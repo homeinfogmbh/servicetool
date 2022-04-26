@@ -234,7 +234,7 @@ ul.navbar-nav li.nav-item:nth-child(4) {
 }
 
 .side_menu .dropdown-menu.show {
-  max-height: 250px;
+  max-height: 2500px;
   overflow: visible;
 }
 
