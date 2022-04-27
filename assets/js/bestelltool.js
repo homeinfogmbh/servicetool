@@ -21,6 +21,8 @@
 
 'use strict';
 
+let DEPLOYMENTS = [];
+
 /*
 	Render page for a new order.
 */
