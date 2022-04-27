@@ -31,7 +31,7 @@ $(document).ready(function(){
 			
 		e.preventDefault()
     });
-	if (localStorage.getItem("session.expired")) {
+	if (localStorage.getItem("servicetool.session.expired")) {
 		removeLocalStorage();
 		document.getElementById("warning").innerHTML = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Ihre Sitzung ist abgelaufen. Bitte melden Sie sich neu an.';
 		$("#warning").show();
@@ -55,13 +55,11 @@ function login() {
 		contentType: 'application/json',
 		success: function (msg) {
 			if (typeof(Storage) !== "undefined") {
-				//if (localStorage.getItem("url") !== null && new Date() - new Date(localStorage.getItem("lastlogin")) < 14400000) { // 4h
-				//	localStorage.setItem("lastlogin", new Date());
-					//window.location.href = localStorage.getItem("url");
-				//} else {
-				//	localStorage.setItem("lastlogin", new Date());
+				if (localStorage.getItem("servicetool.url") !== null) {
+					window.location.href = localStorage.getItem("servicetool.url");
+				} else {
 					window.location.href = "dashboard.html";
-				//}
+				}
 			} else {
 				document.getElementById("warning").innerHTML = '<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Leider ist etwas schiefgelaufen. Ihr Browser unterstützt keine Cookies.';
 				$("#warning").show();
@@ -86,18 +84,16 @@ function login() {
 }
 
 function checkSession() {
-	localStorage.removeItem("user");
-	localStorage.removeItem("customers");
-	localStorage.removeItem("account");
+	localStorage.removeItem("servicetool.user");
 	$('#pageloader').show();
 	$.ajax({
 		timeout: 15000,
 		url: "https://his.homeinfo.de/session/!",
 		type: "GET",
 		success: function (msg) {
-			//if (localStorage.getItem("url") !== null)
-			//	window.location.href = localStorage.getItem("url");
-			//else
+			if (localStorage.getItem("servicetool.url") !== null)
+				window.location.href = localStorage.getItem("servicetool.url");
+			else
 				window.location.href = "dashboard.html";
 		},
 		error: function (xmlhttprequest, textstatus, message) { // EXPIRED
@@ -151,12 +147,11 @@ function isIEorEDGE(){
 	return navigator.appName == 'Microsoft Internet Explorer' || (navigator.appName == "Netscape" && navigator.appVersion.indexOf('Edge') > -1);
 }
 function removeLocalStorage() {
-	localStorage.removeItem("user");
-	localStorage.removeItem("url");
-	localStorage.removeItem("session.expired");
+	localStorage.removeItem("servicetool.user");
+	localStorage.removeItem("servicetool.url");
+	localStorage.removeItem("servicetool.session.expired");
 	/*
 	localStorage.removeItem("customers");
-	localStorage.removeItem("account");
 	localStorage.removeItem("customer");
 	localStorage.removeItem("customerid");
 	localStorage.removeItem("comcataccounts");

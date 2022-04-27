@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    getListOfSystemChecks().then(setVariableMenu); 
+    getListOfSystemChecks().then(setVariableMenu);
 	let menu = '<div class="loader" id="pageloader"></div><div class="menu_content">' +
         '<div class="side_logo">' +
             '<a href="index.html"><img src="assets/img/sideLogo.png" alt="Logo"></a>' +
@@ -110,9 +110,9 @@ function setVariableMenu(checks) {
     let customers = {};
     let customersDom = '';
     for (let check in checks) {
-        if (checks[check].hasOwnProperty("deployment") && !customers.hasOwnProperty(checks[check].deployment.customer.company.name)) {
-            customersDom += '<li><a class="dropdown-item" href="#">' + checks[check].deployment.customer.company.name + '</a></li>';
-            customers[checks[check].deployment.customer.company.name] = {};
+        if (checks[check].hasOwnProperty("deployment") && !customers.hasOwnProperty(checks[check].deployment.customer.company.abbreviation)) {
+            customersDom += '<li><a class="dropdown-item" href="#">' + (checks[check].deployment.customer.company.hasOwnProperty("abbreviation") ?checks[check].deployment.customer.company.abbreviation :checks[check].deployment.customer.company.name) + '</a></li>';
+            customers[checks[check].deployment.customer.company.abbreviation] = {};
         }
     }
     $('#menucustomerlist').html(customersDom);

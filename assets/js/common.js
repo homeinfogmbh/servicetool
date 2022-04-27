@@ -1,5 +1,6 @@
 var _showErrorMessages = true;
 var _countdowntimer = null;
+var _systemChecksPromise = null;
 $(window).on("unload", function(e) {
     _showErrorMessages = false;
 });
@@ -28,8 +29,8 @@ $(document).ready(function() {
 		$(".seru_avatar").text(getInitials(name));
 	});
     $('.logout').click(function() {
-        localStorage.removeItem("user");
-        localStorage.removeItem("session.expired");
+        localStorage.removeItem("servicetool.user");
+        localStorage.removeItem("servicetool.session.expired");
         deleteSession();
     });	
 });  
@@ -42,20 +43,20 @@ function holdSession() {
 		cache: false,
 		success: function (msg) {
 			if ((new Date(msg.end) - new Date()) < 0) {
-				localStorage.setItem("session.expired", true);
+				localStorage.setItem("servicetool.session.expired", true);
 				if ($(location).attr('href').indexOf("charts/") !== -1 || $(location).attr('href').indexOf("services/") !== -1)
 					window.location.href = "../index.html";
 				else
 					window.location.href = "index.html";
 			} else {
-				localStorage.removeItem("session.expired");
-				localStorage.setItem("url", window.location.href);
+				localStorage.removeItem("servicetool.session.expired");
+				localStorage.setItem("servicetool.url", window.location.href);
 				countdown(msg.end);
 			}
 		},
 		error: function (msg) { // EXPIRED
 			if (/*msg.statusText !== "error" || */msg.status !== 0) {
-				localStorage.setItem("session.expired", true);
+				localStorage.setItem("servicetool.session.expired", true);
 				if (msg.statusText == "Gone" || msg.statusText == "Not Found" || msg.statusText == "No Reason Phrase" || msg.statusText == "Unauthorized" || msg.responseText == '{"message": "Keine Sitzung angegeben."}' || msg.responseText == '{"message": "No session specified."}' || msg.responseText == '{"message": "Session expired."}') {
 					if ($(location).attr('href').indexOf("charts/") !== -1 ||$(location).attr('href').indexOf("services/") !== -1)
 						window.location.href = "../index.html";
@@ -78,7 +79,7 @@ function countdown(end) {
 		//$("#sessiontime").html('<font color="#bbb" style="font-size:12px">Sitzung läuft ab <br>in: <b>' + (minutes < 10 ?'0' :'') + minutes + ":" + (seconds < 10 ?'0' :'') + seconds + '</b></font>');
 		if (distance <= 0) {
 			clearInterval(_countdowntimer);
-			localStorage.setItem("session.expired", true);
+			localStorage.setItem("servicetool.session.expired", true);
 			deleteSession();
 		}
 	} , 1000);
@@ -100,15 +101,15 @@ function getUser() {
 	// List all keys:values
 	//for (var i = 0, len = localStorage.length; i < len; ++i )
 		//console.log(localStorage.key(i) + ": " + localStorage.getItem(localStorage.key(i)));
-	if (localStorage.getItem("user") !== null) {
-		return Promise.resolve(JSON.parse(localStorage.getItem("user")));
+	if (localStorage.getItem("servicetool.user") !== null) {
+		return Promise.resolve(JSON.parse(localStorage.getItem("servicetool.user")));
 	} else {
 		return $.ajax({
 			timeout: 15000,
 			url: "https://his.homeinfo.de/account/!",
 			type: "GET",
 			success: function (user) {
-				localStorage.setItem("user", JSON.stringify(user));
+				localStorage.setItem("servicetool.user", JSON.stringify(user));
 			},
 			error: function (msg) {
 			}
@@ -117,11 +118,16 @@ function getUser() {
 }
 
 function getListOfSystemChecks() {
+	if (_systemChecksPromise === null)
+		_systemChecksPromise = getPromis();
+	return _systemChecksPromise;
+}
+function getPromis() {
     return $.ajax({
         url: "https://sysmon.homeinfo.de/checks",
         type: "GET",
         cache: false,
-        success: function (data) {  },
+        success: function (data) {	},
         error: function (msg) {
             setErrorMessage(msg, "Laden der Checklist");
         }
@@ -183,4 +189,10 @@ function setErrorMessage(msg, fromFunction) {
 		$("#message").html('<font class="errormsg">Leider ist ein Fehler beim <b>"' + fromFunction + '"</b> aufgetreten. Bitte versuchen Sie es erneut oder kontaktieren Sie uns.</font>');
 	}
 	$('#pageloader').hide();
+}
+function compare(a, b) {
+	return (a < b) ? -1 : (a > b) ? 1 : 0;
+}
+function compareInverted(a, b) {
+	return (a > b) ? -1 : (a < b) ? 1 : 0;
 }
