@@ -103,10 +103,40 @@ function * filterDeployments (
 
 
 /*
+    Return the ID of the selected customer.
+    If not customer has been selected, return null.
+*/
+function getSelectedCustomerId () {
+    const selectedCustomerId = $('#Kundenauswählen').val();
+
+    if (!selectedCustomerId)
+        return null;
+
+    return Integer.parse(selectedCustomerId);
+}
+
+
+/*
+    Filter deployments matching the partially entered address and display
+    those as hints to existing addresses.
+*/
+function onAddressChange (event) {
+    const deployments = Array.from(filterDeployments(
+        getSelectedCustomerId(),
+        $('#street').val() || null,
+        $('#houseNumber').val() || null,
+        $('#zipCode').val() || null,
+        $('#city').val() || null
+    ));
+    // TODO: implement display of matches.
+}
+
+
+/*
     Initialize the buttons on the page.
 */
 function initButtons () {
-    $('#street').change(event => )
+    $('#street').change(onAddressChange);
 }
 
 
