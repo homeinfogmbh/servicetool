@@ -134,10 +134,41 @@ function onAddressChange (event) {
 
 
 /*
+    Create a new order.
+*/
+function createNewOrder () {
+    return $.ajax({
+        url: 'https://ddborder.homeinfo.de/order',
+        method: 'POST',
+        data: {
+            customer: getSelectedCustomerId(),
+            street: ('#street').val() || null,
+            houseNumber: ('#houseNumber').val() || null,
+            zipCode: ('#zipCode').val() || null,
+            city: ('#city').val() || null
+            model: getSelectedModel(),
+            connection: getSelectedConnection()
+        }
+        dataType: 'json',
+        xhrFields: {
+            withCredentials: true
+        }
+    }).then(
+        response => {
+            CURRENT_ODER_ID = response.id;
+        };
+    );
+}
+
+
+/*
     Create new order or modify an existing order.
 */
 function onSubmit (event) {
+    if (CURRENT_ODER_ID == null)
+        return createNewOrder();
 
+    return patchOrder(CURRENT_ODER_ID);
 }
 
 
