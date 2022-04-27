@@ -26,6 +26,17 @@ let DEPLOYMENTS = [];
 
 
 /*
+    Return a URL for the current order.
+*/
+function getCurrentOrderURL () {
+    if (CURRENT_ODER_ID == null)
+        throw 'No order selected.';
+
+    return 'https://ddborder.homeinfo.de/order/' + CURRENT_ODER_ID;
+}
+
+
+/*
     Query a list of deployments from the backend.
 */
 function getDeployments () {
