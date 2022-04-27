@@ -162,6 +162,14 @@ function createNewOrder () {
 
 
 /*
+    Patch an existing order.
+*/
+function patchOrder (id) {
+    // TODO: implement after discussion in meeting.
+}
+
+
+/*
     Create new order or modify an existing order.
 */
 function onSubmit (event) {
