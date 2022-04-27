@@ -21,7 +21,6 @@
 
 'use strict';
 
-let CURRENT_ORDER = null;
 let CURRENT_ORDER_ID = null;
 let DEPLOYMENTS = [];
 
@@ -52,8 +51,8 @@ function getOrder (id) {
             withCredentials: true
         }
     }).then(order => {
-        CURRENT_ORDER = order;
         CURRENT_ORDER_ID = order.id;
+        return order;
     });
 }
 
@@ -280,7 +279,7 @@ function renderNewOrder () {
 function renderPatchOrder (id) {
     disableBasisData();
     initButtons();
-    getOrder(id);
+    getOrder(id).then(renderOrder);
 }
 
 
