@@ -73,7 +73,7 @@ function matchHouseNumber (houseNumber) {
             return true;
 
         return address.houseNumber == houseNumber.trim();
-    }
+    };
 }
 
 
