@@ -21,6 +21,7 @@
 
 'use strict';
 
+let CURRENT_ODER_ID = null;
 let DEPLOYMENTS = [];
 
 
