@@ -274,6 +274,95 @@ function renderNewOrder () {
 
 
 /*
+    Yield history items from the order object.
+*/
+function * getHistoryItems (order) {
+    if (order.constructionSitePreparationFeedback != null)
+        yield {
+            caption: 'Anlage Baustellenvorbeitung erledigt',
+            timestamp: new Date(order.constructionSitePreparationFeedback)
+        };
+
+    if (order.internetConnection != null)
+        yield {
+            caption: 'Netzanbindung erfolgt',
+            timestamp: new Date(order.internetConnection)
+        };
+
+    if (order.installationDateConfirmed != null)
+        yield {
+            caption: 'Datum Installation bestätigt',
+            timestamp: new Date(order.installationDateConfirmed)
+        };
+
+    if (order.hardwareInstallation != null)
+        yield {
+            caption: 'Hardware installiert',
+            timestamp: new Date(order.hardwareInstallation)
+        };
+
+    if (order.finalized != null)
+        yield {
+            caption: 'Bestellung abgeschlossen',
+            timestamp: new Date(order.finalized)
+        };
+}
+
+
+/*
+    Convert a history item to HTML.
+*/
+function historyItemToHTML (historyItem) {
+    const tr = document.createElement('tr');
+    const col1 = document.createElement('td');
+    col1.textContent = (
+        historyItem.timestamp.getDate()
+        + '.'
+        + (historyItem.timestamp.getMonth() + 1)
+        + '.'
+        + historyItem.timestamp.getFullYear()
+    );
+    const col2 = document.createElement('td');
+    col2.textContent = historyItem.caption;
+    tr.appendChild(col1);
+    tr.appendChild(col2);
+    return tr;
+}
+
+
+/*
+    Render an order into the core data fields.
+*/
+function renderOrder (order) {
+    // Basic data
+    setSelectedCustomer(order.customer);
+    $('#street').val(order.street);
+    $('#houseNumber').val(order.houseNumber);
+    $('#zipCode').val(order.zipCode);
+    $('#city').val(order.city);
+    setSelectedModel(order.model);
+    setSelectedConnection(order.connection);
+
+    // Check list
+    $('#Anlage').prop('checked', order.constructionSitePreparationFeedback != null);
+    $('#Netzbindung').prop('checked', order.internetConnection != null);
+    $('#DatumInstallation').prop('checked', order.installationDateConfirmed != null);
+    $('#Hardware').prop('checked', order.hardwareInstallation != null);
+    $('#Abgeschlossen').prop('checked', order.finalized != null);
+    $('#Bemerkung').val(order.annotation);
+
+    // History
+    const historyItems = Array.from(getHistoryItems(order));
+    historyItems.sort((lhs, rhs) => {
+        return lhs.timestamp - rhs.timestamp;
+    });
+
+    for (const historyItem of historyItems)
+        $('#history').append(historyItemToHTML(historyItem));
+}
+
+
+/*
     Render page for modifying an existing order.
 */
 function renderPatchOrder (id) {
