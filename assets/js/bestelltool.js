@@ -154,6 +154,7 @@ function createNewOrder () {
     return $.ajax({
         url: 'https://ddborder.homeinfo.de/order',
         method: 'POST',
+        mimeType: 'application/json',
         data: {
             customer: getSelectedCustomerId(),
             street: ('#street').val() || null,
@@ -203,6 +204,7 @@ function setChecklistItem (endpoint) {
         return $.ajax({
             url: getCurrentOrderURL(endpoint),
             method: 'POST',
+            mimeType: 'application/json',
             data: event.target.checked,
             dataType: 'json',
             xhrFields: {
