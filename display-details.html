@@ -40,7 +40,7 @@
 							<a href="index.html"><img src="assets/img/sideLogo.png" alt="Logo"></a>
 						</div>
 						<div class="dashTopLeft">
-							<h2><span id="displaytitle"></span> <a href="#" class="editIcon editAddress"><img src="assets/img/edit.svg" alt=""></a></h2>
+							<h2><span id="displaytitle"></span></h2>
 							<p>Kundenname in voller Länge ausgeschreiben</p>
 						</div>
 						<div class="dashTopRight">
@@ -51,9 +51,7 @@
 								</form>
 							</div>
 							<div class="top_user">
-								<div class="seru_avatar">
-									MH
-								</div>
+								<div class="seru_avatar"></div>
 								<div class="user_cont">
 									<h5 id="username"></h5>
 									<a class="blue_btn logout pointer">abmelden</a>
@@ -72,55 +70,55 @@
 											<tbody>
 												<tr>
 													<td>Serial Number</td>
-													<td>00 12 56 89</td>
+													<td id="serialNumber">-</td>
 												</tr>
 												<tr>
-													<td>IP</td>
-													<td>201.108.13.58</td>
+													<td>IPv6</td>
+													<td id="ipv6">-</td>
 												</tr>
 												<tr>
 													<td>RAM</td>
-													<td>800KB</td>
+													<td id="ram">-</td>
 												</tr>
 												<tr>
 													<td>WireGuard pubKey</td>
-													<td>Installiert</td>
+													<td id="wireguard">-</td>
 												</tr>
 												<tr>
 													<td>Typ</td>
-													<td>Exposé TV</td>
+													<td id="screentype">-</td>
 												</tr>
 												<tr>
 													<td>Standort</td>
-													<td><span class="whiteMark">zuweisen</span></td>
+													<td><span class="whiteMark" title="Ändern des Deployments">zuweisen</span></td>
 												</tr>
 												<tr>
 													<td>Internetverbindung</td>
-													<td>DSL <a href="#" class="editIcon"><img src="assets/img/edit.svg" alt=""></a></td>
+													<td><span id="internetconnection">-</span> <a href="#" class="editIcon"><img src="assets/img/edit.svg" alt=""></a></td>
 												</tr>
 												<tr>
 													<td>ÖPNV Adresse</td>
-													<td>Adresse gekürzt... <a href="#" class="editIcon"><img src="assets/img/edit.svg" alt=""></a></td>
+													<td><span id="publicTransportAddress">-</span> <a href="#" class="editIcon"><img src="assets/img/edit.svg" alt=""></a></td>
 												</tr>
 												<tr>
 													<td>System ID</td>
-													<td>838396</td>
+													<td id="systemID">-</td>
 												</tr>
 												<tr>
 													<td>root Anmeldung</td>
-													<td>möglich</td>
+													<td id="root">-</td>
 												</tr>
 												<tr>
 													<td>Betriebssystem</td>
-													<td>Linux</td>
+													<td id="os">-</td>
 												</tr>
 												<tr>
 													<td>Theme (ist/wird)</td>
-													<td>3D Design (3D Design)</td>
+													<td id="applicationDesign">-</td>
 												</tr>
 												<tr>
 													<td>Theme Version</td>
-													<td>1.5 (1.6)</td>
+													<td id="applicationVersion">-</td>
 												</tr>
 											</tbody>
 										</table>
@@ -134,39 +132,39 @@
 											<tbody>
 												<tr>
 													<td>Status</td>
-													<td><span class="orangeMark">offline</span></td>
+													<td id="offline">-</td>
 												</tr>
 												<tr>
 													<td>SSD Karten Test</td>
-													<td><span class="orangeMark">failed</span></td>
+													<td id="ssd">-</td>
 												</tr>
 												<tr>
-													<td>Letzte Synchronisation</td>
-													<td><span class="orangeMark">19.01.2022</span></td>
+													<td>Letzte Aktualisierung</td>
+													<td id="sync">-</td>
 												</tr>
 												<tr>
 													<td>ICMP Antwort</td>
-													<td><span class="blueMark">ok</span></td>
+													<td id="icmp">-</td>
 												</tr>
 												<tr>
 													<td>SSH Verbindung</td>
-													<td><span class="blueMark">established</span></td>
+													<td id="ssh">-</td>
 												</tr>
 												<tr>
 													<td>HTTP Antwort</td>
-													<td><span class="blueMark">ok</span></td>
+													<td id="http">-</td>
 												</tr>
 												<tr>
 													<td>Application</td>
-													<td><span class="blueMark">running</span></td>
+													<td id="application">-</td>
 												</tr>
 												<tr>
 													<td>Baytrail Bug</td>
-													<td><span class="orangeMark">vulnerable</span></td>
+													<td id="baytrail">-</td>
 												</tr>
 												<tr>
 													<td>Application Version</td>
-													<td><span class="blueMark">upToDate</span></td>
+													<td id="applicationuptodate">-</td>
 												</tr>
 											</tbody>
 										</table>
@@ -174,7 +172,7 @@
 										<br>
 										<div class="text-center">
 											<a href="#" class="whitelineBtn">Systemcheck starten</a>
-										    <p class="fz12">Letzter check 31.12.2021 (01:45Uhr)</p>
+										    <p class="fz12" id="lastCheck"></p>
 										</div>
 									</div> <!-- /.neuinstaContent -->
 								</div> <!-- /.neuinstaCol -->
@@ -212,7 +210,7 @@
 										<div class="LogfilesBox">
 											<h4 class="bg_title">Error Log</h4>
 											<table class="table border_none">
-												<tbody>
+												<tbody id="errorlog">
 													<tr>
 														<td>Nicht Online (5 Tage)</td>
 														<td>12.05.2022</td>
