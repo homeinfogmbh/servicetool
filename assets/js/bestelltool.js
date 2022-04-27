@@ -291,7 +291,7 @@ function renderPatchOrder (id) {
 */
 function render () {
     const urlParams = new URLSearchParams(window.location.search);
-    const id = urlParams.get('id')
+    const id = urlParams.get('id');
 
     if (id == null)
         return renderNewOrder();
