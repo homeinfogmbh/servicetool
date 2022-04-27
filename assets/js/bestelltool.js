@@ -139,7 +139,7 @@ function * filterDeployments (
 
 /*
     Return the ID of the selected customer.
-    If not customer has been selected, return null.
+    If no customer has been selected, return null.
 */
 function getSelectedCustomerId () {
     const selectedCustomerId = $('#Kundenauswählen').val();
