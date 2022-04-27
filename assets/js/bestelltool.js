@@ -210,7 +210,7 @@ function onCheckboxClick (handler) {
 */
 function setInternetConnection (available) {
     return $.ajax({
-        url: 'https://ddborder.homeinfo.de/order/' + CURRENT_ORDER_ID + '/internet-connection',
+        url: getCurrentOrderURL('internet-connection'),
         method: 'POST',
         data: available
         dataType: 'json',
