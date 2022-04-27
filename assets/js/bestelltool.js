@@ -132,7 +132,7 @@ function * filterDeployments (
             )
             && isSubstrNocasematchOrNull(zipCode)(deployment.address.zipCode)
             && isSubstrNocasematchOrNull(city)(deployment.address.city)
-        ):
+        )
             yield deployment;
     }
 }
@@ -181,19 +181,17 @@ function createNewOrder () {
             street: ('#street').val() || null,
             houseNumber: ('#houseNumber').val() || null,
             zipCode: ('#zipCode').val() || null,
-            city: ('#city').val() || null
+            city: ('#city').val() || null,
             model: getSelectedModel(),
             connection: getSelectedConnection()
-        }
+        },
         dataType: 'json',
         xhrFields: {
             withCredentials: true
         }
-    }).then(
-        response => {
-            CURRENT_ORDER_ID = response.id;
-        };
-    );
+    }).then(response => {
+        CURRENT_ORDER_ID = response.id;
+    });
 }
 
 
