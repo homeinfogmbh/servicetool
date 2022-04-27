@@ -39,6 +39,19 @@ function getDeployments () {
 
 
 /*
+	Return a function to match a deployment against a customer ID.
+*/
+function matchCustomerId (customerId) {
+	return deployment => {
+		if (customerId == null)
+			return true;
+
+		return deployment.customer.id == customerId;
+	};
+}
+
+
+/*
 	Group deployments by customer.
 */
 function * filterDeployments (
