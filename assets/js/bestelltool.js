@@ -28,11 +28,14 @@ let DEPLOYMENTS = [];
 /*
     Return a URL for the current order.
 */
-function getCurrentOrderURL () {
+function getCurrentOrderURL (endpoint = null) {
     if (CURRENT_ORDER_ID == null)
         throw 'No order selected.';
 
-    return 'https://ddborder.homeinfo.de/order/' + CURRENT_ORDER_ID;
+    if (endpoint == null)
+        return 'https://ddborder.homeinfo.de/order/' + CURRENT_ORDER_ID;
+
+    return getCurrentOrderURL() + '/' + endpoint;
 }
 
 
