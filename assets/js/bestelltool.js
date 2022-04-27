@@ -202,6 +202,23 @@ function onCheckboxClick (handler) {
 
 
 /*
+    Set the state of the internet connection
+    availability on the deployment site.
+*/
+function setInternetConnection (available) {
+    return $.ajax({
+        url: 'https://ddborder.homeinfo.de/order/' + CURRENT_ODER_ID + '/internet-connection',
+        method: 'POST',
+        data: available
+        dataType: 'json',
+        xhrFields: {
+            withCredentials: true
+        }
+    });
+}
+
+
+/*
     Initialize the buttons on the page.
 */
 function initButtons () {
