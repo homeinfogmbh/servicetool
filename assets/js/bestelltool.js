@@ -52,6 +52,19 @@ function matchCustomerId (customerId) {
 
 
 /*
+	Return a function to match an address against a street name.
+*/
+function matchStreet (street) {
+	return address => {
+		if (street == null)
+			return true;
+
+		return address.street == street.trim();
+	};
+}
+
+
+/*
 	Group deployments by customer.
 */
 function * filterDeployments (
