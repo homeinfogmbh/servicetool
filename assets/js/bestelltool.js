@@ -45,6 +45,38 @@ class HistoryItem {
         this.timestamp = timestamp;
     }
 
+    static * fromOrder (order) {
+        if (order.constructionSitePreparationFeedback != null)
+            yield new this(
+                'Anlage Baustellenvorbeitung erledigt',
+                new Date(order.constructionSitePreparationFeedback)
+            );
+
+        if (order.internetConnection != null)
+            yield new this(
+                'Netzanbindung erfolgt',
+                new Date(order.internetConnection)
+            );
+
+        if (order.installationDateConfirmed != null)
+            yield new this(
+                'Datum Installation bestätigt',
+                new Date(order.installationDateConfirmed)
+            );
+
+        if (order.hardwareInstallation != null)
+            yield new this(
+                'Hardware installiert',
+                new Date(order.hardwareInstallation)
+            );
+
+        if (order.finalized != null)
+            yield new this(
+                'Bestellung abgeschlossen',
+                new Date(order.finalized)
+            );
+    }
+
     toHTML () {
         const tr = document.createElement('tr');
         const col1 = document.createElement('td');
@@ -329,42 +361,6 @@ function renderNewOrder () {
 
 
 /*
-    Yield history items from the order object.
-*/
-function * getHistoryItems (order) {
-    if (order.constructionSitePreparationFeedback != null)
-        yield new HistoryItem(
-            'Anlage Baustellenvorbeitung erledigt',
-            new Date(order.constructionSitePreparationFeedback)
-        );
-
-    if (order.internetConnection != null)
-        yield new HistoryItem(
-            'Netzanbindung erfolgt',
-            new Date(order.internetConnection)
-        );
-
-    if (order.installationDateConfirmed != null)
-        yield new HistoryItem(
-            'Datum Installation bestätigt',
-            new Date(order.installationDateConfirmed)
-        );
-
-    if (order.hardwareInstallation != null)
-        yield new HistoryItem(
-            'Hardware installiert',
-            new Date(order.hardwareInstallation)
-        );
-
-    if (order.finalized != null)
-        yield new HistoryItem(
-            'Bestellung abgeschlossen',
-            new Date(order.finalized)
-        );
-}
-
-
-/*
     Render an order into the core data fields.
 */
 function renderOrder (order) {
@@ -390,7 +386,7 @@ function renderOrder (order) {
     $('#Bemerkung').val(order.annotation);
 
     // History
-    const historyItems = Array.from(getHistoryItems(order));
+    const historyItems = Array.from(HistoryItem.fromOrder(order));
     historyItems.sort((lhs, rhs) => {
         return lhs.timestamp - rhs.timestamp;
     });
