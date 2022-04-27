@@ -133,10 +133,19 @@ function onAddressChange (event) {
 
 
 /*
+    Create new order or modify an existing order.
+*/
+function onSubmit (event) {
+
+}
+
+
+/*
     Initialize the buttons on the page.
 */
 function initButtons () {
     $('#street').change(onAddressChange);
+    $('#submit').click(onSubmit);
 }
 
 
