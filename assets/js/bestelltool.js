@@ -211,7 +211,7 @@ function setChecklistItem (endpoint) {
                 withCredentials: true
             }
         });
-     };
+    };
 }
 
 
