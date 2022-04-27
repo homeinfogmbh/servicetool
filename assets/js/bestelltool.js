@@ -78,6 +78,19 @@ function matchHouseNumber (houseNumber) {
 
 
 /*
+    Return a function to match an address against a zip code.
+*/
+function matchZipCode (zipCode) {
+    return address => {
+        if (zipCode == null)
+            return true;
+
+        return address.zipCode == zipCode;
+    };
+}
+
+
+/*
     Group deployments by customer.
 */
 function * filterDeployments (
