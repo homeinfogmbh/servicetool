@@ -371,9 +371,13 @@ function renderOrder (order) {
     setSelectedConnection(order.connection);
 
     // Check list
-    $('#Anlage').prop('checked', order.constructionSitePreparationFeedback != null);
+    $('#Anlage').prop(
+        'checked', order.constructionSitePreparationFeedback != null
+    );
     $('#Netzbindung').prop('checked', order.internetConnection != null);
-    $('#DatumInstallation').prop('checked', order.installationDateConfirmed != null);
+    $('#DatumInstallation').prop(
+        'checked', order.installationDateConfirmed != null
+    );
     $('#Hardware').prop('checked', order.hardwareInstallation != null);
     $('#Abgeschlossen').prop('checked', order.finalized != null);
     $('#Bemerkung').val(order.annotation);
