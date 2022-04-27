@@ -216,6 +216,14 @@ function setChecklistItem (endpoint) {
 
 
 /*
+    Disable the checklist and history columns for new orders.
+*/
+function disableChecklistAndHistory () {
+    // TODO: implement
+}
+
+
+/*
     Initialize the buttons on the page.
 */
 function initButtons () {
@@ -233,6 +241,7 @@ function initButtons () {
     Render page for a new order.
 */
 function renderNewOrder () {
-    getDeployments().then(deployments => { DEPLOYMENTS = deployments; });
+    disableChecklistAndHistory();
     initButtons();
+    getDeployments().then(deployments => { DEPLOYMENTS = deployments; });
 }
