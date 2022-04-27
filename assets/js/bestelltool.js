@@ -26,16 +26,17 @@ let DEPLOYMENTS = [];
 
 
 /*
-    Return a URL for the current order.
+    Return a URL for the given order.
+    Optionally specify a trailing endpoint.
 */
-function getCurrentOrderURL (endpoint = null) {
-    if (CURRENT_ORDER_ID == null)
+function getOrderURL (id, endpoint = null) {
+    if (id == null)
         throw 'No order selected.';
 
     if (endpoint == null)
-        return 'https://ddborder.homeinfo.de/order/' + CURRENT_ORDER_ID;
+        return 'https://ddborder.homeinfo.de/order/' + id;
 
-    return getCurrentOrderURL() + '/' + endpoint;
+    return getOrderURL(id) + '/' + endpoint;
 }
 
 
@@ -202,7 +203,7 @@ function onSubmit (event) {
 function setChecklistItem (endpoint) {
     return event => {
         return $.ajax({
-            url: getCurrentOrderURL(endpoint),
+            url: getOrderURL(CURRENT_ORDER_ID, endpoint),
             method: 'POST',
             mimeType: 'application/json',
             data: event.target.checked,
