@@ -5,6 +5,10 @@ $(document).ready(function() {
 });
 
 function setChecks(list) {
+    list = $.map(list, function(value, index){
+        return [value];
+    });
+    console.log(list);
     // Big points on top
     let ssdcarderrors = 0;
     let notfitted = 0;
@@ -15,39 +19,34 @@ function setChecks(list) {
     let oldApplication = 0;
     //Observer table
     let observerItems = [];
-    for (let check in list) {
-        if (list[check].hasOwnProperty("checkResults")) {
-            list[check].checkResults.sort(function(a, b) {
-                return compareInverted(a.timestamp, b.timestamp);
-            });
-        }
-        if (list[check].hasOwnProperty("checkResults") && list[check].checkResults.length > 0 && list[check].checkResults[0].smartCheck === "failed") {
+    for (let check of list) {
+        if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].smartCheck === "failed") {
             ssdcarderrors++;
-            observerItems.push(getObserveItem(list[check], "SSD Fehler"));
+            observerItems.push(getObserveItem(check, "SSD Fehler"));
         }
-        if (!list[check].fitted) {
+        if (!check.fitted) {
             notfitted++;
-            observerItems.push(getObserveItem(list[check], "Nicht verbaut"));
+            observerItems.push(getObserveItem(check, "Nicht verbaut"));
         }
-        if (list[check].hasOwnProperty("deployment") && list[check].deployment && list[check].deployment.testing) {
+        if (check.hasOwnProperty("deployment") && check.deployment && check.deployment.testing) {
             testsystems++;
-            observerItems.push(getObserveItem(list[check], "Testsystem"));
+            observerItems.push(getObserveItem(check, "Testsystem"));
         }
-        if (list[check].hasOwnProperty("checkResults") && list[check].checkResults.length > 0 && list[check].checkResults[0].hasOwnProperty("offlineSince")) {
+        if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("offlineSince")) {
             offline++;
-            if (!isOnDate(list[check].checkResults[0].offlineSince, THREE_MONTHS))
-                observerItems.push(getObserveItem(list[check], "Mehr als 3 Monate offline"));
+            if (!isOnDate(check.checkResults[0].offlineSince, THREE_MONTHS))
+                observerItems.push(getObserveItem(check, "Mehr als 3 Monate offline"));
         }
-        if (!isOnDate(list[check].lastSync, 24)) {
+        if (!isOnDate(check.lastSync, 24)) {
             noActualData++;
-            if (!isOnDate(list[check].lastSync, THREE_MONTHS))
-                observerItems.push(getObserveItem(list[check], "Alte Daten"));
+            if (!isOnDate(check.lastSync, THREE_MONTHS))
+                observerItems.push(getObserveItem(check, "Alte Daten"));
         }
-        if (list[check].hasOwnProperty("checkResults") && list[check].checkResults.length > 0 && list[check].checkResults[0].applicationState === "NOT_RUNNING") {
+        if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState === "not running") {
             blackscreens++;
-            observerItems.push(getObserveItem(list[check], "Schwarz-Bildmodus"));
+            observerItems.push(getObserveItem(check, "Schwarz-Bildmodus"));
         }
-        //TODOif (list[check].hasOwnProperty("checkResults") && list[check].checkResults.length > 0 && list[check].checkResults[0].applicationState === "NOT_RUNNING")
+        //TODOif (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState === "NOT_RUNNING")
             //oldApplication++;
     }
     
@@ -87,7 +86,7 @@ function getObserveItem(item, annotation) {
     let address = item.hasOwnProperty("deployment") ?item.deployment.hasOwnProperty("address") ?item.deployment.address.street + " " + item.deployment.address.houseNumber + " " + item.deployment.address.zipCode + " " + item.deployment.address.city :'Keine Adresse' :'';
     return '<tr>' +
         '<td title="System-ID: ' + item.id  + '">' + (item.hasOwnProperty("deployment") ?item.deployment.customer.company.abbreviation :'Keine Zuordnung') + '</td>' +
-        '<td title="' + address + '">' + address.substring(0, 15) + '</td>' +
+        '<td title="' + address + '">' + address.substring(0, 12) + '...</td>' +
         '<td>' + annotation + '</td>' +
         '<td>' + (item.hasOwnProperty("checkResults") && item.checkResults.length > 0 ?formatDate(item.checkResults[0].timestamp) :"-") + '</td>' +
         '<td><a href="display-details.html?id=' + item.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>' +
