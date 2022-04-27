@@ -65,6 +65,19 @@ function matchStreet (street) {
 
 
 /*
+	Return a function to match an address against a house number.
+*/
+function matchHouseNumber (houseNumber) {
+    return address => {
+        if (houseNumber == null)
+            return true;
+
+        return address.houseNumber == houseNumber.trim();
+    }
+}
+
+
+/*
     Group deployments by customer.
 */
 function * filterDeployments (
