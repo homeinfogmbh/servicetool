@@ -181,11 +181,30 @@ function onSubmit (event) {
 
 
 /*
+    Handle a click on a given check box.
+*/
+function onCheckboxClick (handler) {
+     return event => {
+        handler(event.target.checked);
+     };
+}
+
+
+/*
     Initialize the buttons on the page.
 */
 function initButtons () {
     $('#street').change(onAddressChange);
     $('#submit').click(onSubmit);
+    $('#Anlage').click(onCheckboxClick(
+        setConstructionSitePreparationFeedback
+    ));
+    $('#Netzbindung').click(onCheckboxClick(setInternetConnection));
+    $('#DatumInstallation').click(onCheckboxClick(
+        setInstallationDateConfirmed
+    ));
+    $('#Hardware').click(onCheckboxClick(setHardwareInstalled));
+    $('#Abgeschlossen').click(onCheckboxClick(setFinalized));
 }
 
 
