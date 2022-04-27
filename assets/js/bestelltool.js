@@ -23,6 +23,21 @@
 
 let DEPLOYMENTS = [];
 
+
+/*
+	Query a list of deployments from the backend.
+*/
+function getDeployments () {
+	return $.ajax({
+		url: 'https://ddborder.homeinfo.de/deployments',
+		dataType: 'json',
+		xhrFields: {
+			withCredentials: true
+		}
+	});
+}
+
+
 /*
 	Render page for a new order.
 */
