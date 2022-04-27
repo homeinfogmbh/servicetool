@@ -195,29 +195,21 @@ function onSubmit (event) {
 
 
 /*
-    Handle a click on a given check box.
+    Set the state of the given checklist item by its endpoint name to the given
+    state.
 */
-function onCheckboxClick (handler) {
-     return event => {
-        handler(event.target.checked);
+function setChecklistItem (endpoint) {
+    return event => {
+        return $.ajax({
+            url: getCurrentOrderURL(endpoint),
+            method: 'POST',
+            data: event.target.checked,
+            dataType: 'json',
+            xhrFields: {
+                withCredentials: true
+            }
+        });
      };
-}
-
-
-/*
-    Set the state of the internet connection
-    availability on the deployment site.
-*/
-function setInternetConnection (available) {
-    return $.ajax({
-        url: getCurrentOrderURL('internet-connection'),
-        method: 'POST',
-        data: available
-        dataType: 'json',
-        xhrFields: {
-            withCredentials: true
-        }
-    });
 }
 
 
@@ -227,15 +219,11 @@ function setInternetConnection (available) {
 function initButtons () {
     $('#street').change(onAddressChange);
     $('#submit').click(onSubmit);
-    $('#Anlage').click(onCheckboxClick(
-        setConstructionSitePreparationFeedback
-    ));
-    $('#Netzbindung').click(onCheckboxClick(setInternetConnection));
-    $('#DatumInstallation').click(onCheckboxClick(
-        setInstallationDateConfirmed
-    ));
-    $('#Hardware').click(onCheckboxClick(setHardwareInstalled));
-    $('#Abgeschlossen').click(onCheckboxClick(setFinalized));
+    $('#Anlage').click(setChecklistItem('construction-site-preparation'));
+    $('#Netzbindung').click(setChecklistItem('internet-connection'));
+    $('#DatumInstallation').click(setChecklistItem('installation-date-confirmed'));
+    $('#Hardware').click(setChecklistItem('hardware-installation'));
+    $('#Abgeschlossen').click(setChecklistItem('finalize'));
 }
 
 
