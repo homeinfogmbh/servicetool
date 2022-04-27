@@ -224,6 +224,14 @@ function disableChecklistAndHistory () {
 
 
 /*
+    Disable the basis data column for existing orders view.
+*/
+function disableBasisData () {
+    // TODO: implement
+}
+
+
+/*
     Initialize the buttons on the page.
 */
 function initButtons () {
@@ -244,4 +252,17 @@ function renderNewOrder () {
     disableChecklistAndHistory();
     initButtons();
     getDeployments().then(deployments => { DEPLOYMENTS = deployments; });
+}
+
+
+/*
+    Render page for modifying an existing order.
+*/
+function renderPatchOrder (id) {
+    disableBasisData();
+    initButtons();
+    getOrder(id).then(order => {
+        CURRENT_ORDER = order;
+        CURRENT_ORDER_ID = order.id;
+    });
 }
