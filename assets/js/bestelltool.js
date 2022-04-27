@@ -107,7 +107,8 @@ function matchCity (city) {
     Group deployments by customer.
 */
 function * filterDeployments (
-    deployments, customerId, street, houseNumber, zipCode, city) {
+        deployments, customerId, street, houseNumber, zipCode, city
+) {
     for (const deployment of deployments) {
         if (
             matchCustomerId(customerId)(deployment)
@@ -125,7 +126,5 @@ function * filterDeployments (
     Render page for a new order.
 */
 function renderNewOrder () {
-    getDeployments().then(deployments => {
-        DEPLOYMENTS = deployments;
-    });
+    getDeployments().then(deployments => { DEPLOYMENTS = deployments; });
 }
