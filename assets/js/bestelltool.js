@@ -210,7 +210,7 @@ function onSubmit (event) {
     if (CURRENT_ORDER_ID == null)
         return createNewOrder();
 
-    return patchOrder(CURRENT_ORDER_ID);
+    throw 'Cannot create new order in patch mode.';
 }
 
 
