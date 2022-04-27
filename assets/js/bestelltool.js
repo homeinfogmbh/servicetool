@@ -97,7 +97,7 @@ function isSubstrNocasematchOrNull (substring) {
 
 
 /*
-    Group deployments by customer.
+    Filter deployments by customer and address information.
 */
 function * filterDeployments (
         deployments, customerId, street, houseNumber, zipCode, city
