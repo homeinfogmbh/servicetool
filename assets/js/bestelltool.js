@@ -85,7 +85,7 @@ function matchZipCode (zipCode) {
         if (zipCode == null)
             return true;
 
-        return address.zipCode == zipCode;
+        return address.zipCode == zipCode.trim();
     };
 }
 
