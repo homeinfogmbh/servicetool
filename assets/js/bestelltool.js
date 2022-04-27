@@ -39,6 +39,24 @@ function getDeployments () {
 
 
 /*
+	Group deployments by customer.
+*/
+function * filterDeployments (
+    deployments, customerId, street, houseNumber, zipCode, city) {
+	for (const deployment of deployments) {
+		if (
+			matchCustomerId(customerId)(deployment)
+			&& matchStreet(street)(deployment.address)
+			&& matchHouseNumber(houseNumber)(deployment.address)
+			&& matchZipCode(zipCode)(deployment.address)
+			&& matchCity(city)(deployment.address)
+		):
+			yield deployment;
+	}
+}
+
+
+/*
 	Render page for a new order.
 */
 function renderNewOrder () {
