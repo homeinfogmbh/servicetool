@@ -37,6 +37,34 @@ let DEPLOYMENTS = [];
 
 
 /*
+    Container for history item information.
+*/
+class HistoryItem {
+    constructor (caption, timestamp) {
+        this.caption = caption;
+        this.timestamp = timestamp;
+    }
+
+    toHTML () {
+        const tr = document.createElement('tr');
+        const col1 = document.createElement('td');
+        col1.textContent = (
+            this.timestamp.getDate()
+            + '.'
+            + (this.timestamp.getMonth() + 1)
+            + '.'
+            + this.timestamp.getFullYear()
+        );
+        tr.appendChild(col1);
+        const col2 = document.createElement('td');
+        col2.textContent = this.caption;
+        tr.appendChild(col2);
+        return tr;
+    }
+}
+
+
+/*
     Return a URL for the given order.
     Optionally specify a trailing endpoint.
 */
@@ -305,55 +333,34 @@ function renderNewOrder () {
 */
 function * getHistoryItems (order) {
     if (order.constructionSitePreparationFeedback != null)
-        yield {
-            caption: 'Anlage Baustellenvorbeitung erledigt',
-            timestamp: new Date(order.constructionSitePreparationFeedback)
-        };
+        yield new HistoryItem(
+            'Anlage Baustellenvorbeitung erledigt',
+            new Date(order.constructionSitePreparationFeedback)
+        );
 
     if (order.internetConnection != null)
-        yield {
-            caption: 'Netzanbindung erfolgt',
-            timestamp: new Date(order.internetConnection)
-        };
+        yield new HistoryItem(
+            'Netzanbindung erfolgt',
+            new Date(order.internetConnection)
+        );
 
     if (order.installationDateConfirmed != null)
-        yield {
-            caption: 'Datum Installation bestätigt',
-            timestamp: new Date(order.installationDateConfirmed)
-        };
+        yield new HistoryItem(
+            'Datum Installation bestätigt',
+            new Date(order.installationDateConfirmed)
+        );
 
     if (order.hardwareInstallation != null)
-        yield {
-            caption: 'Hardware installiert',
-            timestamp: new Date(order.hardwareInstallation)
-        };
+        yield new HistoryItem(
+            'Hardware installiert',
+            new Date(order.hardwareInstallation)
+        );
 
     if (order.finalized != null)
-        yield {
-            caption: 'Bestellung abgeschlossen',
-            timestamp: new Date(order.finalized)
-        };
-}
-
-
-/*
-    Convert a history item to HTML.
-*/
-function historyItemToHTML (historyItem) {
-    const tr = document.createElement('tr');
-    const col1 = document.createElement('td');
-    col1.textContent = (
-        historyItem.timestamp.getDate()
-        + '.'
-        + (historyItem.timestamp.getMonth() + 1)
-        + '.'
-        + historyItem.timestamp.getFullYear()
-    );
-    const col2 = document.createElement('td');
-    col2.textContent = historyItem.caption;
-    tr.appendChild(col1);
-    tr.appendChild(col2);
-    return tr;
+        yield new HistoryItem(
+            'Bestellung abgeschlossen',
+            new Date(order.finalized)
+        );
 }
 
 
@@ -389,7 +396,7 @@ function renderOrder (order) {
     });
 
     for (const historyItem of historyItems)
-        $('#history').append(historyItemToHTML(historyItem));
+        $('#history').append(historyItem.toHTML());
 }
 
 
