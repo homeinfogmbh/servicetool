@@ -146,7 +146,7 @@ function getSelectedCustomerId () {
     if (!selectedCustomerId)
         return null;
 
-    return Integer.parse(selectedCustomerId);
+    return parseInt(selectedCustomerId);
 }
 
 
@@ -294,5 +294,5 @@ function render () {
     if (id == null)
         return renderNewOrder();
 
-    return renderPatchOrder(Integer.parse(id));
+    return renderPatchOrder(parseInt(id));
 }
