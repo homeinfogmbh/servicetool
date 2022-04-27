@@ -21,6 +21,7 @@
 
 'use strict';
 
+let CURRENT_ORDER = null;
 let CURRENT_ORDER_ID = null;
 let DEPLOYMENTS = [];
 
@@ -37,6 +38,23 @@ function getOrderURL (id, endpoint = null) {
         return 'https://ddborder.homeinfo.de/order/' + id;
 
     return getOrderURL(id) + '/' + endpoint;
+}
+
+
+/*
+    Query an order by its ID.
+*/
+function getOrder (id) {
+    return $.ajax({
+        url: getOrderURL(id),
+        dataType: 'json',
+        xhrFields: {
+            withCredentials: true
+        }
+    }).then(order => {
+        CURRENT_ORDER = order;
+        CURRENT_ORDER_ID = order.id;
+    });
 }
 
 
@@ -262,8 +280,5 @@ function renderNewOrder () {
 function renderPatchOrder (id) {
     disableBasisData();
     initButtons();
-    getOrder(id).then(order => {
-        CURRENT_ORDER = order;
-        CURRENT_ORDER_ID = order.id;
-    });
+    getOrder(id);
 }
