@@ -21,7 +21,7 @@
 
 'use strict';
 
-let CURRENT_ODER_ID = null;
+let CURRENT_ORDER_ID = null;
 let DEPLOYMENTS = [];
 
 
@@ -29,10 +29,10 @@ let DEPLOYMENTS = [];
     Return a URL for the current order.
 */
 function getCurrentOrderURL () {
-    if (CURRENT_ODER_ID == null)
+    if (CURRENT_ORDER_ID == null)
         throw 'No order selected.';
 
-    return 'https://ddborder.homeinfo.de/order/' + CURRENT_ODER_ID;
+    return 'https://ddborder.homeinfo.de/order/' + CURRENT_ORDER_ID;
 }
 
 
@@ -166,7 +166,7 @@ function createNewOrder () {
         }
     }).then(
         response => {
-            CURRENT_ODER_ID = response.id;
+            CURRENT_ORDER_ID = response.id;
         };
     );
 }
@@ -184,10 +184,10 @@ function patchOrder (id) {
     Create new order or modify an existing order.
 */
 function onSubmit (event) {
-    if (CURRENT_ODER_ID == null)
+    if (CURRENT_ORDER_ID == null)
         return createNewOrder();
 
-    return patchOrder(CURRENT_ODER_ID);
+    return patchOrder(CURRENT_ORDER_ID);
 }
 
 
@@ -207,7 +207,7 @@ function onCheckboxClick (handler) {
 */
 function setInternetConnection (available) {
     return $.ajax({
-        url: 'https://ddborder.homeinfo.de/order/' + CURRENT_ODER_ID + '/internet-connection',
+        url: 'https://ddborder.homeinfo.de/order/' + CURRENT_ORDER_ID + '/internet-connection',
         method: 'POST',
         data: available
         dataType: 'json',
