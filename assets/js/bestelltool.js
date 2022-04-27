@@ -282,3 +282,17 @@ function renderPatchOrder (id) {
     initButtons();
     getOrder(id);
 }
+
+
+/*
+    Render page dependent on requested view.
+*/
+function render () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id')
+
+    if (id == null)
+        return renderNewOrder();
+
+    return renderPatchOrder(Integer.parse(id));
+}
