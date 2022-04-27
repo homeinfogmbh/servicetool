@@ -21,6 +21,17 @@
 
 'use strict';
 
+const MODELS = {
+    'Touch24': 'Standard 24"',
+    'Touch34': 'Standard 32"',
+    'PhoenixTouch24': 'Phönix',
+    'NeptunTouch24': 'Neptun'
+};
+const CONNECTIONS = {
+    'ADSL': 'DSL',
+    'lte3G4G': 'LTE'
+};
+
 let CURRENT_ORDER_ID = null;
 let DEPLOYMENTS = [];
 
@@ -148,6 +159,22 @@ function getSelectedCustomerId () {
         return null;
 
     return parseInt(selectedCustomerId);
+}
+
+
+/*
+    Return the selected hardware model.
+*/
+function getSelectedModel () {
+    return MODELS[$('input[name="Artdes"]:checked').val()];
+}
+
+
+/*
+    Return the selected connection type.
+*/
+function getSelectedConnection () {
+    return CONNECTIONS[$('input[name="ArtDerNetz"]:checked').val()];
 }
 
 
