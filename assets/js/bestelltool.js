@@ -25,68 +25,68 @@ let DEPLOYMENTS = [];
 
 
 /*
-	Query a list of deployments from the backend.
+    Query a list of deployments from the backend.
 */
 function getDeployments () {
-	return $.ajax({
-		url: 'https://ddborder.homeinfo.de/deployments',
-		dataType: 'json',
-		xhrFields: {
-			withCredentials: true
-		}
-	});
+    return $.ajax({
+        url: 'https://ddborder.homeinfo.de/deployments',
+        dataType: 'json',
+        xhrFields: {
+            withCredentials: true
+        }
+    });
 }
 
 
 /*
-	Return a function to match a deployment against a customer ID.
+    Return a function to match a deployment against a customer ID.
 */
 function matchCustomerId (customerId) {
-	return deployment => {
-		if (customerId == null)
-			return true;
+    return deployment => {
+        if (customerId == null)
+            return true;
 
-		return deployment.customer.id == customerId;
-	};
+        return deployment.customer.id == customerId;
+    };
 }
 
 
 /*
-	Return a function to match an address against a street name.
+    Return a function to match an address against a street name.
 */
 function matchStreet (street) {
-	return address => {
-		if (street == null)
-			return true;
+    return address => {
+        if (street == null)
+            return true;
 
-		return address.street == street.trim();
-	};
+        return address.street == street.trim();
+    };
 }
 
 
 /*
-	Group deployments by customer.
+    Group deployments by customer.
 */
 function * filterDeployments (
     deployments, customerId, street, houseNumber, zipCode, city) {
-	for (const deployment of deployments) {
-		if (
-			matchCustomerId(customerId)(deployment)
-			&& matchStreet(street)(deployment.address)
-			&& matchHouseNumber(houseNumber)(deployment.address)
-			&& matchZipCode(zipCode)(deployment.address)
-			&& matchCity(city)(deployment.address)
-		):
-			yield deployment;
-	}
+    for (const deployment of deployments) {
+        if (
+            matchCustomerId(customerId)(deployment)
+            && matchStreet(street)(deployment.address)
+            && matchHouseNumber(houseNumber)(deployment.address)
+            && matchZipCode(zipCode)(deployment.address)
+            && matchCity(city)(deployment.address)
+        ):
+            yield deployment;
+    }
 }
 
 
 /*
-	Render page for a new order.
+    Render page for a new order.
 */
 function renderNewOrder () {
-	getDeployments().then(deployments => {
-		DEPLOYMENTS = deployments;
-	});
+    getDeployments().then(deployments => {
+        DEPLOYMENTS = deployments;
+    });
 }
