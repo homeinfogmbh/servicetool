@@ -298,3 +298,6 @@ function render () {
 
     return renderPatchOrder(parseInt(id));
 }
+
+
+$(document).ready(render);
