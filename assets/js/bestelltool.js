@@ -91,6 +91,19 @@ function matchZipCode (zipCode) {
 
 
 /*
+    Return a function to match an address against a city.
+*/
+function matchCity (city) {
+    return address => {
+        if (city == null)
+            return true;
+
+        return address.city == city.trim();
+    };
+}
+
+
+/*
     Group deployments by customer.
 */
 function * filterDeployments (
