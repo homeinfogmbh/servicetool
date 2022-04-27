@@ -39,6 +39,22 @@ function getDeployments () {
 
 
 /*
+    Return true iff the first string is a substring of the second string with
+    both strings being converted to lower case beforehand for case-insensitive
+    matching.
+*/
+function isSubstrNocasematch (substring, string) {
+    substring = substring.trim().toLowerCase();
+    string = string.toLowerCase();
+
+    if (substring.length > string.length)
+        return false;
+
+    return string.substring(0, substring.length) == substring;
+}
+
+
+/*
     Return a function to match a deployment against a customer ID.
 */
 function matchCustomerId (customerId) {
@@ -59,7 +75,7 @@ function matchStreet (street) {
         if (street == null)
             return true;
 
-        return address.street == street.trim();
+        return isSubstrNocasematch(street, address.street);
     };
 }
 
@@ -72,7 +88,7 @@ function matchHouseNumber (houseNumber) {
         if (houseNumber == null)
             return true;
 
-        return address.houseNumber == houseNumber.trim();
+        return isSubstrNocasematch(houseNumber, address.houseNumber);
     };
 }
 
@@ -85,7 +101,7 @@ function matchZipCode (zipCode) {
         if (zipCode == null)
             return true;
 
-        return address.zipCode == zipCode.trim();
+        return isSubstrNocasematch(zipCode, address.zipCode);
     };
 }
 
@@ -98,7 +114,7 @@ function matchCity (city) {
         if (city == null)
             return true;
 
-        return address.city == city.trim();
+        return isSubstrNocasematch(city, address.city);
     };
 }
 
@@ -123,8 +139,17 @@ function * filterDeployments (
 
 
 /*
+    Initialize the buttons on the page.
+*/
+function initButtons () {
+    $('#street').change(event => )
+}
+
+
+/*
     Render page for a new order.
 */
 function renderNewOrder () {
     getDeployments().then(deployments => { DEPLOYMENTS = deployments; });
+    initButtons();
 }
