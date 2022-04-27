@@ -68,6 +68,8 @@ function getDeployments () {
         xhrFields: {
             withCredentials: true
         }
+    }).then(deployments => {
+        DEPLOYMENTS = deployments;
     });
 }
 
@@ -270,7 +272,7 @@ function initButtons () {
 function renderNewOrder () {
     disableChecklistAndHistory();
     initButtons();
-    getDeployments().then(deployments => { DEPLOYMENTS = deployments; });
+    getDeployments();
 }
 
 
