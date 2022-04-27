@@ -196,3 +196,10 @@ function compare(a, b) {
 function compareInverted(a, b) {
 	return (a > b) ? -1 : (a < b) ? 1 : 0;
 }
+function formatDate(date) {
+	return date.substring(8, 10) + "." + date.substring(5, 7) + "." + date.substring(0, 4); // dd-mm-yyy
+}
+function getURLParameterByName(name) {
+    var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+    return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+}

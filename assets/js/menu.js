@@ -1,14 +1,14 @@
 $(document).ready(function() {
-    getListOfSystemChecks().then(setVariableMenu);
+    getListOfSystemChecks().then(setCustomerList);
 	let menu = '<div class="loader" id="pageloader"></div><div class="menu_content">' +
         '<div class="side_logo">' +
-            '<a href="index.html"><img src="assets/img/sideLogo.png" alt="Logo"></a>' +
+            '<a href="dashboard.html"><img src="assets/img/sideLogo.png" alt="Logo"></a>' +
         '</div>' +
         '<div class="side_menu">' +
             '<h3 class="menu_title">Menu</h3>' +
             '<ul class="navbar-nav">' +
                 '<li class="nav-item">' +
-                    '<a class="nav-link active" aria-current="page" href="index.html">Dashboard</a>' +
+                    '<a class="nav-link active" aria-current="page" href="dashboard.html">Dashboard</a>' +
                 '</li>' +
                 '<li class="nav-item dropdown">' +
                     '<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">' +
@@ -106,7 +106,7 @@ $(document).ready(function() {
     $(".menu_sidebar").html(menu);
 });
 
-function setVariableMenu(checks) {
+function setCustomerList(checks) {
     let customers = {};
     let customersDom = '';
     for (let check in checks) {
