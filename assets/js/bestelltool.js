@@ -21,3 +21,11 @@
 
 'use strict';
 
+/*
+	Render page for a new order.
+*/
+function renderNewOrder () {
+	getDeployments().then(deployments => {
+		DEPLOYMENTS = deployments;
+	});
+}
