@@ -30,7 +30,7 @@ const ID_TO_MODEL = {
 const MODEL_TO_ID = {
     'Standard 24&quot;': 'Touch24',
     'Standard 32&quot;"': 'Touch34',
-    'Ph\\u00f6nix': 'PhoenixTouch24',
+    'Phönix': 'PhoenixTouch24',
     'Neptun': 'NeptunTouch24'
 };
 const ID_TO_CONNECTION = {
