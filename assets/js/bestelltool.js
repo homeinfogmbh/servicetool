@@ -249,9 +249,15 @@ function getSelectedCustomerId () {
 */
 function getSelectedModel () {
     const key = $('input[name="Artdes"]:checked').attr('id');
-    console.log('Model key: ' + key);
+
+    if (key == null)
+        throw 'No model selected.';
+
     const value = MODELS[key];
-    console.log('Model value: ' + value);
+
+    if (value == null)
+        throw 'Cannot translate key: ' + key;
+
     return value;
 }
 
@@ -261,9 +267,15 @@ function getSelectedModel () {
 */
 function getSelectedConnection () {
     const key = $('input[name="ArtDerNetz"]:checked').attr('id');
-    console.log('Connection key: ' + key);
+
+    if (key == null)
+        throw 'No model selected.';
+
     const value = CONNECTIONS[key];
-    console.log('Connection value: ' + value);
+
+    if (value == null)
+        throw 'Cannot translate key: ' + key;
+
     return value;
 }
 
