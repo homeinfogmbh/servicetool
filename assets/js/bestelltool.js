@@ -421,7 +421,7 @@ function initButtons () {
     $('#DatumInstallation').click(setChecklistItem('installation-date-confirmed'));
     $('#Hardware').click(setChecklistItem('hardware-installation'));
     $('#Abgeschlossen').click(setChecklistItem('finalize'));
-    $('#Bemerkung').change(delaySubmitAnnotation);
+    $('#Bemerkung').keyup(delaySubmitAnnotation);
 }
 
 
