@@ -132,6 +132,17 @@ class CustomerListEntry {
 
 
 /*
+    Handle generic Ajax Query errors.
+*/
+function handleError (jqXHR, textStatus, errorThrown) {
+    // TODO: implement
+    console.log('jqXHR: ' + jqXHR);
+    console.log('textStatus: ' + textStatus);
+    console.log('errorThrown: ' + errorThrown);
+}
+
+
+/*
     Return a URL for the given order.
     Optionally specify a trailing endpoint.
 */
