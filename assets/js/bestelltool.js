@@ -81,6 +81,7 @@ class HistoryItem {
     toHTML () {
         const tr = document.createElement('tr');
         const col1 = document.createElement('td');
+        col1.classList.add('w130');
         col1.textContent = (
             this.timestamp.getDate()
             + '.'
