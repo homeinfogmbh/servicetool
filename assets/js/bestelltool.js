@@ -455,12 +455,15 @@ function initButtons () {
     Render the list of available customer.
 */
 function renderCustomers (customers) {
-    customers.sort(CustomerListEntry.compare);
+    const customerListEntries = []
 
     for (const customer of customers)
-        $('#Kundenauswählen').append(
-            CustomerListEntry.fromJSON(customer).toHTML()
-        );
+        customerListEntries.push(CustomerListEntry.fromJSON(customer));
+
+    customerListEntries.sort(CustomerListEntry.compare);
+
+    for (const customerListEntry of customerListEntries)
+        $('#Kundenauswählen').append(customerListEntry.toHTML());
 }
 
 
