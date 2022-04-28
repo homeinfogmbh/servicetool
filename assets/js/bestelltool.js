@@ -41,6 +41,7 @@ const CONNECTION_TO_ID = {
     'DSL': 'ADSL',
     'LTE': 'lte3G4G'
 };
+const URL_PARAMS = new URLSearchParams(window.location.search);
 
 let CURRENT_ORDER_ID = null;
 let DELAYED_SUBMIT_ANNOTATION_JOB = null;
@@ -338,10 +339,7 @@ function createNewOrder () {
     Create new order or modify an existing order.
 */
 function onSubmit (event) {
-    if (CURRENT_ORDER_ID == null)
-        return createNewOrder();
-
-    throw 'Cannot create new order in patch mode.';
+    return createNewOrder();
 }
 
 
@@ -544,16 +542,28 @@ function renderPatchOrder (id) {
 
 
 /*
+    Return the order ID.
+*/
+function getCurrentOrderId () {
+    const id = URL_PARAMS.get('id');
+
+    if (id == null)
+        return null;
+
+    return parseInt(id);
+}
+
+
+/*
     Render page dependent on requested view.
 */
 function render () {
-    const urlParams = new URLSearchParams(window.location.search);
-    const id = urlParams.get('id');
+    const id = getCurrentOrderId();
 
     if (id == null)
         return renderNewOrder();
 
-    return renderPatchOrder(parseInt(id));
+    return renderPatchOrder(id);
 }
 
 
