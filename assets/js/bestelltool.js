@@ -266,6 +266,7 @@ function getSelectedConnection () {
 */
 function onAddressChange (event) {
     const deployments = Array.from(filterDeployments(
+        DEPLOYMENTS,
         getSelectedCustomerId(),
         $('#street').val() || null,
         $('#houseNumber').val() || null,
