@@ -360,7 +360,10 @@ function submitAnnotation (event) {
             method: 'PATCH',
             mimeType: 'application/json',
             data: event.target.value,
-            dataType: 'json'
+            dataType: 'json',
+            xhrFields: {
+                withCredentials: true
+            }
         });
     };
 }
@@ -408,7 +411,10 @@ function renderCustomers (customers) {
 function getCustomers () {
     $.ajax({
         url: 'https://ddborder.homeinfo.de/customers',
-        dataType: 'json'
+        dataType: 'json',
+        xhrFields: {
+            withCredentials: true
+        }
     }).then(renderCustomers);
 }
 
