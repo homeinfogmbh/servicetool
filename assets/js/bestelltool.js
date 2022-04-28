@@ -27,9 +27,19 @@ const MODELS = {
     'PhoenixTouch24': 'Phönix',
     'NeptunTouch24': 'Neptun'
 };
+const MODEL_TO_ID = {
+    'Standard 24"': 'Touch24',
+    'Standard 32"': 'Touch34',
+    'Phönix': 'PhoenixTouch24',
+    'Neptun': 'NeptunTouch24'
+};
 const CONNECTIONS = {
     'ADSL': 'DSL',
     'lte3G4G': 'LTE'
+};
+const CONNECTION_TO_ID = {
+    'DSL': 'ADSL',
+    'LTE': 'lte3G4G'
 };
 
 let CURRENT_ORDER_ID = null;
@@ -448,6 +458,32 @@ function renderNewOrder () {
     initButtons();
     getDeployments();
     getCustomers();
+}
+
+
+/*
+    Set the selected model.
+*/
+function setSelectedModel (model) {
+    const id = MODEL_TO_ID[model];
+
+    if (id == null)
+        throw 'Cannot translate model to id: ' + model;
+
+    $('#' + id).prop("checked", true);
+}
+
+
+/*
+    Set the selected connection.
+*/
+function setSelectedConnection (connection) {
+    const id = CONNECTION_TO_ID[connection];
+
+    if (id == null)
+        throw 'Cannot translate connection to id: ' + connection;
+
+    $('#' + id).prop("checked", true);
 }
 
 
