@@ -25,13 +25,15 @@ const ID_TO_MODEL = {
     'Touch24': 'Standard 24"',
     'Touch34': 'Standard 32"',
     'PhoenixTouch24': 'Phönix',
-    'NeptunTouch24': 'Neptun'
+    'NeptunTouch24': 'Neptun',
+    'model-other': 'other'
 };
 const MODEL_TO_ID = {
     'Standard 24&quot;': 'Touch24',
     'Standard 32&quot;"': 'Touch34',
     'Phönix': 'PhoenixTouch24',
-    'Neptun': 'NeptunTouch24'
+    'Neptun': 'NeptunTouch24',
+    'other': 'model-other'
 };
 const ID_TO_CONNECTION = {
     'ADSL': 'DSL',
