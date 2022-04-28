@@ -163,29 +163,26 @@ function isSubstrNocasematch (substring, string) {
 
 
 /*
-    Return a function to match a deployment against a customer ID.
+    Return true iff the customer ID is null or the customer ID matches the
+    deployment's customer ID.
 */
-function matchCustomerId (customerId) {
-    return deployment => {
-        if (customerId == null)
-            return true;
+function matchCustomerId (customerId, deployment) {
+    if (customerId == null)
+        return true;
 
-        return deployment.customer.id == customerId;
-    };
+    return deployment.customer.id == customerId;
 }
 
 
 /*
-    Return a function to match a substring against a string.
-    If the substring is null, return true.
+    Return true iff substring is null or if substring is a substring of string
+    while checking case-insensitively.
 */
-function isSubstrNocasematchOrNull (substring) {
-    return string => {
-        if (substring == null)
-            return true;
+function isSubstrNocasematchOrNull (substring, string) {
+    if (substring == null)
+        return true;
 
-        return isSubstrNocasematch(substring, string);
-    };
+    return isSubstrNocasematch(substring, string);
 }
 
 
@@ -197,13 +194,13 @@ function * filterDeployments (
 ) {
     for (const deployment of deployments) {
         if (
-            matchCustomerId(customerId)(deployment)
-            && isSubstrNocasematchOrNull(street)(deployment.address.street)
-            && isSubstrNocasematchOrNull(houseNumber)(
-                deployment.address.houseNumber
+            matchCustomerId(customerId, deployment)
+            && isSubstrNocasematchOrNull(street, deployment.address.street)
+            && isSubstrNocasematchOrNull(
+                houseNumber, deployment.address.houseNumber
             )
-            && isSubstrNocasematchOrNull(zipCode)(deployment.address.zipCode)
-            && isSubstrNocasematchOrNull(city)(deployment.address.city)
+            && isSubstrNocasematchOrNull(zipCode, deployment.address.zipCode)
+            && isSubstrNocasematchOrNull(city, deployment.address.city)
         )
             yield deployment;
     }
