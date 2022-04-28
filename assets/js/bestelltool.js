@@ -43,7 +43,6 @@ const CONNECTION_TO_ID = {
 };
 const URL_PARAMS = new URLSearchParams(window.location.search);
 
-let CURRENT_ORDER_ID = null;
 let DELAYED_SUBMIT_ANNOTATION_JOB = null;
 let DEPLOYMENTS = [];
 
@@ -157,9 +156,6 @@ function getOrder (id) {
         xhrFields: {
             withCredentials: true
         }
-    }).then(order => {
-        CURRENT_ORDER_ID = order.id;
-        return order;
     });
 }
 
@@ -350,7 +346,7 @@ function onSubmit (event) {
 function setChecklistItem (endpoint) {
     return event => {
         return $.ajax({
-            url: getOrderURL(CURRENT_ORDER_ID, endpoint),
+            url: getOrderURL(getCurrentOrderId(), endpoint),
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(event.target.checked),
@@ -385,7 +381,7 @@ function disableBasisData () {
 function submitAnnotation (event) {
     return function () {
         return $.ajax({
-            url: getOrderURL(CURRENT_ORDER_ID, 'annotation'),
+            url: getOrderURL(getCurrentOrderId(), 'annotation'),
             method: 'PATCH',
             contentType: 'application/json',
             data: JSON.stringify(event.target.value),
