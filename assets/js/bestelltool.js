@@ -164,6 +164,7 @@ function getOrder (id) {
     return $.ajax({
         url: getOrderURL(id),
         dataType: 'json',
+        error: handleError,
         xhrFields: {
             withCredentials: true
         }
@@ -178,6 +179,7 @@ function getDeployments () {
     return $.ajax({
         url: 'https://ddborder.homeinfo.de/deployments',
         dataType: 'json',
+        error: handleError,
         xhrFields: {
             withCredentials: true
         }
@@ -333,6 +335,7 @@ function createNewOrder () {
             connection: getSelectedConnection()
         }),
         dataType: 'json',
+        error: handleError,
         xhrFields: {
             withCredentials: true
         }
@@ -362,6 +365,7 @@ function setChecklistItem (endpoint) {
             contentType: 'application/json',
             data: JSON.stringify(event.target.checked),
             dataType: 'json',
+            error: handleError,
             xhrFields: {
                 withCredentials: true
             }
@@ -401,6 +405,7 @@ function submitAnnotation (event) {
             contentType: 'application/json',
             data: JSON.stringify(event.target.value),
             dataType: 'json',
+            error: handleError,
             xhrFields: {
                 withCredentials: true
             }
@@ -452,6 +457,7 @@ function getCustomers () {
     $.ajax({
         url: 'https://ddborder.homeinfo.de/customers',
         dataType: 'json',
+        error: handleError,
         xhrFields: {
             withCredentials: true
         }
