@@ -329,7 +329,7 @@ function createNewOrder () {
             withCredentials: true
         }
     }).then(response => {
-        CURRENT_ORDER_ID = response.id;
+        window.location = window.location + '?id=' + response.id;
     });
 }
 
