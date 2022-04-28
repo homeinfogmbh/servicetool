@@ -25,7 +25,10 @@
 	<link rel="stylesheet" href="assets/css/responsive.css">
 
 	<script src="assets/js/jquery.min.js"></script>
-	<script src="assets/js/menu.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/owl.carousel.min.js"></script>
+    <script src="assets/js/active.js"></script>
+    <script src="assets/js/bestelltool.js"></script>
 
 </head>
 <body class="neuinstallation">
@@ -164,13 +167,11 @@
 								</form>
 							</div>
 							<div class="top_user">
-								<div class="seru_avatar">
-									MH
-								</div>
-								<div class="user_cont">
-									<h5>Martin Herrmann</h5>
-									<a href="#" class="blue_btn">abmelden</a>
-								</div>
+                                <div class="seru_avatar"></div>
+                                <div class="user_cont">
+                                    <h5 id="username"></h5>
+                                    <a class="blue_btn logout pointer">abmelden</a>
+                                </div>
 							</div>
 						</div>
 					</div> <!-- /.dashboardTopbar -->
@@ -183,64 +184,52 @@
 											<h3>Basisdaten</h3>
 											<p>Anfrage auf neue Systeme</p>
 											<div class="neueSystForm">
-													<div class="select">
-														<select name="Kundenauswählen" id="Kundenauswählen">
-															<option value="Kunden auswählen">Kunden auswählen</option>
-															<option value="Kunden auswählen">Kunden auswählen</option>
-															<option value="Kunden auswählen">Kunden auswählen</option>
-															<option value="Kunden auswählen">Kunden auswählen</option>
-														</select>
-														<span class="selectArrow"></span>
-													</div> <!-- /.select -->
-													<div class="dualinp inpCol Straße">
-														<input id="street"
-															   type="text"
-															   placeholder="Straße" class="longInp">
-														<input id="houseNumber" type="text"
-															   placeholder="Nr." class="smallInp">
-													</div>
-													<div class="dualinp inpCol PLZ">
-														<input id="zipCode"
-															   type="text"
-															   placeholder="PLZ" class="smallInp">
-														<input id="city"
-															   type="text"
-															   placeholder="Stadt" class="longInp">
-													</div>
-													<div class="radioBoxCheckBox">
-														<h4 class="bg_title">Art des Displays</h4>
-														<ul class="radioOptList">
-															<li>
-																<input type="radio" name="Artdes" id="Touch24">
-																<label for="Touch24">Standard Touch24 <span class="radioCircle"></span></label>
-															</li>
-															<li>
-																<input type="radio" name="Artdes" id="Touch34">
-																<label for="Touch34">Standard Touch32 <span class="radioCircle"></span></label>
-															</li>
-															<li>
-																<input type="radio" name="Artdes" id="PhoenixTouch24">
-																<label for="PhoenixTouch24">PhoenixTouch24 (nicht brennbar) <span class="radioCircle"></span></label>
-															</li>
-															<li>
-																<input type="radio" name="Artdes" id="NeptunTouch24">
-																<label for="NeptunTouch24">NeptunTouch24 (Regenfest)<span class="radioCircle"></span></label>
-															</li>
-														</ul>
-													</div> <!-- /.radioBoxCheckBox -->
-													<div class="radioBoxCheckBox">
-														<h4 class="bg_title">Art der Netzanbindung</h4>
-														<ul class="radioOptList">
-															<li>
-																<input type="radio" name="ArtDerNetz" id="ADSL">
-																<label for="ADSL">ADSL/Kabel <span class="radioCircle"></span></label>
-															</li>
-															<li>
-																<input type="radio" name="ArtDerNetz" id="lte3G4G">
-																<label for="lte3G4G">LTE/3G/4G <span class="radioCircle"></span></label>
-															</li>
-														</ul>
-													</div> <!-- /.radioBoxCheckBox -->
+												<div class="select">
+													<select name="Kundenauswählen" id="Kundenauswählen" class="basic-data"></select>
+													<span class="selectArrow"></span>
+												</div> <!-- /.select -->
+												<div class="dualinp inpCol Straße">
+													<input id="street" type="text" placeholder="Straße" class="longInp basic-data">
+													<input id="houseNumber" type="text" placeholder="Nr." class="smallInp basic-data">
+												</div>
+												<div class="dualinp inpCol PLZ">
+													<input id="zipCode" type="text" placeholder="PLZ" class="smallInp basic-data">
+													<input id="city" type="text" placeholder="Stadt" class="longInp basic-data">
+												</div>
+												<div class="radioBoxCheckBox">
+													<h4 class="bg_title">Art des Displays</h4>
+													<ul class="radioOptList">
+														<li>
+															<input type="radio" name="Artdes" id="Touch24" class="basic-data">
+															<label for="Touch24">Standard Touch24 <span class="radioCircle"></span></label>
+														</li>
+														<li>
+															<input type="radio" name="Artdes" id="Touch34" class="basic-data">
+															<label for="Touch34">Standard Touch32 <span class="radioCircle"></span></label>
+														</li>
+														<li>
+															<input type="radio" name="Artdes" id="PhoenixTouch24" class="basic-data">
+															<label for="PhoenixTouch24">PhoenixTouch24 (nicht brennbar) <span class="radioCircle"></span></label>
+														</li>
+														<li>
+															<input type="radio" name="Artdes" id="NeptunTouch24" class="basic-data">
+															<label for="NeptunTouch24">NeptunTouch24 (Regenfest)<span class="radioCircle"></span></label>
+														</li>
+													</ul>
+												</div> <!-- /.radioBoxCheckBox -->
+												<div class="radioBoxCheckBox">
+													<h4 class="bg_title">Art der Netzanbindung</h4>
+													<ul class="radioOptList">
+														<li>
+															<input type="radio" name="ArtDerNetz" id="ADSL" class="basic-data">
+															<label for="ADSL">ADSL/Kabel <span class="radioCircle"></span></label>
+														</li>
+														<li>
+															<input type="radio" name="ArtDerNetz" id="lte3G4G" class="basic-data">
+															<label for="lte3G4G">LTE/3G/4G <span class="radioCircle"></span></label>
+														</li>
+													</ul>
+												</div> <!-- /.radioBoxCheckBox -->
 											</div> <!-- /.neueSystForm -->
 										</div> <!-- /.neuinstaContent -->
 									</div> <!-- /.neuinstaCol -->
@@ -249,37 +238,36 @@
 											<h3>Umgebungsdaten</h3>
 											<p>Schritte nach der Bestellung</p>
 											<div class="neueSystForm">
-													<ul class="checkboxList">
-														<li>
-															<input type="checkbox" name="Anlage" id="Anlage">
-															<label for="Anlage">Anlage Baustellenvorbeitung <span class="checkboxStyle"></span></label>
-														</li>
-														<li>
-															<input type="checkbox" name="Netzbindung" id="Netzbindung">
-															<label for="Netzbindung">Netzbindung <span class="checkboxStyle"></span></label>
-														</li>
-														<li>
-															<input type="checkbox" name="DatumInstallation" id="DatumInstallation">
-															<label for="DatumInstallation">Datum Installation bestätigt <span class="checkboxStyle"></span></label>
-														</li>
-														<li>
-															<input type="checkbox" name="Hardware" id="Hardware">
-															<label for="Hardware">Hardware Installation <span class="checkboxStyle"></span></label>
-														</li>
-														<li>
-															<input type="checkbox" name="Abgeschlossen" id="Abgeschlossen">
-															<label for="Abgeschlossen">Abgeschlossen <span class="checkboxStyle"></span></label>
-														</li>
-													</ul>
-													<div class="textAreaBox inpCol">
-														<textarea name="Bemerkung" id="Bemerkung" placeholder="Bemerkung"></textarea>
-													</div>
-													<br>
-													<br>
-													<div class="bestToopBtn">
-														<button id="submit"
-																class="whitelineBtn" type="button">Formular abschicken</button>
-													</div>
+												<ul class="checkboxList">
+													<li>
+														<input type="checkbox" name="Anlage" id="Anlage" class="checklist">
+														<label for="Anlage">Anlage Baustellenvorbeitung <span class="checkboxStyle"></span></label>
+													</li>
+													<li>
+														<input type="checkbox" name="Netzbindung" id="Netzbindung" class="checklist">
+														<label for="Netzbindung">Netzbindung <span class="checkboxStyle"></span></label>
+													</li>
+													<li>
+														<input type="checkbox" name="DatumInstallation" id="DatumInstallation" class="checklist">
+														<label for="DatumInstallation">Datum Installation bestätigt <span class="checkboxStyle"></span></label>
+													</li>
+													<li>
+														<input type="checkbox" name="Hardware" id="Hardware" class="checklist">
+														<label for="Hardware">Hardware Installation <span class="checkboxStyle"></span></label>
+													</li>
+													<li>
+														<input type="checkbox" name="Abgeschlossen" id="Abgeschlossen" class="checklist">
+														<label for="Abgeschlossen">Abgeschlossen <span class="checkboxStyle"></span></label>
+													</li>
+												</ul>
+												<div class="textAreaBox inpCol">
+													<textarea name="Bemerkung" id="Bemerkung" placeholder="Bemerkung" class="checklist"></textarea>
+												</div>
+												<br>
+												<br>
+												<div class="bestToopBtn">
+													<button id="submit" class="whitelineBtn basic-data" type="button">Formular abschicken</button>
+												</div>
 											</div> <!-- /.neueSystForm -->
 										</div> <!-- /.neuinstaContent -->
 									</div> <!-- /.neuinstaCol -->

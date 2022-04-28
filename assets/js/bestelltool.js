@@ -21,18 +21,28 @@
 
 'use strict';
 
-const MODELS = {
+const ID_TO_MODEL = {
     'Touch24': 'Standard 24"',
     'Touch34': 'Standard 32"',
     'PhoenixTouch24': 'Phönix',
     'NeptunTouch24': 'Neptun'
 };
-const CONNECTIONS = {
+const MODEL_TO_ID = {
+    'Standard 24&quot;': 'Touch24',
+    'Standard 32&quot;"': 'Touch34',
+    'Ph\\u00f6nix': 'PhoenixTouch24',
+    'Neptun': 'NeptunTouch24'
+};
+const ID_TO_CONNECTION = {
     'ADSL': 'DSL',
     'lte3G4G': 'LTE'
 };
+const CONNECTION_TO_ID = {
+    'DSL': 'ADSL',
+    'LTE': 'lte3G4G'
+};
+const URL_PARAMS = new URLSearchParams(window.location.search);
 
-let CURRENT_ORDER_ID = null;
 let DELAYED_SUBMIT_ANNOTATION_JOB = null;
 let DEPLOYMENTS = [];
 
@@ -99,6 +109,29 @@ class HistoryItem {
 
 
 /*
+    Representation of customer list entries.
+*/
+class CustomerListEntry {
+    constructor (id, name, abbreviation) {
+        this.id = id;
+        this.name = name;
+        this.abbreviation = abbreviation;
+    }
+
+    static fromJSON (json) {
+        return new this(json.id, json.company.name, json.company.abbreviation);
+    }
+
+    toHTML () {
+        const option = document.createElement('option')
+        option.setAttribute('value', this.id);
+        option.textContent = this.abbreviation || this.name;
+        return option;
+    }
+}
+
+
+/*
     Return a URL for the given order.
     Optionally specify a trailing endpoint.
 */
@@ -123,9 +156,6 @@ function getOrder (id) {
         xhrFields: {
             withCredentials: true
         }
-    }).then(order => {
-        CURRENT_ORDER_ID = order.id;
-        return order;
     });
 }
 
@@ -225,7 +255,17 @@ function getSelectedCustomerId () {
     Return the selected hardware model.
 */
 function getSelectedModel () {
-    return MODELS[$('input[name="Artdes"]:checked').val()];
+    const key = $('input[name="Artdes"]:checked').attr('id');
+
+    if (key == null)
+        throw 'No model selected.';
+
+    const value = ID_TO_MODEL[key];
+
+    if (value == null)
+        throw 'Cannot translate model key: ' + key;
+
+    return value;
 }
 
 
@@ -233,7 +273,17 @@ function getSelectedModel () {
     Return the selected connection type.
 */
 function getSelectedConnection () {
-    return CONNECTIONS[$('input[name="ArtDerNetz"]:checked').val()];
+    const key = $('input[name="ArtDerNetz"]:checked').attr('id');
+
+    if (key == null)
+        throw 'No model selected.';
+
+    const value = ID_TO_CONNECTION[key];
+
+    if (value == null)
+        throw 'Cannot translate connection key: ' + key;
+
+    return value;
 }
 
 
@@ -243,6 +293,7 @@ function getSelectedConnection () {
 */
 function onAddressChange (event) {
     const deployments = Array.from(filterDeployments(
+        DEPLOYMENTS,
         getSelectedCustomerId(),
         $('#street').val() || null,
         $('#houseNumber').val() || null,
@@ -260,31 +311,23 @@ function createNewOrder () {
     return $.ajax({
         url: 'https://ddborder.homeinfo.de/order',
         method: 'POST',
-        mimeType: 'application/json',
-        data: {
+        contentType: 'application/json',
+        data: JSON.stringify({
             customer: getSelectedCustomerId(),
-            street: ('#street').val() || null,
-            houseNumber: ('#houseNumber').val() || null,
-            zipCode: ('#zipCode').val() || null,
-            city: ('#city').val() || null,
+            street: $('#street').val() || null,
+            houseNumber: $('#houseNumber').val() || null,
+            zipCode: $('#zipCode').val() || null,
+            city: $('#city').val() || null,
             model: getSelectedModel(),
             connection: getSelectedConnection()
-        },
+        }),
         dataType: 'json',
         xhrFields: {
             withCredentials: true
         }
     }).then(response => {
-        CURRENT_ORDER_ID = response.id;
+        window.location = window.location + '?id=' + response.id;
     });
-}
-
-
-/*
-    Patch an existing order.
-*/
-function patchOrder (id) {
-    // TODO: implement after discussion in meeting.
 }
 
 
@@ -292,10 +335,7 @@ function patchOrder (id) {
     Create new order or modify an existing order.
 */
 function onSubmit (event) {
-    if (CURRENT_ORDER_ID == null)
-        return createNewOrder();
-
-    throw 'Cannot create new order in patch mode.';
+    return createNewOrder();
 }
 
 
@@ -306,10 +346,10 @@ function onSubmit (event) {
 function setChecklistItem (endpoint) {
     return event => {
         return $.ajax({
-            url: getOrderURL(CURRENT_ORDER_ID, endpoint),
+            url: getOrderURL(getCurrentOrderId(), endpoint),
             method: 'POST',
-            mimeType: 'application/json',
-            data: event.target.checked,
+            contentType: 'application/json',
+            data: JSON.stringify(event.target.checked),
             dataType: 'json',
             xhrFields: {
                 withCredentials: true
@@ -322,8 +362,8 @@ function setChecklistItem (endpoint) {
 /*
     Disable the checklist and history columns for new orders.
 */
-function disableChecklistAndHistory () {
-    // TODO: implement
+function disableChecklist () {
+    $('.checklist').prop('disabled', true);
 }
 
 
@@ -331,7 +371,7 @@ function disableChecklistAndHistory () {
     Disable the basis data column for existing orders view.
 */
 function disableBasisData () {
-    // TODO: implement
+    $('.basic-data').prop('disabled', true);
 }
 
 
@@ -341,11 +381,14 @@ function disableBasisData () {
 function submitAnnotation (event) {
     return function () {
         return $.ajax({
-            url: getOrderURL(CURRENT_ORDER_ID, 'annotation'),
+            url: getOrderURL(getCurrentOrderId(), 'annotation'),
             method: 'PATCH',
-            mimeType: 'application/json',
-            data: event.target.value,
-            dataType: 'json'
+            contentType: 'application/json',
+            data: JSON.stringify(event.target.value),
+            dataType: 'json',
+            xhrFields: {
+                withCredentials: true
+            }
         });
     };
 }
@@ -372,7 +415,32 @@ function initButtons () {
     $('#DatumInstallation').click(setChecklistItem('installation-date-confirmed'));
     $('#Hardware').click(setChecklistItem('hardware-installation'));
     $('#Abgeschlossen').click(setChecklistItem('finalize'));
-    $('#Bemerkung').change(delaySubmitAnnotation);
+    $('#Bemerkung').keyup(delaySubmitAnnotation);
+}
+
+
+/*
+    Render the list of available customer.
+*/
+function renderCustomers (customers) {
+    for (const customer of customers)
+        $('#Kundenauswählen').append(
+            CustomerListEntry.fromJSON(customer).toHTML()
+        );
+}
+
+
+/*
+    Retrieve then render the list of available customers.
+*/
+function getCustomers () {
+    $.ajax({
+        url: 'https://ddborder.homeinfo.de/customers',
+        dataType: 'json',
+        xhrFields: {
+            withCredentials: true
+        }
+    }).then(renderCustomers);
 }
 
 
@@ -380,9 +448,46 @@ function initButtons () {
     Render page for a new order.
 */
 function renderNewOrder () {
-    disableChecklistAndHistory();
+    disableChecklist();
     initButtons();
     getDeployments();
+    getCustomers();
+}
+
+
+/*
+    Set the selected customer.
+*/
+function setSelectedCustomer (customer) {
+    const listEntry = CustomerListEntry.fromJSON(customer).toHTML();
+    $('#Kundenauswählen').append(listEntry);
+    $('#Kundenauswählen').attr('selected', customer.id);
+}
+
+
+/*
+    Set the selected model.
+*/
+function setSelectedModel (model) {
+    const id = MODEL_TO_ID[model];
+
+    if (id == null)
+        throw 'Cannot translate model to id: ' + model;
+
+    $('#' + id).prop("checked", true);
+}
+
+
+/*
+    Set the selected connection.
+*/
+function setSelectedConnection (connection) {
+    const id = CONNECTION_TO_ID[connection];
+
+    if (id == null)
+        throw 'Cannot translate connection to id: ' + connection;
+
+    $('#' + id).prop("checked", true);
 }
 
 
@@ -433,16 +538,28 @@ function renderPatchOrder (id) {
 
 
 /*
+    Return the order ID.
+*/
+function getCurrentOrderId () {
+    const id = URL_PARAMS.get('id');
+
+    if (id == null)
+        return null;
+
+    return parseInt(id);
+}
+
+
+/*
     Render page dependent on requested view.
 */
 function render () {
-    const urlParams = new URLSearchParams(window.location.search);
-    const id = urlParams.get('id');
+    const id = getCurrentOrderId();
 
     if (id == null)
         return renderNewOrder();
 
-    return renderPatchOrder(parseInt(id));
+    return renderPatchOrder(id);
 }
 
 
