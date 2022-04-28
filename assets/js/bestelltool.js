@@ -462,6 +462,16 @@ function renderNewOrder () {
 
 
 /*
+    Set the selected customer.
+*/
+function setSelectedCustomer (customer) {
+    const listEntry = CustomerListEntry.fromJSON(customer).toHTML();
+    $('#Kundenauswählen').append(listEntry);
+    $('#Kundenauswählen').attr('selected', customer.id);
+}
+
+
+/*
     Set the selected model.
 */
 function setSelectedModel (model) {
