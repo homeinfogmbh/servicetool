@@ -5,8 +5,7 @@ $(document).ready(function() {
         $("#pageloader").show();
         checkSystem(_display.id).then(setChecks);
 		e.preventDefault();
-	});
-    
+	});  
 });
 
 function setDetails(list) {
@@ -43,11 +42,15 @@ console.log(_display)
     if (_display.hasOwnProperty("checkResults") && _display.checkResults.length > 0) {
         let logs = "";
         for (let log of _display.checkResults) {
-            logs += '<tr>' +
-                '<td>Nicht Online (' + Math.floor((new Date() - new Date(log.offlineSince)) / 86400000) + ' Tage)</td>' + // Days
-                '<td>' + formatDate(log.timestamp) + '</td>' +
-            '</tr>';
+            // offlineSince
+           if (log.hasOwnProperty("offlineSince")) {
+                logs += '<tr>' +
+                    '<td>Nicht Online (' + Math.ceil(1 + (new Date(log.timestamp) - new Date(log.offlineSince)) / 86400000) + ' Tage)</td>' + // Days
+                    '<td>' + formatDate(log.timestamp) + '</td>' +
+                '</tr>';
+           }
         }
+        logs = logs === "" ?"<tr><td>Keine Einträge vorhanden</td></tr>" :logs;
        $("#errorlog").html(logs);
     }
 
@@ -61,13 +64,13 @@ console.log(_display)
 function setChecks(lastCheck) {
     $("#offline").html(lastCheck.hasOwnProperty("offlineSince") || lastCheck.sshLogin !== "success" ?'<span class="orangeMark">offline</span>' :'<span class="blueMark">online</span>');
     $("#ssd").html(lastCheck.smartCheck === "success" ?'<span class="blueMark">' + lastCheck.smartCheck + '</span>' :'<span class="orangeMark">' + lastCheck.smartCheck + '</span>');
-    $("#sync").text(formatDate(_display.lastSync) + " " + lastCheck.timestamp.substring(12, 16));
+    $("#sync").text(formatDate(_display.lastSync) + " " + _display.lastSync.substring(11, 16));
     $("#icmp").html(lastCheck.icmpRequest ?'<span class="blueMark">ok</span>' :'<span class="orangeMark">fehlgeschlagen</span>');
     $("#ssh").html(lastCheck.sshLogin === "success" ?'<span class="blueMark">' + lastCheck.sshLogin + '</span>' :'<span class="orangeMark">' + lastCheck.sshLogin +'</span>');
     $("#http").html(lastCheck.httpRequest === "success" ?'<span class="blueMark">' + lastCheck.httpRequest + '</span>' :'<span class="orangeMark">' + lastCheck.httpRequest + '</span>');
     $("#application").html(lastCheck.applicationState === "html" ?'<span class="blueMark">running</span>' :'<span class="orangeMark">' + lastCheck.applicationState + '</span>');
     $("#baytrail").html(lastCheck.baytrailFreeze === "vulnerable" ?'<span class="orangeMark">' + lastCheck.baytrailFreeze + '</span>' :'<span class="blueMark">' + lastCheck.baytrailFreeze + '</span>');
     $("#applicationuptodate").html('<span class="orangeMark">TODO</span>');
-    $("#lastCheck").text("Letzter Check " + formatDate(lastCheck.timestamp) + " (" + lastCheck.timestamp.substring(12, 16) + " Uhr)");
+    $("#lastCheck").text("Letzter Check " + formatDate(lastCheck.timestamp) + " (" + lastCheck.timestamp.substring(11, 16) + " Uhr)");
     $("#pageloader").hide();
 }

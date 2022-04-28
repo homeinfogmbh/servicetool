@@ -31,6 +31,7 @@ $(document).ready(function() {
     $('.logout').click(function() {
         localStorage.removeItem("servicetool.user");
         localStorage.removeItem("servicetool.session.expired");
+		localStorage.removeItem("servicetool.systemchecks");
         deleteSession();
     });	
 });  
@@ -44,10 +45,7 @@ function holdSession() {
 		success: function (msg) {
 			if ((new Date(msg.end) - new Date()) < 0) {
 				localStorage.setItem("servicetool.session.expired", true);
-				if ($(location).attr('href').indexOf("charts/") !== -1 || $(location).attr('href').indexOf("services/") !== -1)
-					window.location.href = "../index.html";
-				else
-					window.location.href = "index.html";
+				window.location.href = "index.html";
 			} else {
 				localStorage.removeItem("servicetool.session.expired");
 				localStorage.setItem("servicetool.url", window.location.href);
@@ -58,10 +56,7 @@ function holdSession() {
 			if (/*msg.statusText !== "error" || */msg.status !== 0) {
 				localStorage.setItem("servicetool.session.expired", true);
 				if (msg.statusText == "Gone" || msg.statusText == "Not Found" || msg.statusText == "No Reason Phrase" || msg.statusText == "Unauthorized" || msg.responseText == '{"message": "Keine Sitzung angegeben."}' || msg.responseText == '{"message": "No session specified."}' || msg.responseText == '{"message": "Session expired."}') {
-					if ($(location).attr('href').indexOf("charts/") !== -1 ||$(location).attr('href').indexOf("services/") !== -1)
-						window.location.href = "../index.html";
-					else
-						window.location.href = "index.html";
+					window.location.href = "index.html";
 				}
 			}
 		}
@@ -89,10 +84,7 @@ function deleteSession() {
 		url: "https://his.homeinfo.de/session/!",
 		type: "DELETE",
 		complete: function (msg) {
-			if ($(location).attr('href').indexOf("charts/") !== -1 ||$(location).attr('href').indexOf("services/") !== -1)
-				window.location.href = "../index.html";
-			else
-				window.location.href = "index.html";
+			window.location.href = "index.html";
 		}
 	});
 }
@@ -123,15 +115,22 @@ function getListOfSystemChecks() {
 	return _systemChecksPromise;
 }
 function getPromis() {
-    return $.ajax({
-        url: "https://sysmon.homeinfo.de/checks",
-        type: "GET",
-        cache: false,
-        success: function (data) {	},
-        error: function (msg) {
-            setErrorMessage(msg, "Laden der Checklist");
-        }
-    });
+	if (localStorage.getItem("servicetool.systemchecks") !== null) {
+		let checks = JSON.parse(localStorage.getItem("servicetool.systemchecks"));
+		return Promise.resolve(checks);
+	} else {
+		return $.ajax({
+			url: "https://sysmon.homeinfo.de/checks",
+			type: "GET",
+			cache: false,
+			success: function (data) {
+				localStorage.setItem("servicetool.systemchecks", JSON.stringify(data));
+			},
+			error: function (msg) {
+				setErrorMessage(msg, "Laden der Checklist");
+			}
+		});
+	}
 }
 function checkSystem(systemID) {
     return $.ajax({

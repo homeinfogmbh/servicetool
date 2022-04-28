@@ -148,8 +148,8 @@ function isIEorEDGE(){
 }
 function removeLocalStorage() {
 	localStorage.removeItem("servicetool.user");
-	localStorage.removeItem("servicetool.url");
 	localStorage.removeItem("servicetool.session.expired");
+	localStorage.removeItem("servicetool.systemchecks");
 	/*
 	localStorage.removeItem("customers");
 	localStorage.removeItem("customer");
