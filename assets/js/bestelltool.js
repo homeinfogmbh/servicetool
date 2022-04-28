@@ -476,6 +476,7 @@ function setSelectedCustomer (customer) {
 */
 function setSelectedModel (model) {
     const id = MODEL_TO_ID[model];
+    console.log('Translated model "' + model '" to "' + id + '.');
 
     if (id == null)
         throw 'Cannot translate model to id: ' + model;
@@ -490,6 +491,7 @@ function setSelectedModel (model) {
 */
 function setSelectedConnection (connection) {
     const id = CONNECTION_TO_ID[connection];
+    console.log('Translated connection "' + connection '" to "' + id + '.');
 
     if (id == null)
         throw 'Cannot translate connection to id: ' + connection;
