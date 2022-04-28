@@ -364,6 +364,8 @@ function setChecklistItem (endpoint) {
 */
 function disableChecklist () {
     $('.checklist').prop('disabled', true);
+    $('#checklist').find('*').css({opacity: 0.7});
+    $('#history-col').find('*').css({opacity: 0.7});
 }
 
 
