@@ -147,10 +147,12 @@ class CustomerListEntry {
     Handle generic Ajax Query errors.
 */
 function handleError (jqXHR, textStatus, errorThrown) {
-    // TODO: implement
-    console.log('jqXHR: ' + JSON.stringify(jqXHR));
-    console.log('textStatus: ' + textStatus);
-    console.log('errorThrown: ' + errorThrown);
+    Swal.fire({
+        icon: 'error',
+        title: textStatus,
+        text: errorThrown,
+        footer: '<pre>' + JSON.stringify(jqXHR) + '</pre>'
+    })
 }
 
 
