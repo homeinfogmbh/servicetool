@@ -1,5 +1,4 @@
 $(document).ready(function() {
-    getListOfSystemChecks().then(setCustomerList);
 	let menu = '<div class="loader" id="pageloader"></div><div class="menu_content">' +
         '<div class="side_logo">' +
             '<a href="dashboard.html"><img src="assets/img/sideLogo.png" alt="Logo"></a>' +
@@ -25,69 +24,52 @@ $(document).ready(function() {
                     '<a class="nav-link" href="#">Neuinstallationen</a>' +
                 '</li>' +
                 '<li class="nav-item dropdown">' +
-                    '<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                        'SSD Karten Fehler (0)' +
+                    '<a class="nav-link dropdown-toggle menuSSDCounter" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                        'SSD Karten Fehler' +
                     '</a>' +
-                    '<ul class="dropdown-menu" aria-labelledby="navbarDropdown">' +
-                        '<li><a class="dropdown-item" href="#">SSD Karten Fehler (0)</a></li>' +
-                        '<li><a class="dropdown-item" href="#">SSD Karten Fehler (0)</a></li>' +
-                        '<li><a class="dropdown-item" href="#">SSD Karten Fehler (0)</a></li>' +
-                        '<li><a class="dropdown-item" href="#">SSD Karten Fehler (0)</a></li>' +
+                    '<ul class="dropdown-menu" id="menuSSD" aria-labelledby="navbarDropdown">' +
                     '</ul>' +
                 '</li>' +
                 '<li class="nav-item dropdown">' +
-                    '<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                        'Nicht verbaute Systeme (08)' +
+                    '<a class="nav-link dropdown-toggle menuNotfittedCounter" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                        'Nicht verbaute Systeme' +
                     '</a>' +
-                    '<ul class="dropdown-menu" aria-labelledby="navbarDropdown">' +
-                        '<li><a class="dropdown-item" href="#">Nicht verbaute Systeme (08)</a></li>' +
-                        '<li><a class="dropdown-item" href="#">Nicht verbaute Systeme (08)</a></li>' +
-                        '<li><a class="dropdown-item" href="#">Nicht verbaute Systeme (08)</a></li>' +
-                        '<li><a class="dropdown-item" href="#">Nicht verbaute Systeme (08)</a></li>' +
+                    '<ul class="dropdown-menu" id="menuNotfitted" aria-labelledby="navbarDropdown">' +
                     '</ul>' +
                 '</li>' +
                 '<li class="nav-item dropdown">' +
-                    '<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                        'Testgeräte (2)' +
+                    '<a class="nav-link dropdown-toggle menuTestsystemsCounter" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                        'Testgerät' +
                     '</a>' +
-                    '<ul class="dropdown-menu" aria-labelledby="navbarDropdown">' +
-                        '<li><a class="dropdown-item" href="#">Testgeräte (2)</a></li>' +
-                        '<li><a class="dropdown-item" href="#">Testgeräte (2)</a></li>' +
-                        '<li><a class="dropdown-item" href="#">Testgeräte (2)</a></li>' +
-                        '<li><a class="dropdown-item" href="#">Testgeräte (2)</a></li>' +
+                    '<ul class="dropdown-menu" id="menuTestsystems" aria-labelledby="navbarDropdown">' +
                         '</ul>' +
                 '</li>' +
                 '<li class="nav-item dropdown">' +
-                    '<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                        'Im Schwartzbildmodus (0)' +
+                    '<a class="nav-link dropdown-toggle menuActualDataCounter" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                        'Keine aktuellen Daten' +
                     '</a>' +
-                    '<ul class="dropdown-menu" aria-labelledby="navbarDropdown">' +
-                        '<li><a class="dropdown-item" href="#">Im Schwartzbildmodus (0)</a></li>' +
-                        '<li><a class="dropdown-item" href="#">Im Schwartzbildmodus (0)</a></li>' +
-                        '<li><a class="dropdown-item" href="#">Im Schwartzbildmodus (0)</a></li>' +
-                        '<li><a class="dropdown-item" href="#">Im Schwartzbildmodus (0)</a></li>' +
+                    '<ul class="dropdown-menu" id="menuActualData" aria-labelledby="navbarDropdown">' +
+                        '</ul>' +
+                '</li>' +
+                '<li class="nav-item dropdown">' +
+                    '<a class="nav-link dropdown-toggle menuBlackscreenCounter" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                        'Im Schwarz-Bildmodus' +
+                    '</a>' +
+                    '<ul class="dropdown-menu" id="menuBlackscreen" aria-labelledby="navbarDropdown">' +
                     '</ul>' +
                 '</li>' +
                 '<li class="nav-item dropdown">' +
-                    '<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                        'Alte OS Version (31)' +
+                    '<a class="nav-link dropdown-toggle menuOldApplicationCounter" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                        'Alte Application Version(en)' +
                     '</a>' +
-                    '<ul class="dropdown-menu" aria-labelledby="navbarDropdown">' +
-                        '<li><a class="dropdown-item" href="#">Alte OS Version (31)</a></li>' +
-                        '<li><a class="dropdown-item" href="#">Alte OS Version (31)</a></li>' +
-                        '<li><a class="dropdown-item" href="#">Alte OS Version (31)</a></li>' +
-                        '<li><a class="dropdown-item" href="#">Alte OS Version (31)</a></li>' +
+                    '<ul class="dropdown-menu" id="menuOldApplication" aria-labelledby="navbarDropdown">' +
                     '</ul>' +
                 '</li>' +
                 '<li class="nav-item dropdown">' +
-                    '<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">' +
-                        'Offline mehr als 3 Monate (0)' +
+                    '<a class="nav-link dropdown-toggle menuOfflineCounter" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                        'Offline mehr als 3 Monate' +
                     '</a>' +
-                    '<ul class="dropdown-menu" aria-labelledby="navbarDropdown">' +
-                        '<li><a class="dropdown-item" href="#">Offline mehr als 3 Monate (0)</a></li>' +
-                        '<li><a class="dropdown-item" href="#">Offline mehr als 3 Monate (0)</a></li>' +
-                        '<li><a class="dropdown-item" href="#">Offline mehr als 3 Monate (0)</a></li>' +
-                        '<li><a class="dropdown-item" href="#">Offline mehr als 3 Monate (0)</a></li>' +
+                    '<ul class="dropdown-menu" id="menuOffline" aria-labelledby="navbarDropdown">' +
                     '</ul>' +
                 '</li>' +
             '</ul>' +
@@ -104,16 +86,80 @@ $(document).ready(function() {
         '</div>' +
     '</div>';
     $(".menu_sidebar").html(menu);
+    getListOfSystemChecks().then(setMenu);
 });
 
-function setCustomerList(checks) {
+function setMenu(checks) {
+    let list = $.map(checks, function(value, index){
+        return [value];
+    });
     let customers = {};
-    let customersDom = '';
-    for (let check in checks) {
-        if (checks[check].hasOwnProperty("deployment") && !customers.hasOwnProperty(checks[check].deployment.customer.company.abbreviation)) {
-            customersDom += '<li><a class="dropdown-item" href="#">' + (checks[check].deployment.customer.company.hasOwnProperty("abbreviation") ?checks[check].deployment.customer.company.abbreviation :checks[check].deployment.customer.company.name) + '</a></li>';
-            customers[checks[check].deployment.customer.company.abbreviation] = {};
+    let ssdcarderrors = 0;
+    let notfitted = 0;
+    let testsystems = 0;
+    let noActualData = 0;
+    let blackscreens = 0;
+    let oldApplication = 0;
+    let offline = 0;
+    let customerDom = "";
+    let ssdDom = "";
+    let notFittedDom = "";
+    let testsystemsDom = "";
+    let actualDataDom = "";
+    let blackScreenDom = "";
+    let oldApplicationDom = "";
+    let offlineDom = "";
+
+    for (let check of list) {
+        // Customerlist
+        if (check.hasOwnProperty("deployment") && !customers.hasOwnProperty(check.deployment.customer.company.abbreviation)) {
+            customerDom += '<li><a class="dropdown-item" href="#">' + (check.deployment.customer.company.hasOwnProperty("abbreviation") ?check.deployment.customer.company.abbreviation :check.deployment.customer.company.name) + '</a></li>';
+            customers[check.deployment.customer.company.abbreviation] = {};
+        }
+
+        // Errorsystems list
+        if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].smartCheck === "failed") {
+            ssdcarderrors++;
+            ssdDom += '<li><a class="dropdown-item" href="#">SSD Karten Fehler (0)</a></li>';
+        }
+        if (!check.fitted) {
+            notfitted++;
+            notFittedDom += '<li><a class="dropdown-item" href="#">Nicht verbaute Systeme (08)</a></li>';
+        }
+        if (check.hasOwnProperty("deployment") && check.deployment.testing) {
+            testsystems++;
+            testsystemsDom += '<li><a class="dropdown-item" href="#">Testgeräte (2)</a></li>';
+        }   
+
+        if (!isOnDate(check.lastSync, THREE_MONTHS)) {
+            noActualData++;
+            actualDataDom += '<li><a class="dropdown-item" href="#">Testgeräte (2)</a></li>';
+        }
+        if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState === "not running") {
+            blackscreens++;
+            blackScreenDom +='<li><a class="dropdown-item" href="#">Im Schwartzbildmodus (0)</a></li>';
+        }
+        //TODO
+        oldApplicationDom += '<li><a class="dropdown-item" href="#">Alte OS Version (31)</a></li>';
+        if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("offlineSince") && !isOnDate(check.checkResults[0].offlineSince, THREE_MONTHS)) {
+            offline++;
+            offlineDom += '<li><a class="dropdown-item" href="#">Offline mehr als 3 Monate (0)</a></li>';
         }
     }
-    $('#menucustomerlist').html(customersDom);
+    $('#menucustomerlist').html(customerDom);
+    $('.menuSSDCounter').text('SSD Karten Fehler (' + ssdcarderrors + ')');
+    $('#menuSSD').html(ssdDom);
+    $('.menuNotfittedCounter').text('Nicht verbaute Systeme (' + notfitted + ')');
+    $('#menuNotfitted').html(notFittedDom);
+    $('.menuTestsystemsCounter').text('Testgerät (' + testsystems + ')');
+    $('#menuTestsystems').html(testsystemsDom);
+    $('.menuActualDataCounter').text('Daten älter als 3 Monate (' + noActualData + ')');
+    $('#menuActualData').html(actualDataDom);
+    $('.menuBlackscreenCounter').text('Im Schwarz-Bildmodus (' + blackscreens + ')');
+    $('#menuBlackscreen').html(blackScreenDom);
+    $('.menuOldApplicationCounter').text('Alte Application TODO(' + oldApplication + ')');
+    $('#menuOldApplication').html(oldApplicationDom);
+    $('.menuOfflineCounter').text('Offline mehr als 3 Monate (' + offline + ')');
+    $('#menuOffline').html(offlineDom);
+    
 }

@@ -1,9 +1,19 @@
 var _list = null;
+var _type;
+var _typeDefinitions = {'ssdcarderror':{'title':'SSD Karten Fehler', 'text':'Liste der Geräte die einen SSD-Karten-Fehler vorweisen'},
+    'notfitted':{'title':'Nicht verbaute Systeme', 'text':'Liste der Geräte die nicht verbaut sind'},
+    'testsystem':{'title':'Testgeräte', 'text':'Liste der Testgeräte'},
+    'offline':{'title':'Offline', 'text':'Liste der Geräte die offline sein'},
+    'noActualData':{'title':'Keine aktuellen Daten', 'text':'Liste der Geräte die keine aktuellen Daten besitzen'},
+    'blackscreen':{'title':'Im Schwarz-Bildmodus', 'text':'Liste der Geräte die schwarz geschaltet sind'},
+    'oldApplication':{'title':'Alte Applicationen', 'text':'Liste der Geräte auf denen eine alte Version der Applikation läuft'},
+    'system':{'title':'Systeme', 'text':'Liste aller Systeme'},
+};
 $(document).ready(function() {
-    let type = getURLParameterByName('type');
+    _type = _typeDefinitions.hasOwnProperty(getURLParameterByName('type')) ?getURLParameterByName('type') :'system';
     getListOfSystemChecks().then(setList);
     //$(".dashTopLeft").html('<h2>Listenansicht</h2><p>Liste der Geräte deren Betriebssystem veraltet ist</p>');
-    $(".dashTopLeft").html('<h2>Offline</h2><p>Liste der Geräte die offline sein</p>');
+    $(".dashTopLeft").html('<h2>' + _typeDefinitions[_type].title + '</h2><p>' + _typeDefinitions[_type].text + '</p>');
 	$('#searchfield').on('input',function(e) {
 		setList();
 	});	
@@ -65,6 +75,6 @@ function setList(list = null) {
         systemlistDOM = systemlistDOM === "" ?"<tr><td>Keine Einträge vorhanden</td></tr>" :systemlistDOM;
         $("#systemlist").html(systemlistDOM);
     }
-    $(".dashTopLeft").html('<h2>Offline (' + counter + ')</h2><p>Liste der Geräte die offline sein</p>');
+    $(".dashTopLeft").html('<h2>' + _typeDefinitions[_type].title + ' (' + counter + ')</h2><p>' + _typeDefinitions[_type].text + '</p>');
     $("#pageloader").hide();
 }

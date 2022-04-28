@@ -1,9 +1,7 @@
-const ONE_HOUR = 60 * 60 * 1000; // Milliseconds;
-const THREE_MONTHS = 3 * 30 * 24; // Hours
 $(document).ready(function() {
     getListOfSystemChecks().then(setChecks);
     $('.btn_list').click(function(e) {
-        window.location.href = "listenansicht.html";
+        window.location.href = "listenansicht.html?type=" + $(this).attr("id");
 		e.preventDefault();
 	}); 
     $('#observercounter').click(function(e) {
@@ -86,10 +84,6 @@ function setChecks(list) {
     $("#pageloader").hide();
 }
 
-function isOnDate(dateToCheck, periodInHours) {
-    periodInHours = periodInHours * ONE_HOUR;
-    return (new Date()) - new Date(dateToCheck) < periodInHours;
-}
 function getObserveItem(item, annotation, counter) {
     let address = item.hasOwnProperty("deployment") ?item.deployment.hasOwnProperty("address") ?item.deployment.address.street + " " + item.deployment.address.houseNumber + " " + item.deployment.address.zipCode + " " + item.deployment.address.city :'Keine Adresse' :'';
     return '<tr ' + (counter > 10 ?'class="observerItem" style="display:none"' :'') + '>' +
