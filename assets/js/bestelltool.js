@@ -591,7 +591,8 @@ function getCurrentOrderId () {
 /*
     Render page dependent on requested view.
 */
-function render () {
+function init () {
+    $('.mdb-select').materialSelect();
     const id = getCurrentOrderId();
 
     if (id == null)
@@ -601,4 +602,4 @@ function render () {
 }
 
 
-$(document).ready(render);
+$(document).ready(init);
