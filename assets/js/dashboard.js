@@ -2,6 +2,14 @@ const ONE_HOUR = 60 * 60 * 1000; // Milliseconds;
 const THREE_MONTHS = 3 * 30 * 24; // Hours
 $(document).ready(function() {
     getListOfSystemChecks().then(setChecks);
+    $('.btn_list').click(function(e) {
+        window.location.href = "listenansicht.html";
+		e.preventDefault();
+	}); 
+    $('#observercounter').click(function(e) {
+        $(".observerItem").show();
+		e.preventDefault();
+	}); 
 });
 
 function setChecks(list) {
@@ -22,29 +30,29 @@ function setChecks(list) {
     for (let check of list) {
         if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].smartCheck === "failed") {
             ssdcarderrors++;
-            observerItems.push(getObserveItem(check, "SSD Fehler"));
+            observerItems.push(getObserveItem(check, "SSD Fehler", observerItems.length));
         }
         if (!check.fitted) {
             notfitted++;
-            observerItems.push(getObserveItem(check, "Nicht verbaut"));
+            observerItems.push(getObserveItem(check, "Nicht verbaut", observerItems.length));
         }
-        if (check.hasOwnProperty("deployment") && check.deployment && check.deployment.testing) {
+        if (check.hasOwnProperty("deployment") && check.deployment.testing) {
             testsystems++;
-            observerItems.push(getObserveItem(check, "Testsystem"));
+            observerItems.push(getObserveItem(check, "Testsystem", observerItems.length));
         }
         if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("offlineSince")) {
             offline++;
             if (!isOnDate(check.checkResults[0].offlineSince, THREE_MONTHS))
-                observerItems.push(getObserveItem(check, "Mehr als 3 Monate offline"));
+                observerItems.push(getObserveItem(check, "Mehr als 3 Monate offline", observerItems.length));
         }
         if (!isOnDate(check.lastSync, 24)) {
             noActualData++;
             if (!isOnDate(check.lastSync, THREE_MONTHS))
-                observerItems.push(getObserveItem(check, "Alte Daten"));
+                observerItems.push(getObserveItem(check, "Alte Daten", observerItems.length));
         }
         if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState === "not running") {
             blackscreens++;
-            observerItems.push(getObserveItem(check, "Schwarz-Bildmodus"));
+            observerItems.push(getObserveItem(check, "Schwarz-Bildmodus", observerItems.length));
         }
         //TODOif (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState === "NOT_RUNNING")
             //oldApplication++;
@@ -82,11 +90,11 @@ function isOnDate(dateToCheck, periodInHours) {
     periodInHours = periodInHours * ONE_HOUR;
     return (new Date()) - new Date(dateToCheck) < periodInHours;
 }
-function getObserveItem(item, annotation) {
+function getObserveItem(item, annotation, counter) {
     let address = item.hasOwnProperty("deployment") ?item.deployment.hasOwnProperty("address") ?item.deployment.address.street + " " + item.deployment.address.houseNumber + " " + item.deployment.address.zipCode + " " + item.deployment.address.city :'Keine Adresse' :'';
-    return '<tr>' +
+    return '<tr ' + (counter > 10 ?'class="observerItem" style="display:none"' :'') + '>' +
         '<td title="System-ID: ' + item.id  + '">' + (item.hasOwnProperty("deployment") ?item.deployment.customer.company.abbreviation :'Keine Zuordnung') + '</td>' +
-        '<td title="' + address + '">' + address.substring(0, 12) + '...</td>' +
+        '<td title="' + address + '">' + address.substring(0, 12) + (address != '' ? '...' :'') +  '</td>' +
         '<td>' + annotation + '</td>' +
         '<td>' + (item.hasOwnProperty("checkResults") && item.checkResults.length > 0 ?formatDate(item.checkResults[0].timestamp) :"-") + '</td>' +
         '<td><a href="display-details.html?id=' + item.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>' +
@@ -96,8 +104,7 @@ function getObserverItems(observerItems) {
     if (observerItems.length === 0)
         return '<font color="white">Keine Systeme zur Beobachtung</font>';
     let dom = "";
-    let itemsLength = observerItems.length > 10 ?10 :observerItems.length;
-    for (let item = 0; item < itemsLength; item++)
-        dom += observerItems[item];
+    for (let item = 0; item < observerItems.length; item++)
+            dom += observerItems[item];           
     return dom;
 }
