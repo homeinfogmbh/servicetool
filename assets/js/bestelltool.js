@@ -373,6 +373,7 @@ function disableChecklist () {
 function disableBasisData () {
     $('.basic-data').prop('disabled', true);
     $('#submit').hide();
+    $('#basic-data').find('*').css({opacity: 0.5});
 }
 
 
