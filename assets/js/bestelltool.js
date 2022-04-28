@@ -21,7 +21,7 @@
 
 'use strict';
 
-const MODELS = {
+const ID_TO_MODEL = {
     'Touch24': 'Standard 24"',
     'Touch34': 'Standard 32"',
     'PhoenixTouch24': 'Phönix',
@@ -33,7 +33,7 @@ const MODEL_TO_ID = {
     'Ph\\u00f6nix': 'PhoenixTouch24',
     'Neptun': 'NeptunTouch24'
 };
-const CONNECTIONS = {
+const ID_TO_CONNECTION = {
     'ADSL': 'DSL',
     'lte3G4G': 'LTE'
 };
@@ -263,7 +263,7 @@ function getSelectedModel () {
     if (key == null)
         throw 'No model selected.';
 
-    const value = MODELS[key];
+    const value = ID_TO_MODEL[key];
 
     if (value == null)
         throw 'Cannot translate model key: ' + key;
@@ -281,7 +281,7 @@ function getSelectedConnection () {
     if (key == null)
         throw 'No model selected.';
 
-    const value = CONNECTIONS[key];
+    const value = ID_TO_CONNECTION[key];
 
     if (value == null)
         throw 'Cannot translate connection key: ' + key;
