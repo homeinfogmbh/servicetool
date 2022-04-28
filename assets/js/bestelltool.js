@@ -248,7 +248,11 @@ function getSelectedCustomerId () {
     Return the selected hardware model.
 */
 function getSelectedModel () {
-    return MODELS[$('input[name="Artdes"]:checked').val()];
+    const key = $('input[name="Artdes"]:checked').val();
+    console.log('Model key: ' + key);
+    const value = MODELS[key];
+    console.log('Model value: ' + value);
+    return value;
 }
 
 
@@ -256,7 +260,11 @@ function getSelectedModel () {
     Return the selected connection type.
 */
 function getSelectedConnection () {
-    return CONNECTIONS[$('input[name="ArtDerNetz"]:checked').val()];
+    const key = $('input[name="ArtDerNetz"]:checked').val();
+    console.log('Connection key: ' + key);
+    const value = CONNECTIONS[key];
+    console.log('Connection value: ' + value);
+    return value;
 }
 
 
