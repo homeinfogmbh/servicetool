@@ -284,8 +284,8 @@ function createNewOrder () {
     return $.ajax({
         url: 'https://ddborder.homeinfo.de/order',
         method: 'POST',
-        mimeType: 'application/json',
-        data: {
+        contentType: 'application/json',
+        data: JSON.stringify({
             customer: getSelectedCustomerId(),
             street: $('#street').val() || null,
             houseNumber: $('#houseNumber').val() || null,
@@ -293,7 +293,7 @@ function createNewOrder () {
             city: $('#city').val() || null,
             model: getSelectedModel(),
             connection: getSelectedConnection()
-        },
+        }),
         dataType: 'json',
         xhrFields: {
             withCredentials: true
@@ -324,8 +324,8 @@ function setChecklistItem (endpoint) {
         return $.ajax({
             url: getOrderURL(CURRENT_ORDER_ID, endpoint),
             method: 'POST',
-            mimeType: 'application/json',
-            data: event.target.checked,
+            contentType: 'application/json',
+            data: JSON.stringify(event.target.checked),
             dataType: 'json',
             xhrFields: {
                 withCredentials: true
@@ -359,8 +359,8 @@ function submitAnnotation (event) {
         return $.ajax({
             url: getOrderURL(CURRENT_ORDER_ID, 'annotation'),
             method: 'PATCH',
-            mimeType: 'application/json',
-            data: event.target.value,
+            contentType: 'application/json',
+            data: JSON.stringify(event.target.value),
             dataType: 'json',
             xhrFields: {
                 withCredentials: true
