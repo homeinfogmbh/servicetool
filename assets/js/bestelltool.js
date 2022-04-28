@@ -148,7 +148,7 @@ class CustomerListEntry {
 */
 function handleError (jqXHR, textStatus, errorThrown) {
     // TODO: implement
-    console.log('jqXHR: ' + jqXHR);
+    console.log('jqXHR: ' + JSON.stringify(jqXHR));
     console.log('textStatus: ' + textStatus);
     console.log('errorThrown: ' + errorThrown);
 }
