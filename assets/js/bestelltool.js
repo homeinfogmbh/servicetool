@@ -120,6 +120,16 @@ class CustomerListEntry {
         this.abbreviation = abbreviation;
     }
 
+    static compare (lhs, rhs) {
+        if (lhs.abbreviation == rhs.abbreviation)
+            return 0;
+
+        if (lhs.abbreviation < rhs.abbreviation)
+            return -1:
+
+        return 1;
+    }
+
     static fromJSON (json) {
         return new this(json.id, json.company.name, json.company.abbreviation);
     }
@@ -445,6 +455,8 @@ function initButtons () {
     Render the list of available customer.
 */
 function renderCustomers (customers) {
+    customers.sort(CustomerListEntry.compare);
+
     for (const customer of customers)
         $('#Kundenauswählen').append(
             CustomerListEntry.fromJSON(customer).toHTML()
