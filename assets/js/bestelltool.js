@@ -33,6 +33,7 @@ const CONNECTIONS = {
 };
 
 let CURRENT_ORDER_ID = null;
+let DELAYED_SUBMIT_ANNOTATION_JOB = null;
 let DEPLOYMENTS = [];
 
 
@@ -337,6 +338,32 @@ function disableBasisData () {
 
 
 /*
+    Return a submit function given the respective event.
+*/
+function submitAnnotation (event) {
+    return function () {
+        return $.ajax({
+            url: getOrderURL(CURRENT_ORDER_ID, 'annotation'),
+            method: 'PATCH',
+            mimeType: 'application/json',
+            data: event.target.value,
+            dataType: 'json'
+        });
+    };
+}
+
+
+/*
+    Start a delayed job to submit the annotation.
+*/
+function delaySubmitAnnotation (event) {
+    if (DELAYED_SUBMIT_ANNOTATION_JOB != null)
+        clearTimeout(DELAYED_SUBMIT_ANNOTATION_JOB);
+
+    DELAYED_SUBMIT_ANNOTATION_JOB = setTimeout(submitAnnotation(event), 1000);
+}
+
+/*
     Initialize the buttons on the page.
 */
 function initButtons () {
@@ -347,6 +374,7 @@ function initButtons () {
     $('#DatumInstallation').click(setChecklistItem('installation-date-confirmed'));
     $('#Hardware').click(setChecklistItem('hardware-installation'));
     $('#Abgeschlossen').click(setChecklistItem('finalize'));
+    $('#Bemerkung').change(delaySubmitAnnotation);
 }
 
 
