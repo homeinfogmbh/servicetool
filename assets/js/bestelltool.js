@@ -148,7 +148,7 @@ function getDeployments () {
 
 /*
     Return true iff the first string is a substring of the second string with
-    both strings being converted to lower case beforehand for case-insensitive
+    both strings being converted to lower case beforehand with case-insensitive
     matching.
 */
 function isSubstrNocasematch (substring, string) {
