@@ -368,8 +368,8 @@ function setChecklistItem (endpoint) {
 /*
     Disable the checklist and history columns for new orders.
 */
-function disableChecklistAndHistory () {
-    // TODO: implement
+function disableChecklist () {
+    $('.checklist').prop('disabled', true);
 }
 
 
@@ -377,7 +377,7 @@ function disableChecklistAndHistory () {
     Disable the basis data column for existing orders view.
 */
 function disableBasisData () {
-    // TODO: implement
+    $('.basic-data').prop('disabled', true);
 }
 
 
@@ -454,7 +454,7 @@ function getCustomers () {
     Render page for a new order.
 */
 function renderNewOrder () {
-    disableChecklistAndHistory();
+    disableChecklist();
     initButtons();
     getDeployments();
     getCustomers();
