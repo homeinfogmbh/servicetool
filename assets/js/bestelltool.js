@@ -125,7 +125,7 @@ class CustomerListEntry {
             return 0;
 
         if (lhs.abbreviation < rhs.abbreviation)
-            return -1:
+            return -1;
 
         return 1;
     }
