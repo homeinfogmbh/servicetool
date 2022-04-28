@@ -23,11 +23,13 @@
 	<link rel="stylesheet" href="style.css">
 	<!-- Responsive Css -->
 	<link rel="stylesheet" href="assets/css/responsive.css">
+	<link rel="stylesheet" href="assets/css/sweetalert2.min.css">
 
 	<script src="assets/js/jquery.min.js"></script>
     <script src="assets/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/owl.carousel.min.js"></script>
     <script src="assets/js/active.js"></script>
+	<script src="assets/js/sweetalert2.min.js"></script>
     <script src="assets/js/bestelltool.js"></script>
 
 </head>
@@ -180,7 +182,7 @@
 							<form action="#" id="bestToolForm">
 								<div class="row">
 									<div class="neuinstaCol col33">
-										<div class="neuinstaContent basisdaten">
+										<div id="basic-data" class="neuinstaContent basisdaten">
 											<h3>Basisdaten</h3>
 											<p>Anfrage auf neue Systeme</p>
 											<div class="neueSystForm">
@@ -189,7 +191,14 @@
 													<span class="selectArrow"></span>
 												</div> <!-- /.select -->
 												<div class="dualinp inpCol Straße">
-													<input id="street" type="text" placeholder="Straße" class="longInp basic-data">
+													<!--<input id="street"
+													type="text"
+													placeholder="Straße"
+													class="longInp
+													basic-data"> -->
+													<select id="street" class="longInp mdb-select md-form basic-data" searchable="Straße">
+														<option value="" disabled selected>Choose your country</option>
+												  	</select>
 													<input id="houseNumber" type="text" placeholder="Nr." class="smallInp basic-data">
 												</div>
 												<div class="dualinp inpCol PLZ">
@@ -215,6 +224,10 @@
 															<input type="radio" name="Artdes" id="NeptunTouch24" class="basic-data">
 															<label for="NeptunTouch24">NeptunTouch24 (Regenfest)<span class="radioCircle"></span></label>
 														</li>
+														<li>
+															<input type="radio" name="Artdes" id="model-other" class="basic-data">
+															<label for="model-other">Anderes<span class="radioCircle"></span></label>
+														</li>
 													</ul>
 												</div> <!-- /.radioBoxCheckBox -->
 												<div class="radioBoxCheckBox">
@@ -234,7 +247,7 @@
 										</div> <!-- /.neuinstaContent -->
 									</div> <!-- /.neuinstaCol -->
 									<div class="neuinstaCol col33">
-										<div class="neuinstaContent umgebungsdaten">
+										<div id="checklist" class="neuinstaContent umgebungsdaten">
 											<h3>Umgebungsdaten</h3>
 											<p>Schritte nach der Bestellung</p>
 											<div class="neueSystForm">
@@ -272,7 +285,7 @@
 										</div> <!-- /.neuinstaContent -->
 									</div> <!-- /.neuinstaCol -->
 									<div class="neuinstaCol col33">
-										<div class="neuinstaContent HistoryCol">
+										<div id="history-col" class="neuinstaContent HistoryCol">
 											<h3>History</h3>
 											<p>Änderungen am Display</p>
 											<table class="table tableHeadNone">

@@ -25,13 +25,15 @@ const ID_TO_MODEL = {
     'Touch24': 'Standard 24"',
     'Touch34': 'Standard 32"',
     'PhoenixTouch24': 'Phönix',
-    'NeptunTouch24': 'Neptun'
+    'NeptunTouch24': 'Neptun',
+    'model-other': 'other'
 };
 const MODEL_TO_ID = {
     'Standard 24&quot;': 'Touch24',
     'Standard 32&quot;"': 'Touch34',
-    'Ph\\u00f6nix': 'PhoenixTouch24',
-    'Neptun': 'NeptunTouch24'
+    'Phönix': 'PhoenixTouch24',
+    'Neptun': 'NeptunTouch24',
+    'other': 'model-other'
 };
 const ID_TO_CONNECTION = {
     'ADSL': 'DSL',
@@ -118,6 +120,16 @@ class CustomerListEntry {
         this.abbreviation = abbreviation;
     }
 
+    static compare (lhs, rhs) {
+        if (lhs.abbreviation == rhs.abbreviation)
+            return 0;
+
+        if (lhs.abbreviation < rhs.abbreviation)
+            return -1;
+
+        return 1;
+    }
+
     static fromJSON (json) {
         return new this(json.id, json.company.name, json.company.abbreviation);
     }
@@ -128,6 +140,19 @@ class CustomerListEntry {
         option.textContent = this.abbreviation || this.name;
         return option;
     }
+}
+
+
+/*
+    Handle generic Ajax Query errors.
+*/
+function handleError (jqXHR, textStatus, errorThrown) {
+    Swal.fire({
+        icon: 'error',
+        title: textStatus,
+        text: errorThrown,
+        footer: '<pre>' + JSON.stringify(jqXHR, null, 2) + '</pre>'
+    })
 }
 
 
@@ -153,6 +178,7 @@ function getOrder (id) {
     return $.ajax({
         url: getOrderURL(id),
         dataType: 'json',
+        error: handleError,
         xhrFields: {
             withCredentials: true
         }
@@ -167,6 +193,7 @@ function getDeployments () {
     return $.ajax({
         url: 'https://ddborder.homeinfo.de/deployments',
         dataType: 'json',
+        error: handleError,
         xhrFields: {
             withCredentials: true
         }
@@ -322,6 +349,7 @@ function createNewOrder () {
             connection: getSelectedConnection()
         }),
         dataType: 'json',
+        error: handleError,
         xhrFields: {
             withCredentials: true
         }
@@ -351,6 +379,7 @@ function setChecklistItem (endpoint) {
             contentType: 'application/json',
             data: JSON.stringify(event.target.checked),
             dataType: 'json',
+            error: handleError,
             xhrFields: {
                 withCredentials: true
             }
@@ -364,6 +393,8 @@ function setChecklistItem (endpoint) {
 */
 function disableChecklist () {
     $('.checklist').prop('disabled', true);
+    $('#checklist').find('*').css({opacity: 0.7});
+    $('#history-col').find('*').css({opacity: 0.7});
 }
 
 
@@ -372,6 +403,8 @@ function disableChecklist () {
 */
 function disableBasisData () {
     $('.basic-data').prop('disabled', true);
+    $('#submit').hide();
+    $('#basic-data').find('*').css({opacity: 0.7});
 }
 
 
@@ -386,6 +419,7 @@ function submitAnnotation (event) {
             contentType: 'application/json',
             data: JSON.stringify(event.target.value),
             dataType: 'json',
+            error: handleError,
             xhrFields: {
                 withCredentials: true
             }
@@ -423,10 +457,15 @@ function initButtons () {
     Render the list of available customer.
 */
 function renderCustomers (customers) {
+    const customerListEntries = []
+
     for (const customer of customers)
-        $('#Kundenauswählen').append(
-            CustomerListEntry.fromJSON(customer).toHTML()
-        );
+        customerListEntries.push(CustomerListEntry.fromJSON(customer));
+
+    customerListEntries.sort(CustomerListEntry.compare);
+
+    for (const customerListEntry of customerListEntries)
+        $('#Kundenauswählen').append(customerListEntry.toHTML());
 }
 
 
@@ -437,6 +476,7 @@ function getCustomers () {
     $.ajax({
         url: 'https://ddborder.homeinfo.de/customers',
         dataType: 'json',
+        error: handleError,
         xhrFields: {
             withCredentials: true
         }
@@ -553,7 +593,8 @@ function getCurrentOrderId () {
 /*
     Render page dependent on requested view.
 */
-function render () {
+function init () {
+    //$('.mdb-select').materialSelect();
     const id = getCurrentOrderId();
 
     if (id == null)
@@ -563,4 +604,4 @@ function render () {
 }
 
 
-$(document).ready(render);
+$(document).ready(init);
