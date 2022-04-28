@@ -287,10 +287,10 @@ function createNewOrder () {
         mimeType: 'application/json',
         data: {
             customer: getSelectedCustomerId(),
-            street: ('#street').val() || null,
-            houseNumber: ('#houseNumber').val() || null,
-            zipCode: ('#zipCode').val() || null,
-            city: ('#city').val() || null,
+            street: $('#street').val() || null,
+            houseNumber: $('#houseNumber').val() || null,
+            zipCode: $('#zipCode').val() || null,
+            city: $('#city').val() || null,
             model: getSelectedModel(),
             connection: getSelectedConnection()
         },
