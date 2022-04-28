@@ -256,7 +256,7 @@ function getSelectedModel () {
     const value = MODELS[key];
 
     if (value == null)
-        throw 'Cannot translate key: ' + key;
+        throw 'Cannot translate model key: ' + key;
 
     return value;
 }
@@ -274,7 +274,7 @@ function getSelectedConnection () {
     const value = CONNECTIONS[key];
 
     if (value == null)
-        throw 'Cannot translate key: ' + key;
+        throw 'Cannot translate connection key: ' + key;
 
     return value;
 }
