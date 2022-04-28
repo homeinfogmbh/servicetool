@@ -28,9 +28,9 @@ const MODELS = {
     'NeptunTouch24': 'Neptun'
 };
 const MODEL_TO_ID = {
-    'Standard 24"': 'Touch24',
-    'Standard 32"': 'Touch34',
-    'Phönix': 'PhoenixTouch24',
+    'Standard 24&quot;': 'Touch24',
+    'Standard 32&quot;"': 'Touch34',
+    'Ph\\u00f6nix': 'PhoenixTouch24',
     'Neptun': 'NeptunTouch24'
 };
 const CONNECTIONS = {
