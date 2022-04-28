@@ -594,7 +594,7 @@ function getCurrentOrderId () {
     Render page dependent on requested view.
 */
 function init () {
-    $('.mdb-select').materialSelect();
+    //$('.mdb-select').materialSelect();
     const id = getCurrentOrderId();
 
     if (id == null)
