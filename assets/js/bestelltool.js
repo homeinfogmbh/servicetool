@@ -480,6 +480,7 @@ function setSelectedModel (model) {
     if (id == null)
         throw 'Cannot translate model to id: ' + model;
 
+    console.log('Setting "#' + id + '" as checked.');
     $('#' + id).prop("checked", true);
 }
 
@@ -493,6 +494,7 @@ function setSelectedConnection (connection) {
     if (id == null)
         throw 'Cannot translate connection to id: ' + connection;
 
+    console.log('Setting "#' + id + '" as checked.');
     $('#' + id).prop("checked", true);
 }
 
