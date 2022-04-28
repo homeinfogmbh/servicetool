@@ -151,7 +151,7 @@ function handleError (jqXHR, textStatus, errorThrown) {
         icon: 'error',
         title: textStatus,
         text: errorThrown,
-        footer: '<pre>' + JSON.stringify(jqXHR) + '</pre>'
+        footer: '<pre>' + JSON.stringify(jqXHR, null, 2) + '</pre>'
     })
 }
 
