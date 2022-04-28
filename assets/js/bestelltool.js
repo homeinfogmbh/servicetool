@@ -99,6 +99,29 @@ class HistoryItem {
 
 
 /*
+    Representation of customer list entries.
+*/
+class CustomerListEntry {
+    constructor (id, name, abbreviation) {
+        this.id = id;
+        this.name = name;
+        this.abbreviation = abbreviation;
+    }
+
+    static fromJSON (json) {
+        return new this(json.id, json.company.name, json.company.abbreviation);
+    }
+
+    toHTML () {
+        const option = document.createElement('option')
+        option.setAttribute('value', this.id);
+        option.textContent = this.abbreviation || this.name;
+        return option;
+    }
+}
+
+
+/*
     Return a URL for the given order.
     Optionally specify a trailing endpoint.
 */
@@ -377,12 +400,35 @@ function initButtons () {
 
 
 /*
+    Render the list of available customer.
+*/
+function renderCustomers (customers) {
+    for (const customer of customers)
+        $('#Kundenauswählen').append(
+            CustomerListEntry.fromJSON(customer).toHTML()
+        );
+}
+
+
+/*
+    Retrieve then render the list of available customers.
+*/
+function getCustomers () {
+    $.ajax({
+        url: 'https://ddborder.homeinfo.de/customers',
+        dataType: 'json'
+    }).then(renderCustomers);
+}
+
+
+/*
     Render page for a new order.
 */
 function renderNewOrder () {
     disableChecklistAndHistory();
     initButtons();
     getDeployments();
+    getCustomers();
 }
 
 
