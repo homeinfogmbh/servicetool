@@ -353,8 +353,6 @@ function createNewOrder () {
         xhrFields: {
             withCredentials: true
         }
-    }).then(response => {
-        window.location = window.location + '?id=' + response.id;
     });
 }
 
@@ -363,7 +361,9 @@ function createNewOrder () {
     Create new order or modify an existing order.
 */
 function onSubmit (event) {
-    return createNewOrder();
+    return createNewOrder().then(response => {
+        window.location = window.location + '?id=' + response.id;
+    });
 }
 
 
