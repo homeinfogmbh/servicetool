@@ -410,7 +410,9 @@ function delaySubmitAnnotation (event) {
     Initialize the buttons on the page.
 */
 function initButtons (deployments) {
-    $('#street').autocomplete({source: Array.from(filterStreets(deployments))});
+    const streets = Array.from(filterStreets(deployments));
+    console.log('Streets: ' + JSON.stringify(streets));
+    $('#street').autocomplete({source: streets});
     $('#submit').click(onSubmit);
     $('#Anlage').click(setChecklistItem('construction-site-preparation'));
     $('#Netzbindung').click(setChecklistItem('internet-connection'));
