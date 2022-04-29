@@ -327,7 +327,14 @@ function onAddressChange (event) {
         $('#zipCode').val() || null,
         $('#city').val() || null
     ));
-    // TODO: implement display of matches.
+    const streets = [];
+
+    for (const deployment of deployments)
+        streets.push(deployment.address.street);
+
+    $('#street').autocomplete({
+        source: streets
+    });
 }
 
 
