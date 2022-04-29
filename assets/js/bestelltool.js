@@ -532,10 +532,9 @@ function setSelectedConnection (connection) {
 
 
 /*
-    Render an order into the core data fields.
+    Render basic data block.
 */
-function renderOrder (order) {
-    // Basic data
+function renderBasicData (order) {
     setSelectedCustomer(order.customer);
     $('#street').val(order.street);
     $('#houseNumber').val(order.houseNumber);
@@ -543,8 +542,13 @@ function renderOrder (order) {
     $('#city').val(order.city);
     setSelectedModel(order.model);
     setSelectedConnection(order.connection);
+}
 
-    // Check list
+
+/*
+    Render checklist.
+*/
+function renderChecklist (order) {
     $('#Anlage').prop(
         'checked', order.constructionSitePreparationFeedback != null
     );
@@ -555,8 +559,13 @@ function renderOrder (order) {
     $('#Hardware').prop('checked', order.hardwareInstallation != null);
     $('#Abgeschlossen').prop('checked', order.finalized != null);
     $('#Bemerkung').val(order.annotation);
+}
 
-    // History
+
+/*
+    Render history.
+*/
+function renderHistory (order) {
     const historyItems = Array.from(HistoryItem.fromOrder(order));
     historyItems.sort((lhs, rhs) => {
         return lhs.timestamp - rhs.timestamp;
@@ -564,6 +573,16 @@ function renderOrder (order) {
 
     for (const historyItem of historyItems)
         $('#history').append(historyItem.toHTML());
+}
+
+
+/*
+    Render an order into the core data fields.
+*/
+function renderOrder (order) {
+    renderBasicData(order);
+    renderChecklist(order);
+    renderHistory(order);
 }
 
 
