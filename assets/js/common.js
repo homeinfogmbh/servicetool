@@ -1,3 +1,5 @@
+const ONE_HOUR = 60 * 60 * 1000; // Milliseconds;
+const THREE_MONTHS = 3 * 30 * 24; // Hours
 var _showErrorMessages = true;
 var _countdowntimer = null;
 var _systemChecksPromise = null;
@@ -194,6 +196,10 @@ function compare(a, b) {
 }
 function compareInverted(a, b) {
 	return (a > b) ? -1 : (a < b) ? 1 : 0;
+}
+function isOnDate(dateToCheck, periodInHours) {
+    periodInHours = periodInHours * ONE_HOUR;
+    return (new Date()) - new Date(dateToCheck) < periodInHours;
 }
 function formatDate(date) {
 	return date.substring(8, 10) + "." + date.substring(5, 7) + "." + date.substring(0, 4); // dd-mm-yyyy
