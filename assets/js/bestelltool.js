@@ -293,9 +293,13 @@ function getSelectedConnection () {
 /*
     Yield street names from a list of deployments.
 */
-function * filterStreets (deployments) {
+function extractStreets (deployments) {
+    const streets = new Set();
+
     for (const deployment of deployments)
-        yield deployment.address.street;
+        streets.add(deployment.address.street);
+
+    return streets;
 }
 
 
@@ -410,9 +414,7 @@ function delaySubmitAnnotation (event) {
     Initialize the buttons on the page.
 */
 function initButtons (deployments) {
-    const streets = Array.from(filterStreets(deployments));
-    console.log('Streets: ' + JSON.stringify(streets));
-    $('#street').autocomplete({source: streets});
+    $('#street').autocomplete({source: extractStreets(deployments)});
     $('#submit').click(onSubmit);
     $('#Anlage').click(setChecklistItem('construction-site-preparation'));
     $('#Netzbindung').click(setChecklistItem('internet-connection'));
