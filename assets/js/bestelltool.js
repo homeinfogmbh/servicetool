@@ -46,7 +46,6 @@ const CONNECTION_TO_ID = {
 const URL_PARAMS = new URLSearchParams(window.location.search);
 
 let DELAYED_SUBMIT_ANNOTATION_JOB = null;
-let DEPLOYMENTS = [];
 
 
 /*
@@ -197,8 +196,6 @@ function getDeployments () {
         xhrFields: {
             withCredentials: true
         }
-    }).then(deployments => {
-        DEPLOYMENTS = deployments;
     });
 }
 
@@ -240,27 +237,6 @@ function isSubstrNocasematchOrNull (substring, string) {
         return true;
 
     return isSubstrNocasematch(substring, string);
-}
-
-
-/*
-    Filter deployments by customer and address information.
-*/
-function * filterDeployments (
-        deployments, customerId, street, houseNumber, zipCode, city
-) {
-    for (const deployment of deployments) {
-        if (
-            matchCustomerId(customerId, deployment)
-            && isSubstrNocasematchOrNull(street, deployment.address.street)
-            && isSubstrNocasematchOrNull(
-                houseNumber, deployment.address.houseNumber
-            )
-            && isSubstrNocasematchOrNull(zipCode, deployment.address.zipCode)
-            && isSubstrNocasematchOrNull(city, deployment.address.city)
-        )
-            yield deployment;
-    }
 }
 
 
@@ -315,26 +291,11 @@ function getSelectedConnection () {
 
 
 /*
-    Filter deployments matching the partially entered address and display
-    those as hints to existing addresses.
+    Yield street names from a list of deployments.
 */
-function onAddressChange (event) {
-    const deployments = Array.from(filterDeployments(
-        DEPLOYMENTS,
-        getSelectedCustomerId(),
-        $('#street').val() || null,
-        $('#houseNumber').val() || null,
-        $('#zipCode').val() || null,
-        $('#city').val() || null
-    ));
-    const streets = [];
-
+function filterStreets (deployments) {
     for (const deployment of deployments)
-        streets.push(deployment.address.street);
-
-    $('#street').autocomplete({
-        source: streets
-    });
+        yield deployment.address.street;
 }
 
 
@@ -448,8 +409,8 @@ function delaySubmitAnnotation (event) {
 /*
     Initialize the buttons on the page.
 */
-function initButtons () {
-    $('#street').keyup(onAddressChange);
+function initButtons (deployments) {
+    $('#street').autocomplete({source: Array.from(filterStreets(deployments))});
     $('#submit').click(onSubmit);
     $('#Anlage').click(setChecklistItem('construction-site-preparation'));
     $('#Netzbindung').click(setChecklistItem('internet-connection'));
@@ -496,8 +457,7 @@ function getCustomers () {
 */
 function renderNewOrder () {
     disableChecklist();
-    initButtons();
-    getDeployments();
+    getDeployments().then(initButtons);
     getCustomers();
 }
 
