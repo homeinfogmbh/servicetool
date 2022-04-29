@@ -442,7 +442,7 @@ function delaySubmitAnnotation (event) {
     Initialize the buttons on the page.
 */
 function initButtons () {
-    $('#street').change(onAddressChange);
+    $('#street').keyup(onAddressChange);
     $('#submit').click(onSubmit);
     $('#Anlage').click(setChecklistItem('construction-site-preparation'));
     $('#Netzbindung').click(setChecklistItem('internet-connection'));
