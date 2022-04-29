@@ -293,7 +293,7 @@ function getSelectedConnection () {
 /*
     Yield street names from a list of deployments.
 */
-function filterStreets (deployments) {
+function * filterStreets (deployments) {
     for (const deployment of deployments)
         yield deployment.address.street;
 }
