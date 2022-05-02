@@ -445,7 +445,7 @@ function validateNewOrder (newOrder) {
         issues.push('Kein Ort angegeben.');
 
     if (!newOrder.model)
-        issues.push('Kein Displayart ausgewählt.');
+        issues.push('Keine Displayart ausgewählt.');
 
     if (!newOrder.connection)
         issues.push('Keine Netzanbindung ausgewählt.');
