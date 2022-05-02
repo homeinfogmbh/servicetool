@@ -523,12 +523,14 @@ function initButtons () {
     Render the list of available customer.
 */
 function renderCustomers (customers) {
+    const customerNotSelected = new CustomerListEntry(-1, 'Bitte auswählen');
     const customerListEntries = []
 
     for (const customer of customers)
         customerListEntries.push(CustomerListEntry.fromJSON(customer));
 
     customerListEntries.sort(CustomerListEntry.compare);
+    $('#Kundenauswählen').append(customerNotSelected.toHTML());
 
     for (const customerListEntry of customerListEntries)
         $('#Kundenauswählen').append(customerListEntry.toHTML());
