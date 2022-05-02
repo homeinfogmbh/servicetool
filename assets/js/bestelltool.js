@@ -178,13 +178,8 @@ function * filterDeployments () {
         if (matchDeployment(
             deployment, getSelectedCustomerId(), $('#street').val(),
             $('#houseNumber').val(), $('#zipCode').val(), $('#city').val()
-        )) {
-            console.log(
-                'Matched: ' + deployment.address.street + ' ' +
-                deployment.address.houseNumber
-            );
+        ))
             yield deployment;
-        }
     }
 }
 
