@@ -457,7 +457,8 @@ function validateNewOrder (newOrder) {
         icon: 'error',
         iconHtml: '<img src="assets/img/PopUp-Icon.png"></img>',
         title: 'Fehler',
-        html: toHTMLList(issues)
+        html: toHTMLList(issues),
+        confirmButtonColor: '#0074A5'
     })
     return false;
 }
