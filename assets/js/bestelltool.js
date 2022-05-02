@@ -181,8 +181,14 @@ function matchDeployment (deployment) {
 */
 function * filterDeployments () {
     for (const deployment of DEPLOYMENTS)
-        if (matchDeployment(deployment))
+        if (matchDeployment(deployment)) {
+            console.log(
+                'Filtered deployment: ' + deployment.address.street + ' '
+                + deployment.address.houseNumber + ', '
+                + deployment.address.zipCode + ' ' + deployment.address.city
+            );
             yield deployment;
+        }
 }
 
 
