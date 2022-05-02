@@ -193,7 +193,7 @@ function * filterDeployments () {
     Remove the auto completion list.
 */
 function removeAutocompleteList (textInput) {
-    for (const childNode of textInput.childNodes)
+    for (const childNode of textInput.parentNode.childNodes)
         if (childNode.classList.contains('autocomplete-items'))
             textInput.removeChild(childNode);
 }
@@ -236,7 +236,10 @@ function createAutocompleteList (textInput) {
     for (const deployment of filterDeployments())
         list.appendChild(createAutocompleteListItem(deployment));
 
-    textInput.appendChild(list);
+    if (textInput.nextSibling)
+        textInput.parentNode.insertBefore(list, textInput.nextSibling);
+    else
+        textInput.parentNode.appendChild(list);
 }
 
 
