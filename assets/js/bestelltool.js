@@ -207,7 +207,7 @@ function selectAutocompleteItem (event) {
     $('#houseNumber').val(event.target.getAttribute('data-house-number'));
     $('#zipCode').val(event.target.getAttribute('data-zip-code'));
     $('#city').val(event.target.getAttribute('data-city'));
-    removeAutocompleteList();
+    removeAutocompleteList(document.getElementById('street'));
 }
 
 
