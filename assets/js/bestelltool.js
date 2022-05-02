@@ -400,7 +400,7 @@ function getSelectedConnection () {
 /*
     Construct a JSON object representing a new order.
 */
-function getNewOrderObject () {
+function getNewOrder () {
     return {
         customer: getSelectedCustomerId(),
         street: $('#street').val() || null,
