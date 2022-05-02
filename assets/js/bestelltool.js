@@ -395,19 +395,6 @@ function getSelectedConnection () {
 
 
 /*
-    Yield street names from a list of deployments.
-*/
-function extractStreets (deployments) {
-    const streets = new Set();
-
-    for (const deployment of deployments)
-        streets.add(deployment.address.street);
-
-    return streets;
-}
-
-
-/*
     Create a new order.
 */
 function createNewOrder () {
@@ -517,10 +504,8 @@ function delaySubmitAnnotation (event) {
 /*
     Initialize the buttons on the page.
 */
-function initButtons (deployments) {
-    const streets = Array.from(extractStreets(deployments));
-    console.log('Streets: ' + JSON.stringify(streets));
-    $('#street').autocomplete({source: streets});
+function initButtons () {
+    $('#street').keyup(regenerateAutocompleteList);
     $('#submit').click(onSubmit);
     $('#Anlage').click(setChecklistItem('construction-site-preparation'));
     $('#Netzbindung').click(setChecklistItem('internet-connection'));
@@ -567,11 +552,8 @@ function getCustomers () {
 */
 function renderNewOrder () {
     disableChecklist();
-    getDeployments().then(deployments => {
-        DEPLOYMENTS = deployments;
-        return deployments;
-    }).then(initButtons);
-    $('#street').keyup(regenerateAutocompleteList);
+    getDeployments().then(deployments => { DEPLOYMENTS = deployments; });
+    initButtons();
     getCustomers();
 }
 
