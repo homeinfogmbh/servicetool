@@ -152,16 +152,16 @@ function matchDeployment (
     if (customerId && customerId != deployment.customer.id)
         return false;
 
-    if (street && street != deployment.address.street)
+    if (isSubstrNocasematchOrNull(street, deployment.address.street))
         return false;
 
-    if (houseNumber && houseNumber != deployment.address.houseNumber)
+    if (isSubstrNocasematchOrNull(houseNumber, deployment.address.houseNumber))
         return false;
 
-    if (zipCode && zipCode != deployment.address.zipCode)
+    if (isSubstrNocasematchOrNull(zipCode, deployment.address.zipCode))
         return false;
 
-    if (city && city != deployment.address.city)
+    if (isSubstrNocasematchOrNull(city, deployment.address.city))
         return false;
 
     return true;
