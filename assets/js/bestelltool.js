@@ -131,7 +131,7 @@ class CustomerListEntry {
     }
 
     static fromJSON (json) {
-        return new this(json.id, json.company.name, json.company.abbreviation);
+        return new this(json.id, json.company.name, json.abbreviation);
     }
 
     toHTML () {
