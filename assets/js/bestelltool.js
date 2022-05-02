@@ -215,7 +215,7 @@ function selectAutocompleteItem (event) {
     Create a list item for the auto completion.
 */
 function createAutocompleteListItem (deployment) {
-    div = document.createElement('div');
+    const div = document.createElement('div');
     div.classList.add('autocomplete-item');
     div.setAttribute('data-street', deployment.address.street);
     div.setAttribute('data-house-number', deployment.address.houseNumber);
