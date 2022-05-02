@@ -215,13 +215,15 @@ function selectAutocompleteItem (event) {
 /*
     Create a list item for the auto completion.
 */
-function createAutocompleteListItem (deployment) {
+function createAutocompleteListItem (address) {
     const div = document.createElement('div');
     div.classList.add('autocomplete-item');
-    div.setAttribute('data-street', deployment.address.street);
-    div.setAttribute('data-house-number', deployment.address.houseNumber);
-    div.setAttribute('data-zip-code', deployment.address.zipCode);
-    div.setAttribute('data-city', deployment.address.city);
+    div.setAttribute('data-street', address.street);
+    div.setAttribute('data-house-number', address.houseNumber);
+    div.setAttribute('data-zip-code', address.zipCode);
+    div.setAttribute('data-city', address.city);
+    div.textContent = address.street + ' ' + address.houseNumber + ', '
+        + address.zipCode + ' ' + address.city;
     div.addEventListener('click', selectAutocompleteItem);
     return div;
 }
@@ -235,7 +237,7 @@ function createAutocompleteList (textInput) {
     list.classList.add('autocomplete-items');
 
     for (const deployment of filterDeployments())
-        list.appendChild(createAutocompleteListItem(deployment));
+        list.appendChild(createAutocompleteListItem(deployment.address));
 
     if (textInput.nextSibling)
         textInput.parentNode.insertBefore(list, textInput.nextSibling);
