@@ -146,30 +146,22 @@ class CustomerListEntry {
 /*
     Match a deployment against the current address and customer.
 */
-function matchDeployment (deployment) {
-    const customerId = getSelectedCustomerId();
-
-    if (customerId != null && customerId != deployment.customer.id)
+function matchDeployment (
+    deployment, customerId, street, houseNumber, zipCode, city
+) {
+    if (customerId && customerId != deployment.customer.id)
         return false;
 
-    const street = $('#street').val();
-
-    if (street != null && street != deployment.address.street)
+    if (street && street != deployment.address.street)
         return false;
 
-    const houseNumber = $('#houseNumber').val();
-
-    if (houseNumber != null && houseNumber != deployment.address.houseNumber)
+    if (houseNumber && houseNumber != deployment.address.houseNumber)
         return false;
 
-    const zipCode = $('#zipCode').val();
-
-    if (zipCode != null && zipCode != deployment.address.zipCode)
+    if (zipCode && zipCode != deployment.address.zipCode)
         return false;
 
-    const city = $('#city').val();
-
-    if (city != null && city != deployment.address.city)
+    if (city && city != deployment.address.city)
         return false;
 
     return true;
@@ -187,7 +179,10 @@ function * filterDeployments () {
             + deployment.address.zipCode + ' ' + deployment.address.city
         );
 
-        if (matchDeployment(deployment))
+        if (matchDeployment(
+            deployment, getSelectedCustomerId(), $('#street').val(),
+            $('#houseNumber').val(), $('#zipCode').val(), $('#city').val()
+        ))
             yield deployment;
     }
 }
