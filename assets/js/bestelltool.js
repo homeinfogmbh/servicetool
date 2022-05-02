@@ -454,7 +454,6 @@ function validateNewOrder (newOrder) {
         return true;
 
     Swal.fire({
-        icon: 'error',
         iconHtml: '<img src="assets/img/PopUp-Icon.png"></img>',
         title: 'Fehler',
         html: toHTMLList(issues)
