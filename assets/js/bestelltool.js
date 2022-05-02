@@ -152,16 +152,18 @@ function matchDeployment (
     if (customerId && customerId != deployment.customer.id)
         return false;
 
-    if (isSubstrNocasematchOrNull(street, deployment.address.street))
+    if (!isSubstrNocasematchOrNull(street, deployment.address.street))
         return false;
 
-    if (isSubstrNocasematchOrNull(houseNumber, deployment.address.houseNumber))
+    if (!isSubstrNocasematchOrNull(
+        houseNumber, deployment.address.houseNumber
+    ))
         return false;
 
-    if (isSubstrNocasematchOrNull(zipCode, deployment.address.zipCode))
+    if (!isSubstrNocasematchOrNull(zipCode, deployment.address.zipCode))
         return false;
 
-    if (isSubstrNocasematchOrNull(city, deployment.address.city))
+    if (!isSubstrNocasematchOrNull(city, deployment.address.city))
         return false;
 
     return true;
@@ -173,12 +175,6 @@ function matchDeployment (
 */
 function * filterDeployments () {
     for (const deployment of DEPLOYMENTS) {
-        console.log(
-            'Iterated deployment: ' + deployment.address.street + ' '
-            + deployment.address.houseNumber + ', '
-            + deployment.address.zipCode + ' ' + deployment.address.city
-        );
-
         if (matchDeployment(
             deployment, getSelectedCustomerId(), $('#street').val(),
             $('#houseNumber').val(), $('#zipCode').val(), $('#city').val()
