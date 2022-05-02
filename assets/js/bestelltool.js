@@ -46,6 +46,7 @@ const CONNECTION_TO_ID = {
 const URL_PARAMS = new URLSearchParams(window.location.search);
 
 let DELAYED_SUBMIT_ANNOTATION_JOB = null;
+let DEPLOYMENTS = [];
 
 
 /*
@@ -139,6 +140,115 @@ class CustomerListEntry {
         option.textContent = this.abbreviation || this.name;
         return option;
     }
+}
+
+
+/*
+    Match a deployment against the current address and customer.
+*/
+function matchDeployment (deployment) {
+    const customerId = getSelectedCustomerId();
+
+    if (customerId != null && customerId != deployment.customer.id)
+        return false;
+
+    const street = $('#street').val();
+
+    if (street != null && street != deployment.address.street)
+        return false;
+
+    const houseNumber = $('#houseNumber').val();
+
+    if (houseNumber != null && houseNumber != deployment.address.houseNumber)
+        return false;
+
+    const zipCode = $('#zipCode').val();
+
+    if (zipCode != null && zipCode != deployment.address.zipCode)
+        return false;
+
+    const city = $('#city').val();
+
+    if (city != null && city != deployment.address.city)
+        return false;
+
+    return true;
+}
+
+
+/*
+    Yield deployments that match the filtering criteria.
+*/
+function * filterDeployments () {
+    for (const deployment of DEPLOYMENTS)
+        if (matchDeployment(deployment))
+            yield deployment;
+}
+
+
+/*
+    Remove the auto completion list.
+*/
+function removeAutocompleteList (textInput) {
+    textInput.children('.autocomplete-items').remove();
+}
+
+
+/*
+    Select an autocomplete item.
+*/
+function selectAutocompleteItem (event) {
+    $('#street').val(event.target.getAttribute('data-street'));
+    $('#houseNumber').val(event.target.getAttribute('data-house-number'));
+    $('#zipCode').val(event.target.getAttribute('data-zip-code'));
+    $('#city').val(event.target.getAttribute('data-city'));
+    removeAutocompleteList();
+}
+
+
+/*
+    Create a list item for the auto completion.
+*/
+function createAutocompleteListItem (deployment) {
+    div = document.createElement('div');
+    div.classList.add('autocomplete-item');
+    div.setAttribute('data-street', deployment.address.street);
+    div.setAttribute('data-house-number', deployment.address.houseNumber);
+    div.setAttribute('data-zip-code', deployment.address.zipCode);
+    div.setAttribute('data-city', deployment.address.city);
+    div.addEventListener('click', selectAutocompleteItem);
+    return div;
+}
+
+
+/*
+    Create list with auto completion entries.
+*/
+function createAutocompleteList (textInput) {
+    const list = document.createElement('div');
+    list.classList.add('autocomplete-items');
+
+    for (const deployment of filterDeployments())
+        list.appendChild(createAutocompleteListItem(deployment));
+
+    textInput.append(list);
+}
+
+
+/*
+    Re-generate the completion list.
+*/
+function regenerateAutocompleteList (textInput) {
+    removeAutocompleteList(textInput);
+    createAutocompleteList(textInput);
+}
+
+
+/*
+    Auto completion for text inputs.
+*/
+function autocomplete (textInput) {
+    textInput.keyup(regenerateAutocompleteList);
 }
 
 
