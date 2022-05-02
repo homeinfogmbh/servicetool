@@ -180,15 +180,16 @@ function matchDeployment (deployment) {
     Yield deployments that match the filtering criteria.
 */
 function * filterDeployments () {
-    for (const deployment of DEPLOYMENTS)
-        if (matchDeployment(deployment)) {
-            console.log(
-                'Filtered deployment: ' + deployment.address.street + ' '
-                + deployment.address.houseNumber + ', '
-                + deployment.address.zipCode + ' ' + deployment.address.city
-            );
+    for (const deployment of DEPLOYMENTS) {
+        console.log(
+            'Iterated deployment: ' + deployment.address.street + ' '
+            + deployment.address.houseNumber + ', '
+            + deployment.address.zipCode + ' ' + deployment.address.city
+        );
+
+        if (matchDeployment(deployment))
             yield deployment;
-        }
+    }
 }
 
 
