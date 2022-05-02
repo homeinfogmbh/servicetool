@@ -445,17 +445,17 @@ function validateNewOrder (newOrder) {
         issues.push('Kein Ort angegeben.');
 
     if (!newOrder.model)
-        issues.push('Kein Modell ausgewählt.');
+        issues.push('Kein Displayart ausgewählt.');
 
     if (!newOrder.connection)
-        issues.push('Keine Internetanbindung ausgewählt.');
+        issues.push('Keine Netzanbindung ausgewählt.');
 
     if (issues.length == 0)
         return true;
 
     Swal.fire({
         icon: 'error',
-        title: 'Fehlende Angaben',
+        title: 'Fehler',
         html: toHTMLList(issues)
     })
     return false;
