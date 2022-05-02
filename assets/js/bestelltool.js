@@ -574,6 +574,7 @@ function delaySubmitAnnotation (event) {
 function initButtons () {
     $('#street').keyup(regenerateAutocompleteList);
     $('#street').click(regenerateAutocompleteList);
+    $('#Kundenauswählen').change(regenerateAutocompleteList);
     $('#submit').click(onSubmit);
     $('#Anlage').click(setChecklistItem('construction-site-preparation'));
     $('#Netzbindung').click(setChecklistItem('internet-connection'));
