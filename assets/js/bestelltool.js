@@ -567,8 +567,8 @@ function getCustomers () {
 */
 function renderNewOrder () {
     disableChecklist();
-    getDeployments().then({
-        deployments => DEPLOYMENTS = deployments;
+    getDeployments().then(deployments => {
+        DEPLOYMENTS = deployments;
     }).then(initButtons);
     $('#street').keyup(regenerateAutocompleteList);
     getCustomers();
