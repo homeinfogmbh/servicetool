@@ -190,7 +190,9 @@ function * filterDeployments () {
     Remove the auto completion list.
 */
 function removeAutocompleteList (textInput) {
-    textInput.children('.autocomplete-items').remove();
+    for (const childNode of textInput.childNodes())
+        if (childNode.classList.contains('autocomplete-items'))
+            textInput.removeChild(childNode);
 }
 
 
@@ -231,24 +233,16 @@ function createAutocompleteList (textInput) {
     for (const deployment of filterDeployments())
         list.appendChild(createAutocompleteListItem(deployment));
 
-    textInput.append(list);
+    textInput.appendChild(list);
 }
 
 
 /*
     Re-generate the completion list.
 */
-function regenerateAutocompleteList (textInput) {
-    removeAutocompleteList(textInput);
-    createAutocompleteList(textInput);
-}
-
-
-/*
-    Auto completion for text inputs.
-*/
-function autocomplete (textInput) {
-    textInput.keyup(regenerateAutocompleteList);
+function regenerateAutocompleteList (event) {
+    removeAutocompleteList(event.target);
+    createAutocompleteList(event.target);
 }
 
 
@@ -573,7 +567,10 @@ function getCustomers () {
 */
 function renderNewOrder () {
     disableChecklist();
-    getDeployments().then(initButtons);
+    getDeployments().then({
+        deployments => DEPLOYMENTS = deployments;
+    }).then(initButtons);
+    $('#street').keyup(regenerateAutocompleteList);
     getCustomers();
 }
 
