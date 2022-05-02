@@ -368,14 +368,9 @@ function getSelectedModel () {
     const key = $('input[name="Artdes"]:checked').attr('id');
 
     if (key == null)
-        throw 'No model selected.';
+        return null;
 
-    const value = ID_TO_MODEL[key];
-
-    if (value == null)
-        throw 'Cannot translate model key: ' + key;
-
-    return value;
+    return ID_TO_MODEL[key];
 }
 
 
@@ -386,14 +381,9 @@ function getSelectedConnection () {
     const key = $('input[name="ArtDerNetz"]:checked').attr('id');
 
     if (key == null)
-        throw 'No model selected.';
+        return null;
 
-    const value = ID_TO_CONNECTION[key];
-
-    if (value == null)
-        throw 'Cannot translate connection key: ' + key;
-
-    return value;
+    return ID_TO_CONNECTION[key];
 }
 
 
