@@ -114,9 +114,8 @@ class HistoryItem {
     Representation of customer list entries.
 */
 class CustomerListEntry {
-    constructor (id, name, abbreviation) {
+    constructor (id, abbreviation) {
         this.id = id;
-        this.name = name;
         this.abbreviation = abbreviation;
     }
 
@@ -131,13 +130,13 @@ class CustomerListEntry {
     }
 
     static fromJSON (json) {
-        return new this(json.id, json.company.name, json.abbreviation);
+        return new this(json.id, json.abbreviation);
     }
 
     toHTML () {
         const option = document.createElement('option')
         option.setAttribute('value', this.id);
-        option.textContent = this.abbreviation || this.name;
+        option.textContent = this.abbreviation;
         return option;
     }
 }
