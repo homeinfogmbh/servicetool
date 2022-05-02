@@ -452,7 +452,7 @@ function validateNewOrder (newOrder) {
 
     Swal.fire({
         icon: 'error',
-        title: 'Fehlende Anhaben',
+        title: 'Fehlende Angaben',
         html: toHTMLList(issues)
     })
     return false;
