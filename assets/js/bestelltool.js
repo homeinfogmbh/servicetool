@@ -398,22 +398,91 @@ function getSelectedConnection () {
 
 
 /*
+    Construct a JSON object representing a new order.
+*/
+function getNewOrderObject () {
+    return {
+        customer: getSelectedCustomerId(),
+        street: $('#street').val() || null,
+        houseNumber: $('#houseNumber').val() || null,
+        zipCode: $('#zipCode').val() || null,
+        city: $('#city').val() || null,
+        model: getSelectedModel(),
+        connection: getSelectedConnection()
+    };
+}
+
+
+/*
+    Convert an iterable into a HTML list.
+*/
+function toHTMLList (items, type = 'ul') {
+    const list = document.createElement(type);
+    let element = null;
+
+    for (const item of items) {
+        element = document.createElement('li');
+        element.textContent = item;
+        list.appendChild(element);
+    }
+
+    return list;
+}
+
+
+/*
+    Validate a JSON object representing a new order.
+*/
+function validateNewOrder (newOrder) {
+    const issues = [];
+
+    if (newOrder.customer == null || newOrder.customer < 1)
+        issues.push('Kein Kunde ausgewählt.');
+
+    if (!newOrder.street)
+        issues.push('Keine Straße angegeben.');
+
+    if (!newOrder.houseNumber)
+        issues.push('Keine Hausnummer angegeben.');
+
+    if (!newOrder.zipCode)
+        issues.push('Keine PLZ angegeben.');
+
+    if (!newOrder.city)
+        issues.push('Kein Ort angegeben.');
+
+    if (!newOrder.model)
+        issues.push('Kein Modell ausgewählt.');
+
+    if (!newOrder.connection)
+        issues.push('Keine Internetanbindung ausgewählt.');
+
+    if (issues.length == 0)
+        return true;
+
+    Swal.fire({
+        icon: 'error',
+        title: 'Fehlende Anhaben',
+        text: toHTMLList(issues)
+    })
+    return false;
+}
+
+
+/*
     Create a new order.
 */
 function createNewOrder () {
+    const newOrder = getNewOrder();
+
+    if (!validateNewOrder(newOrder))
+        return Promise.reject('Fehlende Daten.');
+
     return $.ajax({
         url: 'https://ddborder.homeinfo.de/order',
         method: 'POST',
         contentType: 'application/json',
-        data: JSON.stringify({
-            customer: getSelectedCustomerId(),
-            street: $('#street').val() || null,
-            houseNumber: $('#houseNumber').val() || null,
-            zipCode: $('#zipCode').val() || null,
-            city: $('#city').val() || null,
-            model: getSelectedModel(),
-            connection: getSelectedConnection()
-        }),
+        data: JSON.stringify(newOrder),
         dataType: 'json',
         error: handleError,
         xhrFields: {
