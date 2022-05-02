@@ -190,7 +190,7 @@ function * filterDeployments () {
     Remove the auto completion list.
 */
 function removeAutocompleteList (textInput) {
-    for (const childNode of textInput.childNodes())
+    for (const childNode of textInput.childNodes)
         if (childNode.classList.contains('autocomplete-items'))
             textInput.removeChild(childNode);
 }
