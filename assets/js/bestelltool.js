@@ -217,8 +217,10 @@ function createAutocompleteListItem (address) {
     div.setAttribute('data-house-number', address.houseNumber);
     div.setAttribute('data-zip-code', address.zipCode);
     div.setAttribute('data-city', address.city);
-    div.textContent = address.street + ' ' + address.houseNumber + ', '
-        + address.zipCode + ' ' + address.city;
+    div.textContent = (
+        address.street + ' ' + address.houseNumber
+        + ', ' + address.zipCode + ' ' + address.city
+    );
     div.addEventListener('click', selectAutocompleteItem);
     return div;
 }
