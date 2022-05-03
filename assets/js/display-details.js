@@ -1,6 +1,6 @@
 var _display = null;
 $(document).ready(function() {
-    getListOfSystemChecks().then(setDetails);
+    getListOfSystemChecks().then(setDetails); // TODO /checks/<int:system> 
     $('.whitelineBtn').click(function(e) {
         $("#pageloader").show();
         checkSystem(_display.id).then(setChecks);
@@ -64,7 +64,7 @@ console.log(_display)
 function setChecks(lastCheck) {
     $("#offline").html(lastCheck.hasOwnProperty("offlineSince") || lastCheck.sshLogin !== "success" ?'<span class="orangeMark">offline</span>' :'<span class="blueMark">online</span>');
     $("#ssd").html(lastCheck.smartCheck === "success" ?'<span class="blueMark">' + lastCheck.smartCheck + '</span>' :'<span class="orangeMark">' + lastCheck.smartCheck + '</span>');
-    $("#sync").text(formatDate(_display.lastSync) + " " + _display.lastSync.substring(11, 16));
+    $("#sync").text(_display.hasOwnProperty("lastSync") ?formatDate(_display.lastSync) + " " + _display.lastSync.substring(11, 16) :"-");
     $("#icmp").html(lastCheck.icmpRequest ?'<span class="blueMark">ok</span>' :'<span class="orangeMark">fehlgeschlagen</span>');
     $("#ssh").html(lastCheck.sshLogin === "success" ?'<span class="blueMark">' + lastCheck.sshLogin + '</span>' :'<span class="orangeMark">' + lastCheck.sshLogin +'</span>');
     $("#http").html(lastCheck.httpRequest === "success" ?'<span class="blueMark">' + lastCheck.httpRequest + '</span>' :'<span class="orangeMark">' + lastCheck.httpRequest + '</span>');

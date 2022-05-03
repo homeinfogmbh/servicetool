@@ -1,5 +1,15 @@
 const ONE_HOUR = 60 * 60 * 1000; // Milliseconds;
 const THREE_MONTHS = 3 * 30 * 24; // Hours
+var _commonChecks = {"ssdcarderror":{"title":"SSD Karten Fehler", "text":"Liste der Geräte die einen SSD-Karten-Fehler vorweisen", "systems":[]},
+ 	"notfitted":{"title":"Nicht verbaute Systeme", "text":"Liste der Geräte die nicht verbaut sind", "systems":[]},
+	"testsystem":{"title":"Testgeräte", "text":"Liste der Testgeräte", "systems":[]},
+	"offline":{"title":"Offline", "text":"Liste der Geräte die offline sein", "systems":[]},
+	"offlineThreeMonth":{"title":"Offline mehr als 3 Monate", "systems":[]},
+	"noActualData":{"title":"Keine aktuellen Daten", "text":"Liste der Geräte die keine aktuellen Daten besitzen", "systems":[]},
+	"blackscreen":{"title":"Im Schwarzbild-Modus", "text":"Liste der Geräte die schwarz geschaltet sind", "systems":[]},
+	"oldApplication":{"title":"Alte Applicationen", "text":"Liste der Geräte auf denen eine alte Version der Applikation läuft", "systems":[]},
+	"system":{"title":"Systeme", "text":"Liste aller Systeme", "systems":[]}
+}; // -> also setCheckList() for filter
 var _showErrorMessages = true;
 var _countdowntimer = null;
 var _systemChecksPromise = null;
@@ -66,14 +76,10 @@ function holdSession() {
 }
 function countdown(end) {
 	clearInterval(_countdowntimer);
-	_countdowntimer = setInterval(function(){
-		var countDownDate = new Date(end).getTime()-10000; // -10000: 10 seconds before end to delete session
-		var now = new Date().getTime();
-		// Find the distance between now an the count down date
-		var distance = countDownDate - now;
-		var minutes = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60));
-		var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-		//$("#sessiontime").html('<font color="#bbb" style="font-size:12px">Sitzung läuft ab <br>in: <b>' + (minutes < 10 ?'0' :'') + minutes + ":" + (seconds < 10 ?'0' :'') + seconds + '</b></font>');
+	_countdowntimer = setInterval(function() {
+		let countDownDate = new Date(end).getTime()-10000;
+		let now = new Date().getTime();
+		let distance = countDownDate - now;
 		if (distance <= 0) {
 			clearInterval(_countdowntimer);
 			localStorage.setItem("servicetool.session.expired", true);
@@ -93,7 +99,7 @@ function deleteSession() {
 
 function getUser() {
 	// List all keys:values
-	//for (var i = 0, len = localStorage.length; i < len; ++i )
+	//for (let i = 0, len = localStorage.length; i < len; ++i )
 		//console.log(localStorage.key(i) + ": " + localStorage.getItem(localStorage.key(i)));
 	if (localStorage.getItem("servicetool.user") !== null) {
 		return Promise.resolve(JSON.parse(localStorage.getItem("servicetool.user")));
@@ -113,20 +119,20 @@ function getUser() {
 
 function getListOfSystemChecks() {
 	if (_systemChecksPromise === null)
-		_systemChecksPromise = getPromis();
+		_systemChecksPromise = getCheckPromis();
 	return _systemChecksPromise;
 }
-function getPromis() {
+function getCheckPromis() {
 	if (localStorage.getItem("servicetool.systemchecks") !== null) {
-		let checks = JSON.parse(localStorage.getItem("servicetool.systemchecks"));
-		return Promise.resolve(checks);
+		let list = JSON.parse(localStorage.getItem("servicetool.systemchecks"));
+		return Promise.resolve(list);
 	} else {
 		return $.ajax({
 			url: "https://sysmon.homeinfo.de/checks",
 			type: "GET",
 			cache: false,
-			success: function (data) {
-				localStorage.setItem("servicetool.systemchecks", JSON.stringify(data));
+			success: function (list) {
+				localStorage.setItem("servicetool.systemchecks", JSON.stringify(list));
 			},
 			error: function (msg) {
 				setErrorMessage(msg, "Laden der Checklist");
@@ -134,6 +140,41 @@ function getPromis() {
 		});
 	}
 }
+function setCheckList(list) {
+    list = $.map(list, function(value, index){
+        return [value];
+    });
+    for (let item in _commonChecks)
+        _commonChecks[item].systems = [];
+	for (let check of list) {
+        if (!check.hasOwnProperty("deployment"))
+            check.deployment = {"customer":{"id":-1, "abbreviation": "Zzuordnung nicht vorhanden"}};
+        else if (!check.deployment.hasOwnProperty("customer"))
+            check.deployment.customer = {"id":-1, "abbreviation": "Zzuordnung nicht vorhanden"}
+		else if (!check.deployment.hasOwnProperty("address"))
+			check.deployment.address = {"street":"Keine Adresse", "houseNumber":"", "zipCode":"", "city":""}
+
+		if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].smartCheck === "failed")
+			_commonChecks.ssdcarderror.systems.push(check);
+		if (!check.fitted)
+			_commonChecks.notfitted.systems.push(check);
+		if (check.hasOwnProperty("deployment") && check.deployment.testing)
+			_commonChecks.testsystem.systems.push(check);
+		if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("offlineSince")) {
+			_commonChecks.offline.systems.push(check);
+			if (!isOnDate(check.checkResults[0].offlineSince, THREE_MONTHS))
+				_commonChecks.offlineThreeMonth.systems.push(check);
+		}
+		if (!isOnDate(check.lastSync, 24))
+			_commonChecks.noActualData.systems.push(check);
+		if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState === "not running")
+			_commonChecks.blackscreen.systems.push(check);
+		//TODOif (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState === "NOT_RUNNING")
+			//_commonChecks.oldApplication.systems.push(check);
+	}
+	return list;
+}
+
 function checkSystem(systemID) {
     return $.ajax({
         url: "https://sysmon.homeinfo.de/check/" + systemID,
@@ -192,10 +233,10 @@ function setErrorMessage(msg, fromFunction) {
 	$('#pageloader').hide();
 }
 function compare(a, b) {
-	return (a < b) ? -1 : (a > b) ? 1 : 0;
+	return (a < b) ?-1 : (a > b) ?1 :0;
 }
 function compareInverted(a, b) {
-	return (a > b) ? -1 : (a < b) ? 1 : 0;
+	return (a > b) ?-1 : (a < b) ?1 :0;
 }
 function isOnDate(dateToCheck, periodInHours) {
     periodInHours = periodInHours * ONE_HOUR;
@@ -205,6 +246,6 @@ function formatDate(date) {
 	return date.substring(8, 10) + "." + date.substring(5, 7) + "." + date.substring(0, 4); // dd-mm-yyyy
 }
 function getURLParameterByName(name) {
-    var match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+    let match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
     return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
 }
