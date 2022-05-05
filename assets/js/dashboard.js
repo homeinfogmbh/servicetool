@@ -8,7 +8,6 @@ $(document).ready(function() {
 
 function setChecks(list) {
     list = setCheckList(list);
-    console.log(list);
     //Observer table
     let observerItems = [];
     for (let check of list) {
@@ -32,7 +31,7 @@ function setChecks(list) {
     // Widgets
     let errorsDOM = "";
     for (let item in _commonChecks) {
-        if (_commonChecks[item].systems.length !== 0) {
+        if (_commonChecks[item].systems.length !== 0 && _commonChecks[item].show) {
             errorsDOM += '<div class="col btn_list pointer" data-id="' + item + '">' +
                 '<div class="number_box">' +
                     '<span class="theNumber">' + _commonChecks[item].systems.length + '</span>' +

@@ -453,9 +453,8 @@ span.theNumber {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 64px;
   height: 64px;
-  border: 3px solid #ff821d;
+  border: 3px solid #009fe3;
   background: #fff;
   border-radius: 10px;
   font-size: 38px;
@@ -463,6 +462,7 @@ span.theNumber {
   color: #424242;
   flex-shrink: 0;
   margin-right: 12px;
+  padding:0 10px 0 10px;
   font-weight: bold;
 }
 

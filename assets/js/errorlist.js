@@ -1,7 +1,10 @@
 var _type;
-var _lastsort;
+var _customer;
+var _lastsort = null;
 $(document).ready(function() {
     _type = _commonChecks.hasOwnProperty(getURLParameterByName('type')) ?getURLParameterByName('type') :'system';
+    _customer = getURLParameterByName('customer');
+    $('#searchfield').val(getURLParameterByName('filter') !== null ? getURLParameterByName('filter') :"");
     getListOfSystemChecks().then((list)=>{setCheckList(list); setList()});
     //$(".dashTopLeft").html('<h2>Listenansicht</h2><p>Liste der Geräte deren Betriebssystem veraltet ist</p>');
     $(".dashTopLeft").html('<h2>' + _commonChecks[_type].title + '</h2><p>' + _commonChecks[_type].text + '</p>');
@@ -28,22 +31,24 @@ function setList(sort = "sortcustomer") {
     for (let check of _commonChecks[_type].systems) {
         addressComplete = check.deployment.hasOwnProperty("address") ?check.deployment.address.street + " " + check.deployment.address.houseNumber + " " + check.deployment.address.zipCode + " " + check.deployment.address.city :'Nicht angegeben';
         if ($('#searchfield').val().length === 0 || (check.id.toString().indexOf($('#searchfield').val().toLowerCase()) !== -1 || addressComplete.toLowerCase().indexOf($('#searchfield').val().toLowerCase()) !== -1 || check.deployment.customer.abbreviation.toLowerCase().indexOf($('#searchfield').val().toLowerCase()) !== -1 || (check.deployment.customer.hasOwnProperty("company") && check.deployment.customer.company.hasOwnProperty("name") ?check.deployment.customer.company.name :"").toLowerCase().indexOf($('#searchfield').val().toLowerCase()) !== -1 || check.deployment.customer.id.toString().indexOf($('#searchfield').val().toLowerCase()) !== -1)) {
-            address = check.deployment.hasOwnProperty("address") ?check.deployment.address.street + " " + check.deployment.address.houseNumber :'';
-            systemlistDOM += '<tr class="system" data-id="' + check.id + '">' +
-                '<td title="System-ID: ' + check.id  + '">' + (check.deployment.customer.abbreviation === "Zuordnung nicht vorhanden" ?'<i>' + check.deployment.customer.abbreviation + '</i>' :check.deployment.customer.abbreviation) + '</td>' +
-                '<td title="' + addressComplete + '" style="white-space: nowrap;">' + address +  '</td>' + //'<td title="' + address + '">' + address.substring(0, 12) + (address != '' ?'...' :'') +  '</td>' +
-                '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("offlineSince") ?'orangeCircle' :'blueCircle') + '"></span></td>' +
-                '<td><span class="' + (!check.fitted ?'orangeCircle' :'blueCircle') + '"></span></td>' +
-                '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].smartCheck === "failed" ?'orangeCircle' :'blueCircle') + '"></span></td>' +
-                '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].icmpRequest ?"blueCircle":"orangeCircle") + '"></span></td>' +
-                '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].sshLogin === "success" ?"blueCircle":"orangeCircle") + '"></span></td>' +
-                '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState === "not running" ?"orangeCircle":"blueCircle") + '"></span></td>' +
-                '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].baytrailFreeze === "vulnerable" ?"orangeCircle":"blueCircle") + '"></span></td>' +
-                '<td><span class="' + (isOnDate(check.lastSync, 24) ?"blueCircle":"orangeCircle") + '"></span></td>' +
-                '<td>' + (check.hasOwnProperty("lastSync") ?formatDate(check.lastSync) + " " + check.lastSync.substring(11, 16): "nie") + '</td>' +
-                '<td><a href="display-details.html?id=' + check.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>' +
-            '</tr>';
-            counter++;
+            if (_customer == null || _customer == check.deployment.customer.id) {
+                address = check.deployment.hasOwnProperty("address") ?check.deployment.address.street + " " + check.deployment.address.houseNumber :'';
+                systemlistDOM += '<tr class="system" data-id="' + check.id + '">' +
+                    '<td title="System-ID: ' + check.id  + '">' + (check.deployment.customer.abbreviation === "Zuordnung nicht vorhanden" ?'<i>' + check.deployment.customer.abbreviation + '</i>' :check.deployment.customer.abbreviation) + '</td>' +
+                    '<td title="' + addressComplete + '" style="white-space: nowrap;">' + address +  '</td>' + //'<td title="' + address + '">' + address.substring(0, 12) + (address != '' ?'...' :'') +  '</td>' +
+                    '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("offlineSince") ?'blueCircle' :'orangeCircle') + '"></span></td>' +
+                    '<td><span class="' + (!check.fitted ?'blueCircle' :'orangeCircle') + '"></span></td>' +
+                    '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].smartCheck === "failed" ?'blueCircle' :'orangeCircle') + '"></span></td>' +
+                    '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].icmpRequest ?"orangeCircle":"blueCircle") + '"></span></td>' +
+                    '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].sshLogin === "failed" ?"blueCircle":"orangeCircle") + '"></span></td>' +
+                    '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && (check.checkResults[0].applicationState === "conflict" || check.checkResults[0].applicationState === "not enabled" || check.checkResults[0].applicationState === "not running") ?"blueCircle":"orangeCircle") + '"></span></td>' +
+                    '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].baytrailFreeze === "vulnerable" ?"blueCircle":"orangeCircle") + '"></span></td>' +
+                    '<td><span class="' + (isOnDate(check.lastSync, 24) ?"orangeCircle":"blueCircle") + '"></span></td>' +
+                    '<td>' + (check.hasOwnProperty("lastSync") ?formatDate(check.lastSync) + " (" + check.lastSync.substring(11, 16) + "h)": "noch nie") + '</td>' +
+                    '<td><a href="display-details.html?id=' + check.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>' +
+                '</tr>';
+                counter++;
+            }
         }
     }
     systemlistDOM = systemlistDOM === "" ?"<tr><td>Keine Einträge vorhanden</td></tr>" :systemlistDOM;
@@ -53,7 +58,10 @@ function setList(sort = "sortcustomer") {
 }
 
 function sortCommonList(sort) {
-    _lastsort = _lastsort === sort && _lastsort.indexOf('inverted' === -1) ? _lastsort + "Inverted" :sort;
+    if (_lastsort === null && getURLParameterByName('sort') !== null)
+        _lastsort = getURLParameterByName('sort');
+    else
+        _lastsort = _lastsort === sort && _lastsort.indexOf('inverted' === -1) ? _lastsort + "Inverted" :sort;
     if (_lastsort === "sortcustomer") {
         _commonChecks[_type].systems.sort(function(a, b) {
             return compare(a.deployment.customer.abbreviation.toLowerCase(), b.deployment.customer.abbreviation.toLowerCase());
@@ -103,7 +111,6 @@ function sortCommonList(sort) {
             return a.checkResults[0].icmpRequest ?-1 : b.checkResults[0].icmpRequest? 1 :0
         });
     } else if (_lastsort == "sortssh") {
-        check.checkResults[0].sshLogin === "success" ?"blueCircle":
         _commonChecks[_type].systems.sort(function(a, b) {
             return a.checkResults[0].sshLogin === "success" ?-1 : b.checkResults[0].sshLogin === "success" ?1 :0
         });
@@ -144,4 +151,10 @@ function sortCommonList(sort) {
             return !a.hasOwnProperty("lastSync") ?-1 :!b.hasOwnProperty("lastSync") ?1 :compare(a.lastSync.toLowerCase(), b.lastSync.toLowerCase());            
         });
     }
+}
+
+// Called from menu
+function getParamsForEmail() {
+    return "sort=" + _lastsort + "%26filter=" + $('#searchfield').val();
+    
 }
