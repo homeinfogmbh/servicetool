@@ -21,6 +21,7 @@
 
 'use strict';
 
+
 export class Deployment {
     constructor (
         id, customer, type, connection, address, lptAddress, scheduled,
@@ -40,12 +41,6 @@ export class Deployment {
     }
 
     static fromJSON (json) {
-        const systems = [];
-
-        if (json.systems != null)
-            for (const system of json.systems)
-                systems.push(System.fromJSON(system));
-
         return new this(
             json.id,
             Customer.fromJSON(json.customer),
@@ -57,7 +52,7 @@ export class Deployment {
             json.annotation,
             json.testing,
             (json.timestamp == null) ? null : new Date(json.timestamp),
-            systems
+            json.systems || []
         );
     }
 
