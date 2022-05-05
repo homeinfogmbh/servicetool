@@ -22,6 +22,9 @@
 'use strict';
 
 
+import { Deployment } from './deployment.mjs';
+
+
 export class System {
     constructor (
         id, group, deployment, dataset, openvpn, ipv6address, pubkey,
