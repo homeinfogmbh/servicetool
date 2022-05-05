@@ -27,7 +27,7 @@ export class System {
         id, group, deployment, dataset, openvpn, ipv6address, pubkey,
         created, configured, fitted, operatingSystem, monitor, serialNumber,
         model, lastSync
-     ) {
+    ) {
         this.id = id;
         this.group = group;
         this.deployment = deployment;
@@ -43,5 +43,25 @@ export class System {
         this.serialNumber = serialNumber;
         this.model = model;
         this.lastSync = lastSync;
+     }
+
+    static fromJSON (json) {
+        return new this(
+            json.id,
+            json.group,
+            (json.deployment == null) ? null : Deployment.fromJSON(json.deployment),
+            (json.dataset == null) ? null : Deployment.fromJSON(json.dataset),
+            json.openvpn,
+            json.ipv6address,
+            json.pubkey,
+            json.created,
+            json.configured,
+            json.fitted,
+            json.operatingSystem,
+            json.monitor,
+            json.serialNumber,
+            json.model,
+            json.lastSync
+        );
      }
 }
