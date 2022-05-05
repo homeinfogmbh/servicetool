@@ -21,8 +21,7 @@
 
 'use strict';
 
-
-import { toHTMLList } from '../common.mjs';
+import { toHTMLList, handleError } from '../common.mjs';
 import { regenerateAutocompleteList } from './autocomplete.mjs';
 import {
     ID_TO_MODEL, MODEL_TO_ID, ID_TO_CONNECTION, CONNECTION_TO_ID, URL_PARAMS

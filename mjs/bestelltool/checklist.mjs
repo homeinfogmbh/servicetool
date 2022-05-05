@@ -22,7 +22,7 @@
 'use strict';
 
 
-import { DelayedJobs } from '../common.mjs';
+import { DelayedJobs, handleError } from '../common.mjs';
 import { URL_PARAMS } from './constants.mjs';
 import { renderHistory } from './history.mjs';
 
