@@ -21,11 +21,10 @@
 
 'use strict';
 
-
 export class Deployment {
     constructor (
         id, customer, type, connection, address, lptAddress, scheduled,
-        annotation, testing, timestamp
+        annotation, testing, timestamp, systems = []
     ) {
         this.id = id;
         this.customer = customer;
@@ -37,5 +36,48 @@ export class Deployment {
         this.annotation = annotation;
         this.testing = testing;
         this.timestamp = timestamp;
+        this.systems = systems;
+    }
+
+    get addressAndHouseNumber () {
+        return this.address.street + ' ' + this.address.houseNumber;
+    }
+
+    get zipCodeAndCity () {
+        return this.address.zipCode + ' ' + this.address.city;
+    }
+
+    toHTML () {
+        const tr = document.createElement('tr');
+        const col1 = document.createElement('td');
+        tr.appendChild(col1);
+        const input = document.createElement('input');
+        input.setAttribute('id', 'deployment-' + this.id);
+        input.setAttribute('type', 'radio');
+        input.setAttribute('name', 'deploymentSelect');
+        input.setAttribute('data-id', this.id);
+        input.style.display = 'none';
+        col1.appendChild(input);
+        const label = document.createElement('label');
+        label.setAttribute('for', 'deployment-' + this.id);
+        col1.appendChild(label);
+        const span = document.createElement('span');
+        span.classList.add('radioCircle');
+        span.classList.add('blueCircle');
+        label.appendChild(span);
+        const col2 = document.createElement('td');
+        col2.textContent = this.addressAndHouseNumber;
+        tr.appendChild(col2);
+        const col3 = document.createElement('td');
+        col3.textContent = this.zipCodeAndCity;
+        tr.appendChild(col3);
+        const col4 = document.createElement('td');
+        col4.textContent = this.customer.abbreviation;
+        tr.appendChild(col4);
+        const col5 = document.createElement('td');
+        col5.classList.add('text-center');
+        col5.textContent = this.systems.length;
+        tr.appendChild(col5);
+        return tr;
     }
 }
