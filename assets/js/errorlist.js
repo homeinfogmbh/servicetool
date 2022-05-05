@@ -1,80 +1,147 @@
-var _list = null;
 var _type;
-var _typeDefinitions = {'ssdcarderror':{'title':'SSD Karten Fehler', 'text':'Liste der Geräte die einen SSD-Karten-Fehler vorweisen'},
-    'notfitted':{'title':'Nicht verbaute Systeme', 'text':'Liste der Geräte die nicht verbaut sind'},
-    'testsystem':{'title':'Testgeräte', 'text':'Liste der Testgeräte'},
-    'offline':{'title':'Offline', 'text':'Liste der Geräte die offline sein'},
-    'noActualData':{'title':'Keine aktuellen Daten', 'text':'Liste der Geräte die keine aktuellen Daten besitzen'},
-    'blackscreen':{'title':'Im Schwarz-Bildmodus', 'text':'Liste der Geräte die schwarz geschaltet sind'},
-    'oldApplication':{'title':'Alte Applicationen', 'text':'Liste der Geräte auf denen eine alte Version der Applikation läuft'},
-    'system':{'title':'Systeme', 'text':'Liste aller Systeme'},
-};
+var _lastsort;
 $(document).ready(function() {
-    _type = _typeDefinitions.hasOwnProperty(getURLParameterByName('type')) ?getURLParameterByName('type') :'system';
-    getListOfSystemChecks().then(setList);
+    _type = _commonChecks.hasOwnProperty(getURLParameterByName('type')) ?getURLParameterByName('type') :'system';
+    getListOfSystemChecks().then((list)=>{setCheckList(list); setList()});
     //$(".dashTopLeft").html('<h2>Listenansicht</h2><p>Liste der Geräte deren Betriebssystem veraltet ist</p>');
-    $(".dashTopLeft").html('<h2>' + _typeDefinitions[_type].title + '</h2><p>' + _typeDefinitions[_type].text + '</p>');
+    $(".dashTopLeft").html('<h2>' + _commonChecks[_type].title + '</h2><p>' + _commonChecks[_type].text + '</p>');
 	$('#searchfield').on('input',function(e) {
 		setList();
-	});	
+	});
+    $(document).keypress(function(e) {
+        if(e.which == 13) { // 'enter'
+            e.preventDefault();
+        }
+    });
+    $('.sortCustomer').click(function(e) {
+        setList($(this).data("id"));
+		e.preventDefault();
+	});  
 });
 
-function setList(list = null) {
-    if (list !== null) {
-        _list = $.map(list, function(value, index){
-            return [value];
-        });
-        for (let check of _list) {
-            if (!check.hasOwnProperty("deployment"))
-                check.deployment = {"customer":{"id":-1, "company": {"abbreviation": "Zzuordnung nicht vorhanden"}}};
-        }
-        _list.sort(function(a, b) {
-            return compare(a.deployment.customer.company.abbreviation.toLowerCase(), b.deployment.customer.company.abbreviation.toLowerCase());
-        });
-        console.log(_list);
-    }
+function setList(sort = "sortcustomer") {
+    sortCommonList(sort);
+    let systemlistDOM = "";
+    let address;
+    let addressComplete;
     let counter = 0;
-    //if ($(".system").length > 0) {
-    if (false) { 
-        $('.system').hide();
-        for (let check of _list) {
-            if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("offlineSince")) {
-                if ($('#searchfield').val().length === 0 || (check.id.toString().indexOf($('#searchfield').val().toLowerCase()) !== -1 || (check.deployment.hasOwnProperty('address') ?check.deployment.address.street + ' ' + check.deployment.address.houseNumber + ' ' + check.deployment.address.zipCode + ' ' + check.deployment.address.city :'Nicht angegeben').toLowerCase().indexOf($('#searchfield').val().toLowerCase()) !== -1 || check.deployment.customer.company.abbreviation.toLowerCase().indexOf($('#searchfield').val().toLowerCase()) !== -1 || (check.deployment.customer.company.hasOwnProperty("name") ?check.deployment.customer.company.name :"").toLowerCase().indexOf($('#searchfield').val().toLowerCase()) !== -1 || check.deployment.customer.id.toString().indexOf($('#searchfield').val().toLowerCase()) !== -1)) {
-                    $('.system[data-id="' + check.id + '"]').show();
-                    counter++;
-                }
-            }
+    for (let check of _commonChecks[_type].systems) {
+        addressComplete = check.deployment.hasOwnProperty("address") ?check.deployment.address.street + " " + check.deployment.address.houseNumber + " " + check.deployment.address.zipCode + " " + check.deployment.address.city :'Nicht angegeben';
+        if ($('#searchfield').val().length === 0 || (check.id.toString().indexOf($('#searchfield').val().toLowerCase()) !== -1 || addressComplete.toLowerCase().indexOf($('#searchfield').val().toLowerCase()) !== -1 || check.deployment.customer.abbreviation.toLowerCase().indexOf($('#searchfield').val().toLowerCase()) !== -1 || (check.deployment.customer.hasOwnProperty("company") && check.deployment.customer.company.hasOwnProperty("name") ?check.deployment.customer.company.name :"").toLowerCase().indexOf($('#searchfield').val().toLowerCase()) !== -1 || check.deployment.customer.id.toString().indexOf($('#searchfield').val().toLowerCase()) !== -1)) {
+            address = check.deployment.hasOwnProperty("address") ?check.deployment.address.street + " " + check.deployment.address.houseNumber :'';
+            systemlistDOM += '<tr class="system" data-id="' + check.id + '">' +
+                '<td title="System-ID: ' + check.id  + '">' + (check.deployment.customer.abbreviation === "Zuordnung nicht vorhanden" ?'<i>' + check.deployment.customer.abbreviation + '</i>' :check.deployment.customer.abbreviation) + '</td>' +
+                '<td title="' + addressComplete + '" style="white-space: nowrap;">' + address +  '</td>' + //'<td title="' + address + '">' + address.substring(0, 12) + (address != '' ?'...' :'') +  '</td>' +
+                '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("offlineSince") ?'orangeCircle' :'blueCircle') + '"></span></td>' +
+                '<td><span class="' + (!check.fitted ?'orangeCircle' :'blueCircle') + '"></span></td>' +
+                '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].smartCheck === "failed" ?'orangeCircle' :'blueCircle') + '"></span></td>' +
+                '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].icmpRequest ?"blueCircle":"orangeCircle") + '"></span></td>' +
+                '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].sshLogin === "success" ?"blueCircle":"orangeCircle") + '"></span></td>' +
+                '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState === "not running" ?"orangeCircle":"blueCircle") + '"></span></td>' +
+                '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].baytrailFreeze === "vulnerable" ?"orangeCircle":"blueCircle") + '"></span></td>' +
+                '<td><span class="' + (isOnDate(check.lastSync, 24) ?"blueCircle":"orangeCircle") + '"></span></td>' +
+                '<td>' + (check.hasOwnProperty("lastSync") ?formatDate(check.lastSync) + " " + check.lastSync.substring(11, 16): "nie") + '</td>' +
+                '<td><a href="display-details.html?id=' + check.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>' +
+            '</tr>';
+            counter++;
         }
-    } else {
-        let systemlistDOM = "";
-        let address;
-        let adressComplete;
-        for (let check of _list) {
-            if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("offlineSince")) {
-                if ($('#searchfield').val().length === 0 || (check.id.toString().indexOf($('#searchfield').val().toLowerCase()) !== -1 || (check.deployment.hasOwnProperty('address') ?check.deployment.address.street + ' ' + check.deployment.address.houseNumber + ' ' + check.deployment.address.zipCode + ' ' + check.deployment.address.city :'Nicht angegeben').toLowerCase().indexOf($('#searchfield').val().toLowerCase()) !== -1 || check.deployment.customer.company.abbreviation.toLowerCase().indexOf($('#searchfield').val().toLowerCase()) !== -1 || (check.deployment.customer.company.hasOwnProperty("name") ?check.deployment.customer.company.name :"").toLowerCase().indexOf($('#searchfield').val().toLowerCase()) !== -1 || check.deployment.customer.id.toString().indexOf($('#searchfield').val().toLowerCase()) !== -1)) {
-                    adressComplete = check.deployment.hasOwnProperty("address") ?check.deployment.address.street + " " + check.deployment.address.houseNumber + " " + check.deployment.address.zipCode + " " + check.deployment.address.city :'';
-                    address = check.deployment.hasOwnProperty("address") ?check.deployment.address.street + " " + check.deployment.address.houseNumber :'';
-                    systemlistDOM += '<tr class="system" data-id="' + check.id + '">' +
-                        '<td title="System-ID: ' + check.id  + '">' + (check.deployment.customer.company.abbreviation === "Zuordnung nicht vorhanden" ?'<i>' + check.deployment.customer.company.abbreviation + '</i>' :check.deployment.customer.company.abbreviation) + '</td>' +
-                        '<td title="' + adressComplete + '">' + address +  '</td>' + //'<td title="' + address + '">' + address.substring(0, 12) + (address != '' ?'...' :'') +  '</td>' +
-                        '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("offlineSince") ?'orangeCircle' :'blueCircle') + '"></span></td>' +
-                        '<td><span class="blueCircle"></span></td>' +
-                        '<td><span class="blueCircle"></span></td>' +
-                        '<td><span class="blueCircle"></span></td>' +
-                        '<td><span class="blueCircle"></span></td>' +
-                        '<td><span class="blueCircle"></span></td>' +
-                        '<td><span class="blueCircle"></span></td>' +
-                        '<td><span class="blueCircle"></span></td>' +
-                        '<td>' + (check.hasOwnProperty("lastSync") ?formatDate(check.lastSync) + " " + check.lastSync.substring(11, 16): "nie") + '</td>' +
-                        '<td><a href="display-details.html?id=' + check.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>' +
-                    '</tr>';
-                    counter++;
-                }
-            }
-        }
-        systemlistDOM = systemlistDOM === "" ?"<tr><td>Keine Einträge vorhanden</td></tr>" :systemlistDOM;
-        $("#systemlist").html(systemlistDOM);
     }
-    $(".dashTopLeft").html('<h2>' + _typeDefinitions[_type].title + ' (' + counter + ')</h2><p>' + _typeDefinitions[_type].text + '</p>');
+    systemlistDOM = systemlistDOM === "" ?"<tr><td>Keine Einträge vorhanden</td></tr>" :systemlistDOM;
+    $("#systemlist").html(systemlistDOM);
+    $(".dashTopLeft").html('<h2>' + _commonChecks[_type].title + ' (' + counter + ')</h2><p>' + _commonChecks[_type].text + '</p>');
     $("#pageloader").hide();
+}
+
+function sortCommonList(sort) {
+    _lastsort = _lastsort === sort && _lastsort.indexOf('inverted' === -1) ? _lastsort + "Inverted" :sort;
+    if (_lastsort === "sortcustomer") {
+        _commonChecks[_type].systems.sort(function(a, b) {
+            return compare(a.deployment.customer.abbreviation.toLowerCase(), b.deployment.customer.abbreviation.toLowerCase());
+        });
+    } if (_lastsort === "sortcustomerInverted") {
+        _commonChecks[_type].systems.sort(function(a, b) {
+            return compareInverted(a.deployment.customer.abbreviation.toLowerCase(), b.deployment.customer.abbreviation.toLowerCase());
+        });
+    } else if (_lastsort == "sortaddress") {
+        _commonChecks[_type].systems.sort(function(a, b) {
+            return compare(a.deployment.address.street.toLowerCase(), b.deployment.address.street.toLowerCase());
+        });
+    } else if (_lastsort == "sortaddressInverted") {
+        _commonChecks[_type].systems.sort(function(a, b) {
+            return compareInverted(a.deployment.address.street.toLowerCase(), b.deployment.address.street.toLowerCase());
+        });
+    } else if (_lastsort == "sortonline") {
+        _commonChecks[_type].systems.sort(function(a, b) {
+            return a.checkResults[0].hasOwnProperty("offlineSince") ?-1 : b.checkResults[0].hasOwnProperty("offlineSince")? 1 :0
+        });
+    } else if (_lastsort == "sortonlineInverted") {
+        _commonChecks[_type].systems.sort(function(a, b) {
+            return b.checkResults[0].hasOwnProperty("offlineSince") ?-1 : a.checkResults[0].hasOwnProperty("offlineSince")? 1 :0
+        });
+    } else if (_lastsort == "sortfitted") {
+        _commonChecks[_type].systems.sort(function(a, b) {
+            return b.fitted ?-1 : a.fitted? 1 :0
+        });
+    } else if (_lastsort == "sortfittedInverted") {
+        _commonChecks[_type].systems.sort(function(a, b) {
+            return a.fitted ?-1 : b.fitted? 1 :0
+        });
+    } else if (_lastsort == "sortssd") {
+        _commonChecks[_type].systems.sort(function(a, b) {
+            return a.checkResults[0].smartCheck === "failed" ?-1 : b.checkResults[0].smartCheck === "failed"? 1 :0
+        });
+    } else if (_lastsort == "sortssdInverted") {
+        _commonChecks[_type].systems.sort(function(a, b) {
+            return b.checkResults[0].smartCheck === "failed" ?-1 : a.checkResults[0].smartCheck === "failed"? 1 :0
+        });
+    } else if (_lastsort == "sorticmp") {
+        _commonChecks[_type].systems.sort(function(a, b) {
+            return b.checkResults[0].icmpRequest ?-1 : a.checkResults[0].icmpRequest? 1 :0
+        });
+    } else if (_lastsort == "sorticmpInverted") {
+        _commonChecks[_type].systems.sort(function(a, b) {
+            return a.checkResults[0].icmpRequest ?-1 : b.checkResults[0].icmpRequest? 1 :0
+        });
+    } else if (_lastsort == "sortssh") {
+        check.checkResults[0].sshLogin === "success" ?"blueCircle":
+        _commonChecks[_type].systems.sort(function(a, b) {
+            return a.checkResults[0].sshLogin === "success" ?-1 : b.checkResults[0].sshLogin === "success" ?1 :0
+        });
+    } else if (_lastsort == "sortsshInverted") {
+        _commonChecks[_type].systems.sort(function(a, b) {
+            return b.checkResults[0].sshLogin === "success" ?-1 : a.checkResults[0].sshLogin === "success" ?1 :0
+        });
+    } else if (_lastsort == "sortapprunning") {
+        _commonChecks[_type].systems.sort(function(a, b) {
+            return a.checkResults[0].applicationState === "not running" ?-1 :b.checkResults[0].applicationState === "not running" ?1 :0
+        });
+    } else if (_lastsort == "sortapprunningInverted") {
+        _commonChecks[_type].systems.sort(function(a, b) {
+            return b.checkResults[0].applicationState === "not running" ?-1 :a.checkResults[0].applicationState === "not running" ?1 :0
+        });
+    } else if (_lastsort == "sortbaytrail") {
+        _commonChecks[_type].systems.sort(function(a, b) {
+            return a.checkResults[0].baytrailFreeze === "vulnerable" ?-1 :b.checkResults[0].baytrailFreeze === "vulnerable" ?1 :0
+        });
+    } else if (_lastsort == "sortbaytrailInverted") {
+        _commonChecks[_type].systems.sort(function(a, b) {
+            return b.checkResults[0].baytrailFreeze === "vulnerable" ?-1 :a.checkResults[0].baytrailFreeze === "vulnerable" ?1 :0
+        });
+    } else if (_lastsort == "sortappuptodate") {
+        _commonChecks[_type].systems.sort(function(a, b) {
+            return isOnDate(b.lastSync, 24) ?-1 :isOnDate(a.lastSync, 24) ?1 :0
+        });
+    } else if (_lastsort == "sortappuptodateInverted") {
+        _commonChecks[_type].systems.sort(function(a, b) {
+            return isOnDate(a.lastSync, 24) ?-1 :isOnDate(b.lastSync, 24) ?1 :0
+        });
+    } else if (_lastsort == "sortsync") {
+        _commonChecks[_type].systems.sort(function(a, b) {
+            return !b.hasOwnProperty("lastSync") ?-1 :!a.hasOwnProperty("lastSync") ?1 :compareInverted(a.lastSync.toLowerCase(), b.lastSync.toLowerCase());            
+        });
+    } else if (_lastsort == "sortsyncInverted") {
+        _commonChecks[_type].systems.sort(function(a, b) {
+            return !a.hasOwnProperty("lastSync") ?-1 :!b.hasOwnProperty("lastSync") ?1 :compare(a.lastSync.toLowerCase(), b.lastSync.toLowerCase());            
+        });
+    }
 }
