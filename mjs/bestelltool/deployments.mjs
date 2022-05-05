@@ -23,6 +23,7 @@
 
 
 import { isSubstrNocasematchOrNull, handleError } from '../common.mjs';
+import { getSelectedCustomerId } from './customer-list.mjs';
 
 
 let DEPLOYMENTS = [];

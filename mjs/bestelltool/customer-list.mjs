@@ -52,3 +52,17 @@ export class CustomerListEntry {
         return option;
     }
 }
+
+
+/*
+    Return the ID of the selected customer.
+    If no customer has been selected, return null.
+*/
+export function getSelectedCustomerId () {
+    const selectedCustomerId = $('#Kundenauswählen').val();
+
+    if (!selectedCustomerId)
+        return null;
+
+    return parseInt(selectedCustomerId);
+}

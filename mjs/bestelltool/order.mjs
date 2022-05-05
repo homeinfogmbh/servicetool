@@ -26,7 +26,7 @@ import { regenerateAutocompleteList } from './autocomplete.mjs';
 import {
     ID_TO_MODEL, MODEL_TO_ID, ID_TO_CONNECTION, CONNECTION_TO_ID, URL_PARAMS
 } from './constants.mjs';
-import { CustomerListEntry } from './customer-list.mjs';
+import { CustomerListEntry, getSelectedCustomerId } from './customer-list.mjs';
 import { getDeployments } from './deployments.mjs';
 
 
@@ -153,20 +153,6 @@ function renderCustomers (customers) {
 
     for (const customerListEntry of customerListEntries)
         $('#Kundenauswählen').append(customerListEntry.toHTML());
-}
-
-
-/*
-    Return the ID of the selected customer.
-    If no customer has been selected, return null.
-*/
-function getSelectedCustomerId () {
-    const selectedCustomerId = $('#Kundenauswählen').val();
-
-    if (!selectedCustomerId)
-        return null;
-
-    return parseInt(selectedCustomerId);
 }
 
 
