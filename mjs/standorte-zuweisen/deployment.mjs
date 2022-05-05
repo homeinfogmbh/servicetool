@@ -1,5 +1,5 @@
 /*
-  standorte-zuweisen.js - JavaScript module for system deployment.
+  deployments.mjs - Deployments library.
 
   (C) 2022 HOMEINFO - Digitale Informationssysteme GmbH
 
@@ -22,11 +22,7 @@
 'use strict';
 
 
-const DEPLOYMENTS_PAGE_SIZE = 15;
-const SYSTEMS_PAGE_SIZE = 10;
-
-
-class Deployment {
+export class Deployment {
     constructor (
         id, customer, type, connection, address, lptAddress, scheduled,
         annotation, testing, timestamp
@@ -43,48 +39,3 @@ class Deployment {
         this.timestamp = timestamp;
     }
 }
-
-
-class Pager {
-    constructor (iterable, pageSize) {
-        this.items = Array.from(iterable);
-        this.pageSize = pageSize;
-    }
-
-    get lastPageFull () {
-        return this.items.length % this.pageSize == 0;
-    }
-
-    get pages () {
-        return parseInt(this.items.length / this.pageSize) + (
-            this.lastPageFull ? 0 : 1
-        );
-    }
-
-    page (pageNumber) {
-        if (pageNumber < 0)
-            throw 'Invalid page number.';
-
-        return this.items.slice(
-            pageNumber * this.pageSize,
-            (pageNumber + 1) * this.pageSize
-        );
-    }
-}
-
-
-/*
-    Retrieve all available deployments.
-*/
-function getDeployments () {
-    return $.ajax({
-        url: 'https://termgr.homeinfo.de/list/deployments',
-        dataType: 'json',
-        error: handleError,
-        xhrFields: {
-            withCredentials: true
-        }
-    });
-}
-
-
