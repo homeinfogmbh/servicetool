@@ -21,8 +21,8 @@
 
 'use strict';
 
-import { getCurrentOrderId, render as renderNewOrder } from './checklist.mjs';
-import { render as renderPatchOrder } from './order.mjs';
+import { getCurrentOrderId, render as renderChecklist } from './checklist.mjs';
+import { render as renderNewOrder } from './order.mjs';
 
 
 /*
@@ -34,5 +34,5 @@ export function init () {
     if (id == null)
         return renderNewOrder();
 
-    return renderPatchOrder(id);
+    return renderChecklist(id);
 }
