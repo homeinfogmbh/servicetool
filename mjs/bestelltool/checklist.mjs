@@ -79,6 +79,21 @@ function getOrder (id) {
 
 
 /*
+    Return a URL for the given order.
+    Optionally specify a trailing endpoint.
+*/
+function getOrderURL (id, endpoint = null) {
+    if (id == null)
+        throw 'No order selected.';
+
+    if (endpoint == null)
+        return 'https://ddborder.homeinfo.de/order/' + id;
+
+    return getOrderURL(id) + '/' + endpoint;
+}
+
+
+/*
     Render checklist.
 */
 function renderChecklist (order) {
