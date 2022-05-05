@@ -57,14 +57,14 @@ export class System {
             json.openvpn,
             json.ipv6address,
             json.pubkey,
-            json.created,
-            json.configured,
+            (json.created == null) ? null : new Date(json.created),
+            (json.configured == null) ? null : new Date(json.configured),
             json.fitted,
             json.operatingSystem,
             json.monitor,
             json.serialNumber,
             json.model,
-            json.lastSync
+            (json.lastSync == null) ? null : new Date(json.lastSync)
         );
      }
 }
