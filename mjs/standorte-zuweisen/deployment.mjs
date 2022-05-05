@@ -24,7 +24,7 @@
 export class Deployment {
     constructor (
         id, customer, type, connection, address, lptAddress, scheduled,
-        annotation, testing, timestamp, systems = []
+        annotation, testing, timestamp, systems = null
     ) {
         this.id = id;
         this.customer = customer;
@@ -36,7 +36,29 @@ export class Deployment {
         this.annotation = annotation;
         this.testing = testing;
         this.timestamp = timestamp;
-        this.systems = systems;
+        this.systems = systems || [];
+    }
+
+    static fromJSON (json) {
+        const systems = [];
+
+        if (json.systems != null)
+            for (const system of json.systems)
+                systems.push(System.fromJSON(system));
+
+        return new this(
+            json.id,
+            Customer.fromJSON(json.customer),
+            json.type,
+            json.connection,
+            Address.fromJSON(json.address),
+            (json.lptAddress == null) ? null : Address.fromJSON(json.lptAddress),
+            (json.scheduled == null) ? null : new Date(json.scheduled),
+            json.annotation,
+            json.testing,
+            (json.timestamp == null) ? null : new Date(json.timestamp),
+            systems
+        );
     }
 
     get addressAndHouseNumber () {
