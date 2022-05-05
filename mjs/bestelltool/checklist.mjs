@@ -54,16 +54,6 @@ export function getCurrentOrderId () {
 
 
 /*
-    Disable the checklist and history columns for new orders.
-*/
-export function disable () {
-    $('.checklist').prop('disabled', true);
-    $('#checklist').find('*').css({opacity: 0.7});
-    $('#history-col').find('*').css({opacity: 0.7});
-}
-
-
-/*
     Query an order by its ID.
 */
 function getOrder (id) {

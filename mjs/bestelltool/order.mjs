@@ -214,3 +214,13 @@ function initButtons () {
     $('#street').click(regenerateAutocompleteList);
     $('#submit').click(onSubmit);
 }
+
+
+/*
+    Disable the checklist and history columns for new orders.
+*/
+export function disableChecklist () {
+    $('.checklist').prop('disabled', true);
+    $('#checklist').find('*').css({opacity: 0.7});
+    $('#history-col').find('*').css({opacity: 0.7});
+}
