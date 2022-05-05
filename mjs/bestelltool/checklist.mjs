@@ -211,3 +211,13 @@ function initButtons () {
     $('#Abgeschlossen').click(setChecklistItem('finalize'));
     $('#Bemerkung').keyup(delaySubmitAnnotation);
 }
+
+
+/*
+    Disable the basis data column for existing orders view.
+*/
+export function disableBasisData () {
+    $('.basic-data').prop('disabled', true);
+    $('#submit').hide();
+    $('#basic-data').find('*').css({opacity: 0.7});
+}

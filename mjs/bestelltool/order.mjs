@@ -32,16 +32,6 @@ import { getDeployments } from './deployments.mjs';
 
 
 /*
-    Disable the basis data column for existing orders view.
-*/
-export function disableBasisData () {
-    $('.basic-data').prop('disabled', true);
-    $('#submit').hide();
-    $('#basic-data').find('*').css({opacity: 0.7});
-}
-
-
-/*
     Render page for a new order.
 */
 export function render () {
