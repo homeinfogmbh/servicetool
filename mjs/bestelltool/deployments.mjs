@@ -25,6 +25,9 @@
 import { isSubstrNocasematchOrNull } from '../common.mjs';
 
 
+let DEPLOYMENTS = [];
+
+
 /*
     Query a list of deployments from the backend.
 */
@@ -36,6 +39,9 @@ export function getDeployments () {
         xhrFields: {
             withCredentials: true
         }
+    }).then(deployments => {
+        DEPLOYMENTS = deployments;
+        return deployments;
     });
 }
 
@@ -43,8 +49,8 @@ export function getDeployments () {
 /*
     Yield deployments that match the filtering criteria.
 */
-export function * filterDeployments (deployments) {
-    for (const deployment of deployments) {
+export function * filterDeployments () {
+    for (const deployment of DEPLOYMENTS) {
         if (matchDeployment(
             deployment, getSelectedCustomerId(), $('#street').val(),
             $('#houseNumber').val(), $('#zipCode').val(), $('#city').val()

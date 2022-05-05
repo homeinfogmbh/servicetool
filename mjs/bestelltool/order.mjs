@@ -23,13 +23,13 @@
 
 
 import { toHTMLList } from '../common.mjs';
+import { regenerateAutocompleteList } from './autocomplete.mjs';
 import {
     ID_TO_MODEL, MODEL_TO_ID, ID_TO_CONNECTION, CONNECTION_TO_ID, URL_PARAMS
 } from './constants.mjs';
+import { CustomerListEntry } from './customer-list.mjs';
 import { disableChecklist } from './checklist.mjs';
-
-
-let DEPLOYMENTS = [];
+import { getDeployments } from './deployments.mjs';
 
 
 /*
@@ -47,7 +47,7 @@ export function disableBasisData () {
 */
 export function render () {
     disableChecklist();
-    getDeployments().then(deployments => { DEPLOYMENTS = deployments; });
+    getDeployments();
     initButtons();
     getCustomers();
 }

@@ -22,6 +22,9 @@
 'use strict';
 
 
+import { filterDeployments } from './deployments.mjs';
+
+
 /*
     Re-generate the completion list.
 */
