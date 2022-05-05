@@ -24,6 +24,7 @@
 
 import { DelayedJobs, handleError } from '../common.mjs';
 import { URL_PARAMS } from './constants.mjs';
+import { CustomerListEntry } from './customer-list.mjs';
 import { renderHistory } from './history.mjs';
 
 
