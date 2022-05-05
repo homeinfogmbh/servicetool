@@ -41,7 +41,7 @@
 						</div>
 						<div class="dashTopLeft">
 							<h2><span id="displaytitle"></span></h2>
-							<p>Kundenname in voller Länge ausgeschreiben</p>
+							<p id="completecustomername"></p>
 						</div>
 						<div class="dashTopRight">
 							<div class="search_dash">
@@ -139,7 +139,7 @@
 													<td id="ssd">-</td>
 												</tr>
 												<tr>
-													<td>Letzte Aktualisierung</td>
+													<td>Inhalte übertragen am</td>
 													<td id="sync">-</td>
 												</tr>
 												<tr>
@@ -241,7 +241,7 @@
 												</tr>
 												<tr>
 													<td>Screenshot</td>
-													<td><span class="whiteMark">anzeigen</span></td>
+													<td><span class="whiteMark btn_screenshot pointer">anzeigen</span></td>
 												</tr>
 												<tr>
 													<td>Ping</td>
@@ -261,37 +261,7 @@
 										<p>Ergebnisse der durchgeführten Prüfungen über einen Monat</p>
 										<div class="square_lineBox">
 											<p>Status: Online/Offline</p>
-											<ul class="squareLine">
-												<li class="orangeSq"></li>
-												<li class="orangeSq"></li>
-												<li class="orangeSq"></li>
-												<li class="orangeSq"></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class="orangeSq"></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class="orangeSq"></li>
-												<li class=""></li>
+											<ul class="squareLine" id="thirtyoffline">
 											</ul>
 											<div class="squ_line_text fz12">
 												<span>heute</span>
@@ -299,38 +269,8 @@
 											</div>
 										</div>
 										<div class="square_lineBox">
-											<p>Synchronisation (Inhalte)</p>
-											<ul class="squareLine">
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class="orangeSq"></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
+											<p>Inhalte übertragen</p>
+											<ul class="squareLine" id="thirtysync">
 											</ul>
 											<div class="squ_line_text fz12">
 												<span>heute</span>
@@ -339,37 +279,7 @@
 										</div>
 										<div class="square_lineBox">
 											<p>ICMP Antwort</p>
-											<ul class="squareLine">
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class="orangeSq"></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class="orangeSq"></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
+											<ul class="squareLine" id="thirtyicmp">
 											</ul>
 											<div class="squ_line_text fz12">
 												<span>heute</span>
@@ -378,37 +288,7 @@
 										</div>
 										<div class="square_lineBox">
 											<p>SSH Antwort</p>
-											<ul class="squareLine">
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class="orangeSq"></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
+											<ul class="squareLine" id="thirtyssh">
 											</ul>
 											<div class="squ_line_text fz12">
 												<span>heute</span>
@@ -417,37 +297,7 @@
 										</div>
 										<div class="square_lineBox">
 											<p>HTTP Antwort</p>
-											<ul class="squareLine">
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class="orangeSq"></li>
-												<li class="orangeSq"></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class="orangeSq"></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
-												<li class=""></li>
+											<ul class="squareLine" id="thirtyhttp">
 											</ul>
 											<div class="squ_line_text fz12">
 												<span>heute</span>

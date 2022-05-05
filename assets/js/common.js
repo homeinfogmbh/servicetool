@@ -1,14 +1,14 @@
 const ONE_HOUR = 60 * 60 * 1000; // Milliseconds;
 const THREE_MONTHS = 3 * 30 * 24; // Hours
-var _commonChecks = {"ssdcarderror":{"title":"SSD Karten Fehler", "text":"Liste der Geräte die einen SSD-Karten-Fehler vorweisen", "systems":[]},
- 	"notfitted":{"title":"Nicht verbaute Systeme", "text":"Liste der Geräte die nicht verbaut sind", "systems":[]},
-	"testsystem":{"title":"Testgeräte", "text":"Liste der Testgeräte", "systems":[]},
-	"offline":{"title":"Offline", "text":"Liste der Geräte die offline sein", "systems":[]},
-	"offlineThreeMonth":{"title":"Offline mehr als 3 Monate", "systems":[]},
-	"noActualData":{"title":"Keine aktuellen Daten", "text":"Liste der Geräte die keine aktuellen Daten besitzen", "systems":[]},
-	"blackscreen":{"title":"Im Schwarzbild-Modus", "text":"Liste der Geräte die schwarz geschaltet sind", "systems":[]},
-	"oldApplication":{"title":"Alte Applicationen", "text":"Liste der Geräte auf denen eine alte Version der Applikation läuft", "systems":[]},
-	"system":{"title":"Systeme", "text":"Liste aller Systeme", "systems":[]}
+var _commonChecks = {"ssdcarderror":{"title":"SSD Karten Fehler", "text":"Liste der Geräte die einen SSD-Karten-Fehler vorweisen", "systems":[], "show":true},
+ 	"notfitted":{"title":"Nicht verbaute Systeme", "text":"Liste der Geräte die nicht verbaut sind", "systems":[], "show":true},
+	"testsystem":{"title":"Testgeräte", "text":"Liste der Testgeräte", "systems":[], "show":true},
+	"offline":{"title":"Offline", "text":"Liste der Geräte die offline sein", "systems":[], "show":true},
+	"offlineThreeMonth":{"title":"Offline mehr als 3 Monate", "systems":[], "show":true},
+	"noActualData":{"title":"Keine aktuellen Daten", "text":"Liste der Geräte die keine aktuellen Daten besitzen", "systems":[], "show":true},
+	"blackscreen":{"title":"Im Schwarzbild-Modus", "text":"Liste der Geräte die schwarz geschaltet sind", "systems":[], "show":true},
+	"oldApplication":{"title":"Alte Applicationen", "text":"Liste der Geräte auf denen eine alte Version der Applikation läuft", "systems":[], "show":true},
+	"system":{"title":"Systeme", "text":"Liste aller Systeme", "systems":[], "show":false}
 }; // -> also setCheckList() for filter
 var _showErrorMessages = true;
 var _countdowntimer = null;
@@ -42,6 +42,7 @@ $(document).ready(function() {
 	});
     $('.logout').click(function() {
         localStorage.removeItem("servicetool.user");
+		localStorage.removeItem("servicetool.openedmenulist");
         localStorage.removeItem("servicetool.session.expired");
 		localStorage.removeItem("servicetool.systemchecks");
         deleteSession();
@@ -135,7 +136,7 @@ function getCheckPromis() {
 				localStorage.setItem("servicetool.systemchecks", JSON.stringify(list));
 			},
 			error: function (msg) {
-				setErrorMessage(msg, "Laden der Checklist");
+				setErrorMessage(msg, "Laden der Systemliste");
 			}
 		});
 	}
@@ -149,9 +150,9 @@ function setCheckList(list) {
 	for (let check of list) {
         if (!check.hasOwnProperty("deployment"))
             check.deployment = {"customer":{"id":-1, "abbreviation": "Zzuordnung nicht vorhanden"}};
-        else if (!check.deployment.hasOwnProperty("customer"))
+        if (!check.deployment.hasOwnProperty("customer"))
             check.deployment.customer = {"id":-1, "abbreviation": "Zzuordnung nicht vorhanden"}
-		else if (!check.deployment.hasOwnProperty("address"))
+		if (!check.deployment.hasOwnProperty("address"))
 			check.deployment.address = {"street":"Keine Adresse", "houseNumber":"", "zipCode":"", "city":""}
 
 		if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].smartCheck === "failed")
@@ -169,6 +170,7 @@ function setCheckList(list) {
 			_commonChecks.noActualData.systems.push(check);
 		if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState === "not running")
 			_commonChecks.blackscreen.systems.push(check);
+			_commonChecks.system.systems.push(check);
 		//TODOif (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState === "NOT_RUNNING")
 			//_commonChecks.oldApplication.systems.push(check);
 	}
@@ -186,6 +188,18 @@ function checkSystem(systemID) {
         }
     });
 }
+function getCustomerView() {
+    return $.ajax({
+        url: "https://sysmon.homeinfo.de/enduser",  // ?customer=1030020
+        type: "GET",
+        cache: false,
+        success: function (data) {  },
+        error: function (msg) {
+            setErrorMessage(msg, "Laden der Kundenansicht ");
+        }
+    });
+}
+// Not used
 function getScreenShot(systemID) {
     return $.ajax({
         url: "https://sysmon.homeinfo.de/screenshot" + systemID,
@@ -194,17 +208,6 @@ function getScreenShot(systemID) {
         success: function (data) {  },
         error: function (msg) {
             setErrorMessage(msg, "Laden des Screenshots");
-        }
-    });
-}
-function getCustomerView() {
-    return $.ajax({
-        url: "https://sysmon.homeinfo.de/enduser",
-        type: "GET",
-        cache: false,
-        success: function (data) {  },
-        error: function (msg) {
-            setErrorMessage(msg, "Laden der Kundenansicht ");
         }
     });
 }
@@ -243,7 +246,7 @@ function isOnDate(dateToCheck, periodInHours) {
     return (new Date()) - new Date(dateToCheck) < periodInHours;
 }
 function formatDate(date) {
-	return date.substring(8, 10) + "." + date.substring(5, 7) + "." + date.substring(0, 4); // dd-mm-yyyy
+	return date.substring(8, 10) + "." + date.substring(5, 7) + "." + date.substring(2, 4); // dd-mm-yyyy
 }
 function getURLParameterByName(name) {
     let match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
