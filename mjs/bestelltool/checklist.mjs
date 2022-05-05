@@ -23,10 +23,9 @@
 
 
 import { DelayedJobs, handleError } from '../common.mjs';
-import { URL_PARAMS } from './constants.mjs';
+import { MODEL_TO_ID, CONNECTION_TO_ID, URL_PARAMS } from './constants.mjs';
 import { CustomerListEntry } from './customer-list.mjs';
 import { renderHistory } from './history.mjs';
-
 
 const DELAYED_JOBS = new DelayedJobs();
 
