@@ -30,7 +30,10 @@
     <script src="assets/js/owl.carousel.min.js"></script>
     <script src="assets/js/active.js"></script>
     <script src="assets/js/sweetalert2.min.js"></script>
-    <script src="assets/js/bestelltool.js"></script>
+    <script type="module">
+        import { init } from './mjs/bestelltool.js';
+        $(document).ready(init);
+    </script>
 
 </head>
 <body class="neuinstallation">
