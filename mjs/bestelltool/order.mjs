@@ -28,7 +28,6 @@ import {
     ID_TO_MODEL, MODEL_TO_ID, ID_TO_CONNECTION, CONNECTION_TO_ID, URL_PARAMS
 } from './constants.mjs';
 import { CustomerListEntry } from './customer-list.mjs';
-import { disableChecklist } from './checklist.mjs';
 import { getDeployments } from './deployments.mjs';
 
 
