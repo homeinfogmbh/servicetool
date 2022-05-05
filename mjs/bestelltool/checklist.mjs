@@ -1,5 +1,5 @@
 /*
-  checklist.js - Check list library.
+  checklist.mjs - Check list library.
 
   (C) 2022 HOMEINFO - Digitale Informationssysteme GmbH
 

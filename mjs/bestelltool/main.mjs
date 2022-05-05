@@ -1,5 +1,5 @@
 /*
-  main.js - Main module for the ordering subsystem.
+  main.mjs - Main module for the ordering subsystem.
 
   (C) 2022 HOMEINFO - Digitale Informationssysteme GmbH
 

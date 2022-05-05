@@ -1,5 +1,5 @@
 /*
-  bestelltool.js - JavaScript module for the ordering subsystem.
+  autocomplete.mjs - Address auto completion.
 
   (C) 2022 HOMEINFO - Digitale Informationssysteme GmbH
 
