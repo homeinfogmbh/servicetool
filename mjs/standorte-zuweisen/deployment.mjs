@@ -62,6 +62,9 @@ class Deployment {
         this.systems = systems || [];
     }
 
+    /*
+        Create a Deployment instance from a JSON object.
+    */
     static fromJSON (json) {
         return new this(
             json.id,
@@ -78,14 +81,23 @@ class Deployment {
         );
     }
 
+    /*
+        Return a string containing the street name and house number.
+    */
     get addressAndHouseNumber () {
         return this.address.street + ' ' + this.address.houseNumber;
     }
 
+    /*
+        Return a string containing the zip code and city.
+    */
     get zipCodeAndCity () {
         return this.address.zipCode + ' ' + this.address.city;
     }
 
+    /*
+        Return an HTML element for the deployments list.
+    */
     toHTML () {
         const tr = document.createElement('tr');
         const col1 = document.createElement('td');
