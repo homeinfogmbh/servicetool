@@ -216,8 +216,10 @@ function createPageLinks () {
     $('#deployment-pages').html('');
     const pager = new Pager(filteredDeployments(), PAGE_SIZE);
 
-    for (let index = 0; index < pager.pages; index++)
+    for (let index = 0; index < pager.pages; index++) {
         $('#deployment-pages').append(createPageLink(index));
+        $('#deployment-pages').append('&nbsp;');
+    }
 }
 
 
@@ -284,6 +286,7 @@ function createPageLink (index) {
     span.setAttribute('data-page', index);
     span.classList.add('deployment-page');
     span.addEventListener('click', openPage);
+    span.style.textDecoration = 'underline';
     return span;
 }
 
