@@ -54,11 +54,11 @@ export class Deployment {
     static fromJSON (json) {
         return new this(
             json.id,
-            Customer.fromJSON(json.customer),
+            json.customer,
             json.type,
             json.connection,
-            Address.fromJSON(json.address),
-            (json.lptAddress == null) ? null : Address.fromJSON(json.lptAddress),
+            json.address,
+            json.lptAddress,
             (json.scheduled == null) ? null : new Date(json.scheduled),
             json.annotation,
             json.testing,
