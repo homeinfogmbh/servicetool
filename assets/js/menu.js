@@ -19,10 +19,10 @@ $(document).ready(function() {
                     '</ul>' +
                 '</li>' +
                 '<li class="nav-item">' +
-                    '<a class="nav-link" href="#">Standorte zuweisen</a>' +
+                    '<a class="nav-link" href="standorte-zuweisen.html">Standorte zuweisen</a>' +
                 '</li>' +
                 '<li class="nav-item">' +
-                    '<a class="nav-link" href="#">Neuinstallationen</a>' +
+                    '<a class="nav-link" href="bestelltool.html">Neuinstallationen</a>' +
                 '</li>' +
             '</ul>' +
             '<a href="#" class="abmelden">abmelden</a>' +
@@ -107,19 +107,17 @@ function setMenu(list) {
         }
     }
     $('#additionalMenu').append(additionalMenu);
-    localStorage.removeItem("servicetool.openedmenulist");
-    $('.btn_openedlist[data-openedlist="' + localStorage.getItem("servicetool.openedmenulist") + '"]').next().addClass("show");
-    /*
+
+    
+    console.log($('.btn_openedlist[data-openedlist="' + localStorage.getItem("servicetool.openedmenulist") + '"]').hasClass("show"))
+    $('.btn_openedlist[data-openedlist="' + localStorage.getItem("servicetool.openedmenulist") + '"]').dropdown("toggle");
+    console.log($('.btn_openedlist[data-openedlist="' + localStorage.getItem("servicetool.openedmenulist") + '"]').hasClass("show"))
     $('.btn_openedlist').click(function(e) {
-        console.log($(this).next().hasClass("show"))
-        if ($(this).next().hasClass("show")) {
-            $(this).next().removeClass("show");
+        console.log($(this).data("openedlist"))
+        if ($(this).data("openedlist") == localStorage.getItem("servicetool.openedmenulist")) {
             localStorage.removeItem("servicetool.openedmenulist");
         } else {
-            $('.btn_openedlist[data-openedlist="' + localStorage.getItem("servicetool.openedmenulist") + '"]').next().removeClass("show");
-            $(this).next().addClass("show");
             localStorage.setItem("servicetool.openedmenulist", $(this).data("openedlist"));
         }
     })
-    */
 }
