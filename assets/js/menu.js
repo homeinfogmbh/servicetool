@@ -77,11 +77,13 @@ function setMenu(list) {
         addressComplete = check.hasOwnProperty("deployment") && check.deployment.hasOwnProperty("address") ?check.deployment.address.street + " " + check.deployment.address.houseNumber + " " + check.deployment.address.zipCode + " " + check.deployment.address.city :'Keine Adresse';
         address = check.hasOwnProperty("deployment") && check.deployment.hasOwnProperty("address") ?check.deployment.address.street + " " + check.deployment.address.houseNumber :'<i>Keine Adresse</i>';
         // Customerlist
-        if (!customers.hasOwnProperty(check.deployment.customer.abbreviation) && check.deployment.customer.abbreviation !== "Zzuordnung nicht vorhanden") {
-            customerDom += '<li><a class="dropdown-item" href="listenansicht.html?customer=' + check.deployment.customer.id + '">' + (check.deployment.customer.hasOwnProperty("abbreviation") ?check.deployment.customer.abbreviation :check.deployment.customer.company.name) + '</a></li>';
-            customers[check.deployment.customer.abbreviation] = {};
-        }
+        if (customers.hasOwnProperty(check.deployment.customer.abbreviation))
+            customers[check.deployment.customer.abbreviation].count++;
+        else if (check.deployment.customer.abbreviation !== "Zzuordnung nicht vorhanden")
+            customers[check.deployment.customer.abbreviation] = {'count':1, 'dom':'<li><a class="dropdown-item" href="listenansicht.html?customer=' + check.deployment.customer.id + '">' + (check.deployment.customer.hasOwnProperty("abbreviation") ?check.deployment.customer.abbreviation :check.deployment.customer.company.name)};
     }
+    for (let customer in customers)
+        customerDom += customers[customer].dom + ' (' + customers[customer].count + ')</a></li>'
     $('#menucustomerlist').html(customerDom);
 
     let additionalMenu = "";
@@ -105,16 +107,19 @@ function setMenu(list) {
         }
     }
     $('#additionalMenu').append(additionalMenu);
+    localStorage.removeItem("servicetool.openedmenulist");
     $('.btn_openedlist[data-openedlist="' + localStorage.getItem("servicetool.openedmenulist") + '"]').next().addClass("show");
+    /*
     $('.btn_openedlist').click(function(e) {
         console.log($(this).next().hasClass("show"))
         if ($(this).next().hasClass("show")) {
             $(this).next().removeClass("show");
-            localStorage.removeItem("servicetool.openedmenulist", $(this).data("openedlist"));
+            localStorage.removeItem("servicetool.openedmenulist");
         } else {
             $('.btn_openedlist[data-openedlist="' + localStorage.getItem("servicetool.openedmenulist") + '"]').next().removeClass("show");
             $(this).next().addClass("show");
             localStorage.setItem("servicetool.openedmenulist", $(this).data("openedlist"));
         }
     })
+    */
 }

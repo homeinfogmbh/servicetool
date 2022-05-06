@@ -89,16 +89,22 @@
 													<td id="screentype">-</td>
 												</tr>
 												<tr>
-													<td>Standort</td>
+													<td>StandortTODO</td>
 													<td><span class="whiteMark" title="Ändern des Deployments">zuweisen</span></td>
 												</tr>
 												<tr>
 													<td>Internetverbindung</td>
-													<td><span id="internetconnection">-</span> <a href="#" class="editIcon"><img src="assets/img/edit.svg" alt=""></a></td>
+													<td>
+														<span id="internetconnection">-</span> 
+														<div class="dropdown-menu" id="connectionsDropdown" aria-labelledby="dropdownMenuButton">
+															<a class="dropdown-item btn_connection" href="#">DSL</a>
+															<a class="dropdown-item btn_connection" href="#">LTE</a>
+														</div>
+														<a href="#" class="editIcon btn_internetconnection"><img src="assets/img/edit.svg" alt=""></a></td>
 												</tr>
 												<tr>
-													<td>ÖPNV Adresse</td>
-													<td><span id="publicTransportAddress">-</span> <a href="#" class="editIcon"><img src="assets/img/edit.svg" alt=""></a></td>
+													<td>ÖPNV AdresseTODO</td>
+													<td><span id="publicTransportAddress">-</span> <a href="#" class="editIcon btn_publictransport"><img src="assets/img/edit.svg" alt=""></a></td>
 												</tr>
 												<tr>
 													<td>System ID</td>
@@ -119,6 +125,14 @@
 												<tr>
 													<td>Theme Version</td>
 													<td id="applicationVersion">-</td>
+												</tr>
+												<tr>
+													<td>Deployment-ID</td>
+													<td id="deploymentID">-</td>
+												</tr>
+												<tr>
+													<td>Beschreibung</td>
+													<td id="annotation">-</td>
 												</tr>
 											</tbody>
 										</table>
@@ -206,37 +220,37 @@
 								</div>
 								<div class="col40">
 									<div class="neuinstaContent">
-										<h3>Systemchecks</h3>
-										<p>Tagesaktuell durchgeführte Prüfungen</p>
+										<h3>Funktionen</h3>
+										<p>Individuelle Einstellungen für das Display</p>
 										<table class="table tableHeadNone">
 											<tbody>
 												<tr>
 													<td>Piep Ton</td>
-													<td><span class="whiteMark">senden</span></td>
+													<td><span class="whiteMark btn_noice pointer">senden</span></td>
 												</tr>
 												<tr>
 													<td>Verbaut</td>
 													<td>
-														<input type="checkbox" style="display: none;" name="Verbaut" id="Verbaut" checked>
-														<label for="Verbaut"><span class="checkboxStyle whiteCheckbox"></span></label>
+														<input type="checkbox" style="display: none;" name="Verbaut" id="Verbaut">
+														<label for="Verbaut"><span class="btn_installed checkboxStyle whiteCheckbox"></span></label>
 													</td>
 												</tr>
 												<tr>
 													<td>Schwarzbildmodus</td>
 													<td>
 														<input type="checkbox" style="display: none;" name="Schwarzbildmodus" id="Schwarzbildmodus">
-														<label for="Schwarzbildmodus"><span class="checkboxStyle whiteCheckbox"></span></label>
+														<label for="Schwarzbildmodus"><span class="btn_blackmodus checkboxStyle whiteCheckbox"></span></label>
 													</td>
 												</tr>
 												<tr>
 													<td>Neustart</td>
-													<td><span class="whiteMark">senden</span></td>
+													<td><span class="whiteMark btn_restart pointer">senden</span></td>
 												</tr>
 												<tr>
 													<td>Testgerät</td>
 													<td>
 														<input type="checkbox" style="display: none;" name="Testgerät" id="Testgerät">
-														<label for="Testgerät"><span class="checkboxStyle whiteCheckbox"></span></label>
+														<label for="Testgerät"><span class="btn_testsystem checkboxStyle whiteCheckbox"></span></label>
 													</td>
 												</tr>
 												<tr>
@@ -244,12 +258,12 @@
 													<td><span class="whiteMark btn_screenshot pointer">anzeigen</span></td>
 												</tr>
 												<tr>
-													<td>Ping</td>
-													<td><span class="whiteMark">senden</span></td>
+													<td>PingTODO</td>
+													<td><span class="whiteMark btn_ping pointer">senden</span></td>
 												</tr>
 												<tr>
 													<td>Inhalte aktualisieren</td>
-													<td><span class="whiteMark">starten</span></td>
+													<td><span class="whiteMark btn_sync pointer">starten</span></td>
 												</tr>
 											</tbody>
 										</table>
@@ -269,7 +283,7 @@
 											</div>
 										</div>
 										<div class="square_lineBox">
-											<p>Inhalte übertragen</p>
+											<p>TODO Inhalte übertragen</p>
 											<ul class="squareLine" id="thirtysync">
 											</ul>
 											<div class="squ_line_text fz12">
