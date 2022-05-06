@@ -254,7 +254,14 @@ function selectDeployment (event) {
         parseInt(event.target.getAttribute('data-id'))
     );
     renderDeployedSystems(deployment);
-    const address = deployment.address.toString();
+    setAddress(deployment.address.toString());
+}
+
+
+/*
+    Set content of address placeholders.
+*/
+function setAddress (address) {
     $('.address-container').each((index, value) => {
         value.textContent = address;
     });
@@ -267,9 +274,7 @@ function selectDeployment (event) {
 function renderDeployments (deployments) {
     $('#deployments').html('');
     $('#deployed-systems').html('');
-    $('.address-container').each((index, value) => {
-        value.textContent = 'N/A';
-    });
+    setAddress('N/A');
 
     for (const deployment of deployments)
         $('#deployments').append(deployment.toHTML());
