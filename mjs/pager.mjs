@@ -26,6 +26,7 @@ export class Pager {
     constructor (iterable, pageSize = 15) {
         this.items = Array.from(iterable);
         this.pageSize = pageSize;
+        this.currentPage = 0;
     }
 
     get lastPageFull () {
@@ -46,5 +47,23 @@ export class Pager {
             pageNumber * this.pageSize,
             (pageNumber + 1) * this.pageSize
         );
+    }
+
+    next () {
+        this.currentPage++;
+
+        if (this.currentPage >= this.items.length)
+            this.currentPage = 0;
+
+        return this.page(this.currentPage);
+    }
+
+    previous () {
+        this.currentPage--;
+
+        if (this.currentPage < 0)
+            this.currentPage = this.items.length - 1;
+
+        return this.page(this.currentPage);
     }
 }
