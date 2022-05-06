@@ -8,7 +8,7 @@ $(document).ready(function() {
             '<h3 class="menu_title">Menu</h3>' +
             '<ul class="navbar-nav" id="additionalMenu">' +
                 '<li class="nav-item">' +
-                    '<a class="nav-link active" aria-current="page" href="dashboard.html">Dashboard</a>' +
+                    '<a class="nav-link" id="dash" aria-current="page" href="dashboard.html">Dashboard</a>' +
                 '</li>' +
                 '<li class="nav-item dropdown">' +
                     '<a class="nav-link dropdown-toggle btn_openedlist" href="#" id="navbarDropdown" role="button" data-openedlist="customerlist" data-bs-toggle="dropdown" aria-expanded="false">' +
@@ -19,10 +19,10 @@ $(document).ready(function() {
                     '</ul>' +
                 '</li>' +
                 '<li class="nav-item">' +
-                    '<a class="nav-link" href="standorte-zuweisen.html">Standorte zuweisen</a>' +
+                    '<a class="nav-link" id="standorte-zuweisen" href="standorte-zuweisen.html">Standorte zuweisen</a>' +
                 '</li>' +
                 '<li class="nav-item">' +
-                    '<a class="nav-link" href="bestelltool.html">Neuinstallationen</a>' +
+                    '<a class="nav-link" id="bestelltool" href="bestelltool.html">Neuinstallationen</a>' +
                 '</li>' +
             '</ul>' +
             '<a href="#" class="abmelden">abmelden</a>' +
@@ -39,6 +39,14 @@ $(document).ready(function() {
     '</div>';
     $(".menu_sidebar").html(menu);
 
+    if (window.location.pathname.indexOf("dashboard") != -1)
+        $("#dash").addClass("active");
+    else if (window.location.pathname.indexOf("standorte-zuweisen") != -1)
+        $("#standorte-zuweisen.html").addClass("active");
+    else if (window.location.pathname.indexOf("bestelltool") != -1)
+        $("#bestelltool").addClass("active");
+    
+
     $('.sendBtn').click(function(e) {
         //$("#pageloader").show();
         let date = new Date();
@@ -50,15 +58,6 @@ $(document).ready(function() {
             } catch(err) {  }
             window.location.href = "mailto:r.haupt@homeinfo.de?subject=Supportanfrage Servicetool " + date.getDate() + "." + date.getMonth() + "." + date.getFullYear() + "&body=" + body;
         });
-        //html2canvas(document.querySelector("body")).then(canvas => {
-            //$("#pageloader").hide();
-            //const base64image = canvas.toDataURL("image/png");
-            //window.location.href = base64image;
-            //document.body.appendChild(canvas)
-            //window.open("", "_blank");
-            //window.location.href = '<img src="data:image/jpg;base64,' + canvas+ '" />';
-            //window.location.href = "mailto:r.haupt@homeinfo.de?subject=Supportanfrage Servicetool " + date.getDate() + "." + date.getMonth() + "." + date.getFullYear() + "&body=Screenshot"; // canvas.toDataURL("image/jpeg", 1.0);
-        //});
 		e.preventDefault();
 	});  
     getListOfSystemChecks().then(setMenu);
@@ -108,16 +107,12 @@ function setMenu(list) {
     }
     $('#additionalMenu').append(additionalMenu);
 
-    
-    console.log($('.btn_openedlist[data-openedlist="' + localStorage.getItem("servicetool.openedmenulist") + '"]').hasClass("show"))
     $('.btn_openedlist[data-openedlist="' + localStorage.getItem("servicetool.openedmenulist") + '"]').dropdown("toggle");
-    console.log($('.btn_openedlist[data-openedlist="' + localStorage.getItem("servicetool.openedmenulist") + '"]').hasClass("show"))
+    //$("#menucustomerlist").css("max-height", "100px");
     $('.btn_openedlist').click(function(e) {
-        console.log($(this).data("openedlist"))
-        if ($(this).data("openedlist") == localStorage.getItem("servicetool.openedmenulist")) {
+        if ($(this).data("openedlist") == localStorage.getItem("servicetool.openedmenulist"))
             localStorage.removeItem("servicetool.openedmenulist");
-        } else {
+        else
             localStorage.setItem("servicetool.openedmenulist", $(this).data("openedlist"));
-        }
     })
 }

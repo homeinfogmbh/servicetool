@@ -39,7 +39,20 @@ $(document).ready(function() {
          setApplicationState().then(()=>{$("#pageloader").hide()});
 	}); 
     $('.btn_restart').click(function(e) {
-        restart().then(()=>{$("#pageloader").hide()});
+        Swal.fire({
+            title: 'Sind Sie sicher?',
+            text: "Wollen Sie das System neustarten?",
+            showCancelButton: true,
+            confirmButtonColor: '#009fe3',
+            cancelButtonColor: '#ff821d',
+            iconHtml: '<img src="assets/img/PopUp-Icon.png"></img>',
+            confirmButtonText: 'Ja, neustarten!',
+            cancelButtonText: 'Vorgang abbrechen!',
+            buttonsStyling: true
+          }).then(function(selection) {
+            if (selection.isConfirmed === true)
+                restart().then(()=>{$("#pageloader").hide()});
+          })
 		e.preventDefault();
 	}); 
     $('.btn_testsystem').click(function(e) {
@@ -76,9 +89,9 @@ function getSystemChecks() {
 
 function setDetails(data) {
     _display = data[getURLParameterByName('id')];
-    let address = _display.hasOwnProperty("deployment") ?_display.deployment.hasOwnProperty("address") ?_display.deployment.address.street + " " + _display.deployment.address.houseNumber + " " + _display.deployment.address.zipCode + " " + _display.deployment.address.city :'<i>Keine Adresse angegeben</i>' :'<i>Keinen Standort zugewiesen</i>';
+    let address = _display.hasOwnProperty("deployment") ?_display.deployment.hasOwnProperty("address") ?_display.deployment.address.street + " " + _display.deployment.address.houseNumber + ", " + _display.deployment.address.zipCode + " " + _display.deployment.address.city :'<i>Keine Adresse angegeben</i>' :'<i>Keinen Standort zugewiesen</i>';
     $("#displaytitle").html("Display: " + address);
-    try { $("#completecustomername").html(_display.deployment.customer.company.name + ' (' + _display.deployment.customer.id + ')'); } catch(err) {   }
+    try { $("#completecustomername").html(_display.deployment.customer.company.name + ' (Knr. ' + _display.deployment.customer.id + ')'); } catch(err) {   }
     // Overview
     $("#serialNumber").text(_display.hasOwnProperty("serialNumber") ?_display.serialNumber :'-');
     $("#ipv6").text(_display.ipv6address);

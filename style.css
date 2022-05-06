@@ -511,7 +511,7 @@ table.table tbody tr td {
 .Neuinsta table.table tbody tr td:last-child,
 table.table.tableHeadNone tr th:last-child,
 table.table.tableHeadNone tbody tr td:last-child {
-  width: 45px;
+  width: 150px;
   min-width: 45px;
 }
 
@@ -576,7 +576,7 @@ table.table.tableHeadNone tbody tr td {
 
 .EingeActive {
   display: inline-block;
-  background: #ff821d;
+  background: #009fe3;
   padding: 5px 14px;
   border-radius: 35px;
 }
@@ -1032,40 +1032,12 @@ ul.flexContent li {
     max-width: 110px;
 }
 
-.autocomplete-wrapper {
-    position: relative;
-    flex-grow: 1;
-}
+.customeFilter {position: relative;flex-grow: 1;}
 
-.autocomplete-wrapper> input {
-    display: block;
-    width: 100%;
-}
+.customeFilter> input {display: block;width: 100%;}
 
-.autocomplete-items {
-    position: absolute;
-    z-index: 1;
-    background: #fff;
-    overflow: auto;
-    left: 0;
-    right: 0;
-    top: 100%;
-    border-radius: 0px 0px 10px 10px;
-    max-height: 200px;
-    padding: 5px;opacity: 0;
-    visibility: hidden;
-    transition: .3s ease all;
-    box-shadow: 0 3px 3px #00000059;
-}
+.autocomplete-items {position: absolute;z-index: 1;background: #fff;overflow: auto;left: 0;right: 0;top: 100%;border-radius: 0px 0px 10px 10px;max-height: 200px;padding: 5px;opacity: 0;visibility: hidden;transition: .3s ease all;box-shadow: 0 3px 3px #00000059;}
 
-.autocomplete-item {
-    color: #000;
-    line-height: 19px;
-    font-size: 16px;
-    padding: 5px 15px;
-}
+.autocomplete-item {color: #000;line-height: 19px;font-size: 16px;padding: 5px 15px;}
 
-.autocomplete-wrapper> input:focus + div {
-    opacity: 1;
-    visibility: visible;
-}
+.customeFilter> input:focus + div {opacity: 1;visibility: visible;}
