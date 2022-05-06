@@ -200,14 +200,6 @@ function * filteredDeployments () {
 
 
 /*
-    Return information about the current page and total amount of pages.
-*/
-function pageInfo () {
-    return (PAGER.currentIndex + 1) + ' / ' + PAGER.pages;
-}
-
-
-/*
     Create the list of page links.
 */
 function createPageLinks () {
