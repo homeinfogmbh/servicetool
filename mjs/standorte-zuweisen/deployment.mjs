@@ -221,17 +221,27 @@ function pageInfo () {
 
 
 /*
+    Return a span that is clickable and has a text.
+*/
+function makeSpanLink (caption, action) {
+    const span = document.createElement('span');
+    span.style.textDecoration = 'underline';
+    span.style.cursor = 'pointer';
+    span.addEventListener('click', action);
+    span.textContent = caption;
+    return span;
+}
+
+
+/*
     Create the list of page links.
 */
 function createPageLinks () {
     $('#deployment-pages').html('');
-    const previous = document.createElement('span');
-    previous.style.textDecoration = 'underline';
-    previous.addEventListener('click', event => {
+    const previous = makeSpanLink('<<', event => {
         renderDeployments(PAGER.previous());
         $('#page-info').text(pageInfo());
     });
-    previous.textContent = '<<';
     $('#deployment-pages').append(previous);
     $('#deployment-pages').append('&nbsp;');
     const pageinfo = document.createElement('span');
@@ -239,13 +249,10 @@ function createPageLinks () {
     pageinfo.textContent = pageInfo();
     $('#deployment-pages').append(pageinfo);
     $('#deployment-pages').append('&nbsp;');
-    const next = document.createElement('span');
-    next.style.textDecoration = 'underline';
-    next.addEventListener('click', event => {
+    const next = makeSpanLink('>>', event => {
         renderDeployments(PAGER.next());
         $('#page-info').text(pageInfo());
     });
-    next.textContent = '>>';
     $('#deployment-pages').append(next);
 }
 
