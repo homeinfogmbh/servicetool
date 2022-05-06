@@ -23,6 +23,7 @@
 
 
 import { handleError } from '../common.mjs';
+import { Pager } from '../pager.mjs';
 import { Deployment } from './deployment.mjs';
 
 
