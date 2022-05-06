@@ -267,6 +267,9 @@ function selectDeployment (event) {
 function renderDeployments (deployments) {
     $('#deployments').html('');
     $('#deployed-systems').html('');
+    $('.address-container').each((index, value) => {
+        value.textContent = 'N/A';
+    });
 
     for (const deployment of deployments)
         $('#deployments').append(deployment.toHTML());
