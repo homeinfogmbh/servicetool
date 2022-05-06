@@ -258,9 +258,13 @@ function getDeploymentById (id) {
     Handle event of deployment selection.
 */
 function selectDeployment (event) {
-    renderDeployedSystems(getDeploymentById(
+    const deployment = getDeploymentById(
         parseInt(event.target.getAttribute('data-id'))
-    ));
+    );
+    renderDeployedSystems(deployment);
+    $('.address-container').each((index, value) => {
+        value.text(deployment.address);
+    });
 }
 
 
