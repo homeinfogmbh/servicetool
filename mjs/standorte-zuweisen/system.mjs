@@ -91,7 +91,7 @@ class System {
         const li = document.createElement('li');
         const input = document.createElement('input');
         input.setAttribute('type', 'radio');
-        input.setAttribute('name', 'zugeordnen');
+        input.setAttribute('name', 'system-select');
         input.setAttribute('id', 'system-' + this.id);
         input.setAttribute('data-id', this.id);
         input.style.display = 'none';
