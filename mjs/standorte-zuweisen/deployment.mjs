@@ -22,36 +22,15 @@
 'use strict';
 
 
+import { handleError } from '../common.mjs';
 import { Pager } from '../pager.mjs';
 
 
+const PAGE_SIZE = 15;
 let DEPLOYMENTS = [];
 
 
-/*
-    Retrieve all available deployments.
-*/
-export function getDeployments () {
-    return $.ajax({
-        url: 'https://termgr.homeinfo.de/list/deployments',
-        dataType: 'json',
-        error: handleError,
-        xhrFields: {
-            withCredentials: true
-        }
-    }).then(json => {
-        const deployments = [];
-
-        for (const deployment of json)
-            deployments.push(Deployment.fromJSON(deployment));
-
-        DEPLOYMENTS = deployments;
-        return deployments;
-    });
-}
-
-
-class Deployment {
+export class Deployment {
     constructor (
         id, customer, type, connection, address, lptAddress, scheduled,
         annotation, testing, timestamp, systems = null
@@ -151,6 +130,34 @@ class Deployment {
 }
 
 
+export function init () {
+    return getDeployments().then(render);
+}
+
+
+/*
+    Retrieve all available deployments.
+*/
+function getDeployments () {
+    return $.ajax({
+        url: 'https://termgr.homeinfo.de/list/deployments',
+        dataType: 'json',
+        error: handleError,
+        xhrFields: {
+            withCredentials: true
+        }
+    }).then(json => {
+        const deployments = [];
+
+        for (const deployment of json)
+            deployments.push(Deployment.fromJSON(deployment));
+
+        DEPLOYMENTS = deployments;
+        return deployments;
+    });
+}
+
+
 function deployedSystemToHTML (systemId, deploymentId) {
     const li = document.createElement('li');
     const span1 = document.createElement('span');
@@ -207,7 +214,7 @@ function * filteredDeployments () {
 */
 function createPageLinks () {
     $('#deployment-pages').html('');
-    const pager = new Pager(filteredDeployments(), 15);
+    const pager = new Pager(filteredDeployments(), PAGE_SIZE);
 
     for (let index = 0; index < pager.pages; index++)
         $('#deployment-pages').append(createPageLink(index));
@@ -222,6 +229,18 @@ function renderDeployedSystems (deployment) {
 
     for (const system of deployment.systemsToHTML())
         $('#deployed-systems').append(system);
+}
+
+
+/*
+    Return a deployment by its ID.
+*/
+function getDeploymentById (id) {
+    for (const deployment of DEPLOYMENTS)
+        if (deployment.id == id)
+            return deployment;
+
+    throw 'No such deployment.';
 }
 
 
@@ -241,10 +260,9 @@ function selectDeployment (event) {
 function renderPage (index) {
     $('#deployments').html('');
     $('#deployed-systems').html('');
-    const pager = new Pager(filteredDeployments(), 15);
-    const page = pager.page(index);
+    const pager = new Pager(filteredDeployments(), PAGE_SIZE);
 
-    for (const deployment of page)
+    for (const deployment of pager.page(index))
         $('#deployments').append(deployment.toHTML());
 }
 
@@ -267,4 +285,21 @@ function createPageLink (index) {
     span.classList.add('deployment-page');
     span.addEventListener('click', openPage);
     return span;
+}
+
+
+/*
+    Rebuild the paged list.
+*/
+function render () {
+    createPageLinks();
+    renderPage(0);
+}
+
+
+/*
+    Event handler for typing in the search field.
+*/
+function onSearch (event) {
+    render();
 }

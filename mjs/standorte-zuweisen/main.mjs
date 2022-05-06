@@ -22,6 +22,11 @@
 'use strict';
 
 
-const DEPLOYMENTS_PAGE_SIZE = 15;
+import { init as initDeployments } from './deployment.mjs';
+import { init as initSystems } from './system.mjs';
 
 
+export function init () {
+    initDeployments();
+    initSystems();
+}
