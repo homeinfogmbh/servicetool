@@ -25,7 +25,26 @@
 import { Deployment } from './deployment.mjs';
 
 
-export class System {
+export function getSystems () {
+    return $.ajax({
+        url: 'https://termgr.homeinfo.intra/list/systems',
+        dataType: 'json',
+        error: handleError,
+        xhrFields: {
+            withCredentials: true
+        }
+    }).then(json => {
+        const systems = [];
+
+        for (const system of json)
+            systems.push(System.fromJSON(system));
+
+        return systems;
+    });
+}
+
+
+class System {
     constructor (
         id, group, deployment, dataset, openvpn, ipv6address, pubkey,
         created, configured, fitted, operatingSystem, monitor, serialNumber,
