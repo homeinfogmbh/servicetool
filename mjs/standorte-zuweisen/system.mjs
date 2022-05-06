@@ -86,4 +86,23 @@ class System {
             (json.lastSync == null) ? null : new Date(json.lastSync)
         );
      }
+
+     toHTML () {
+        const li = document.createElement('li');
+        const input = document.createElement('input');
+        input.setAttribute('type', 'radio');
+        input.setAttribute('name', 'zugeordnen');
+        input.setAttribute('id', 'system-' + this.id);
+        input.setAttribute('data-id', this.id);
+        input.style.display = 'none';
+        li.appendChild(input);
+        const label = document.createElement('label');
+        label.setAttribute('for', 'system-' + this.id);
+        label.textContent = this.id;
+        li.appendChild(label);
+        const span = document.createElement('span');
+        span.classList.add('radioCircle');
+        label.appendChild(span);
+        return li;
+     }
 }
