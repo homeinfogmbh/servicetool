@@ -24,6 +24,7 @@
 
 import { handleError, makeSpanLink } from '../common.mjs';
 import { Pager } from '../pager.mjs';
+import { Address } from './address.mjs';
 
 
 const PAGE_SIZE = 15;
@@ -58,28 +59,14 @@ export class Deployment {
             json.customer,
             json.type,
             json.connection,
-            json.address,
-            json.lptAddress,
+            Address.fromJSON(json.address),
+            (json.lptAddress == null) ? null: Address.fromJSON(json.lptAddress),
             (json.scheduled == null) ? null : new Date(json.scheduled),
             json.annotation,
             json.testing,
             (json.timestamp == null) ? null : new Date(json.timestamp),
             json.systems || []
         );
-    }
-
-    /*
-        Return a string containing the street name and house number.
-    */
-    get addressAndHouseNumber () {
-        return this.address.street + ' ' + this.address.houseNumber;
-    }
-
-    /*
-        Return a string containing the zip code and city.
-    */
-    get zipCodeAndCity () {
-        return this.address.zipCode + ' ' + this.address.city;
     }
 
     /*
@@ -105,10 +92,10 @@ export class Deployment {
         span.classList.add('blueCircle');
         label.appendChild(span);
         const col2 = document.createElement('td');
-        col2.textContent = this.addressAndHouseNumber;
+        col2.textContent = this.address.streetAndHouseNumber;
         tr.appendChild(col2);
         const col3 = document.createElement('td');
-        col3.textContent = this.zipCodeAndCity;
+        col3.textContent = this.address.zipCodeAndCity;
         tr.appendChild(col3);
         const col4 = document.createElement('td');
         col4.textContent = this.customer.abbreviation;
