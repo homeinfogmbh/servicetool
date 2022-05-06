@@ -22,7 +22,29 @@
 'use strict';
 
 
-export class Deployment {
+/*
+    Retrieve all available deployments.
+*/
+export function getDeployments () {
+    return $.ajax({
+        url: 'https://termgr.homeinfo.de/list/deployments',
+        dataType: 'json',
+        error: handleError,
+        xhrFields: {
+            withCredentials: true
+        }
+    }).then(json => {
+        const deployments = [];
+
+        for (const deployment of json)
+            deployments.push(Deployment.fromJSON(deployment));
+
+        return deployments;
+    });
+}
+
+
+class Deployment {
     constructor (
         id, customer, type, connection, address, lptAddress, scheduled,
         annotation, testing, timestamp, systems = null
