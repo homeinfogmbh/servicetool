@@ -256,10 +256,6 @@ function selectDeployment (event) {
     renderDeployedSystems(deployment);
     const address = deployment.address.toString();
     $('.address-container').each((index, value) => {
-        console.log('Index: ' + index);
-        console.log('Value: ' + value);
-        console.log('Element: ' + $(this));
-        console.log('Address: ' + address);
         value.textContent = address;
     });
 }
