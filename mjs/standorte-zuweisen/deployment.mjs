@@ -213,6 +213,14 @@ function * filteredDeployments () {
 
 
 /*
+    Return information about the current page and total amount of pages.
+*/
+function pageInfo () {
+    return (PAGER.currentIndex + 1) + ' / ' + PAGER.pages;
+}
+
+
+/*
     Create the list of page links.
 */
 function createPageLinks () {
@@ -221,18 +229,21 @@ function createPageLinks () {
     previous.style.textDecoration = 'underline';
     previous.addEventListener('click', event => {
         renderDeployments(PAGER.previous());
+        $('#page-info').textContent = pageInfo();
     });
     previous.textContent = '<<';
     $('#deployment-pages').append(previous);
     $('#deployment-pages').append('&nbsp;');
     const pageinfo = document.createElement('span');
-    pageinfo.textContent = (PAGER.currentIndex + 1) + ' / ' + PAGER.pages;
+    pageinfo.setAttribute('id', 'page-info');
+    pageinfo.textContent = pageInfo();
     $('#deployment-pages').append(pageinfo);
     $('#deployment-pages').append('&nbsp;');
     const next = document.createElement('span');
     next.style.textDecoration = 'underline';
     next.addEventListener('click', event => {
         renderDeployments(PAGER.next());
+        $('#page-info').textContent = pageInfo();
     });
     next.textContent = '>>';
     $('#deployment-pages').append(next);
