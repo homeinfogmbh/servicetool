@@ -166,7 +166,7 @@ function deployedSystemToHTML (systemId, deploymentId) {
 }
 
 
-function deploymentMatchesFilter (filterString, deployment) {
+function deploymentMatchesFilter (deployment, filterString) {
     if (!filterString)
         return true;
 
@@ -190,7 +190,7 @@ function * filteredDeployments () {
     const filterString = $('#find-deployment').val().toLowerCase();
 
     for (const deployment of DEPLOYMENTS)
-        if (deploymentMatchesFilter(filterString, deployment))
+        if (deploymentMatchesFilter(deployment, filterString))
             yield deployment;
 }
 
