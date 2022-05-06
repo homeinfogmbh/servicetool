@@ -52,7 +52,7 @@ export class Pager {
     next () {
         this.currentIndex++;
 
-        if (this.currentIndex >= this.items.length)
+        if (this.currentIndex >= this.pages)
             this.currentIndex = 0;
 
         return this.page(this.currentIndex);
@@ -62,7 +62,7 @@ export class Pager {
         this.currentIndex--;
 
         if (this.currentIndex < 0)
-            this.currentIndex = this.items.length - 1;
+            this.currentIndex = this.pages - 1;
 
         return this.page(this.currentIndex);
     }
