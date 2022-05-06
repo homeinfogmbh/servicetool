@@ -288,5 +288,5 @@ function renderDeployments (deployments) {
 function render () {
     PAGER = new Pager(filteredDeployments(), PAGE_SIZE);
     createPageLinks();
-    renderPage(0);
+    renderDeployments(PAGER.currentPage());
 }
