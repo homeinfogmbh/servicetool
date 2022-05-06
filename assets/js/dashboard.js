@@ -1,9 +1,17 @@
 $(document).ready(function() {
     getListOfSystemChecks().then(setChecks);
+    getOrderings().then(setOrderings);
     $('#observercounter').click(function(e) {
         $(".observerItem").show();
 		e.preventDefault();
+	});
+    $('.btn_registration').click(function(e) {
+        window.location.href = "bestelltool-list.html";
+		e.preventDefault();
 	}); 
+    
+
+
 });
 
 function setChecks(list) {
@@ -48,15 +56,15 @@ function setChecks(list) {
 
     $("#observations").html(getObserverItems(observerItems));
     if (observerItems.length > 10)
-        $("#observercounter").text("Alle " + observerItems.length + " Meldungen anzeigen"); // TODO clickable
+        $("#observercounter").text("Alle " + observerItems.length + " Meldungen anzeigen");
     $("#pageloader").hide();
 }
 
 function getObserveItem(item, annotation, counter) {
-    let address = item.hasOwnProperty("deployment") ?item.deployment.hasOwnProperty("address") ?item.deployment.address.street + " " + item.deployment.address.houseNumber + " " + item.deployment.address.zipCode + " " + item.deployment.address.city :'Keine Adresse' :'';
+    let address = item.hasOwnProperty("deployment") ?item.deployment.hasOwnProperty("address") ?item.deployment.address.street + " " + item.deployment.address.houseNumber + ", " + item.deployment.address.zipCode + " " + item.deployment.address.city :'Keine Adresse' :'';
     return '<tr ' + (counter > 10 ?'class="observerItem" style="display:none"' :'') + '>' +
         '<td title="System-ID: ' + item.id  + '">' + (item.hasOwnProperty("deployment") ?item.deployment.customer.abbreviation :'Keine Zuordnung') + '</td>' +
-        '<td title="' + address + '">' + address.substring(0, 12) + (address != '' ? '...' :'') +  '</td>' +
+        '<td title="' + address + '">' + address.substring(0, 12) + (address.length > 13 ? '...' :'') +  '</td>' +
         '<td>' + annotation + '</td>' +
         '<td>' + (item.hasOwnProperty("checkResults") && item.checkResults.length > 0 ?formatDate(item.checkResults[0].timestamp) :"-") + '</td>' +
         '<td><a href="display-details.html?id=' + item.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>' +
@@ -69,4 +77,38 @@ function getObserverItems(observerItems) {
     for (let item = 0; item < observerItems.length; item++)
             dom += observerItems[item];           
     return dom;
+}
+function setOrderings(orderings) {
+    console.log(orderings)
+    let orderingsDom = "";
+    let address;
+    for (let order of orderings) {
+        address = order.street + " " + order.houseNumber + ", " + order.zipCode + " " + order.city
+        orderingsDom += '<tr>' +
+            '<td>' + order.customer.abbreviation + '</td>' +
+            '<td title="' + address + '">' + address.substring(0, 12) + (address.length > 13 ? '...' :'') +  '</td>' +
+            '<td><span class="Einge ' + (isOnDate(order.issued, 168) ?"" :"EingeActive") + '">' + formatDate(order.issued) + '</span></td>' +
+            '<td>' +
+                '<ul class="Umgebung">' +
+                    (order.hasOwnProperty('installationDateConfirmed') ?'<li class="active"></li>' :'<li></li>') + 
+                    (order.hasOwnProperty('constructionSitePreparationFeedback') ?'<li class="active"></li>' :'<li></li>') + 
+                    (order.hasOwnProperty('internetConnection') ?'<li class="active"></li>' :'<li></li>') + 
+                    (order.hasOwnProperty('hardwareInstallation')?'<li class="active"></li>' :'<li></li>') + 
+                '</ul>' +
+            '</td>' +
+            '<td><a href="bestelltool.html?id=' + order.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>' +
+        '</tr>';
+    }
+    $("#registrations").html(orderingsDom);
+}
+function getOrderings() {
+	return $.ajax({
+		url: "https://ddborder.homeinfo.de/order",
+		type: "GET",
+		success: function (msg) {
+		},
+		error: function (msg) {
+			setErrorMessage(msg, "Abrufen der Bestellungen"); // Called in default
+		}
+	});
 }
