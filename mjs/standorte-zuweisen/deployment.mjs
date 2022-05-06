@@ -229,7 +229,7 @@ function createPageLinks () {
     previous.style.textDecoration = 'underline';
     previous.addEventListener('click', event => {
         renderDeployments(PAGER.previous());
-        $('#page-info').textContent = pageInfo();
+        $('#page-info').text(pageInfo());
     });
     previous.textContent = '<<';
     $('#deployment-pages').append(previous);
@@ -243,7 +243,7 @@ function createPageLinks () {
     next.style.textDecoration = 'underline';
     next.addEventListener('click', event => {
         renderDeployments(PAGER.next());
-        $('#page-info').textContent = pageInfo();
+        $('#page-info').text(pageInfo());
     });
     next.textContent = '>>';
     $('#deployment-pages').append(next);
