@@ -25,18 +25,3 @@
 const DEPLOYMENTS_PAGE_SIZE = 15;
 
 
-/*
-    Retrieve all available deployments.
-*/
-function getDeployments () {
-    return $.ajax({
-        url: 'https://termgr.homeinfo.de/list/deployments',
-        dataType: 'json',
-        error: handleError,
-        xhrFields: {
-            withCredentials: true
-        }
-    });
-}
-
-

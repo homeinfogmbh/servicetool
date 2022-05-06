@@ -22,7 +22,36 @@
 'use strict';
 
 
-export class Deployment {
+import { Pager } from '../pager.mjs';
+
+
+let DEPLOYMENTS = [];
+
+
+/*
+    Retrieve all available deployments.
+*/
+export function getDeployments () {
+    return $.ajax({
+        url: 'https://termgr.homeinfo.de/list/deployments',
+        dataType: 'json',
+        error: handleError,
+        xhrFields: {
+            withCredentials: true
+        }
+    }).then(json => {
+        const deployments = [];
+
+        for (const deployment of json)
+            deployments.push(Deployment.fromJSON(deployment));
+
+        DEPLOYMENTS = deployments;
+        return deployments;
+    });
+}
+
+
+class Deployment {
     constructor (
         id, customer, type, connection, address, lptAddress, scheduled,
         annotation, testing, timestamp, systems = null
@@ -40,6 +69,9 @@ export class Deployment {
         this.systems = systems || [];
     }
 
+    /*
+        Create a Deployment instance from a JSON object.
+    */
     static fromJSON (json) {
         return new this(
             json.id,
@@ -56,14 +88,23 @@ export class Deployment {
         );
     }
 
+    /*
+        Return a string containing the street name and house number.
+    */
     get addressAndHouseNumber () {
         return this.address.street + ' ' + this.address.houseNumber;
     }
 
+    /*
+        Return a string containing the zip code and city.
+    */
     get zipCodeAndCity () {
         return this.address.zipCode + ' ' + this.address.city;
     }
 
+    /*
+        Return an HTML element for the deployments list.
+    */
     toHTML () {
         const tr = document.createElement('tr');
         const col1 = document.createElement('td');
@@ -71,7 +112,7 @@ export class Deployment {
         const input = document.createElement('input');
         input.setAttribute('id', 'deployment-' + this.id);
         input.setAttribute('type', 'radio');
-        input.setAttribute('name', 'deploymentSelect');
+        input.setAttribute('name', 'deployment-select');
         input.setAttribute('data-id', this.id);
         input.style.display = 'none';
         col1.appendChild(input);
@@ -97,4 +138,110 @@ export class Deployment {
         tr.appendChild(col5);
         return tr;
     }
+
+    /*
+        Yield HTML elements for the list of systems deployed at the currently
+        selected deployment.
+    */
+    * systemsToHTML () {
+        for (const systemId of this.systems)
+            yield deployedSystemToHTML(systemId, this.id);
+    }
+}
+
+
+function deployedSystemToHTML (systemId, deploymentId) {
+    const li = document.createElement('li');
+    const span1 = document.createElement('span');
+    span1.textContent = systemId;
+    li.appendChild(span1);
+    const span2 = document.createElement('span');
+    span2.setAttribute('data-system', systemId);
+    span2.setAttribute('data-deployment', deploymentId);
+    span2.classList.add('whiteMark');
+    span2.classList.add('undeploy');
+    span2.textContent = 'lösen';
+    li.appendChild(span2);
+    return li;
+}
+
+
+/*
+    Return true iff the deployment matches the filter string.
+*/
+function deploymentMatchesFilter (deployment, filterString) {
+    if (!filterString)
+        return true;
+
+    if (deployment.address.street.toLowerCase().includes(filterString))
+        return true;
+
+    if (deployment.address.city.toLowerCase().includes(filterString))
+        return true;
+
+    if (deployment.customer.abbreviation.toLowerCase().includes(filterString))
+        return true;
+
+    if (deployment.customer.id == parseInt(filterString))
+        return true;
+
+    return false;
+}
+
+
+/*
+    Yield deployments that match the filter string.
+*/
+function * filteredDeployments () {
+    const filterString = $('#find-deployment').val().toLowerCase();
+
+    for (const deployment of DEPLOYMENTS)
+        if (deploymentMatchesFilter(deployment, filterString))
+            yield deployment;
+}
+
+
+/*
+    Create the list of page links.
+*/
+function createPageLinks () {
+    $('#deployment-pages').html('');
+    const pager = new Pager(filteredDeployments(), 15);
+
+    for (let index = 0; index < pager.pages; index++)
+        $('#deployment-pages').append(createPageLink(index));
+}
+
+
+/*
+    Render the page with the given index.
+*/
+function renderPage (index) {
+    $('#deployments').html('');
+    const pager = new Pager(filteredDeployments(), 15);
+    const page = pager.page(index);
+
+    for (const deployment of page)
+        $('#deployments').append(deployment.toHTML());
+}
+
+
+/*
+    Event handler to open a page.
+*/
+function openPage (event) {
+    renderPage(parseInt(event.target.getAttribute('data-page')));
+}
+
+
+/*
+    Create a HTML element for the link to the given page number.
+*/
+function createPageLink (index) {
+    const span = document.createElement('span');
+    span.textContent = index + 1;
+    span.setAttribute('data-page', index);
+    span.classList.add('deployment-page');
+    span.addEventListener('click', openPage);
+    return span;
 }
