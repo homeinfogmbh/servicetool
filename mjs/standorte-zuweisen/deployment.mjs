@@ -22,7 +22,7 @@
 'use strict';
 
 
-import { handleError } from '../common.mjs';
+import { handleError, makeSpanLink } from '../common.mjs';
 import { Pager } from '../pager.mjs';
 
 
@@ -221,37 +221,24 @@ function pageInfo () {
 
 
 /*
-    Return a span that is clickable and has a text.
-*/
-function makeSpanLink (caption, action) {
-    const span = document.createElement('span');
-    span.style.textDecoration = 'underline';
-    span.style.cursor = 'pointer';
-    span.addEventListener('click', action);
-    span.textContent = caption;
-    return span;
-}
-
-
-/*
     Create the list of page links.
 */
 function createPageLinks () {
     $('#deployment-pages').html('');
     const previous = makeSpanLink('<<', event => {
         renderDeployments(PAGER.previous());
-        $('#page-info').text(pageInfo());
+        $('#deployment-page-info').text(PAGER.pageInfo);
     });
     $('#deployment-pages').append(previous);
     $('#deployment-pages').append('&nbsp;');
     const pageinfo = document.createElement('span');
-    pageinfo.setAttribute('id', 'page-info');
-    pageinfo.textContent = pageInfo();
+    pageinfo.setAttribute('id', 'deployment-page-info');
+    pageinfo.textContent = PAGER.pageInfo;
     $('#deployment-pages').append(pageinfo);
     $('#deployment-pages').append('&nbsp;');
     const next = makeSpanLink('>>', event => {
         renderDeployments(PAGER.next());
-        $('#page-info').text(pageInfo());
+        $('#deployment-page-info').text(PAGER.pageInfo);
     });
     $('#deployment-pages').append(next);
 }

@@ -109,3 +109,16 @@ function isSubstrNocasematch (substring, string) {
 
     return string.substring(0, substring.length) == substring;
 }
+
+
+/*
+    Return a span that is clickable and has a text.
+*/
+export function makeSpanLink (caption, action) {
+    const span = document.createElement('span');
+    span.style.textDecoration = 'underline';
+    span.style.cursor = 'pointer';
+    span.addEventListener('click', action);
+    span.textContent = caption;
+    return span;
+}

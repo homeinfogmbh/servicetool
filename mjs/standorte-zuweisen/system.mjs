@@ -22,7 +22,7 @@
 'use strict';
 
 
-import { handleError } from '../common.mjs';
+import { handleError, makeSpanLink } from '../common.mjs';
 import { Pager } from '../pager.mjs';
 import { Deployment } from './deployment.mjs';
 
@@ -136,22 +136,33 @@ function * filteredSystems () {
     Create the list of page links.
 */
 function createPageLinks () {
-    $('#system-pages').html('');
-    const pager = new Pager(filteredSystems(), PAGE_SIZE);
-
-    for (let index = 0; index < pager.pages; index++)
-        $('#system-pages').append(createPageLink(index));
+    $('#deployment-pages').html('');
+    const previous = makeSpanLink('<<', event => {
+        renderSystems(PAGER.previous());
+        $('#system-page-info').text(PAGER.pageInfo);
+    });
+    $('#deployment-pages').append(previous);
+    $('#deployment-pages').append('&nbsp;');
+    const pageinfo = document.createElement('span');
+    pageinfo.setAttribute('id', 'system-page-info');
+    pageinfo.textContent = PAGER.pageInfo;
+    $('#deployment-pages').append(pageinfo);
+    $('#deployment-pages').append('&nbsp;');
+    const next = makeSpanLink('>>', event => {
+        renderSystems(PAGER.next());
+        $('#system-page-info').text(PAGER.pageInfo);
+    });
+    $('#deployment-pages').append(next);
 }
 
 
 /*
-    Render the page with the given index.
+    Render the given deployments.
 */
-function renderPage (index) {
+function renderSystems (systems) {
     $('#systems').html('');
-    const pager = new Pager(filteredSystems(), PAGE_SIZE);
 
-    for (const system of pager.page(index))
+    for (const system of systems)
         $('#systems').append(system.toHTML());
 }
 
@@ -160,6 +171,7 @@ function renderPage (index) {
     Rebuild the paged list.
 */
 function render () {
+    PAGER = new Pager(filteredSystems(), PAGE_SIZE);
     createPageLinks();
-    renderPage(0);
+    renderSystems(PAGER.currentPage());
 }

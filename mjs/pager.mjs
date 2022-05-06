@@ -39,6 +39,10 @@ export class Pager {
         );
     }
 
+    get pageInfo () {
+        return (this.currentIndex + 1) + ' / ' + this.pages;
+    }
+
     page (pageNumber) {
         if (pageNumber < 0)
             throw 'Invalid page number.';
