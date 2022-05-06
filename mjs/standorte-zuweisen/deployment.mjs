@@ -222,6 +222,7 @@ function createPageLinks () {
     previous.addEventListener('click', event => {
         renderDeployments(PAGER.previous());
     });
+    previous.textContent = '<<';
     $('#deployment-pages').append(previous);
     $('#deployment-pages').append('&nbsp;');
     const pageinfo = document.createElement('span');
@@ -233,6 +234,7 @@ function createPageLinks () {
     next.addEventListener('click', event => {
         renderDeployments(PAGER.next());
     });
+    next.textContent = '>>';
     $('#deployment-pages').append(next);
 }
 
