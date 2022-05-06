@@ -25,6 +25,9 @@
 import { Deployment } from './deployment.mjs';
 
 
+let SYSTEMS = [];
+
+
 export function getSystems () {
     return $.ajax({
         url: 'https://termgr.homeinfo.intra/list/systems',
@@ -39,6 +42,7 @@ export function getSystems () {
         for (const system of json)
             systems.push(System.fromJSON(system));
 
+        SYSTEMS = systems;
         return systems;
     });
 }
@@ -105,4 +109,16 @@ class System {
         label.appendChild(span);
         return li;
      }
+}
+
+
+/*
+    Yield filtered systems.
+*/
+function * filteredSystems () {
+    const systemId = parseInt($('#find-system').val());
+
+    for (const system of SYSTEMS)
+        if (systemId === NaN || system.id == systemId)
+            yield system;
 }
