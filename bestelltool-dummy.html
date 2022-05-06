@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+<html lang="en"><head>
     <meta charset="UTF-8">
     <meta name="description" content="Site Description">
     <meta name="keywords" content="HTML, CSS, JavaScript, Bootstrap">
@@ -11,8 +9,8 @@
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&amp;display=swap" rel="stylesheet">
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
@@ -32,7 +30,7 @@
     <script src="assets/js/sweetalert2.min.js"></script>
     <script type="module">
         import { init } from './mjs/bestelltool/main.mjs';
-        $(document).ready(init);
+        //$(document).ready(init);
     </script>
 
 </head>
@@ -190,13 +188,11 @@
                                             <p>Anfrage auf neue Systeme</p>
                                             <div class="neueSystForm">
                                                 <div class="select">
-                                                    <select name="Kundenauswählen" id="Kundenauswählen" class="basic-data"></select>
+                                                    <select name="Kundenauswählen" id="Kundenauswählen" class="basic-data"><option value="-1">Bitte Kunden auswählen</option><option value="1022005">Adlershorst</option><option value="1071001">Avila Immobilien</option><option value="1070002">BG Zuffenhausen</option><option value="1085001">BGE - Erding</option><option value="1063001">BGH Hanau</option><option value="1033001">BGW</option><option value="1028001">BREBAU</option><option value="1067001">Bau AG Kaiserslautern</option><option value="1072001">Baugesellschaft Horb</option><option value="1081001">Bauverein Giesing</option><option value="1081002">BayernHeim</option><option value="1012001">DeGeWo</option><option value="5000">Demo 1</option><option value="1010">Demo 2</option><option value="1027003">Die Vereinigte - Bremerhaven</option><option value="1070001">FLÜWO</option><option value="1030018">GBH - Hannover 1</option><option value="1030019">GBH - Hannover 2</option><option value="1028002">GEWOBA</option><option value="1049001">GWB Vechta</option><option value="1058002">GWG Hagen</option><option value="1026001">GeWoBa - Emden</option><option value="1078001">HEGAU</option><option value="1097003">HGU - Unterfranken</option><option value="901049001">HOMEINFO 1</option><option value="1000">HOMEINFO 2</option><option value="1001">HOMEINFO Medienservice</option><option value="1049003">HVO Osnabrück</option><option value="3033001">Haus &amp;amp; Grund Bielefeld</option><option value="1070003">Heimstätten Stuttgart</option><option value="1080001">ISS GmbH</option><option value="1024001">Immosolve</option><option value="1071002">KBG Waiblingen</option><option value="1037002">KWB Osterode</option><option value="1030020">KleBu - Hannover</option><option value="1045001">LEG AG</option><option value="1031002">Lehrter</option><option value="6041001">MOStron</option><option value="1047001">Max Knobloch GmbH</option><option value="1056001">Modernes Wohnen Koblenz</option><option value="1023001">Neue Lübecker</option><option value="1038003">Nibelungen - Braunschweig</option><option value="1097002">SBW - Würzburg</option><option value="1027001">STÄWOG - Bremerhaven</option><option value="1097001">SWG - Schweinfurt</option><option value="2033001">Sparkasse Bielefeld</option><option value="1080002">Stadibau Bayern</option><option value="1039001">TCS AG</option><option value="1018001">UNION Rostock</option><option value="2058001">VR Immo Südwestfalen</option><option value="2094001">VR Passau</option><option value="2074001">VR SHA</option><option value="1038007">VWI</option><option value="2074002">Volksbank Hohenlohe</option><option value="2059001">Volksbank Oelde</option><option value="2070001">Volksbank Stuttgart</option><option value="1180001">Volkswohnungen München</option><option value="1098001">WBG - Meiningen</option><option value="1099001">WBG - Thüringen</option><option value="1032001">WBG Horn-Bad Meinberg</option><option value="1030001">WBG Laazen</option><option value="1014001">WBG Luckenwalde</option><option value="1090003">WBG Nürnberg</option><option value="1042003">WBS Wuppertal</option><option value="1044003">WG Herne-Süd</option><option value="993002">WGH - Herrenhausen</option><option value="1014002">WGL - Ludwigsfelde</option><option value="1049002">WGO Osnabrück</option><option value="1084001">WSGW - Waldkraiburg</option><option value="1058003">WVH Hagen</option><option value="1092001">Werkvolk</option><option value="1030021">ZVK - Hannover</option></select>
                                                     <span class="selectArrow"></span>
                                                 </div> <!-- /.select -->
                                                 <div class="dualinp inpCol Straße">
-                                                    <div class="autocomplete-wrapper">
-                                                        <input id="street" type="text" placeholder="Straße" class="longInp basic-data">
-                                                    </div>
+                                                    <input id="street" type="text" placeholder="Straße" class="longInp basic-data"><div class="autocomplete-items"><div class="autocomplete-item" data-street="Lütjenmoor" data-house-number="39" data-zip-code="22850" data-city="Norderstedt">Lütjenmoor 39, 22850 Norderstedt</div><div class="autocomplete-item" data-street="Lütjenmoor" data-house-number="41" data-zip-code="22850" data-city="Norderstedt">Lütjenmoor 41, 22850 Norderstedt</div><div class="autocomplete-item" data-street="Lütjenmoor" data-house-number="47" data-zip-code="22850" data-city="Norderstedt">Lütjenmoor 47, 22850 Norderstedt</div><div class="autocomplete-item" data-street="Lütjenmoor" data-house-number="49" data-zip-code="22850" data-city="Norderstedt">Lütjenmoor 49, 22850 Norderstedt</div></div>
                                                     <input id="houseNumber" type="text" placeholder="Nr." class="smallInp basic-data">
                                                 </div>
                                                 <div class="dualinp inpCol PLZ">
@@ -253,43 +249,43 @@
                                     </div> <!-- /.neuinstaCol -->
                                     <div class="neuinstaCol col33">
                                         <div id="checklist" class="neuinstaContent umgebungsdaten">
-                                            <h3>Umgebungsdaten</h3>
-                                            <p>Schritte nach der Bestellung</p>
-                                            <div class="neueSystForm">
-                                                <ul class="checkboxList">
-                                                    <li>
-                                                        <input type="checkbox" name="Anlage" id="Anlage" class="checklist">
-                                                        <label for="Anlage">Anlage Baustellenvorbeitung <span class="checkboxStyle"></span></label>
+                                            <h3 style="opacity: 0.7;">Umgebungsdaten</h3>
+                                            <p style="opacity: 0.7;">Schritte nach der Bestellung</p>
+                                            <div class="neueSystForm" style="opacity: 0.7;">
+                                                <ul class="checkboxList" style="opacity: 0.7;">
+                                                    <li style="opacity: 0.7;">
+                                                        <input type="checkbox" name="Anlage" id="Anlage" class="checklist" disabled="" style="opacity: 0.7;">
+                                                        <label for="Anlage" style="opacity: 0.7;">Anlage Baustellenvorbeitung <span class="checkboxStyle" style="opacity: 0.7;"></span></label>
                                                     </li>
-                                                    <li>
-                                                        <input type="checkbox" name="Netzbindung" id="Netzbindung" class="checklist">
-                                                        <label for="Netzbindung">Netzbindung <span class="checkboxStyle"></span></label>
+                                                    <li style="opacity: 0.7;">
+                                                        <input type="checkbox" name="Netzbindung" id="Netzbindung" class="checklist" disabled="" style="opacity: 0.7;">
+                                                        <label for="Netzbindung" style="opacity: 0.7;">Netzbindung <span class="checkboxStyle" style="opacity: 0.7;"></span></label>
                                                     </li>
-                                                    <li>
-                                                        <input type="checkbox" name="DatumInstallation" id="DatumInstallation" class="checklist">
-                                                        <label for="DatumInstallation">Datum Installation bestätigt <span class="checkboxStyle"></span></label>
+                                                    <li style="opacity: 0.7;">
+                                                        <input type="checkbox" name="DatumInstallation" id="DatumInstallation" class="checklist" disabled="" style="opacity: 0.7;">
+                                                        <label for="DatumInstallation" style="opacity: 0.7;">Datum Installation bestätigt <span class="checkboxStyle" style="opacity: 0.7;"></span></label>
                                                     </li>
-                                                    <li>
-                                                        <input type="checkbox" name="Hardware" id="Hardware" class="checklist">
-                                                        <label for="Hardware">Hardware Installation <span class="checkboxStyle"></span></label>
+                                                    <li style="opacity: 0.7;">
+                                                        <input type="checkbox" name="Hardware" id="Hardware" class="checklist" disabled="" style="opacity: 0.7;">
+                                                        <label for="Hardware" style="opacity: 0.7;">Hardware Installation <span class="checkboxStyle" style="opacity: 0.7;"></span></label>
                                                     </li>
-                                                    <li>
-                                                        <input type="checkbox" name="Abgeschlossen" id="Abgeschlossen" class="checklist">
-                                                        <label for="Abgeschlossen">Abgeschlossen <span class="checkboxStyle"></span></label>
+                                                    <li style="opacity: 0.7;">
+                                                        <input type="checkbox" name="Abgeschlossen" id="Abgeschlossen" class="checklist" disabled="" style="opacity: 0.7;">
+                                                        <label for="Abgeschlossen" style="opacity: 0.7;">Abgeschlossen <span class="checkboxStyle" style="opacity: 0.7;"></span></label>
                                                     </li>
                                                 </ul>
-                                                <div class="textAreaBox inpCol">
-                                                    <textarea name="Bemerkung" id="Bemerkung" placeholder="Bemerkung" class="checklist"></textarea>
+                                                <div class="textAreaBox inpCol" style="opacity: 0.7;">
+                                                    <textarea name="Bemerkung" id="Bemerkung" placeholder="Bemerkung" class="checklist" disabled="" style="opacity: 0.7;"></textarea>
                                                 </div>
                                             </div> <!-- /.neueSystForm -->
                                         </div> <!-- /.neuinstaContent -->
                                     </div> <!-- /.neuinstaCol -->
                                     <div class="neuinstaCol col33">
                                         <div id="history-col" class="neuinstaContent HistoryCol">
-                                            <h3>History</h3>
-                                            <p>Änderungen am Display</p>
-                                            <table class="table tableHeadNone">
-                                                <tbody id="history"></tbody>
+                                            <h3 style="opacity: 0.7;">History</h3>
+                                            <p style="opacity: 0.7;">Änderungen am Display</p>
+                                            <table class="table tableHeadNone" style="opacity: 0.7;">
+                                                <tbody id="history" style="opacity: 0.7;"></tbody>
                                             </table>
                                         </div> <!-- /.neuinstaContent -->
                                     </div> <!-- /.neuinstaCol -->
@@ -303,5 +299,6 @@
 
 
     </div> <!-- /.bodyWrap -->
-</body>
-</html>
+
+
+</body></html>
