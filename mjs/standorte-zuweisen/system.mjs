@@ -29,6 +29,7 @@ import { Deployment } from './deployment.mjs';
 
 const PAGE_SIZE = 10;
 let SYSTEMS = [];
+let PAGER = null;
 
 
 export function init () {
