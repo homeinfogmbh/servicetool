@@ -1,14 +1,14 @@
 const ONE_HOUR = 60 * 60 * 1000; // Milliseconds;
 const THREE_MONTHS = 3 * 30 * 24; // Hours
 var _commonChecks = {"ssdcarderror":{"title":"SSD Karten Fehler", "text":"Liste der Geräte die einen SSD-Karten-Fehler vorweisen", "systems":[], "show":true},
- 	"notfitted":{"title":"Nicht verbaute Systeme", "text":"Liste der Geräte die nicht verbaut sind", "systems":[], "show":true},
+ 	"notfitted":{"title":"Nicht verbaute Displays", "text":"Liste der Geräte die nicht verbaut sind", "systems":[], "show":true},
 	"testsystem":{"title":"Testgeräte", "text":"Liste der Testgeräte", "systems":[], "show":true},
 	"offline":{"title":"Offline", "text":"Liste der Geräte die offline sein", "systems":[], "show":true},
 	"offlineThreeMonth":{"title":"Offline mehr als 3 Monate", "systems":[], "show":true},
 	"noActualData":{"title":"Keine aktuellen Daten", "text":"Liste der Geräte die keine aktuellen Daten besitzen", "systems":[], "show":true},
 	"blackscreen":{"title":"Im Schwarzbild-Modus", "text":"Liste der Geräte die schwarz geschaltet sind", "systems":[], "show":true},
 	"oldApplication":{"title":"Alte Applicationen", "text":"Liste der Geräte auf denen eine alte Version der Applikation läuft", "systems":[], "show":true},
-	"system":{"title":"Systeme", "text":"Liste aller Systeme", "systems":[], "show":false}
+	"system":{"title":"Displays", "text":"Liste aller Displays", "systems":[], "show":false}
 }; // -> also setCheckList() for filter
 var _showErrorMessages = true;
 var _countdowntimer = null;
@@ -177,17 +177,6 @@ function setCheckList(list) {
 	return list;
 }
 
-function checkSystem(systemID) {
-    return $.ajax({
-        url: "https://sysmon.homeinfo.de/check/" + systemID,
-        type: "GET",
-        cache: false,
-        success: function (data) {  },
-        error: function (msg) {
-            setErrorMessage(msg, "Checken des Systems");
-        }
-    });
-}
 function getCustomerView() {
     return $.ajax({
         url: "https://sysmon.homeinfo.de/enduser",  // ?customer=1030020
