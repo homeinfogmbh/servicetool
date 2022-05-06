@@ -214,6 +214,27 @@ function createPageLinks () {
 
 
 /*
+    Render the page with the given index.
+*/
+function renderPage (index) {
+    $('#deployments').html('');
+    const pager = new Pager(filteredDeployments(), 15);
+    const page = pager.page(index);
+
+    for (const deployment of page)
+        $('#deployments').append(deployment.toHTML());
+}
+
+
+/*
+    Event handler to open a page.
+*/
+function openPage (event) {
+    renderPage(parseInt(event.target.getAttribute('data-page')));
+}
+
+
+/*
     Create a HTML element for the link to the given page number.
 */
 function createPageLink (index) {
@@ -221,5 +242,6 @@ function createPageLink (index) {
     span.textContent = index + 1;
     span.setAttribute('data-page', index);
     span.classList.add('deployment-page');
+    span.addEventListener('click', openPage);
     return span;
 }
