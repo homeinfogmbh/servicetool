@@ -263,7 +263,7 @@ function selectDeployment (event) {
     );
     renderDeployedSystems(deployment);
     $('.address-container').each((index, value) => {
-        value.text(deployment.address);
+        $(this).text(deployment.address);
     });
 }
 
