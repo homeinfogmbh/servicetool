@@ -166,6 +166,9 @@ function deployedSystemToHTML (systemId, deploymentId) {
 }
 
 
+/*
+    Return true iff the deployment matches the filter string.
+*/
 function deploymentMatchesFilter (deployment, filterString) {
     if (!filterString)
         return true;
@@ -186,6 +189,9 @@ function deploymentMatchesFilter (deployment, filterString) {
 }
 
 
+/*
+    Yield deployments that match the filter string.
+*/
 function * filteredDeployments () {
     const filterString = $('#find-deployment').val().toLowerCase();
 
@@ -195,6 +201,9 @@ function * filteredDeployments () {
 }
 
 
+/*
+    Create the list of page links.
+*/
 function createPageLinks () {
     $('#deployment-pages').html('');
     const pager = new Pager(filteredDeployments(), 15);
@@ -204,6 +213,9 @@ function createPageLinks () {
 }
 
 
+/*
+    Create a HTML element for the link to the given page number.
+*/
 function createPageLink (index) {
     const span = document.createElement('span');
     span.textContent = index + 1;
