@@ -28,6 +28,7 @@ import { Pager } from '../pager.mjs';
 
 const PAGE_SIZE = 15;
 let DEPLOYMENTS = [];
+let PAGER = null;
 
 
 export class Deployment {
@@ -131,7 +132,9 @@ export class Deployment {
 
 
 export function init () {
-    return getDeployments().then(render);
+    return getDeployments().then(render).then(() => {
+        $('#find-deployment').change(render);
+    });
 }
 
 
@@ -214,12 +217,23 @@ function * filteredDeployments () {
 */
 function createPageLinks () {
     $('#deployment-pages').html('');
-    const pager = new Pager(filteredDeployments(), PAGE_SIZE);
-
-    for (let index = 0; index < pager.pages; index++) {
-        $('#deployment-pages').append(createPageLink(index));
-        $('#deployment-pages').append('&nbsp;');
-    }
+    const previous = document.createElement('span');
+    previous.style.textDecoration = 'underline';
+    previous.addEventListener('click', event => {
+        renderDeployments(PAGER.previous());
+    });
+    $('#deployment-pages').append(previous);
+    $('#deployment-pages').append('&nbsp;');
+    const pageinfo = document.createElement('span');
+    pageinfo.textContent = (PAGER.currentIndex + 1) + ' / ' + PAGER.pages;
+    $('#deployment-pages').append(pageinfo);
+    $('#deployment-pages').append('&nbsp;');
+    const next = document.createElement('span');
+    next.style.textDecoration = 'underline';
+    next.addEventListener('click', event => {
+        renderDeployments(PAGER.next());
+    });
+    $('#deployment-pages').append(next);
 }
 
 
@@ -257,37 +271,14 @@ function selectDeployment (event) {
 
 
 /*
-    Render the page with the given index.
+    Render the given deployments.
 */
-function renderPage (index) {
+function renderDeployments (deployments) {
     $('#deployments').html('');
     $('#deployed-systems').html('');
-    const pager = new Pager(filteredDeployments(), PAGE_SIZE);
 
-    for (const deployment of pager.page(index))
+    for (const deployment of deployments)
         $('#deployments').append(deployment.toHTML());
-}
-
-
-/*
-    Event handler to open a page.
-*/
-function openPage (event) {
-    renderPage(parseInt(event.target.getAttribute('data-page')));
-}
-
-
-/*
-    Create a HTML element for the link to the given page number.
-*/
-function createPageLink (index) {
-    const span = document.createElement('span');
-    span.textContent = index + 1;
-    span.setAttribute('data-page', index);
-    span.classList.add('deployment-page');
-    span.addEventListener('click', openPage);
-    span.style.textDecoration = 'underline';
-    return span;
 }
 
 
@@ -295,14 +286,7 @@ function createPageLink (index) {
     Rebuild the paged list.
 */
 function render () {
+    PAGER = new Pager(filteredDeployments(), PAGE_SIZE);
     createPageLinks();
     renderPage(0);
-}
-
-
-/*
-    Event handler for typing in the search field.
-*/
-function onSearch (event) {
-    render();
 }
