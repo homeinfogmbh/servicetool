@@ -44,16 +44,6 @@ export function getDeployments () {
 }
 
 
-/*
-    Yield HTML elements for the list of systems deployed at the currently
-    selected deployment.
-*/
-export function * systemsToHTML (deployment) {
-    for (const systemId of deployment.systems)
-        yield deployedSystemToHTML(systemId, deployment);
-}
-
-
 class Deployment {
     constructor (
         id, customer, type, connection, address, lptAddress, scheduled,
@@ -129,17 +119,26 @@ class Deployment {
         tr.appendChild(col5);
         return tr;
     }
+
+    /*
+        Yield HTML elements for the list of systems deployed at the currently
+        selected deployment.
+    */
+    * systemsToHTML () {
+        for (const systemId of this.systems)
+            yield deployedSystemToHTML(systemId, this.id);
+    }
 }
 
 
-function deployedSystemToHTML (systemId, deployment) {
+function deployedSystemToHTML (systemId, deploymentId) {
     const li = document.createElement('li');
     const span1 = document.createElement('span');
     span1.textContent = systemId;
     li.appendChild(span1);
     const span2 = document.createElement('span');
     span2.setAttribute('data-system', systemId);
-    span2.setAttribute('data-deployment', deployment.id);
+    span2.setAttribute('data-deployment', deploymentId);
     span2.classList.add('whiteMark');
     span2.classList.add('undeploy');
     span2.textContent = 'lösen';
