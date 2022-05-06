@@ -262,11 +262,13 @@ function selectDeployment (event) {
         parseInt(event.target.getAttribute('data-id'))
     );
     renderDeployedSystems(deployment);
+    const address = deployment.address.toString();
     $('.address-container').each((index, value) => {
         console.log('Index: ' + index);
         console.log('Value: ' + value);
         console.log('Element: ' + $(this));
-        $(this).text('FOOBAR' + deployment.address.toString());
+        console.log('Address: ' + address);
+        value.textContent = address;
     });
 }
 
