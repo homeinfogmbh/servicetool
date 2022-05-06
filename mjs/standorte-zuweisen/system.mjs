@@ -37,7 +37,7 @@ export function init () {
 
 function getSystems () {
     return $.ajax({
-        url: 'https://termgr.homeinfo.intra/list/systems',
+        url: 'https://termgr.homeinfo.de/list/systems',
         dataType: 'json',
         error: handleError,
         xhrFields: {
