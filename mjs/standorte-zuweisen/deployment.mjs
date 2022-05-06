@@ -22,6 +22,12 @@
 'use strict';
 
 
+import { Pager } from '../pager.mjs';
+
+
+let DEPLOYMENTS = [];
+
+
 /*
     Retrieve all available deployments.
 */
@@ -39,6 +45,7 @@ export function getDeployments () {
         for (const deployment of json)
             deployments.push(Deployment.fromJSON(deployment));
 
+        DEPLOYMENTS = deployments;
         return deployments;
     });
 }
@@ -156,4 +163,51 @@ function deployedSystemToHTML (systemId, deploymentId) {
     span2.textContent = 'lösen';
     li.appendChild(span2);
     return li;
+}
+
+
+function deploymentMatchesFilter (filterString, deployment) {
+    if (!filterString)
+        return true;
+
+    if (deployment.address.street.toLowerCase().includes(filterString))
+        return true;
+
+    if (deployment.address.city.toLowerCase().includes(filterString))
+        return true;
+
+    if (deployment.customer.abbreviation.toLowerCase().includes(filterString))
+        return true;
+
+    if (deployment.customer.id == parseInt(filterString))
+        return true;
+
+    return false;
+}
+
+
+function * filteredDeployments () {
+    const filterString = $('#find-deployment').val().toLowerCase();
+
+    for (const deployment of DEPLOYMENTS)
+        if (deploymentMatchesFilter(filterString, deployment))
+            yield deployment;
+}
+
+
+function createPageLinks () {
+    $('#deployment-pages').html('');
+    const pager = new Pager(filteredDeployments(), 15);
+
+    for (let index = 0; index < pager.pages; index++)
+        $('#deployment-pages').append(createPageLink(index));
+}
+
+
+function createPageLink (index) {
+    const span = document.createElement('span');
+    span.textContent = index + 1;
+    span.setAttribute('data-page', index);
+    span.classList.add('deployment-page');
+    return span;
 }
