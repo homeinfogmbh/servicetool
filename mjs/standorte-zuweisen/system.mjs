@@ -22,15 +22,23 @@
 'use strict';
 
 
+import { handleError } from '../common.mjs';
+import { Pager } from '../pager.mjs';
 import { Deployment } from './deployment.mjs';
 
 
+const PAGE_SIZE = 10;
 let SYSTEMS = [];
 
 
-export function getSystems () {
+export function init () {
+    return getSystems().then(render);
+}
+
+
+function getSystems () {
     return $.ajax({
-        url: 'https://termgr.homeinfo.intra/list/systems',
+        url: 'https://termgr.homeinfo.de/list/systems',
         dataType: 'json',
         error: handleError,
         xhrFields: {
@@ -116,9 +124,42 @@ class System {
     Yield filtered systems.
 */
 function * filteredSystems () {
-    const systemId = parseInt($('#find-system').val());
+    const systemId = parseInt($('#find-system').val().trim());
 
     for (const system of SYSTEMS)
         if (systemId === NaN || system.id == systemId)
             yield system;
+}
+
+
+/*
+    Create the list of page links.
+*/
+function createPageLinks () {
+    $('#system-pages').html('');
+    const pager = new Pager(filteredSystems(), PAGE_SIZE);
+
+    for (let index = 0; index < pager.pages; index++)
+        $('#system-pages').append(createPageLink(index));
+}
+
+
+/*
+    Render the page with the given index.
+*/
+function renderPage (index) {
+    $('#systems').html('');
+    const pager = new Pager(filteredSystems(), PAGE_SIZE);
+
+    for (const system of pager.page(index))
+        $('#systems').append(system.toHTML());
+}
+
+
+/*
+    Rebuild the paged list.
+*/
+function render () {
+    createPageLinks();
+    renderPage(0);
 }

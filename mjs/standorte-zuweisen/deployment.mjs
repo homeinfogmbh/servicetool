@@ -22,36 +22,16 @@
 'use strict';
 
 
+import { handleError } from '../common.mjs';
 import { Pager } from '../pager.mjs';
 
 
+const PAGE_SIZE = 15;
 let DEPLOYMENTS = [];
+let PAGER = null;
 
 
-/*
-    Retrieve all available deployments.
-*/
-export function getDeployments () {
-    return $.ajax({
-        url: 'https://termgr.homeinfo.de/list/deployments',
-        dataType: 'json',
-        error: handleError,
-        xhrFields: {
-            withCredentials: true
-        }
-    }).then(json => {
-        const deployments = [];
-
-        for (const deployment of json)
-            deployments.push(Deployment.fromJSON(deployment));
-
-        DEPLOYMENTS = deployments;
-        return deployments;
-    });
-}
-
-
-class Deployment {
+export class Deployment {
     constructor (
         id, customer, type, connection, address, lptAddress, scheduled,
         annotation, testing, timestamp, systems = null
@@ -75,11 +55,11 @@ class Deployment {
     static fromJSON (json) {
         return new this(
             json.id,
-            Customer.fromJSON(json.customer),
+            json.customer,
             json.type,
             json.connection,
-            Address.fromJSON(json.address),
-            (json.lptAddress == null) ? null : Address.fromJSON(json.lptAddress),
+            json.address,
+            json.lptAddress,
             (json.scheduled == null) ? null : new Date(json.scheduled),
             json.annotation,
             json.testing,
@@ -115,6 +95,7 @@ class Deployment {
         input.setAttribute('name', 'deployment-select');
         input.setAttribute('data-id', this.id);
         input.style.display = 'none';
+        input.addEventListener('click', selectDeployment);
         col1.appendChild(input);
         const label = document.createElement('label');
         label.setAttribute('for', 'deployment-' + this.id);
@@ -147,6 +128,36 @@ class Deployment {
         for (const systemId of this.systems)
             yield deployedSystemToHTML(systemId, this.id);
     }
+}
+
+
+export function init () {
+    return getDeployments().then(render).then(() => {
+        $('#find-deployment').keyup(render);
+    });
+}
+
+
+/*
+    Retrieve all available deployments.
+*/
+function getDeployments () {
+    return $.ajax({
+        url: 'https://termgr.homeinfo.de/list/deployments',
+        dataType: 'json',
+        error: handleError,
+        xhrFields: {
+            withCredentials: true
+        }
+    }).then(json => {
+        const deployments = [];
+
+        for (const deployment of json)
+            deployments.push(Deployment.fromJSON(deployment));
+
+        DEPLOYMENTS = deployments;
+        return deployments;
+    });
 }
 
 
@@ -202,46 +213,100 @@ function * filteredDeployments () {
 
 
 /*
-    Create the list of page links.
+    Return information about the current page and total amount of pages.
 */
-function createPageLinks () {
-    $('#deployment-pages').html('');
-    const pager = new Pager(filteredDeployments(), 15);
-
-    for (let index = 0; index < pager.pages; index++)
-        $('#deployment-pages').append(createPageLink(index));
+function pageInfo () {
+    return (PAGER.currentIndex + 1) + ' / ' + PAGER.pages;
 }
 
 
 /*
-    Render the page with the given index.
+    Return a span that is clickable and has a text.
 */
-function renderPage (index) {
-    $('#deployments').html('');
-    const pager = new Pager(filteredDeployments(), 15);
-    const page = pager.page(index);
+function makeSpanLink (caption, action) {
+    const span = document.createElement('span');
+    span.style.textDecoration = 'underline';
+    span.style.cursor = 'pointer';
+    span.addEventListener('click', action);
+    span.textContent = caption;
+    return span;
+}
 
-    for (const deployment of page)
+
+/*
+    Create the list of page links.
+*/
+function createPageLinks () {
+    $('#deployment-pages').html('');
+    const previous = makeSpanLink('<<', event => {
+        renderDeployments(PAGER.previous());
+        $('#page-info').text(pageInfo());
+    });
+    $('#deployment-pages').append(previous);
+    $('#deployment-pages').append('&nbsp;');
+    const pageinfo = document.createElement('span');
+    pageinfo.setAttribute('id', 'page-info');
+    pageinfo.textContent = pageInfo();
+    $('#deployment-pages').append(pageinfo);
+    $('#deployment-pages').append('&nbsp;');
+    const next = makeSpanLink('>>', event => {
+        renderDeployments(PAGER.next());
+        $('#page-info').text(pageInfo());
+    });
+    $('#deployment-pages').append(next);
+}
+
+
+/*
+    Render the systems of the given deployment.
+*/
+function renderDeployedSystems (deployment) {
+    $('#deployed-systems').html('');
+
+    for (const system of deployment.systemsToHTML())
+        $('#deployed-systems').append(system);
+}
+
+
+/*
+    Return a deployment by its ID.
+*/
+function getDeploymentById (id) {
+    for (const deployment of DEPLOYMENTS)
+        if (deployment.id == id)
+            return deployment;
+
+    throw 'No such deployment.';
+}
+
+
+/*
+    Handle event of deployment selection.
+*/
+function selectDeployment (event) {
+    renderDeployedSystems(getDeploymentById(
+        parseInt(event.target.getAttribute('data-id'))
+    ));
+}
+
+
+/*
+    Render the given deployments.
+*/
+function renderDeployments (deployments) {
+    $('#deployments').html('');
+    $('#deployed-systems').html('');
+
+    for (const deployment of deployments)
         $('#deployments').append(deployment.toHTML());
 }
 
 
 /*
-    Event handler to open a page.
+    Rebuild the paged list.
 */
-function openPage (event) {
-    renderPage(parseInt(event.target.getAttribute('data-page')));
-}
-
-
-/*
-    Create a HTML element for the link to the given page number.
-*/
-function createPageLink (index) {
-    const span = document.createElement('span');
-    span.textContent = index + 1;
-    span.setAttribute('data-page', index);
-    span.classList.add('deployment-page');
-    span.addEventListener('click', openPage);
-    return span;
+function render () {
+    PAGER = new Pager(filteredDeployments(), PAGE_SIZE);
+    createPageLinks();
+    renderDeployments(PAGER.currentPage());
 }

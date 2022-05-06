@@ -25,6 +25,18 @@
 	<!-- Responsive Css -->
 	<link rel="stylesheet" href="assets/css/responsive.css">
 
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/owl.carousel.min.js"></script>
+    <script src="assets/js/active.js"></script>
+    <script src="assets/js/sweetalert2.min.js"></script>
+	<script src="assets/js/common.js"></script>
+	<script src="assets/js/menu.js"></script>
+    <script type="module">
+        import { init } from './mjs/standorte-zuweisen/main.mjs';
+        $(document).ready(init);
+    </script>
+
 </head>
 <body class="neuinstallation">
 
@@ -202,7 +214,7 @@
 												</table>
 											</div>
 										</div> <!-- /.neuinstaContent -->
-										<div id="deployment-pages"></div>
+										<div id="deployment-pages" class="text-center"></div>
 										<br>
 										<br>
 										<br>
@@ -340,12 +352,5 @@
 
 
 	</div> <!-- /.bodyWrap -->
-
-	<!-- Js -->
-	<script src="assets/js/jquery.min.js"></script>
-	<script src="assets/js/bootstrap.bundle.min.js"></script>
-	<script src="assets/js/owl.carousel.min.js"></script>
-	<script src="assets/js/active.js"></script>
-
 </body>
 </html>
