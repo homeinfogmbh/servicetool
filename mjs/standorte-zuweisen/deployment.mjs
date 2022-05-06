@@ -115,6 +115,7 @@ class Deployment {
         input.setAttribute('name', 'deployment-select');
         input.setAttribute('data-id', this.id);
         input.style.display = 'none';
+        input.addEventListener('click', selectDeployment);
         col1.appendChild(input);
         const label = document.createElement('label');
         label.setAttribute('for', 'deployment-' + this.id);
@@ -214,10 +215,32 @@ function createPageLinks () {
 
 
 /*
+    Render the systems of the given deployment.
+*/
+function renderDeployedSystems (deployment) {
+    $('#deployed-systems').html('');
+
+    for (const system of deployment.systemsToHTML())
+        $('#deployed-systems').append(system);
+}
+
+
+/*
+    Handle event of deployment selection.
+*/
+function selectDeployment (event) {
+    renderDeployedSystems(getDeploymentById(
+        parseInt(event.target.getAttribute('data-id'))
+    ));
+}
+
+
+/*
     Render the page with the given index.
 */
 function renderPage (index) {
     $('#deployments').html('');
+    $('#deployed-systems').html('');
     const pager = new Pager(filteredDeployments(), 15);
     const page = pager.page(index);
 
