@@ -137,23 +137,23 @@ function * filteredSystems () {
     Create the list of page links.
 */
 function createPageLinks () {
-    $('#deployment-pages').html('');
+    $('#system-pages').html('');
     const previous = makeSpanLink('<<', event => {
         renderSystems(PAGER.previous());
         $('#system-page-info').text(PAGER.pageInfo);
     });
-    $('#deployment-pages').append(previous);
-    $('#deployment-pages').append('&nbsp;');
+    $('#system-pages').append(previous);
+    $('#system-pages').append('&nbsp;');
     const pageinfo = document.createElement('span');
     pageinfo.setAttribute('id', 'system-page-info');
     pageinfo.textContent = PAGER.pageInfo;
-    $('#deployment-pages').append(pageinfo);
-    $('#deployment-pages').append('&nbsp;');
+    $('#system-pages').append(pageinfo);
+    $('#system-pages').append('&nbsp;');
     const next = makeSpanLink('>>', event => {
         renderSystems(PAGER.next());
         $('#system-page-info').text(PAGER.pageInfo);
     });
-    $('#deployment-pages').append(next);
+    $('#system-pages').append(next);
 }
 
 
