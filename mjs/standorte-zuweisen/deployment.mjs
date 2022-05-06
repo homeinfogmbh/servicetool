@@ -112,7 +112,7 @@ class Deployment {
         const input = document.createElement('input');
         input.setAttribute('id', 'deployment-' + this.id);
         input.setAttribute('type', 'radio');
-        input.setAttribute('name', 'deploymentSelect');
+        input.setAttribute('name', 'deployment-select');
         input.setAttribute('data-id', this.id);
         input.style.display = 'none';
         col1.appendChild(input);
