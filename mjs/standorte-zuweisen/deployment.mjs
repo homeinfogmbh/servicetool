@@ -160,6 +160,7 @@ function deployedSystemToHTML (systemId, deploymentId) {
     span2.setAttribute('data-deployment', deploymentId);
     span2.classList.add('whiteMark');
     span2.classList.add('undeploy');
+    span2.style.cursor = 'pointer';
     span2.textContent = 'lösen';
     span2.addEventListener('click', undeploy);
     li.appendChild(span2);
