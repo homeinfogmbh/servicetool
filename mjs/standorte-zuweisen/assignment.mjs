@@ -54,8 +54,7 @@ function assign (event) {
             withCredentials: true
         }
     }).then(response => {
-        render();
-        return response;
+        window.location = window.location;
     });
 }
 
