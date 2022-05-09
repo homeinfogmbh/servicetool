@@ -126,7 +126,8 @@ class System {
 */
 function * filteredSystems () {
     const systemId = parseInt($('#find-system').val().trim());
-    console.log('Got systems: ' + systems.length)
+    console.log('Got systems: ' + SYSTEMS.length);
+    console.log('Filtering by: ' + systemId);
 
     for (const system of SYSTEMS)
         if (systemId === NaN || system.id == systemId)
@@ -163,10 +164,10 @@ function createPageLinks () {
 */
 function renderSystems (systems) {
     $('#systems').html('');
-    console.log('Rendering systems: ' + systems.length)
+    console.log('Rendering systems: ' + systems.length);
 
     for (const system of systems) {
-        console.log('Rendering system: ' + system.id)
+        console.log('Rendering system: ' + system.id);
         $('#systems').append(system.toHTML());
     }
 }
