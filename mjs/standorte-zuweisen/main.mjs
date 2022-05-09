@@ -22,11 +22,13 @@
 'use strict';
 
 
+import { init as initAssignment } from './assignment.mjs';
 import { init as initDeployments } from './deployment.mjs';
 import { init as initSystems } from './system.mjs';
 
 
 export function init () {
+    initAssignment();
     initDeployments();
     initSystems();
 }
