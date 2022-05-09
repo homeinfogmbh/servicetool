@@ -159,8 +159,31 @@ function deployedSystemToHTML (systemId, deploymentId) {
     span2.classList.add('whiteMark');
     span2.classList.add('undeploy');
     span2.textContent = 'lösen';
+    span2.addEventListener('click', undeploy);
     li.appendChild(span2);
     return li;
+}
+
+/*
+    Remove a system from a deployment.
+*/
+export function undeploy (event) {
+    return $.ajax({
+        url: 'https://termgr.homeinfo.de/administer/deploy',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            system: parseInt(event.target.getAttribute('data-system')),
+            deployment: null
+        }),
+        dataType: 'json',
+        error: handleError,
+        xhrFields: {
+            withCredentials: true
+        }
+    }).then(response => {
+        window.location = window.location;
+    });
 }
 
 
