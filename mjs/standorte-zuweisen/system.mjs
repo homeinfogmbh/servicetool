@@ -124,13 +124,40 @@ class System {
 
 
 /*
+    Parse the search string and return a tuple
+    of the all flag and the target ID.
+*/
+function parseSearchString (string) {
+    let all = false;
+
+    if (string.startsWith('a:')) {
+        all = true;
+        string = string.substring(2);
+    }
+
+    return [all, parseInt(string.trim())];
+}
+
+
+/*
+    Match a system against the all flag and an ID.
+*/
+function matchSystem (system, all, id) {
+    if (system.deployment != null && !all)
+        return false;
+
+    return isNaN(id) || system.id == id;
+}
+
+
+/*
     Yield filtered systems.
 */
 function * filteredSystems () {
-    const systemId = parseInt($('#find-system').val().trim());
+    const [all, id] = parseSearchString($('#find-system').val().trim());
 
     for (const system of SYSTEMS)
-        if (isNaN(systemId) || system.id == systemId)
+        if (matchSystem(system, all, id))
             yield system;
 }
 
