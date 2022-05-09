@@ -23,6 +23,7 @@
 
 
 import { handleError } from '../common.mjs';
+import { render } from './system.mjs';
 
 
 /*
@@ -52,7 +53,10 @@ function assign (event) {
         xhrFields: {
             withCredentials: true
         }
-    })
+    }).then(response => {
+        render();
+        return response;
+    });
 }
 
 

@@ -39,6 +39,16 @@ export function init () {
 }
 
 
+/*
+    Rebuild the paged list.
+*/
+export function render () {
+    PAGER = new Pager(filteredSystems(), PAGE_SIZE);
+    createPageLinks();
+    renderSystems(PAGER.currentPage());
+}
+
+
 function getSystems () {
     return $.ajax({
         url: 'https://termgr.homeinfo.de/list/systems',
@@ -201,14 +211,4 @@ function renderSystems (systems) {
 
     for (const system of systems)
         $('#systems').append(system.toHTML());
-}
-
-
-/*
-    Rebuild the paged list.
-*/
-function render () {
-    PAGER = new Pager(filteredSystems(), PAGE_SIZE);
-    createPageLinks();
-    renderSystems(PAGER.currentPage());
 }
