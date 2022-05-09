@@ -259,12 +259,40 @@ function selectDeployment (event) {
 
 
 /*
-    Set content of address placeholders.
+    Reset address-related captions.
+*/
+function resetCaptions () {
+    const pleaseSelectDeploymentMessage = 'Bitte einen Standort auswählen';
+    $('#system-page-info').text(pleaseSelectDeploymentMessage);
+    $('#deploy-system-title').text(pleaseSelectDeploymentMessage);
+    $('#deployed-systems-title').text(pleaseSelectDeploymentMessage);
+}
+
+
+/*
+    Set address-related captions.
+*/
+function setCaptions (address) {
+    $('#deploy-system-subtitle').text(
+        'Zuordnung eines Displays zur ' + address
+    );
+    $('#deploy-system-title').text(
+        'Display ' + address + ' zugeordnet'
+    );
+    $('#deployed-systems-title').text(
+        'Display(s) bereits ' + address + ' zugeordnet'
+    );
+}
+
+
+/*
+    Set address into respective captions.
 */
 function setAddress (address) {
-    $('.address-container').each((index, value) => {
-        value.textContent = address;
-    });
+    if (address == null)
+        return resetCaptions();
+
+    return setCaptions(address);
 }
 
 
@@ -274,7 +302,7 @@ function setAddress (address) {
 function renderDeployments (deployments) {
     $('#deployments').html('');
     $('#deployed-systems').html('');
-    setAddress('N/A');
+    setAddress();
 
     for (const deployment of deployments)
         $('#deployments').append(deployment.toHTML());
