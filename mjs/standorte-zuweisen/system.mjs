@@ -126,6 +126,7 @@ class System {
 */
 function * filteredSystems () {
     const systemId = parseInt($('#find-system').val().trim());
+    console.log('Got systems: ' + systems.length)
 
     for (const system of SYSTEMS)
         if (systemId === NaN || system.id == systemId)
