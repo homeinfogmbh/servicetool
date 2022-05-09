@@ -94,7 +94,7 @@ function getAssignment () {
     Return the selected system.
 */
 function getSelectedSystem () {
-    const system = $('input[name="system-select"]:checked').val();
+    const system = $('input[name="system-select"]:checked').attr('data-id');
     console.log('Selected system: ' + system);
     throw 'TODO: implement';
 }
@@ -104,7 +104,7 @@ function getSelectedSystem () {
     Return the selected deployment.
 */
 function getSelectedDeployment () {
-    const deployment = $('input[name="deployment-select"]:checked').val();
+    const deployment = $('input[name="deployment-select"]:checked').attr('data-id');
     console.log('Selected deployment: ' + deployment);
     throw 'TODO: implement';
 }
