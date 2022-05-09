@@ -123,6 +123,7 @@ export function init () {
     return getDeployments().then(render).then(() => {
         $('#find-deployment').keyup(render);
     });
+    initSortElements(render);
 }
 
 
@@ -335,6 +336,5 @@ function renderDeployments (deployments) {
 function render () {
     PAGER = new Pager(sortedDeployments(filteredDeployments(), PAGE_SIZE));
     createPageLinks();
-    initSortElements(render);
     renderDeployments(PAGER.currentPage());
 }
