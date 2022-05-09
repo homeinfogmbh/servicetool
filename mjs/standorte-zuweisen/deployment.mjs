@@ -277,7 +277,7 @@ function setCaptions (address) {
         'Zuordnung eines Displays zur ' + address
     );
     $('#deploy-system-title').text(
-        'Display ' + address + ' zugeordnet'
+        'Display ' + address + ' zuordnen'
     );
     $('#deployed-systems-title').text(
         'Display(s) bereits ' + address + ' zugeordnet'
