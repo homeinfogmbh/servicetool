@@ -128,14 +128,21 @@ class System {
     of the all flag and the target ID.
 */
 function parseSearchString (string) {
+    string = string.trim()
     let all = false;
+    let id = null;
 
     if (string.startsWith('a:')) {
         all = true;
         string = string.substring(2);
     }
 
-    return [all, parseInt(string.trim())];
+    string = string.trim();
+
+    if (string.length > 0)
+        id = parseInt(string.trim());
+
+    return [all, id];
 }
 
 
@@ -146,7 +153,7 @@ function matchSystem (system, all, id) {
     if (system.deployment != null && !all)
         return false;
 
-    return isNaN(id) || system.id == id;
+    return id == null || system.id == id;
 }
 
 
