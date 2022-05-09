@@ -130,7 +130,7 @@ function * filteredSystems () {
     console.log('Filtering by: ' + systemId);
 
     for (const system of SYSTEMS)
-        if (systemId === NaN || system.id == systemId)
+        if (systemId == NaN || system.id == systemId)
             yield system;
 }
 
