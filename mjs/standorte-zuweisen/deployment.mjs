@@ -263,7 +263,7 @@ function selectDeployment (event) {
 */
 function resetCaptions () {
     const pleaseSelectDeploymentMessage = 'Bitte einen Standort auswählen';
-    $('#system-page-info').text(pleaseSelectDeploymentMessage);
+    $('#deploy-system-subtitle').text(pleaseSelectDeploymentMessage);
     $('#deploy-system-title').text(pleaseSelectDeploymentMessage);
     $('#deployed-systems-title').text(pleaseSelectDeploymentMessage);
 }
