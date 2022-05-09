@@ -146,11 +146,6 @@ function toggleDirection (element) {
 }
 
 
-function resetSortElement (element) {
-    element.setAttribute('data-direction', '');
-}
-
-
 /*
     Handle sorting events.
 */
@@ -158,7 +153,7 @@ function onSort (action) {
     return event => {
         for (const element of getSortElements())
             if (element != event.target)
-                resetSortElement(element);
+                element.setAttribute('data-direction', '');
 
         toggleDirection(event.target);
         return action();
