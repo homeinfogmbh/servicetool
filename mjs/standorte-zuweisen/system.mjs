@@ -179,5 +179,8 @@ function renderSystems (systems) {
 function render () {
     PAGER = new Pager(filteredSystems(), PAGE_SIZE);
     createPageLinks();
-    renderSystems(PAGER.currentPage());
+    console.log('Filtered systems: ' + PAGER.items.length);
+    const currentPage = PAGER.currentPage()
+    console.log('Current page: ' + currentPage.size);
+    renderSystems(currentPage);
 }
