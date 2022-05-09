@@ -254,7 +254,7 @@ function selectDeployment (event) {
         parseInt(event.target.getAttribute('data-id'))
     );
     renderDeployedSystems(deployment);
-    setAddress(deployment.address.toString());
+    setAddress(deployment.address);
 }
 
 
@@ -263,7 +263,6 @@ function selectDeployment (event) {
 */
 function resetCaptions () {
     const pleaseSelectDeploymentMessage = 'Bitte einen Standort auswählen';
-    $('#deploy-system-subtitle').text(pleaseSelectDeploymentMessage);
     $('#deploy-system-title').text(pleaseSelectDeploymentMessage);
     $('#deployed-systems-title').text(pleaseSelectDeploymentMessage);
 }
@@ -273,14 +272,11 @@ function resetCaptions () {
     Set address-related captions.
 */
 function setCaptions (address) {
-    $('#deploy-system-subtitle').text(
-        'Zuordnung eines Displays zur ' + address
-    );
     $('#deploy-system-title').text(
-        'Display ' + address + ' zuordnen'
+        'Neues Display ' + address.streetAndHouseNumber + ' zuordnen'
     );
     $('#deployed-systems-title').text(
-        'Display(s) bereits ' + address + ' zugeordnet'
+        'Display(s) bereits ' + address.streetAndHouseNumber + ' zugeordnet'
     );
 }
 
