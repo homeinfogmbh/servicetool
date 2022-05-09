@@ -40,7 +40,12 @@ export class Pager {
     }
 
     get pageInfo () {
-        return (this.currentIndex + 1) + ' / ' + this.pages;
+        const pages = this.pages;
+
+        if (pages == 0)
+            return 'N / A';
+
+        return (this.currentIndex + 1) + ' / ' + pages;
     }
 
     page (pageNumber) {
