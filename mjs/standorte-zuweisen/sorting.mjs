@@ -35,7 +35,7 @@ export function initSortElements (action) {
     Sort deployments.
 */
 export function sortedDeployments (deployments) {
-    const deployments = Array.from(deployments);
+    deployments = Array.from(deployments);
     deployments.sort(getSortFunction())
     return deployments;
 }
