@@ -40,7 +40,7 @@ function assign (event) {
         return Promise.reject('Fehlende Daten.');
 
     return $.ajax({
-        url: 'https://termgr.homeinfo.de/administer/deploy'
+        url: 'https://termgr.homeinfo.de/administer/deploy',
         method: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(assignment),
