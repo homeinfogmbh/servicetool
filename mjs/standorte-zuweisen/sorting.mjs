@@ -75,7 +75,7 @@ function getSortElements () {
     Return the sort parameters.
 */
 function getSortParameters () {
-    let mode = null;
+    let direction = null;
 
     for (const sortOption of getSortElements()) {
         direction = getDirection(sortOption);
