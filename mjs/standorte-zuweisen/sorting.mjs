@@ -67,26 +67,18 @@ function getSortFunction () {
 
 
 /*
-    Return the sort option elements.
-*/
-function getSortElements () {
-    return document.getElementsByClassName('deployment-sort-option');
-}
-
-
-/*
     Return the sort parameters.
 */
 function getSortParameters () {
     let direction = null;
 
-    for (const sortOption of getSortElements()) {
-        direction = getDirection(sortOption);
+    for (const element of getSortElements()) {
+        direction = element.getAttribute('data-direction');
 
         if (direction)
             return {
-                option: sortOption.getAttribute('id'),
-                descending: direction == '⇩'
+                option: element.getAttribute('id'),
+                descending: direction == 'descending'
             };
     }
 
@@ -143,11 +135,11 @@ function getSortIndicators (element) {
 }
 
 
-function toggleSortIndicator (element) {
-    if (element.textContent == '⇧')
-        element.textContent = '⇩';
+function toggleDirection (element) {
+    if (element.getAttribute('data-direction') == 'ascending')
+        element.setAttribute('data-direction', 'descending');
     else
-        element.textContent = '⇧';
+        element.setAttribute('data-direction', 'ascending');
 }
 
 
@@ -158,10 +150,7 @@ function getDirection (element) {
 
 
 function resetSortElement (element) {
-    element.style.textDecoration = '';
-
-    for (const sortIndicator of getSortIndicators(element))
-        sortIndicator.textContent = '';
+    element.setAttribute('data-direction', '');
 }
 
 
@@ -174,11 +163,7 @@ function onSort (action) {
             if (element != event.target)
                 resetSortElement(element);
 
-        event.target.style.textDecoration = 'underline';
-
-        for (const sortIndicator of getSortIndicators(event.target))
-            toggleSortIndicator(sortIndicator);
-
+        toggleDirection(event.target);
         return action();
     };
 }
@@ -190,4 +175,5 @@ function onSort (action) {
 function initSortElement (element, action) {
     element.addEventListener('click', onSort(action));
     element.style.cursor = 'pointer';
+    element.style.textDecoration = 'underline';
 }
