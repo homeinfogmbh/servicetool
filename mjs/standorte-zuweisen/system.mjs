@@ -162,9 +162,12 @@ function createPageLinks () {
 */
 function renderSystems (systems) {
     $('#systems').html('');
+    console.log('Rendering systems: ' + systems.length)
 
-    for (const system of systems)
+    for (const system of systems) {
+        console.log('Rendering system: ' + system.id)
         $('#systems').append(system.toHTML());
+    }
 }
 
 
