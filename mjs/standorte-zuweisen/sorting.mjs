@@ -45,6 +45,14 @@ export function sortedDeployments (deployments) {
 
 
 /*
+    Return the sort elements.
+*/
+function getSortElements () {
+    return document.getElementsByClassName('deployment-sort-option');
+}
+
+
+/*
     Return a sorting function.
 */
 function getSortFunction () {
@@ -130,22 +138,11 @@ function sortBySystems (descending) {
 }
 
 
-function getSortIndicators (element) {
-    return element.getElementsByClassName('sort-direction');
-}
-
-
 function toggleDirection (element) {
     if (element.getAttribute('data-direction') == 'ascending')
         element.setAttribute('data-direction', 'descending');
     else
         element.setAttribute('data-direction', 'ascending');
-}
-
-
-function getDirection (element) {
-    for (const sortIndicator of getSortIndicators(element))
-        return sortIndicator.textContent;
 }
 
 
