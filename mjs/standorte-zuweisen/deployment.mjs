@@ -337,6 +337,6 @@ function renderDeployments (deployments) {
 function render () {
     PAGER = new Pager(sortedDeployments(filteredDeployments(), PAGE_SIZE));
     createPageLinks();
-    initSortOptions();
+    initSortOptions(render);
     renderDeployments(PAGER.currentPage());
 }
