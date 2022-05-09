@@ -59,10 +59,10 @@ function assign (event) {
 function validateAssignment (assignment) {
     const issues = [];
 
-    if (assignment.deployment == null)
+    if (assignment.deployment == null || isNaN(assignment.deployment))
         issues.push('Kein Standort ausgewählt.')
 
-    if (assignment.system == null)
+    if (assignment.system == null || isNaN(assignment.system))
         issues.push('Kein System ausgewählt.')
 
     if (issues.length == 0)
@@ -94,9 +94,8 @@ function getAssignment () {
     Return the selected system.
 */
 function getSelectedSystem () {
-    const system = $('input[name="system-select"]:checked').attr('data-id');
-    console.log('Selected system: ' + system);
-    throw 'TODO: implement';
+    const id = $('input[name="system-select"]:checked').attr('data-id');
+    return parseInt(id);
 }
 
 
@@ -104,7 +103,6 @@ function getSelectedSystem () {
     Return the selected deployment.
 */
 function getSelectedDeployment () {
-    const deployment = $('input[name="deployment-select"]:checked').attr('data-id');
-    console.log('Selected deployment: ' + deployment);
-    throw 'TODO: implement';
+    const id = $('input[name="deployment-select"]:checked').attr('data-id');
+    return parseInt(id);
 }
