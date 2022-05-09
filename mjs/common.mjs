@@ -96,6 +96,40 @@ export function handleError (jqXHR, textStatus, errorThrown) {
 
 
 /*
+    Return a span that is clickable and has a text.
+*/
+export function makeSpanLink (caption, action) {
+    const span = document.createElement('span');
+    span.style.textDecoration = 'underline';
+    span.style.cursor = 'pointer';
+    span.addEventListener('click', action);
+    span.textContent = caption;
+    return span;
+}
+
+
+/*
+    Compare two strings for sorting.
+*/
+export function compareStrings (lhs, rhs, descending) {
+    if (lhs == rhs)
+        return 0;
+
+    if (lhs < rhs)
+        return descending ? 1 : -1;
+
+    return descending ? -1 : 1;
+}
+
+/*
+    Compare two integers for sorting.
+*/
+export function compareIntegers (lhs, rhs, descending) {
+    return (lhs - rhs) * (descending ? -1 : 1);
+}
+
+
+/*
     Return true iff the first string is a substring of the second string with
     both strings being converted to lower case beforehand with case-insensitive
     matching.
@@ -108,17 +142,4 @@ function isSubstrNocasematch (substring, string) {
         return false;
 
     return string.substring(0, substring.length) == substring;
-}
-
-
-/*
-    Return a span that is clickable and has a text.
-*/
-export function makeSpanLink (caption, action) {
-    const span = document.createElement('span');
-    span.style.textDecoration = 'underline';
-    span.style.cursor = 'pointer';
-    span.addEventListener('click', action);
-    span.textContent = caption;
-    return span;
 }

@@ -22,9 +22,12 @@
 'use strict';
 
 
-import { handleError, makeSpanLink } from '../common.mjs';
+import {
+    handleError, makeSpanLink, compareIntegers, compareStrings
+} from '../common.mjs';
 import { Pager } from '../pager.mjs';
 import { Address } from './address.mjs';
+import { initSortElements, sortedDeployments } from './sorting.mjs';
 
 
 const PAGE_SIZE = 15;
@@ -332,7 +335,8 @@ function renderDeployments (deployments) {
     Rebuild the paged list.
 */
 function render () {
-    PAGER = new Pager(filteredDeployments(), PAGE_SIZE);
+    PAGER = new Pager(sortedDeployments(filteredDeployments(), PAGE_SIZE));
     createPageLinks();
+    initSortOptions();
     renderDeployments(PAGER.currentPage());
 }
