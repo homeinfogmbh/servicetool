@@ -34,7 +34,7 @@ let PAGER = null;
 
 export function init () {
     return getSystems().then(render).then(() => {
-        $('#find-deployment').keyup(render);
+        $('#find-system').keyup(render);
     });
 }
 
