@@ -126,16 +126,10 @@ class System {
 */
 function * filteredSystems () {
     const systemId = parseInt($('#find-system').val().trim());
-    console.log('Got systems: ' + SYSTEMS.length);
-    console.log('Filtering by: ' + systemId);
 
     for (const system of SYSTEMS)
-        if (systemId == NaN || system.id == systemId) {
-            console.log('Matched system: ' + system.id);
+        if (isNaN(systemId) || system.id == systemId)
             yield system;
-        } else {
-            console.log('Systems does not match: ' + system.id + ' / ' + systemId);
-        }
 }
 
 
@@ -168,12 +162,9 @@ function createPageLinks () {
 */
 function renderSystems (systems) {
     $('#systems').html('');
-    console.log('Rendering systems: ' + systems.length);
 
-    for (const system of systems) {
-        console.log('Rendering system: ' + system.id);
+    for (const system of systems)
         $('#systems').append(system.toHTML());
-    }
 }
 
 
@@ -183,8 +174,5 @@ function renderSystems (systems) {
 function render () {
     PAGER = new Pager(filteredSystems(), PAGE_SIZE);
     createPageLinks();
-    console.log('Filtered systems: ' + PAGER.items.length);
-    const currentPage = PAGER.currentPage()
-    console.log('Current page: ' + currentPage.size);
-    renderSystems(currentPage);
+    renderSystems(PAGER.currentPage());
 }
