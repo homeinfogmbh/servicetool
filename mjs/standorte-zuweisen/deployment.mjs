@@ -22,9 +22,7 @@
 'use strict';
 
 
-import {
-    handleError, makeSpanLink, compareIntegers, compareStrings
-} from '../common.mjs';
+import { handleError, makeSpanLink } from '../common.mjs';
 import { Pager } from '../pager.mjs';
 import { Address } from './address.mjs';
 import { initSortElements, sortedDeployments } from './sorting.mjs';

@@ -22,6 +22,9 @@
 'use strict';
 
 
+import { compareIntegers, compareStrings } from '../common.mjs';
+
+
 /*
     Initialize the sort buttons.
 */
