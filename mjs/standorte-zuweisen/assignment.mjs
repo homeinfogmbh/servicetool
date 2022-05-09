@@ -22,6 +22,9 @@
 'use strict';
 
 
+import { handleError } from '../common.mjs';
+
+
 /*
     Initialize the assignment subsystem.
 */
