@@ -124,7 +124,7 @@ function sortByCustomer (descending) {
 }
 
 
-function sortByCustomer (descending) {
+function sortBySystems (descending) {
     return (lhs, rhs) => {
         return compareIntegers(
             lhs.systems.length,
