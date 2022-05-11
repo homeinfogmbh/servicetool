@@ -3,7 +3,7 @@ $.ajaxPrefilter(function(options, originalOptions, jqXHR) {
 	options.xhrFields = {withCredentials: true};
 });
 checkSession();
-$(document).ready(function(){
+$(document).ready(function() {
 	if (isIE() && !isIEorEDGE()) {
 		$("#username").hide();
 		$("#password").hide();

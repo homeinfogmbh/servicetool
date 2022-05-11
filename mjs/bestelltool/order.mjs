@@ -147,6 +147,7 @@ function renderCustomers (customers) {
         customerListEntries.push(CustomerListEntry.fromJSON(customer));
 
     customerListEntries.sort(CustomerListEntry.compare);
+    $('#Kundenauswählen').html('');
     $('#Kundenauswählen').append(customerNotSelected.toHTML());
 
     for (const customerListEntry of customerListEntries)

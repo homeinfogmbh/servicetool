@@ -149,9 +149,9 @@ function setCheckList(list) {
         _commonChecks[item].systems = [];
 	for (let check of list) {
         if (!check.hasOwnProperty("deployment"))
-            check.deployment = {"customer":{"id":-1, "abbreviation": "Zzuordnung nicht vorhanden"}};
+            check.deployment = {"customer":{"id":-1, "abbreviation": "Zuordnung nicht vorhanden"}};
         if (!check.deployment.hasOwnProperty("customer"))
-            check.deployment.customer = {"id":-1, "abbreviation": "Zzuordnung nicht vorhanden"}
+            check.deployment.customer = {"id":-1, "abbreviation": "Zuordnung nicht vorhanden"}
 		if (!check.deployment.hasOwnProperty("address"))
 			check.deployment.address = {"street":"Keine Adresse", "houseNumber":"", "zipCode":"", "city":""}
 
