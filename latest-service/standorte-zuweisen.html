@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="description" content="Site Description">
+	<meta name="keywords" content="HTML, CSS, JavaScript, Bootstrap">
+	<meta name="author" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="shortcut icon" href="assets/img/favicon.ico" />
+	<title>Standorte zuweisen</title>
+
+
+	<!-- Google Fonts -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+	<!-- Bootstrap -->
+	<link rel="stylesheet" href="assets/css/bootstrap.min.css">
+	<!-- owl.carousel -->
+	<link rel="stylesheet" href="assets/css/owl.carousel.min.css">
+	<link rel="stylesheet" href="assets/css/owl.theme.default.min.css">
+	<!-- Main Css -->
+	<link rel="stylesheet" href="style.css">
+	<!-- Responsive Css -->
+	<link rel="stylesheet" href="assets/css/responsive.css">
+    <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/owl.carousel.min.js"></script>
+    <script src="assets/js/active.js"></script>
+    <script src="assets/js/sweetalert2.min.js"></script>
+	<script src="assets/js/common.js"></script>
+	<script src="assets/js/menu.js"></script>
+    <script type="module">
+        import { init } from './mjs/standorte-zuweisen/main.mjs';
+        $(document).ready(init);
+    </script>
+
+</head>
+<body class="neuinstallation">
+
+	<div class="bodyWrap">
+
+		<div class="mobile_triger">
+			<img src="assets/img/mobile-burger.svg" class="burger">
+			<img src="assets/img/mobile-close.svg" class="close_menu" style="display: none;">
+		</div>
+
+		<div class="dashboard_container">
+			<div class="menu_sidebar">
+				<div class="menu_content">
+					<div class="side_logo">
+						<a href="index.html"><img src="assets/img/sideLogo.png" alt="Logo"></a>
+					</div>
+					<div class="side_menu">
+						<h3 class="menu_title">Menu</h3>
+					    <ul class="navbar-nav">
+					        <li class="nav-item">
+					          <a class="nav-link active" aria-current="page" href="index.html">Dashboard</a>
+					        </li>
+					        <li class="nav-item dropdown">
+					          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+					            Kunden NicNameList
+					          </a>
+					          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+					            <li><a class="dropdown-item" href="#">Kunden NicNameList</a></li>
+					            <li><a class="dropdown-item" href="#">Kunden NicNameList</a></li>
+					            <li><a class="dropdown-item" href="#">Kunden NicNameList</a></li>
+					            <li><a class="dropdown-item" href="#">Kunden NicNameList</a></li>
+					          </ul>
+					        </li>
+					        <li class="nav-item">
+					          <a class="nav-link" href="#">Standorte zuweisen</a>
+					        </li>
+					        <li class="nav-item">
+					          <a class="nav-link" href="#">Neuinstallationen</a>
+					        </li>
+					        <li class="nav-item dropdown">
+					          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+					            SSD Karten Fehler (0)
+					          </a>
+					          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+					            <li><a class="dropdown-item" href="#">SSD Karten Fehler (0)</a></li>
+					            <li><a class="dropdown-item" href="#">SSD Karten Fehler (0)</a></li>
+					            <li><a class="dropdown-item" href="#">SSD Karten Fehler (0)</a></li>
+					            <li><a class="dropdown-item" href="#">SSD Karten Fehler (0)</a></li>
+					          </ul>
+					        </li>
+					        <li class="nav-item dropdown">
+					          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+					            Nicht verbaute Systeme (08)
+					          </a>
+					          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+					            <li><a class="dropdown-item" href="#">Nicht verbaute Systeme (08)</a></li>
+					            <li><a class="dropdown-item" href="#">Nicht verbaute Systeme (08)</a></li>
+					            <li><a class="dropdown-item" href="#">Nicht verbaute Systeme (08)</a></li>
+					            <li><a class="dropdown-item" href="#">Nicht verbaute Systeme (08)</a></li>
+					          </ul>
+					        </li>
+					        <li class="nav-item dropdown">
+					          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+					            Testgeräte (2)
+					          </a>
+					          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+					            <li><a class="dropdown-item" href="#">Testgeräte (2)</a></li>
+					            <li><a class="dropdown-item" href="#">Testgeräte (2)</a></li>
+					            <li><a class="dropdown-item" href="#">Testgeräte (2)</a></li>
+					            <li><a class="dropdown-item" href="#">Testgeräte (2)</a></li>
+					          </ul>
+					        </li>
+					        <li class="nav-item dropdown">
+					          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+					            Im Schwartzbildmodus (0)
+					          </a>
+					          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+					            <li><a class="dropdown-item" href="#">Im Schwartzbildmodus (0)</a></li>
+					            <li><a class="dropdown-item" href="#">Im Schwartzbildmodus (0)</a></li>
+					            <li><a class="dropdown-item" href="#">Im Schwartzbildmodus (0)</a></li>
+					            <li><a class="dropdown-item" href="#">Im Schwartzbildmodus (0)</a></li>
+					          </ul>
+					        </li>
+					        <li class="nav-item dropdown">
+					          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+					            Alte OS Version (31)
+					          </a>
+					          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+					            <li><a class="dropdown-item" href="#">Alte OS Version (31)</a></li>
+					            <li><a class="dropdown-item" href="#">Alte OS Version (31)</a></li>
+					            <li><a class="dropdown-item" href="#">Alte OS Version (31)</a></li>
+					            <li><a class="dropdown-item" href="#">Alte OS Version (31)</a></li>
+					          </ul>
+					        </li>
+					        <li class="nav-item dropdown">
+					          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+					            Offline mehr als 3 Monate (0)
+					          </a>
+					          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+					            <li><a class="dropdown-item" href="#">Offline mehr als 3 Monate (0)</a></li>
+					            <li><a class="dropdown-item" href="#">Offline mehr als 3 Monate (0)</a></li>
+					            <li><a class="dropdown-item" href="#">Offline mehr als 3 Monate (0)</a></li>
+					            <li><a class="dropdown-item" href="#">Offline mehr als 3 Monate (0)</a></li>
+					          </ul>
+					        </li>
+					    </ul>
+					    <a href="#" class="abmelden">abmelden</a>
+					</div>
+					<div class="admin_box">
+						<div class="admin_content">
+							<img src="assets/img/rocket.svg" alt="Admin">
+							<h5>Supportanfrage</h5>
+							<p class="fz12">Serviceanfrage zu dieser <br>Seite an den Admin</p>
+							<a href="#" class="whiteBtn sendBtn">SENDEN</a>
+						</div>
+						<p class="fz8">Ein Dienst der HOMEINFO GmbH (c) 2022</p>
+					</div>
+				</div>
+			</div>
+			<div class="dashboard_containers">
+				<div class="dashboard_content">
+					<div class="dashboardTopbar">
+						<div class="mobileLogo">
+							<a href="index.html"><img src="assets/img/sideLogo.png" alt="Logo"></a>
+						</div>
+						<div class="dashTopLeft">
+							<h2>Standorte zuweisen</h2>
+							<p>Verbindungen zwischen Displays und Adressen (Standorten) zuweisen</p>
+						</div>
+						<div class="dashTopRight">
+							<div class="search_dash">
+								<form action="#">
+									<button type="button"><img src="assets/img/search.svg"></button>
+									<input type="search" placeholder="Suche...">
+								</form>
+							</div>
+							<div class="top_user">
+								<div class="seru_avatar">
+									MH
+								</div>
+								<div class="user_cont">
+									<h5>Martin Herrmann</h5>
+									<a href="#" class="blue_btn">abmelden</a>
+								</div>
+							</div>
+						</div>
+					</div> <!-- /.dashboardTopbar -->
+					<div class="dash_bottomCont ">
+						<div class="zuweisenContainer">
+							<div class="row">
+								<div class="col60">
+									<div class="neuinstaContent zuweisenContent">
+										<div class="zuweisenBox">
+											<h3>Standort</h3>
+											<p>Adresse, der das Display zugeordnet wird.</p>
+											<div class="search_dash whiteSearch">
+												<form action="#">
+													<button type="button"><img src="assets/img/search_gray.svg"></button>
+													<input id="find-deployment" type="search" placeholder="Standort suchen...">
+												</form>
+											</div>
+											<br>
+											<div class="table_container">
+												<table class="table">
+													<thead>
+														<tr>
+															<th>Auswahl</th>
+															<th id="sort-deployment-by-street-and-house-number" class="deployment-sort-option">Adresse</th>
+															<th id="sort-deployment-by-zip-code-and-city" class="deployment-sort-option">Ort</th>
+															<th id="sort-deployment-by-customer" class="deployment-sort-option">Kunde</th>
+															<th id="sort-deployment-by-systems" class="deployment-sort-option text-center">Anzahl Displays</th>
+														</tr>
+													</thead>
+													<tbody id="deployments"></tbody>
+												</table>
+											</div>
+										</div> <!-- /.neuinstaContent -->
+										<div id="deployment-pages" class="text-center"></div>
+										<br>
+										<br>
+										<br>
+									</div> <!-- /.neuinstaContent -->
+								</div> <!-- /.neuinstaCol -->
+								<div class="col40">
+									<div class="neuinstaContent zuweisenContent">
+										<div class="zuweisenBox">
+											<h3>Display(s)</h3>
+											<p>Zuordnung eines Displays.</p>
+											<div class="search_dash whiteSearch">
+												<form action="#">
+													<button type="button"><img src="assets/img/search_gray.svg"></button>
+													<input id="find-system" type="search" placeholder="Display suchen...">
+												</form>
+											</div>
+											<br>
+											<h4 id="deploy-system-title" class="bg_title"></h4>
+											<ul id="systems" class="radioOptList"></ul>
+											<div id="system-pages" class="text-center"></div>
+											<br>
+											<div class="text-center">
+												<a id="deploy-system" href="#" class="whitelineBtn">Display & Standort verknüpfen</a>
+											</div>
+										</div>
+										<br>
+										<br>
+										<br>
+										<div class="zuweisenBox">
+											<h3>Bestehende Verknüpfung(en)</h3>
+											<h5 id="deployed-systems-title" class="bg_title_small"></h5>
+											<ul id="deployed-systems" class="flexContent"></ul>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div> <!-- /.zuweisenContainer -->
+					</div>
+				</div> <!-- /.dashboard_content -->
+			</div> <!-- /.dashboard_container -->
+		</div> <!-- /.dashboard_container -->
+
+
+	</div> <!-- /.bodyWrap -->
+</body>
+</html>
