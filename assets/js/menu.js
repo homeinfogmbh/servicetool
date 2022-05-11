@@ -78,7 +78,7 @@ function setMenu(list) {
         // Customerlist
         if (customers.hasOwnProperty(check.deployment.customer.abbreviation))
             customers[check.deployment.customer.abbreviation].count++;
-        else if (check.deployment.customer.abbreviation !== "Zzuordnung nicht vorhanden")
+        else if (check.deployment.customer.abbreviation !== "Zuordnung nicht vorhanden")
             customers[check.deployment.customer.abbreviation] = {'count':1, 'dom':'<li><a class="dropdown-item" href="listenansicht.html?customer=' + check.deployment.customer.id + '">' + (check.deployment.customer.hasOwnProperty("abbreviation") ?check.deployment.customer.abbreviation :check.deployment.customer.company.name)};
     }
     for (let customer in customers)
