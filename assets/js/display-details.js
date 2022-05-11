@@ -272,6 +272,7 @@ function setChecks(lastCheck) {
     $("#http").html(lastCheck.httpRequest === "failed" ?'<span class="blueMark">' + lastCheck.httpRequest + '</span>' :'<span class="orangeMark">' + lastCheck.httpRequest + '</span>');
     $("#application").html(lastCheck.applicationState === "conflict" || lastCheck.applicationState === "not enabled" || lastCheck.applicationState === "not running"?'<span class="blueMark">' + lastCheck.applicationState +'</span>' :'<span class="orangeMark">' + lastCheck.applicationState + '</span>');
     $("#baytrail").html(lastCheck.baytrailFreeze === "vulnerable" ?'<span class="blueMark">' + lastCheck.baytrailFreeze + '</span>' :'<span class="orangeMark">' + lastCheck.baytrailFreeze + '</span>');
+    $("#bootpartition").html(lastCheck.efiMountOk === "failed" ?'<span class="blueMark">' + lastCheck.efiMountOk + '</span>' :'<span class="orangeMark">' + lastCheck.efiMountOk + '</span>');
     $("#applicationuptodate").html('<span class="orangeMark">TODO</span>');
     $("#lastCheck").text("Letzter Check " + formatDate(lastCheck.timestamp) + " (" + lastCheck.timestamp.substring(11, 16) + " Uhr)");
     $("#pageloader").hide();
