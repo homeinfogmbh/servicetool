@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="236" height="59" viewBox="0 0 236 59">
+  <g id="Logo" transform="translate(-57 -113)">
+    <text id="SERVICETOOL" transform="translate(57 153)" fill="#fff" font-size="30" font-family="SegoeUIBlack, Segoe UI"><tspan x="0" y="0">SERVICE</tspan><tspan y="0" fill="#038ec9">TOOL</tspan></text>
+    <text id="für_digitale_Informationssysteme" data-name="für digitale Informationssysteme" transform="translate(108 169)" fill="#fff" font-size="13" font-family="Roboto-Light, Roboto" font-weight="300"><tspan x="0" y="0">für digitale Informationssysteme</tspan></text>
+    <text id="HOMEINFO" transform="translate(57 126)" fill="#fff" font-size="14" font-family="Roboto-Light, Roboto" font-weight="300"><tspan x="0" y="0">HOMEINFO</tspan></text>
+  </g>
+</svg>

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="25.817" height="22.08" viewBox="0 0 25.817 22.08">
+  <defs>
+    <filter id="Mobile_Burger_Icon" x="0" y="0" width="25.817" height="22.08" filterUnits="userSpaceOnUse">
+      <feOffset dy="2" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="1" result="blur"/>
+      <feFlood flood-color="#262626" flood-opacity="0.251"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g transform="matrix(1, 0, 0, 1, 0, 0)" filter="url(#Mobile_Burger_Icon)">
+    <path id="Mobile_Burger_Icon-2" data-name="Mobile Burger Icon" d="M0,14.08V12.691H17.817V14.08ZM0,7.832V6.444H17.817V7.832ZM0,1.388V0H17.817V1.388Z" transform="translate(4 2)" fill="none" stroke="#fff" stroke-linejoin="round" stroke-width="2"/>
+  </g>
+</svg>
