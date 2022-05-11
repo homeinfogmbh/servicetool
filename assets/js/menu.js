@@ -1,4 +1,5 @@
 var _paramsForEmail = ""
+//var _commonChecks import from common
 $(document).ready(function() {
 	let menu = '<div class="loader" id="pageloader"></div><div class="menu_content">' +
         '<div class="side_logo">' +
@@ -72,10 +73,10 @@ function setMenu(list) {
     list.sort(function(a, b) {
         return compare(a.deployment.customer.abbreviation.toLowerCase(), b.deployment.customer.abbreviation.toLowerCase());
     });
+    // Customerlist
     for (let check of list) {
         addressComplete = check.hasOwnProperty("deployment") && check.deployment.hasOwnProperty("address") ?check.deployment.address.street + " " + check.deployment.address.houseNumber + " " + check.deployment.address.zipCode + " " + check.deployment.address.city :'Keine Adresse';
         address = check.hasOwnProperty("deployment") && check.deployment.hasOwnProperty("address") ?check.deployment.address.street + " " + check.deployment.address.houseNumber :'<i>Keine Adresse</i>';
-        // Customerlist
         if (customers.hasOwnProperty(check.deployment.customer.abbreviation))
             customers[check.deployment.customer.abbreviation].count++;
         else if (check.deployment.customer.abbreviation !== "Zuordnung nicht vorhanden")
@@ -85,21 +86,27 @@ function setMenu(list) {
         customerDom += customers[customer].dom + ' (' + customers[customer].count + ')</a></li>'
     $('#menucustomerlist').html(customerDom);
 
+    // Error list menu
+    let customerErrors;
     let additionalMenu = "";
     for (let item in _commonChecks) {
         if (_commonChecks[item].systems.length !== 0 && _commonChecks[item].show) {
             _commonChecks[item].systems.sort(function(a, b) {
-                return compare(a.deployment.address.street.toLowerCase(), b.deployment.address.street.toLowerCase());
+                return compare(a.deployment.customer.abbreviation.toLowerCase(), b.deployment.customer.abbreviation.toLowerCase());
             });
+            customerErrors = {};
             additionalMenu +='<li class="nav-item dropdown">' +
                 '<a class="nav-link dropdown-toggle btn_openedlist" data-openedlist="' + item + '" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">' +
                     _commonChecks[item].title + ' (' + _commonChecks[item].systems.length + ')' +
                 '</a>' +
                 '<ul class="dropdown-menu" aria-labelledby="navbarDropdown">';
                 for (let system of _commonChecks[item].systems) {
-                    addressComplete = system.hasOwnProperty("deployment") && system.deployment.hasOwnProperty("address") ?system.deployment.address.street + " " + system.deployment.address.houseNumber + " " + system.deployment.address.zipCode + " " + system.deployment.address.city :'Keine Adresse';
-                    address = system.hasOwnProperty("deployment") && system.deployment.hasOwnProperty("address") ?system.deployment.address.street + " " + system.deployment.address.houseNumber :'<i>Keine Adresse</i>';
-                    additionalMenu += '<li title="' + addressComplete + '"><a class="dropdown-item" href="display-details.html?id=' + system.id + '">' + address + '</a></li>';
+                    if (!customerErrors.hasOwnProperty(system.deployment.customer.abbreviation))
+                        customerErrors[system.deployment.customer.abbreviation] = {"id":system.deployment.customer.id, "count":0, "name":system.deployment.customer.abbreviation};
+                    customerErrors[system.deployment.customer.abbreviation].count++;
+                }
+                for (let customer in customerErrors) {
+                    additionalMenu += '<li><a class="dropdown-item" href="listenansicht.html?customer=' + customerErrors[customer].id + '&type=' + item + '">' + customer + ' (' + customerErrors[customer].count + ')</a></li>';
                 }
                 additionalMenu += '</ul>' +
             '</li>';
