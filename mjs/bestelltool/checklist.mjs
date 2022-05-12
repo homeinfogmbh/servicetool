@@ -91,9 +91,6 @@ function renderChecklist (order) {
         'checked', order.constructionSitePreparationFeedback != null
     );
     $('#Netzbindung').prop('checked', order.internetConnection != null);
-    $('#DatumInstallation').prop(
-        'checked', order.installationDateConfirmed != null
-    );
     $('#Hardware').prop('checked', order.hardwareInstallation != null);
     $('#Abgeschlossen').prop('checked', order.finalized != null);
     $('#Bemerkung').val(order.annotation);
@@ -211,7 +208,6 @@ function delaySubmitAnnotation (event) {
 function initButtons () {
     $('#Anlage').click(setChecklistItem('construction-site-preparation'));
     $('#Netzbindung').click(setChecklistItem('internet-connection'));
-    $('#DatumInstallation').click(setChecklistItem('installation-date-confirmed'));
     $('#Hardware').click(setChecklistItem('hardware-installation'));
     $('#Abgeschlossen').click(setChecklistItem('finalize'));
     $('#Bemerkung').keyup(delaySubmitAnnotation);
