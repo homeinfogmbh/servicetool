@@ -1,6 +1,7 @@
 $(document).ready(function() {
     getListOfSystemChecks().then(setChecks);
     getOrderings().then(setOrderings);
+    getHipsterStatus().then(setHipsterStatus);
     $('#observercounter').click(function(e) {
         $(".observerItem").show();
 		e.preventDefault();
@@ -9,9 +10,12 @@ $(document).ready(function() {
         window.location.href = "bestelltool-list.html";
 		e.preventDefault();
 	}); 
-    
-
-
+    $('.btn_hipster').click(function(e) {
+        $("#hipsterstatus").css("border-color", "#009fe3");
+        $("#hipsterstatus").text("-");
+        getHipsterStatus().then(setHipsterStatus);
+		e.preventDefault();
+	}); 
 });
 
 function setChecks(list) {
@@ -48,7 +52,7 @@ function setChecks(list) {
             '</div>';
         }
     }
-    $("#widgets").html(errorsDOM);
+    $("#widgets").append(errorsDOM);
     $('.btn_list').click(function(e) {
         window.location.href = "listenansicht.html?type=" + $(this).data("id");
 		e.preventDefault();
@@ -101,14 +105,27 @@ function setOrderings(orderings) {
     }
     $("#registrations").html(orderingsDom);
 }
+function setHipsterStatus(data) {
+    $("#hipsterstatus").css("border-color", data ?"#ff821d" :"#009fe3");
+    $("#hipsterstatus").text(data ?"running" :"offline");
+}
 function getOrderings() {
 	return $.ajax({
 		url: "https://ddborder.homeinfo.de/order",
 		type: "GET",
-		success: function (msg) {
-		},
+		success: function (msg) {   },
 		error: function (msg) {
-			setErrorMessage(msg, "Abrufen der Bestellungen"); // Called in default
+			setErrorMessage(msg, "Abrufen der Bestellungen");
 		}
 	});
+}
+function getHipsterStatus() {
+    return $.ajax({
+		url: "https://sysmon.homeinfo.de/hipster-status",
+		type: "GET",
+		success: function (msg) {   },
+		error: function (msg) {
+			setErrorMessage(msg, "Abrufen des Hipster-Status");
+		}
+	});   
 }
