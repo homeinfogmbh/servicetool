@@ -120,10 +120,9 @@ export class Deployment {
 
 
 export function init () {
-    return getDeployments().then(render).then(() => {
-        $('#find-deployment').keyup(render);
-        initSortElements(render);
-    });
+    initSortElements(render);
+    $('#find-deployment').keyup(render);
+    return getDeployments().then(render);
 }
 
 
