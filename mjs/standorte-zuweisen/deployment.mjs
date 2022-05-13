@@ -206,6 +206,9 @@ function deploymentMatchesFilter (deployment, filterString) {
     if (deployment.customer.abbreviation.toLowerCase().includes(filterString))
         return true;
 
+    if (deployment.customer.company.name.toLowerCase().includes(filterString))
+        return true;
+
     if (deployment.customer.id == parseInt(filterString))
         return true;
 
