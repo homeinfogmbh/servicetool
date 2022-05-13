@@ -25,12 +25,19 @@
 import { compareIntegers, compareStrings } from '../common.mjs';
 
 
+const DEFAULT_SORT_ELEMENT = 'sort-deployment-by-street-and-house-number';
+
+
 /*
     Initialize the sort buttons.
 */
 export function initSortElements (action) {
     for (const element of getSortElements())
-        initSortElement(element, action);
+        initSortElement(
+            element,
+            action,
+            element.getAttribute('id') == DEFAULT_SORT_ELEMENT
+        );
 }
 
 
@@ -164,8 +171,11 @@ function onSort (action) {
 /*
     Initialize a sort element.
 */
-function initSortElement (element, action) {
+function initSortElement (element, action, defaultOption) {
     element.addEventListener('click', onSort(action));
     element.style.cursor = 'pointer';
     element.style.textDecoration = 'underline';
+
+    if (defaultOption)
+        toggleDirection(element);
 }

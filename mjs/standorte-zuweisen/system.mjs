@@ -63,6 +63,7 @@ function getSystems () {
         for (const system of json)
             systems.push(System.fromJSON(system));
 
+        systems.sort(System.sortById(true));
         SYSTEMS = systems;
         return systems;
     });
@@ -110,6 +111,15 @@ class System {
             json.model,
             (json.lastSync == null) ? null : new Date(json.lastSync)
         );
+     }
+
+     static sortById (descending) {
+        return (lhs, rhs) => {
+            if (lhs.id == rhs.id)
+                return 0;
+
+            return (lhs.id - rhs.id) * (descending ? -1 : 1);
+        };
      }
 
      toHTML () {
