@@ -171,11 +171,11 @@ function onSort (action) {
 /*
     Initialize a sort element.
 */
-function initSortElement (element, action, default) {
+function initSortElement (element, action, defaultOption) {
     element.addEventListener('click', onSort(action));
     element.style.cursor = 'pointer';
     element.style.textDecoration = 'underline';
 
-    if (default)
+    if (defaultOption)
         toggleDirection(element);
 }
