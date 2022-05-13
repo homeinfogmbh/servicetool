@@ -1034,7 +1034,7 @@ ul.flexContent li {
 
 .autocomplete-wrapper {
     position: relative;
-    flexq-grow: 1;
+    flex-grow: 1;
 }
 
 .autocomplete-wrapper> input {

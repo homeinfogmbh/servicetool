@@ -3,13 +3,13 @@ var _paramsForEmail = ""
 $(document).ready(function() {
 	let menu = '<div class="loader" id="pageloader"></div><div class="menu_content">' +
         '<div class="side_logo">' +
-            '<a href="dashboard.html"><img src="assets/img/sideLogo.png" alt="Logo"></a>' +
+            '<a href="dashboard.html" onclick="removeopenedlist()"><img src="assets/img/sideLogo.png" alt="Logo"></a>' +
         '</div>' +
         '<div class="side_menu">' +
             '<h3 class="menu_title">Menu</h3>' +
             '<ul class="navbar-nav" id="additionalMenu">' +
                 '<li class="nav-item">' +
-                    '<a class="nav-link" id="dash" aria-current="page" href="dashboard.html">Dashboard</a>' +
+                    '<a class="nav-link" id="dash" aria-current="page" href="dashboard.html" onclick="removeopenedlist()">Dashboard</a>' +
                 '</li>' +
                 '<li class="nav-item dropdown">' +
                     '<a class="nav-link dropdown-toggle btn_openedlist" href="#" id="navbarDropdown" role="button" data-openedlist="customerlist" data-bs-toggle="dropdown" aria-expanded="false">' +
@@ -20,10 +20,10 @@ $(document).ready(function() {
                     '</ul>' +
                 '</li>' +
                 '<li class="nav-item">' +
-                    '<a class="nav-link" id="standorte-zuweisen" href="standorte-zuweisen.html">Standorte zuweisen</a>' +
+                    '<a class="nav-link" id="standorte-zuweisen" href="standorte-zuweisen.html" onclick="removeopenedlist()">Standorte zuweisen</a>' +
                 '</li>' +
                 '<li class="nav-item">' +
-                    '<a class="nav-link" id="bestelltool" href="bestelltool.html">Neuinstallationen</a>' +
+                    '<a class="nav-link" id="bestelltool" href="bestelltool.html" onclick="removeopenedlist()">Neuinstallationen</a>' +
                 '</li>' +
             '</ul>' +
             '<a href="#" class="abmelden">abmelden</a>' +
@@ -118,8 +118,11 @@ function setMenu(list) {
     //$("#menucustomerlist").css("max-height", "100px");
     $('.btn_openedlist').click(function(e) {
         if ($(this).data("openedlist") == localStorage.getItem("servicetool.openedmenulist"))
-            localStorage.removeItem("servicetool.openedmenulist");
+            removeopenedlist();
         else
             localStorage.setItem("servicetool.openedmenulist", $(this).data("openedlist"));
     })
 }
+function removeopenedlist() {
+    localStorage.removeItem("servicetool.openedmenulist");
+};
