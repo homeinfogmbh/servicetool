@@ -209,7 +209,12 @@ function initButtons () {
     $('#Anlage').click(setChecklistItem('construction-site-preparation'));
     $('#Netzbindung').click(setChecklistItem('internet-connection'));
     $('#Hardware').click(setChecklistItem('hardware-installation'));
-    $('#Abgeschlossen').click(setChecklistItem('finalize'));
+    $('#Abgeschlossen').click(event => {
+        return setChecklistItem('finalize').then((response) => {
+            window.location = 'dashboard.html';
+            return response;
+        });
+    });
     $('#Bemerkung').keyup(delaySubmitAnnotation);
 }
 
