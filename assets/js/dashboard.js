@@ -91,13 +91,12 @@ function setOrderings(orderings) {
         orderingsDom += '<tr>' +
             '<td>' + order.customer.abbreviation + '</td>' +
             '<td title="' + address + '">' + address.substring(0, 12) + (address.length > 13 ? '...' :'') +  '</td>' +
-            '<td><span class="Einge ' + (isOnDate(order.issued, 168) ?"" :"EingeActive") + '">' + formatDate(order.issued) + '</span></td>' +
+            '<td><span class="Einge ' + (isOnDate(order.issued, 2160) ?"" :"EingeActive") + '">' + formatDate(order.issued) + '</span></td>' +
             '<td>' +
                 '<ul class="Umgebung">' +
-                    (order.hasOwnProperty('installationDateConfirmed') ?'<li class="active"></li>' :'<li></li>') + 
-                    (order.hasOwnProperty('constructionSitePreparationFeedback') ?'<li class="active"></li>' :'<li></li>') + 
-                    (order.hasOwnProperty('internetConnection') ?'<li class="active"></li>' :'<li></li>') + 
-                    (order.hasOwnProperty('hardwareInstallation')?'<li class="active"></li>' :'<li></li>') + 
+                    (order.hasOwnProperty('constructionSitePreparationFeedback') ?'<li title="Baustelle OK"></li>' :'<li class="active" title="Baustelle nicht OK"></li>') + 
+                    (order.hasOwnProperty('internetConnection') ?'<li title="Netzanbindung OK"></li>' :'<li class="active" title="Netzanbindung nicht OK"></li>') + 
+                    (order.hasOwnProperty('hardwareInstallation')?'<li title="Hardware installiert"></li>' :'<li class="active" title="Hardware nicht installiert"></li>') + 
                 '</ul>' +
             '</td>' +
             '<td><a href="bestelltool.html?id=' + order.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>' +
@@ -108,6 +107,7 @@ function setOrderings(orderings) {
 function setHipsterStatus(data) {
     $("#hipsterstatus").css("border-color", data ?"#ff821d" :"#009fe3");
     $("#hipsterstatus").text(data ?"running" :"offline");
+    $(".btn_hipster").css("display", data ?"none" :"default");
 }
 function getOrderings() {
 	return $.ajax({

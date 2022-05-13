@@ -235,7 +235,7 @@ function isOnDate(dateToCheck, periodInHours) {
     return (new Date()) - new Date(dateToCheck) < periodInHours;
 }
 function formatDate(date) {
-	return date.substring(8, 10) + "." + date.substring(5, 7) + "." + date.substring(2, 4); // dd-mm-yyyy
+	return date.substring(8, 10) + "." + date.substring(5, 7) + "." + date.substring(2, 4); // dd-mm-yy
 }
 function getURLParameterByName(name) {
     let match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);

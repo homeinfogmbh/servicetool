@@ -91,10 +91,6 @@
 													<td id="screentype">-</td>
 												</tr>
 												<tr>
-													<td>StandortTODO</td>
-													<td><span class="whiteMark" title="Ändern des Deployments">zuweisen</span></td>
-												</tr>
-												<tr>
 													<td>Internetverbindung</td>
 													<td>
 														<span id="internetconnection">-</span> 
@@ -105,8 +101,25 @@
 														<a href="#" class="editIcon btn_internetconnection"><img src="assets/img/edit.svg" alt=""></a></td>
 												</tr>
 												<tr>
-													<td>ÖPNV AdresseTODO</td>
-													<td><span id="publicTransportAddress">-</span> <a href="#" class="editIcon btn_publictransport"><img src="assets/img/edit.svg" alt=""></a></td>
+													<td>ÖPNV Adresse</td>
+													<td>
+														<span id="publicTransportAddress">-</span> <a href="#" class="editIcon btn_publictransport"><img src="assets/img/edit.svg" alt=""></a>
+														<div id="addressfields" style="display:none; padding-top:5px">
+															<div class="dualinp inpCol Straße">
+																<div class="autocomplete-wrapper">
+																	<input id="street" type="text" placeholder="Straße" class="longInp basic-data">
+																</div>
+																<input id="houseNumber" type="text" placeholder="Nr." class="smallInp basic-data">
+															</div>
+															<div class="dualinp inpCol PLZ">
+																<input id="zipCode" type="text" placeholder="PLZ" class="smallInp basic-data">
+																<input id="city" type="text" placeholder="Stadt" class="longInp basic-data">
+															</div>
+															<div class="text-center">
+																<a href="#" class="whitelineBtn btn_savePublicTransport">ÖPNV-Alternative speichern</a>
+															</div>
+														</div>
+													</td>
 												</tr>
 												<tr>
 													<td>System ID</td>
@@ -191,7 +204,7 @@
 										<br>
 										<br>
 										<div class="text-center">
-											<a href="#" class="whitelineBtn">Systemcheck starten</a>
+											<a href="#" class="whitelineBtn btn_check">Systemcheck starten</a>
 										    <p class="fz12" id="lastCheck"></p>
 										</div>
 									</div> <!-- /.neuinstaContent -->
@@ -203,11 +216,9 @@
 										<div class="LogfilesBox">
 											<h4 class="bg_title">Display Standort History (Deployment)</h4>
 											<table class="table border_none">
-												<tbody>
+												<tbody id="history">
 													<tr>
-														<td>TODO Gunkel</td>
-														<td>12.05.2022 12:41Uhr</td>
-														<td>Schweiditzer Weg 6</td>
+														<td>Daten werden geladen...</td>
 													</tr>
 												</tbody>
 											</table>
@@ -230,6 +241,19 @@
 										<p>Individuelle Einstellungen für das Display</p>
 										<table class="table tableHeadNone">
 											<tbody>
+												<tr>
+													<td>Standort</td>
+													<td>
+														<span class="whiteMark btn_deployment pointer" title="Ändern des Deployments">zuweisen</span>
+														<div class="dropdown-menu" id="deploymentsDropdown" aria-labelledby="dropdownMenuButton" style='height:auto; max-height:400px; overflow-x:hidden'>
+															<input type='text' autocomplete='off' class='form-control' id='deploymentsearch' placeholder='Straße oder Kunden eingeben'>
+														</div>
+													</td>
+												</tr>
+												<tr>
+													<td>Standort</td>
+													<td><span class="whiteMark btn_deleteDeployment pointer" title="Deployments lösen">lösen</span></td>
+												</tr>
 												<tr>
 													<td>Piep Ton</td>
 													<td><span class="whiteMark btn_noice pointer">senden</span></td>

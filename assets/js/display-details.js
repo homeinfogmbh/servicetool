@@ -1,7 +1,9 @@
 var _display = null;
 var _checked = {"btn_installed":false, "btn_blackmodus":false, "btn_testsystem":false};
+var _deployments = null;
 $(document).ready(function() {
 	getSystemChecks().then(setDetails);
+    getDeploymentHistory().then(setHistory)
     $('.btn_internetconnection').click(function(e) {
         if ($("#connectionsDropdown").hasClass("show"))
             $("#connectionsDropdown").removeClass("show");
@@ -16,16 +18,76 @@ $(document).ready(function() {
             changeDeployment("connection", $(this).text()).then(()=>{$("#pageloader").hide()});
 		e.preventDefault();
 	});
-    
     $('.btn_publictransport').click(function(e) {
-        if (_display.hasOwnProperty("deployment"))
-            changeDeployment("lptAddress", ["Teststraße", "7", "123456", "Teststadt"]).then(()=>{$("#pageloader").hide()});
+        if (_display.hasOwnProperty("deployment")) {
+            if ($("#addressfields").is(":visible"))
+                $("#addressfields").hide();
+            else
+                $("#addressfields").show();
+        }
 		e.preventDefault();
 	});
-    $('.whitelineBtn').click(function(e) {
+    $('.btn_savePublicTransport').click(function(e) {
+        if (_display.hasOwnProperty("deployment")) {
+            let address = [$("#street").val(), $("#houseNumber").val(), $("#zipCode").val(), $("#city").val()];
+            if (address[0].trim() === "" && address[1].trim() === "" && address[2].trim() === "" && address[3].trim() === "") {
+                address = null;
+            } else if (address[0].trim() === "" || address[1].trim() === "" || address[2].trim() === "" || address[3].trim() === "") {
+                $("#message").html('<font class="errormsg">Bitte geben Sie die Adresse vollständig an.</font>');
+                return null;
+            }
+            setPublicTransport(address).then(() => {
+                if (address === null)
+                    $("#publicTransportAddress").text("-");
+                else
+                    $("#publicTransportAddress").text(address[0] + " " + address[1] + ", " + address[2] + " " + address[3]);
+                $("#addressfields").hide();
+                $("#pageloader").hide()
+            });
+        }
+		e.preventDefault();
+	});
+    $('.btn_check').click(function(e) {
         checkSystem().then(setChecks);
 		e.preventDefault();
 	});
+
+    $('.btn_deployment').click(function(e) {
+        if ($("#deploymentsDropdown").hasClass("show"))
+            $("#deploymentsDropdown").removeClass("show");
+        else if (_deployments === null)
+            getDeployments().then(listDeployments);
+        else
+            listDeployments();
+		e.preventDefault();
+	});
+    $('#deploymentsearch').on('input',function(e) {
+        listDeployments();
+        e.preventDefault();
+    });	
+    $('.btn_deleteDeployment').click(function(e) {
+        if (_display.hasOwnProperty("deployment")) {
+            Swal.fire({
+                title: 'Sind Sie sicher?',
+                text: "Wollen Sie das System wirklich lösen?",
+                showCancelButton: true,
+                confirmButtonColor: '#009fe3',
+                cancelButtonColor: '#ff821d',
+                iconHtml: '<img src="assets/img/PopUp-Icon.png"></img>',
+                confirmButtonText: 'Ja, lösen!',
+                cancelButtonText: 'Vorgang abbrechen!',
+                buttonsStyling: true
+            }).then(function(selection) {
+                if (selection.isConfirmed === true)
+                    setDeployments(null).then(()=>{
+                        getSystemChecks().then(setDetails);
+                        getDeploymentHistory().then(setHistory);
+                    });
+            });
+        }
+        e.preventDefault();
+	});
+
     $('.btn_noice').click(function(e) {
         noice().then(()=>{$("#pageloader").hide()});
 		e.preventDefault();
@@ -71,7 +133,7 @@ $(document).ready(function() {
         if (_display.hasOwnProperty("deployment"))
             sync().then(()=>{$("#pageloader").hide()});
 		e.preventDefault();
-	}); 
+	});
 });
 
 function getSystemChecks() {
@@ -241,6 +303,12 @@ function setDetails(data) {
         $(".btn_sync").css("opacity", "0.3");
         $(".btn_sync").removeClass("pointer");
         $(".btn_sync").attr("title", "Keine Zuordnung vorhanden");
+        $(".btn_publictransport").css("opacity", "0.3");
+        $(".btn_publictransport").removeClass("pointer");
+        $(".btn_publictransport").attr("title", "Keine Zuordnung vorhanden");
+        $(".btn_deleteDeployment").css("opacity", "0.3");
+        $(".btn_deleteDeployment").removeClass("pointer");
+        $(".btn_deleteDeployment").attr("title", "Keine Zuordnung vorhanden");
     }
     _checked = {"btn_installed":true, "btn_blackmodus":true, "btn_testsystem":true};
 
@@ -262,7 +330,6 @@ function setDetails(data) {
         $('#thirtyhttp').append('<li title="keine Daten vorhanden" class="orangeSq"></li>');
     }
 }
-
 function setChecks(lastCheck) {
     $("#offline").html(lastCheck.hasOwnProperty("offlineSince") || lastCheck.sshLogin !== "success" ?'<span class="blueMark">offline</span>' :'<span class="orangeMark">online</span>');
     $("#ssd").html(lastCheck.smartCheck === "failed" ?'<span class="blueMark">' + lastCheck.smartCheck + '</span>' :'<span class="orangeMark">' + lastCheck.smartCheck + '</span>');
@@ -278,15 +345,125 @@ function setChecks(lastCheck) {
     $("#pageloader").hide();
 }
 
-function checkSystem() {
+function setHistory(history) {
+    let historyEntries = "";
+    for (let entry of history) {
+        historyEntries += "<tr>" +
+            "<td>" + (entry.account.hasOwnProperty("fullName") ?entry.account.fullName :entry.account.name) + "</td>" +
+            "<td>" + formatDate(entry.timestamp) + " " + entry.timestamp.substring(11, 16) + "Uhr</td>" +
+            "<td>" + entry.oldDeployment + "</td>" +
+        "</tr>";
+    }
+    historyEntries = historyEntries === "" ?"<tr><td>Keine Einträge vorhanden.</td></tr>" :historyEntries;
+    $("#history").html(historyEntries);
+
+}
+function getDeploymentHistory() {
     $("#pageloader").show();
     return $.ajax({
-        url: "https://sysmon.homeinfo.de/check/" + _display.id,
+        url: "https://termgr.homeinfo.de/deployment-history/" + getURLParameterByName('id'),
         type: "GET",
         cache: false,
         success: function (data) {  },
         error: function (msg) {
             setErrorMessage(msg, "Checken des Systems");
+        }
+    });
+}
+function checkSystem() {
+    $("#pageloader").show();
+    return $.ajax({
+        url: "https://sysmon.homeinfo.de/check/" + getURLParameterByName('id'),
+        type: "GET",
+        cache: false,
+        success: function (data) {  },
+        error: function (msg) {
+            setErrorMessage(msg, "Checken des Systems");
+        }
+    });
+}
+
+function listDeployments(deployments = null) {
+    if (deployments !== null) {
+        _deployments = deployments;
+        _deployments.sort(function(a, b) {
+            //return a.systems.length > 0 ?1 :b.systems.length > 0 ?-1 :0;
+            return compare(a.address.street, b.address.street);
+        });
+    }10
+    if (_deployments !== null) {
+        let deploymentList = "";
+        let address;
+        for (let item of _deployments) {
+            address = item.hasOwnProperty("address") ?item.address.street + " " + item.address.houseNumber + ", " + item.address.zipCode + " " + item.address.city :'<i>Keine Adresse angegeben</i>';
+            if (address.toLowerCase().indexOf($('#deploymentsearch').val().toLowerCase()) !== -1 || item.customer.id.toString().indexOf($('#deploymentsearch').val()) !== -1 || (item.customer.hasOwnProperty("abbreviation") && item.customer.abbreviation.toString().toLowerCase().indexOf($('#deploymentsearch').val()) !== -1) || item.customer.company.name.toString().toLowerCase().indexOf($('#deploymentsearch').val()) !== -1 || item.id.toString().indexOf($('#deploymentsearch').val()) !== -1) 
+                deploymentList += '<li><a class="dropdown-item btn_addDeployment" data-id="' + item.id + '" data-used="' + (item.systems.length > 0 ?"true" :false) + '" title="' + item.id + '"href="#">' + address + ' (' + item.systems.length + ')</a></li>';
+        }
+        $('.btn_addDeployment').parent().remove();
+        $("#deploymentsDropdown").append(deploymentList);
+        $('.btn_addDeployment').click(function(e) {
+            let id = $(this).data("id");
+            if ($(this).data("used") == true) {
+                Swal.fire({
+                    title: 'Dieser Standort wird bereits genutzt',
+                    text: "Wollen Sie das System dennoch zuweisen?",
+                    showCancelButton: true,
+                    confirmButtonColor: '#009fe3',
+                    cancelButtonColor: '#ff821d',
+                    iconHtml: '<img src="assets/img/PopUp-Icon.png"></img>',
+                    confirmButtonText: 'Ja, zuweisen!',
+                    cancelButtonText: 'Vorgang abbrechen!',
+                    buttonsStyling: true
+                }).then(function(selection) {
+                    if (selection.isConfirmed === true) {
+                        setDeployments(id).then(()=>{
+                            $("#deploymentsDropdown").removeClass("show");
+                            getSystemChecks().then(setDetails);
+                            getDeploymentHistory().then(setHistory);
+                        });
+                    }
+                });
+            } else {
+                setDeployments(id).then(()=>{
+                    $("#deploymentsDropdown").removeClass("show");
+                    getSystemChecks().then(setDetails);
+                    getDeploymentHistory().then(setHistory);
+                });  
+            }
+            e.preventDefault();
+        });
+        $("#deploymentsDropdown").addClass("show");
+        $('#deploymentsearch').focus();
+        $("#pageloader").hide();
+    }
+}
+function getDeployments() {
+    $("#pageloader").show();
+    return $.ajax({
+        url: "https://termgr.homeinfo.de/list/deployments",
+        type: "GET",
+        cache: false,
+        success: function (data) {  },
+        error: function (msg) {
+            setErrorMessage(msg, "Listen der Standorte");
+        }
+    });
+}
+function setDeployments(deployment, exclusive = false) {
+    $("#pageloader").show();
+    const data = {
+        'system': _display.id,
+        'deployment':deployment,
+        'exclusive': false
+    };
+    return $.ajax({
+        url: 'https://termgr.homeinfo.de/administer/deploy',
+        type: "POST",
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function (data) {  },
+        error: function (msg) {
+            setErrorMessage(msg, "Zuweisen des Stanortes");
         }
     });
 }
@@ -356,6 +533,19 @@ function setApplicationState() {
             setErrorMessage(msg, "Piepen des Systems");
         }
     });  
+}
+function setPublicTransport(address) {
+    $("#pageloader").show();
+    return $.ajax({
+        url: 'https://termgr.homeinfo.de/administer/lpt-address/' + _display.deployment.id,
+        type: "POST",
+        data: JSON.stringify(address),
+        contentType: 'application/json',
+        success: function (msg) {   },
+        error: function (msg) {
+            setErrorMessage(msg, "Durchführen der ÖPNV-Änderung");
+        }
+    });
 }
 
 function changeDeployment(key, value) {
