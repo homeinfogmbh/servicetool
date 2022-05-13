@@ -210,7 +210,7 @@ function initButtons () {
     $('#Netzbindung').click(setChecklistItem('internet-connection'));
     $('#Hardware').click(setChecklistItem('hardware-installation'));
     $('#Abgeschlossen').click(event => {
-        return setChecklistItem('finalize')().then((response) => {
+        return setChecklistItem('finalize')(event).then((response) => {
             window.location = 'dashboard.html';
             return response;
         });
