@@ -3,11 +3,12 @@ const THREE_MONTHS = 3 * 30 * 24; // Hours
 var _commonChecks = {"ssdcarderror":{"title":"SSD Karten Fehler", "text":"Liste der Geräte die einen SSD-Karten-Fehler vorweisen", "systems":[], "show":true},
  	"notfitted":{"title":"Nicht verbaute Displays", "text":"Liste der Geräte die nicht verbaut sind", "systems":[], "show":true},
 	"testsystem":{"title":"Testgeräte", "text":"Liste der Testgeräte", "systems":[], "show":true},
-	"offline":{"title":"Offline", "text":"Liste der Geräte die offline sein", "systems":[], "show":true},
+	"offline":{"title":"Offline", "text":"Liste der Geräte die offline sind", "systems":[], "show":true},
 	"offlineThreeMonth":{"title":"Offline mehr als 3 Monate", "systems":[], "show":true},
 	"noActualData":{"title":"Keine aktuellen Daten", "text":"Liste der Geräte die keine aktuellen Daten besitzen", "systems":[], "show":true},
 	"blackscreen":{"title":"Im Schwarzbild-Modus", "text":"Liste der Geräte die schwarz geschaltet sind", "systems":[], "show":true},
 	"oldApplication":{"title":"Alte Applicationen", "text":"Liste der Geräte auf denen eine alte Version der Applikation läuft", "systems":[], "show":true},
+	"systemchecksFailed":{"title":"Systemchecks fehlgeschlagen", "text":"Liste der Geräte die nicht gecheckt werden konnten", "systems":[], "show":true},
 	"system":{"title":"Displays", "text":"Liste aller Displays", "systems":[], "show":false}
 }; // -> also setCheckList() for filter
 var _showErrorMessages = true;
@@ -170,7 +171,9 @@ function setCheckList(list) {
 			_commonChecks.noActualData.systems.push(check);
 		if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState === "not running")
 			_commonChecks.blackscreen.systems.push(check);
-			_commonChecks.system.systems.push(check);
+		if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && !isOnDate(check.checkResults[0].timestamp, 24))
+			_commonChecks.systemchecksFailed.systems.push(check);
+		_commonChecks.system.systems.push(check);
 		//TODOif (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState === "NOT_RUNNING")
 			//_commonChecks.oldApplication.systems.push(check);
 	}

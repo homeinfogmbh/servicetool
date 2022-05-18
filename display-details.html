@@ -71,7 +71,11 @@
 										<table class="table tableHeadNone">
 											<tbody>
 												<tr>
-													<td>Serial Number</td>
+													<td>Modell</td>
+													<td id="model">-</td>
+												</tr>
+												<tr>
+													<td>Seriennummer</td>
 													<td id="serialNumber">-</td>
 												</tr>
 												<tr>
@@ -196,6 +200,14 @@
 													<td id="bootpartition">-</td>
 												</tr>
 												<tr>
+													<td>Downstream</td>
+													<td id="download">-</td>
+												</tr>
+												<tr>
+													<td>Upstream</td>
+													<td id="upload">-</td>
+												</tr>
+												<tr>
 													<td>Application Version</td>
 													<td id="applicationuptodate">-</td>
 												</tr>
@@ -303,6 +315,15 @@
 									<div class="neuinstaContent">
 										<h3>Systemchecks über 30 Tage</h3>
 										<p>Ergebnisse der durchgeführten Prüfungen über einen Monat</p>
+										<div class="square_lineBox">
+											<p>Systemchecks</p>
+											<ul class="squareLine" id="thirtysystemcheck">
+											</ul>
+											<div class="squ_line_text fz12">
+												<span>heute</span>
+												<span>vor 30 Tagen</span>
+											</div>
+										</div>
 										<div class="square_lineBox">
 											<p>Status: Online/Offline</p>
 											<ul class="squareLine" id="thirtyoffline">

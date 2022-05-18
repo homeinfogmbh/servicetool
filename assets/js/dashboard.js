@@ -83,7 +83,6 @@ function getObserverItems(observerItems) {
     return dom;
 }
 function setOrderings(orderings) {
-    console.log(orderings)
     let orderingsDom = "";
     let address;
     for (let order of orderings) {
@@ -107,7 +106,10 @@ function setOrderings(orderings) {
 function setHipsterStatus(data) {
     $("#hipsterstatus").css("border-color", data ?"#ff821d" :"#009fe3");
     $("#hipsterstatus").text(data ?"running" :"offline");
-    $(".btn_hipster").css("display", data ?"none" :"default");
+    if (data)
+        $(".btn_hipster").hide();
+    else
+        $(".btn_hipster").show();
 }
 function getOrderings() {
 	return $.ajax({
