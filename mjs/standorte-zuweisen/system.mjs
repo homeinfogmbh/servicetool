@@ -111,18 +111,18 @@ class System {
             json.model,
             (json.lastSync == null) ? null : new Date(json.lastSync)
         );
-     }
+    }
 
-     static sortById (descending) {
+    static sortById (descending) {
         return (lhs, rhs) => {
             if (lhs.id == rhs.id)
                 return 0;
 
             return (lhs.id - rhs.id) * (descending ? -1 : 1);
         };
-     }
+    }
 
-     toHTML () {
+    toHTML () {
         const li = document.createElement('li');
         const input = document.createElement('input');
         input.setAttribute('type', 'radio');
@@ -141,7 +141,7 @@ class System {
         span.classList.add('radioCircle');
         label.appendChild(span);
         return li;
-     }
+    }
 }
 
 
