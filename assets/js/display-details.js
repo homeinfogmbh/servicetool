@@ -1,9 +1,12 @@
+const _KIBIBITTOMBIT = 1024/1000/1000;
+var _id;
 var _display = null;
 var _checked = {"btn_installed":false, "btn_blackmodus":false, "btn_testsystem":false};
 var _deployments = null;
 $(document).ready(function() {
-	getSystemChecks().then(setDetails);
-    getDeploymentHistory().then(setHistory)
+    _id = getURLParameterByName('id');
+	getSystemChecks().then(systemCheckCompleted);
+    getDeploymentHistory().then(setHistory, denyHistory)
     $('.btn_internetconnection').click(function(e) {
         if ($("#connectionsDropdown").hasClass("show"))
             $("#connectionsDropdown").removeClass("show");
@@ -14,12 +17,12 @@ $(document).ready(function() {
     $('.btn_connection').click(function(e) {
         $("#connectionsDropdown").removeClass("show");
         $("#internetconnection").text($(this).text());
-        if (_display.hasOwnProperty("deployment"))
+        if (_display !== null && _display.hasOwnProperty("deployment"))
             changeDeployment("connection", $(this).text()).then(()=>{$("#pageloader").hide()});
 		e.preventDefault();
 	});
     $('.btn_publictransport').click(function(e) {
-        if (_display.hasOwnProperty("deployment")) {
+        if (_display !== null && _display.hasOwnProperty("deployment")) {
             if ($("#addressfields").is(":visible"))
                 $("#addressfields").hide();
             else
@@ -27,8 +30,9 @@ $(document).ready(function() {
         }
 		e.preventDefault();
 	});
+    
     $('.btn_savePublicTransport').click(function(e) {
-        if (_display.hasOwnProperty("deployment")) {
+        if (_display !== null && _display.hasOwnProperty("deployment")) {
             let address = [$("#street").val(), $("#houseNumber").val(), $("#zipCode").val(), $("#city").val()];
             if (address[0].trim() === "" && address[1].trim() === "" && address[2].trim() === "" && address[3].trim() === "") {
                 address = null;
@@ -66,7 +70,7 @@ $(document).ready(function() {
         e.preventDefault();
     });	
     $('.btn_deleteDeployment').click(function(e) {
-        if (_display.hasOwnProperty("deployment")) {
+        if (_display !== null &&  _display.hasOwnProperty("deployment")) {
             Swal.fire({
                 title: 'Sind Sie sicher?',
                 text: "Wollen Sie das System wirklich lösen?",
@@ -80,8 +84,8 @@ $(document).ready(function() {
             }).then(function(selection) {
                 if (selection.isConfirmed === true)
                     setDeployments(null).then(()=>{
-                        getSystemChecks().then(setDetails);
-                        getDeploymentHistory().then(setHistory);
+                        getSystemChecks().then(systemCheckCompleted);
+                        getDeploymentHistory().then(setHistory, denyHistory);
                     });
             });
         }
@@ -98,7 +102,7 @@ $(document).ready(function() {
 	}); 
     $('.btn_blackmodus').click(function(e) {
         if (_checked.btn_blackmodus)
-         setApplicationState().then(()=>{$("#pageloader").hide()});
+            setApplicationState().then(()=>{$("#pageloader").hide()});
 	}); 
     $('.btn_restart').click(function(e) {
         Swal.fire({
@@ -118,19 +122,19 @@ $(document).ready(function() {
 		e.preventDefault();
 	}); 
     $('.btn_testsystem').click(function(e) {
-        if (_display.hasOwnProperty("deployment") && _checked.btn_testsystem)
+        if (_display !== null && _display.hasOwnProperty("deployment") && _checked.btn_testsystem)
             changeDeployment("testing", $('input[name=Testgerät]:checked').val() !== 'on').then(()=>{$("#pageloader").hide()});
 	});
     $('.btn_screenshot').click(function(e) {
-        window.open('https://sysmon.homeinfo.de/screenshot/' + _display.id, "_blank"); // http://321.terminals.homeinfo.intra:8000/screenshot (faster)
+        window.open('https://sysmon.homeinfo.de/screenshot/' + _id, "_blank"); // http://321.terminals.homeinfo.intra:8000/screenshot (faster)
 		e.preventDefault();
 	}); 
     $('.btn_ping').click(function(e) {
-        
+        // TODO
 		e.preventDefault();
 	}); 
     $('.btn_sync').click(function(e) {
-        if (_display.hasOwnProperty("deployment"))
+        if (_display !== null && _display.hasOwnProperty("deployment"))
             sync().then(()=>{$("#pageloader").hide()});
 		e.preventDefault();
 	});
@@ -138,7 +142,7 @@ $(document).ready(function() {
 
 function getSystemChecks() {
     return $.ajax({
-        url: "https://sysmon.homeinfo.de/checks/" + getURLParameterByName('id'),
+        url: "https://sysmon.homeinfo.de/checks/" + _id,
         type: "GET",
         cache: false,
         success: function (data) {  },
@@ -149,12 +153,19 @@ function getSystemChecks() {
     
 }
 
+function systemCheckCompleted(data) {
+    if ($.isEmptyObject(data))
+        getSystem().then(setDetails);
+    else
+        setDetails(data);
+}
 function setDetails(data) {
-    _display = data[getURLParameterByName('id')];
-    let address = _display.hasOwnProperty("deployment") ?_display.deployment.hasOwnProperty("address") ?_display.deployment.address.street + " " + _display.deployment.address.houseNumber + ", " + _display.deployment.address.zipCode + " " + _display.deployment.address.city :'<i>Keine Adresse angegeben</i>' :'<i>Keinen Standort zugewiesen</i>';
+    _display = data.hasOwnProperty(_id) ?data[_id] :data;
+    let address = _display.hasOwnProperty("deployment") ?_display.deployment.hasOwnProperty("address") ?_display.deployment.address.street + " " + _display.deployment.address.houseNumber + ", " + _display.deployment.address.zipCode + " " + _display.deployment.address.city :'<i>Keine Adresse angegeben</i>' :'<i>Keinem Standort zugewiesen</i>';
     $("#displaytitle").html("Display: " + address);
     try { $("#completecustomername").html(_display.deployment.customer.company.name + ' (Knr. ' + _display.deployment.customer.id + ')'); } catch(err) {   }
     // Overview
+    $("#model").text(_display.hasOwnProperty("model") ?_display.model :'-');
     $("#serialNumber").text(_display.hasOwnProperty("serialNumber") ?_display.serialNumber :'-');
     $("#ipv6").text(_display.ipv6address);
     if (_display.hasOwnProperty("checkResults") && _display.checkResults.length > 0) {
@@ -173,7 +184,6 @@ function setDetails(data) {
     $("#os").text(_display.operatingSystem);
     $("#applicationDesign").text("TODO");
     $("#applicationVersion").text("TODO");
-
     // Error Log
     let logs = "";
     let errorData = {"offline":[], "ssd":[], "baytrail":[], "icmp":[], "ssh":[], "http":[], "application":[]}; // [{"<days>, <timestamp>}]
@@ -261,13 +271,6 @@ function setDetails(data) {
             '</tr>';
         }
     }
-    // "Keinen Standort"
-    if (!_display.hasOwnProperty("deployment")) {
-        logs += '<tr>' +
-            '<td>Keinen Standort</td>' +
-            '<td></td>' +
-        '</tr>';
-    }
     if (!_display.hasOwnProperty("pubkey")) {
         logs += '<tr>' +
             '<td>WireGuard pubkey nicht gesetzt</td>' +
@@ -313,22 +316,40 @@ function setDetails(data) {
     _checked = {"btn_installed":true, "btn_blackmodus":true, "btn_testsystem":true};
 
     // Systemchecks über 30 Tage
-    let daysCounter = 0;
-    for (let log of _display.checkResults) {
-        daysCounter++;
-        $("#thirtyoffline").append(log.hasOwnProperty("offlineSince") || log.sshLogin !== "success" ?'<li title="' + formatDate(log.timestamp) + '" class=""></li>' :'<li title="' + formatDate(log.timestamp) + '" class="orangeSq"></li>');
-        $("#thirtysync").append(false ?'<li title="' + formatDate(log.timestamp) + '" class=""></li>' :'<li title="' + formatDate(log.timestamp) + '" class="orangeSq"></li>');
-        $("#thirtyicmp").append(!log.icmpRequest ?'<li title="' + formatDate(log.timestamp) + '" class=""></li>' :'<li title="' + formatDate(log.timestamp) + '" class="orangeSq"></li>');
-        $("#thirtyssh").append(log.sshLogin === "failed" ?'<li title="' + formatDate(log.timestamp) + '" class=""></li>' :'<li title="' + formatDate(log.timestamp) + '" class="orangeSq"></li>');
-        $("#thirtyhttp").append(log.httpRequest === "failed" ?'<li title="' + formatDate(log.timestamp) + '" class=""></li>' :'<li title="' + formatDate(log.timestamp) + '" class="orangeSq"></li>');
-    }
-    for (let day = 0; day < 30-daysCounter; day++) {
-        $('#thirtyoffline').append('<li title="keine Daten vorhanden" class="orangeSq"></li>');
-        $('#thirtysync').append('<li title="keine Daten vorhanden" class="orangeSq"></li>');
-        $('#thirtyicmp').append('<li title="keine Daten vorhanden" class="orangeSq"></li>');
-        $('#thirtyssh').append('<li title="keine Daten vorhanden" class="orangeSq"></li>');
-        $('#thirtyhttp').append('<li title="keine Daten vorhanden" class="orangeSq"></li>');
-    }
+    console.log(_display.checkResults)
+    let date = new Date();
+    let dateDay;
+    let dateFound;
+    let timestamp;
+    for (let day = 0; day < 30; day++) {
+        dateFound = false;
+        dateDay = (date.getDate() < 10 ?"0" + date.getDate(): date.getDate()) + "." + (date.getMonth() < 9 ?"0" + (date.getMonth()+1) :date.getMonth()+1) + "." + date.getFullYear();
+        if (_display.hasOwnProperty("checkResults") && _display.checkResults.length > day) {
+            for (let log of _display.checkResults) {
+                timestamp = new Date(log.timestamp);
+                if (date.getFullYear() === timestamp.getFullYear() && date.getMonth() === timestamp.getMonth() && date.getDate() === timestamp.getDate()) {
+                    dateFound = true;
+                    $("#thirtysystemcheck").append('<li title="' + dateDay + '" class="orangeSq"></li>');
+                    $("#thirtyoffline").append(log.hasOwnProperty("offlineSince") || log.sshLogin !== "success" ?'<li title="' + dateDay + '" class=""></li>' :'<li title="' + dateDay + '" class="orangeSq"></li>');
+                    $("#thirtysync").append(false ?'<li title="' + dateDay + '" class=""></li>' :'<li title="' + dateDay + '" class="orangeSq"></li>');
+                    $("#thirtyicmp").append(!log.icmpRequest ?'<li title="' + dateDay + '" class=""></li>' :'<li title="' + dateDay + '" class="orangeSq"></li>');
+                    $("#thirtyssh").append(log.sshLogin === "failed" ?'<li title="' + dateDay + '" class=""></li>' :'<li title="' + dateDay + '" class="orangeSq"></li>');
+                    $("#thirtyhttp").append(log.httpRequest === "failed" ?'<li title="' + dateDay + '" class=""></li>' :'<li title="' + dateDay + '" class="orangeSq"></li>');
+                    break;
+                }
+            }
+        }
+        if (!dateFound) {
+            $("#thirtysystemcheck").append('<li title="' + dateDay + ': Keine Daten vorhanden" class=""></li>');
+            $('#thirtyoffline').append('<li title="' + dateDay + ': Keine Daten vorhanden" class="orangeSq"></li>');
+            $('#thirtysync').append('<li title="' + dateDay + ': Keine Daten vorhanden" class="orangeSq"></li>');
+            $('#thirtyicmp').append('<li title="' + dateDay + ': Keine Daten vorhanden" class="orangeSq"></li>');
+            $('#thirtyssh').append('<li title="' + dateDay + ': Keine Daten vorhanden" class="orangeSq"></li>');
+            $('#thirtyhttp').append('<li title="' + dateDay + ': Keine Daten vorhanden" class="orangeSq"></li>');
+        }
+        date.setDate(date.getDate()-1);
+    };
+    $("#pageloader").hide();
 }
 function setChecks(lastCheck) {
     $("#offline").html(lastCheck.hasOwnProperty("offlineSince") || lastCheck.sshLogin !== "success" ?'<span class="blueMark">offline</span>' :'<span class="orangeMark">online</span>');
@@ -340,6 +361,8 @@ function setChecks(lastCheck) {
     $("#application").html(lastCheck.applicationState === "conflict" || lastCheck.applicationState === "not enabled" || lastCheck.applicationState === "not running"?'<span class="blueMark">' + lastCheck.applicationState +'</span>' :'<span class="orangeMark">' + lastCheck.applicationState + '</span>');
     $("#baytrail").html(lastCheck.baytrailFreeze === "vulnerable" ?'<span class="blueMark">' + lastCheck.baytrailFreeze + '</span>' :'<span class="orangeMark">' + lastCheck.baytrailFreeze + '</span>');
     $("#bootpartition").html(lastCheck.efiMountOk === "failed" ?'<span class="blueMark">' + lastCheck.efiMountOk + '</span>' :'<span class="orangeMark">' + lastCheck.efiMountOk + '</span>');
+    $("#download").html(lastCheck.hasOwnProperty("download") ?lastCheck.download*_KIBIBITTOMBIT < 2 ?'<span class="blueMark">' + (lastCheck.download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>' :'<span class="orangeMark">' + (lastCheck.download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>' :"-");
+    $("#upload").text(lastCheck.hasOwnProperty("upload") ?(lastCheck.upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + " Mbit" :"-");
     $("#applicationuptodate").html('<span class="orangeMark">TODO</span>');
     $("#lastCheck").text("Letzter Check " + formatDate(lastCheck.timestamp) + " (" + lastCheck.timestamp.substring(11, 16) + " Uhr)");
     $("#pageloader").hide();
@@ -350,30 +373,45 @@ function setHistory(history) {
     for (let entry of history) {
         historyEntries += "<tr>" +
             "<td>" + (entry.account.hasOwnProperty("fullName") ?entry.account.fullName :entry.account.name) + "</td>" +
-            "<td>" + formatDate(entry.timestamp) + " " + entry.timestamp.substring(11, 16) + "Uhr</td>" +
-            "<td>" + entry.oldDeployment + "</td>" +
+            "<td>Zuordnung: " + (entry.oldDeployment === null ?"keine" :entry.oldDeployment) + "</td>" + // "k.Z." -> " "keine Zuordnung"
+            "<td>" + formatDate(entry.timestamp) + " (" + entry.timestamp.substring(11, 16) + "Uhr)</td>" +
         "</tr>";
     }
     historyEntries = historyEntries === "" ?"<tr><td>Keine Einträge vorhanden.</td></tr>" :historyEntries;
     $("#history").html(historyEntries);
 
 }
+function denyHistory() {
+    $("#history").html("<tr><td>History nicht vorhanden</td></tr>");
+}
 function getDeploymentHistory() {
     $("#pageloader").show();
     return $.ajax({
-        url: "https://termgr.homeinfo.de/deployment-history/" + getURLParameterByName('id'),
+        url: "https://termgr.homeinfo.de/deployment-history/" + _id,
         type: "GET",
         cache: false,
         success: function (data) {  },
         error: function (msg) {
-            setErrorMessage(msg, "Checken des Systems");
+            if (msg.responseText !== "No such system.")
+                setErrorMessage(msg, "Anzeigen der History");
+        }
+    });
+}
+function getSystem() {
+    return $.ajax({
+        url: "https://termgr.homeinfo.de/list/systems/" + _id,
+        type: "GET",
+        cache: false,
+        success: function (data) {  },
+        error: function (msg) {
+            setErrorMessage(msg, "Anzeigen des Systems");
         }
     });
 }
 function checkSystem() {
     $("#pageloader").show();
     return $.ajax({
-        url: "https://sysmon.homeinfo.de/check/" + getURLParameterByName('id'),
+        url: "https://sysmon.homeinfo.de/check/" + _id,
         type: "GET",
         cache: false,
         success: function (data) {  },
@@ -418,16 +456,16 @@ function listDeployments(deployments = null) {
                     if (selection.isConfirmed === true) {
                         setDeployments(id).then(()=>{
                             $("#deploymentsDropdown").removeClass("show");
-                            getSystemChecks().then(setDetails);
-                            getDeploymentHistory().then(setHistory);
+                            getSystemChecks().then(systemCheckCompleted);
+                            getDeploymentHistory().then(setHistory, denyHistory);
                         });
                     }
                 });
             } else {
                 setDeployments(id).then(()=>{
                     $("#deploymentsDropdown").removeClass("show");
-                    getSystemChecks().then(setDetails);
-                    getDeploymentHistory().then(setHistory);
+                    getSystemChecks().then(systemCheckCompleted);
+                    getDeploymentHistory().then(setHistory, denyHistory);
                 });  
             }
             e.preventDefault();
@@ -452,7 +490,7 @@ function getDeployments() {
 function setDeployments(deployment, exclusive = false) {
     $("#pageloader").show();
     const data = {
-        'system': _display.id,
+        'system': _id,
         'deployment':deployment,
         'exclusive': false
     };
@@ -472,7 +510,7 @@ function sync() {
     return $.ajax({
         url: 'https://termgr.homeinfo.de/administer/sync', //"https://hipster.homeinfo.de?customer=" + _display.deployment.customer.id,
         type: "POST",
-        data: JSON.stringify({'system': _display.id}),
+        data: JSON.stringify({'system': _id}),
         contentType: 'application/json',
         success: function (queue) {
             console.log(queue);
@@ -487,7 +525,7 @@ function noice() {
     return $.ajax({
         url: 'https://termgr.homeinfo.de/administer/beep',
         type: "POST",
-        data: JSON.stringify({'system': _display.id}),
+        data: JSON.stringify({'system': _id}),
         contentType: 'application/json',
         success: function (data) {  },
         error: function (msg) {
@@ -500,7 +538,7 @@ function restart() {
     return $.ajax({
         url: 'https://termgr.homeinfo.de/administer/reboot',
         type: "POST",
-        data: JSON.stringify({'system': _display.id}),
+        data: JSON.stringify({'system': _id}),
         contentType: 'application/json',
         success: function (data) {  },
         error: function (msg) {
@@ -513,7 +551,7 @@ function setFit() {
     return $.ajax({
         url: 'https://termgr.homeinfo.de/administer/fit',
         type: "POST",
-        data: JSON.stringify({'system': _display.id, 'fitted': $('input[name=Verbaut]:checked').val() !== 'on'}),
+        data: JSON.stringify({'system': _id, 'fitted': $('input[name=Verbaut]:checked').val() !== 'on'}),
         contentType: 'application/json',
         success: function (data) {  },
         error: function (msg) {
@@ -526,7 +564,7 @@ function setApplicationState() {
     return $.ajax({
         url: 'https://termgr.homeinfo.de/administer/application',
         type: "POST",
-        data: JSON.stringify({'system': _display.id, 'state': $('input[name=Schwarzbildmodus]:checked').val() !== 'on'}),
+        data: JSON.stringify({'system': _id, 'state': $('input[name=Schwarzbildmodus]:checked').val() !== 'on'}),
         contentType: 'application/json',
         success: function (data) {  },
         error: function (msg) {

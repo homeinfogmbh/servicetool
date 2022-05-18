@@ -38,15 +38,14 @@ function setList(sort = "sortcustomer") {
                 address = check.deployment.hasOwnProperty("address") ?check.deployment.address.street + " " + check.deployment.address.houseNumber :'';
                 abbreviation = check.deployment.customer.abbreviation === "Zuordnung nicht vorhanden" ?'<i>' + check.deployment.customer.abbreviation + '</i>' :check.deployment.customer.abbreviation;
                 systemlistDOM += '<tr class="system" data-id="' + check.id + '">' +
-                    '<td title="System-ID: ' + check.id  + '">' + abbreviation + '</td>' +
+                    '<td>' + check.id + '</td>' +
+                    '<td>' + abbreviation + '</td>' +
                     '<td title="' + addressComplete + '" style="white-space: nowrap;">' + address +  '</td>' + //'<td title="' + address + '">' + address.substring(0, 12) + (address != '' ?'...' :'') +  '</td>' +
                     '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("offlineSince") ?'blueCircle' :'orangeCircle') + '"></span></td>' +
                     '<td><span class="' + (!check.fitted ?'blueCircle' :'orangeCircle') + '"></span></td>' +
                     '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].smartCheck === "failed" ?'blueCircle' :'orangeCircle') + '"></span></td>' +
-                    '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].icmpRequest ?"orangeCircle":"blueCircle") + '"></span></td>' +
                     '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].sshLogin === "failed" ?"blueCircle":"orangeCircle") + '"></span></td>' +
                     '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && (check.checkResults[0].applicationState === "conflict" || check.checkResults[0].applicationState === "not enabled" || check.checkResults[0].applicationState === "not running") ?"blueCircle":"orangeCircle") + '"></span></td>' +
-                    '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].baytrailFreeze === "vulnerable" ?"blueCircle":"orangeCircle") + '"></span></td>' +
                     '<td><span class="' + (isOnDate(check.lastSync, 24) ?"orangeCircle":"blueCircle") + '"></span></td>' +
                     '<td>' + (check.hasOwnProperty("lastSync") ?formatDate(check.lastSync) + " (" + check.lastSync.substring(11, 16) + "h)": "noch nie") + '</td>' +
                     '<td><a href="display-details.html?id=' + check.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>' +
@@ -66,7 +65,15 @@ function sortCommonList(sort) {
         _lastsort = getURLParameterByName('sort');
     else
         _lastsort = _lastsort === sort && _lastsort.indexOf('inverted' === -1) ? _lastsort + "Inverted" :sort;
-    if (_lastsort === "sortcustomer") {
+    if (_lastsort === "sortsystemid") {
+        _commonChecks[_type].systems.sort(function(a, b) {
+            return compare(a.id, b.id);
+        });
+    } if (_lastsort === "sortsystemidInverted") {
+        _commonChecks[_type].systems.sort(function(a, b) {
+            return compareInverted(a.id, b.id);
+        });
+    } else if (_lastsort === "sortcustomer") {
         _commonChecks[_type].systems.sort(function(a, b) {
             return compare(a.deployment.customer.abbreviation.toLowerCase(), b.deployment.customer.abbreviation.toLowerCase());
         });
@@ -106,14 +113,6 @@ function sortCommonList(sort) {
         _commonChecks[_type].systems.sort(function(a, b) {
             return b.checkResults[0].smartCheck === "failed" ?-1 : a.checkResults[0].smartCheck === "failed"? 1 :0
         });
-    } else if (_lastsort == "sorticmp") {
-        _commonChecks[_type].systems.sort(function(a, b) {
-            return b.checkResults[0].icmpRequest ?-1 : a.checkResults[0].icmpRequest? 1 :0
-        });
-    } else if (_lastsort == "sorticmpInverted") {
-        _commonChecks[_type].systems.sort(function(a, b) {
-            return a.checkResults[0].icmpRequest ?-1 : b.checkResults[0].icmpRequest? 1 :0
-        });
     } else if (_lastsort == "sortssh") {
         _commonChecks[_type].systems.sort(function(a, b) {
             return a.checkResults[0].sshLogin === "success" ?-1 : b.checkResults[0].sshLogin === "success" ?1 :0
@@ -129,14 +128,6 @@ function sortCommonList(sort) {
     } else if (_lastsort == "sortapprunningInverted") {
         _commonChecks[_type].systems.sort(function(a, b) {
             return b.checkResults[0].applicationState === "not running" ?-1 :a.checkResults[0].applicationState === "not running" ?1 :0
-        });
-    } else if (_lastsort == "sortbaytrail") {
-        _commonChecks[_type].systems.sort(function(a, b) {
-            return a.checkResults[0].baytrailFreeze === "vulnerable" ?-1 :b.checkResults[0].baytrailFreeze === "vulnerable" ?1 :0
-        });
-    } else if (_lastsort == "sortbaytrailInverted") {
-        _commonChecks[_type].systems.sort(function(a, b) {
-            return b.checkResults[0].baytrailFreeze === "vulnerable" ?-1 :a.checkResults[0].baytrailFreeze === "vulnerable" ?1 :0
         });
     } else if (_lastsort == "sortappuptodate") {
         _commonChecks[_type].systems.sort(function(a, b) {
