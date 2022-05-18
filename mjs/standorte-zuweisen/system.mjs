@@ -141,7 +141,7 @@ class System {
         li.appendChild(label);
         const span = document.createElement('span');
         span.classList.add('radioCircle');
-        label.appendChild(span);
+        li.appendChild(span);
         return li;
     }
 }
