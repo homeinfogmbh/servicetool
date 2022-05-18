@@ -186,6 +186,8 @@ function deployedSystemToHTML (systemId, deploymentId) {
     const li = document.createElement('li');
     const span1 = document.createElement('span');
     span1.setAttribute('data-id', systemId);
+    span1.style.textDecoration = 'underline';
+    span1.style.cursor = 'pointer';
     span1.textContent = systemId;
     span1.addEventListener('click', openSystemDetails);
     li.appendChild(span1);

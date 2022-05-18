@@ -134,6 +134,8 @@ class System {
         const label = document.createElement('label');
         label.setAttribute('for', 'system-' + this.id);
         label.setAttribute('data-id', this.id);
+        label.style.textDecoration = 'underline';
+        label.style.cursor = 'pointer';
         label.textContent = this.id;
         label.addEventListener('click', openSystemDetails);
         li.appendChild(label);
