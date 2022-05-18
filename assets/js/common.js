@@ -171,7 +171,7 @@ function setCheckList(list) {
 			_commonChecks.noActualData.systems.push(check);
 		if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState === "not running")
 			_commonChecks.blackscreen.systems.push(check);
-		if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && !isOnDate(check.checkResults[0].timestamp, 24))
+		if (!check.hasOwnProperty("checkResults") || (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && !isOnDate(check.checkResults[0].timestamp, 24)))
 			_commonChecks.systemchecksFailed.systems.push(check);
 		_commonChecks.system.systems.push(check);
 		//TODOif (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState === "NOT_RUNNING")
