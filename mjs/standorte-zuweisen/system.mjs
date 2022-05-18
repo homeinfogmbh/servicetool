@@ -132,18 +132,16 @@ class System {
         input.style.display = 'none';
         li.appendChild(input);
         const label = document.createElement('label');
-        const span1 = document.createElement('span');
-        span1.setAttribute('for', 'system-' + this.id);
+        label.setAttribute('for', 'system-' + this.id);
         span1.setAttribute('data-id', this.id);
-        span1.style.textDecoration = 'underline';
-        span1.style.cursor = 'pointer';
-        span1.textContent = this.id;
-        span1.addEventListener('click', openSystemDetails);
-        label.appendChild(span1);
+        label.style.textDecoration = 'underline';
+        label.style.cursor = 'pointer';
+        label.textContent = this.id;
+        label.addEventListener('click', openSystemDetails);
         li.appendChild(label);
-        const span2 = document.createElement('span');
-        span2.classList.add('radioCircle');
-        label.appendChild(span2);
+        const span = document.createElement('span');
+        span.classList.add('radioCircle');
+        li.appendChild(span);
         return li;
     }
 }
