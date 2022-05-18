@@ -137,11 +137,11 @@ class System {
         label.style.textDecoration = 'underline';
         label.style.cursor = 'pointer';
         label.textContent = this.id;
-        label.addEventListener('click', openSystemDetails);
+        //label.addEventListener('click', openSystemDetails);
         li.appendChild(label);
         const span = document.createElement('span');
         span.classList.add('radioCircle');
-        li.appendChild(span);
+        label.appendChild(span);
         return li;
     }
 }
