@@ -316,7 +316,6 @@ function setDetails(data) {
     _checked = {"btn_installed":true, "btn_blackmodus":true, "btn_testsystem":true};
 
     // Systemchecks über 30 Tage
-    console.log(_display.checkResults)
     let date = new Date();
     let dateDay;
     let dateFound;
