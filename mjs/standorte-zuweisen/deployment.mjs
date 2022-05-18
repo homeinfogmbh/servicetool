@@ -28,6 +28,7 @@ import { Address } from './address.mjs';
 import { initSortElements, sortedDeployments } from './sorting.mjs';
 
 
+const DISPLAY_DETAILS = 'display-details.html';
 const PAGE_SIZE = 15;
 let DEPLOYMENTS = [];
 let PAGER = null;
@@ -149,23 +150,6 @@ function getDeployments () {
 }
 
 
-function deployedSystemToHTML (systemId, deploymentId) {
-    const li = document.createElement('li');
-    const span1 = document.createElement('span');
-    span1.textContent = systemId;
-    li.appendChild(span1);
-    const span2 = document.createElement('span');
-    span2.setAttribute('data-system', systemId);
-    span2.setAttribute('data-deployment', deploymentId);
-    span2.classList.add('whiteMark');
-    span2.classList.add('undeploy');
-    span2.style.cursor = 'pointer';
-    span2.textContent = 'lösen';
-    span2.addEventListener('click', undeploy);
-    li.appendChild(span2);
-    return li;
-}
-
 /*
     Remove a system from a deployment.
 */
@@ -186,6 +170,37 @@ export function undeploy (event) {
     }).then(response => {
         window.location.reload();
     });
+}
+
+
+export function openSystemDetails (event) {
+    window.location = (
+        DISPLAY_DETAILS
+        + '?id='
+        + event.target.getAttribute('data-id')
+    );
+}
+
+
+function deployedSystemToHTML (systemId, deploymentId) {
+    const li = document.createElement('li');
+    const span1 = document.createElement('span');
+    span1.setAttribute('data-id', systemId);
+    span1.style.textDecoration = 'underline';
+    span1.style.cursor = 'pointer';
+    span1.textContent = systemId;
+    span1.addEventListener('click', openSystemDetails);
+    li.appendChild(span1);
+    const span2 = document.createElement('span');
+    span2.setAttribute('data-system', systemId);
+    span2.setAttribute('data-deployment', deploymentId);
+    span2.classList.add('whiteMark');
+    span2.classList.add('undeploy');
+    span2.style.cursor = 'pointer';
+    span2.textContent = 'lösen';
+    span2.addEventListener('click', undeploy);
+    li.appendChild(span2);
+    return li;
 }
 
 

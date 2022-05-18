@@ -24,7 +24,7 @@
 
 import { handleError, makeSpanLink } from '../common.mjs';
 import { Pager } from '../pager.mjs';
-import { Deployment } from './deployment.mjs';
+import { Deployment, openSystemDetails } from './deployment.mjs';
 
 
 const PAGE_SIZE = 10;
@@ -111,18 +111,18 @@ class System {
             json.model,
             (json.lastSync == null) ? null : new Date(json.lastSync)
         );
-     }
+    }
 
-     static sortById (descending) {
+    static sortById (descending) {
         return (lhs, rhs) => {
             if (lhs.id == rhs.id)
                 return 0;
 
             return (lhs.id - rhs.id) * (descending ? -1 : 1);
         };
-     }
+    }
 
-     toHTML () {
+    toHTML () {
         const li = document.createElement('li');
         const input = document.createElement('input');
         input.setAttribute('type', 'radio');
@@ -133,13 +133,17 @@ class System {
         li.appendChild(input);
         const label = document.createElement('label');
         label.setAttribute('for', 'system-' + this.id);
+        label.setAttribute('data-id', this.id);
+        label.style.textDecoration = 'underline';
+        label.style.cursor = 'pointer';
         label.textContent = this.id;
+        label.addEventListener('click', openSystemDetails);
         li.appendChild(label);
         const span = document.createElement('span');
         span.classList.add('radioCircle');
         label.appendChild(span);
         return li;
-     }
+    }
 }
 
 
