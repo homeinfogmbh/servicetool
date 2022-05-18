@@ -24,7 +24,7 @@
 
 import { handleError, makeSpanLink } from '../common.mjs';
 import { Pager } from '../pager.mjs';
-import { Deployment } from './deployment.mjs';
+import { Deployment, openSystemDetails } from './deployment.mjs';
 
 
 const PAGE_SIZE = 10;
@@ -133,7 +133,9 @@ class System {
         li.appendChild(input);
         const label = document.createElement('label');
         label.setAttribute('for', 'system-' + this.id);
+        label.setAttribute('data-id', this.id);
         label.textContent = this.id;
+        label.addEventListener('click', openSystemDetails);
         li.appendChild(label);
         const span = document.createElement('span');
         span.classList.add('radioCircle');
