@@ -60,7 +60,10 @@ $(document).ready(function() {
             window.location.href = "mailto:r.haupt@homeinfo.de?subject=Supportanfrage Servicetool " + date.getDate() + "." + date.getMonth() + "." + date.getFullYear() + "&body=" + body;
         });
 		e.preventDefault();
-	});  
+	}); 
+	$('#globalsearchfield').on('input',function(e) {
+		console.log("KK");
+	});
     getListOfSystemChecks().then(setMenu);
 });
 

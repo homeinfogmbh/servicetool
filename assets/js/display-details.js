@@ -129,10 +129,6 @@ $(document).ready(function() {
         window.open('https://sysmon.homeinfo.de/screenshot/' + _id, "_blank"); // http://321.terminals.homeinfo.intra:8000/screenshot (faster)
 		e.preventDefault();
 	}); 
-    $('.btn_ping').click(function(e) {
-        // TODO
-		e.preventDefault();
-	}); 
     $('.btn_sync').click(function(e) {
         if (_display !== null && _display.hasOwnProperty("deployment"))
             sync().then(()=>{$("#pageloader").hide()});
@@ -160,6 +156,7 @@ function systemCheckCompleted(data) {
         setDetails(data);
 }
 function setDetails(data) {
+    console.log(data)
     _display = data.hasOwnProperty(_id) ?data[_id] :data;
     let address = _display.hasOwnProperty("deployment") ?_display.deployment.hasOwnProperty("address") ?_display.deployment.address.street + " " + _display.deployment.address.houseNumber + ", " + _display.deployment.address.zipCode + " " + _display.deployment.address.city :'<i>Keine Adresse angegeben</i>' :'<i>Keinem Standort zugewiesen</i>';
     $("#displaytitle").html("Display: " + address);
@@ -170,6 +167,7 @@ function setDetails(data) {
     $("#ipv6").text(_display.ipv6address);
     if (_display.hasOwnProperty("checkResults") && _display.checkResults.length > 0) {
         $("#ram").text(_display.checkResults[0].hasOwnProperty("ramFree") ?_display.checkResults[0].ramFree/1024 + " (" + _display.checkResults[0].ramAvailable/1024 + ") / " + _display.checkResults[0].ramTotal/1024 :"-");
+        $("#applicationDesign").text(_display.checkResults[0].hasOwnProperty("design") ?_display.checkResults[0].design :"-");
     }
     if (_display.hasOwnProperty("deployment")) {
         $("#screentype").text(_display.deployment.type);
@@ -180,10 +178,8 @@ function setDetails(data) {
     }
     $("#wireguard").html(_display.hasOwnProperty("pubkey") ?"<span title='" + _display.pubkey + "'>" + _display.pubkey.substring(0, 20) + " " + _display.pubkey.substring(20) + "</span>" :"-");
     $("#systemID").text(_display.id);
-    $("#root").text("TODO");
     $("#os").text(_display.operatingSystem);
-    $("#applicationDesign").text("TODO");
-    $("#applicationVersion").text("TODO");
+
     // Error Log
     let logs = "";
     let errorData = {"offline":[], "ssd":[], "baytrail":[], "icmp":[], "ssh":[], "http":[], "application":[]}; // [{"<days>, <timestamp>}]
@@ -330,7 +326,6 @@ function setDetails(data) {
                     dateFound = true;
                     $("#thirtysystemcheck").append('<li title="' + dateDay + '" class="orangeSq"></li>');
                     $("#thirtyoffline").append(log.hasOwnProperty("offlineSince") || log.sshLogin !== "success" ?'<li title="' + dateDay + '" class=""></li>' :'<li title="' + dateDay + '" class="orangeSq"></li>');
-                    $("#thirtysync").append(false ?'<li title="' + dateDay + '" class=""></li>' :'<li title="' + dateDay + '" class="orangeSq"></li>');
                     $("#thirtyicmp").append(!log.icmpRequest ?'<li title="' + dateDay + '" class=""></li>' :'<li title="' + dateDay + '" class="orangeSq"></li>');
                     $("#thirtyssh").append(log.sshLogin === "failed" ?'<li title="' + dateDay + '" class=""></li>' :'<li title="' + dateDay + '" class="orangeSq"></li>');
                     $("#thirtyhttp").append(log.httpRequest === "failed" ?'<li title="' + dateDay + '" class=""></li>' :'<li title="' + dateDay + '" class="orangeSq"></li>');
@@ -341,7 +336,6 @@ function setDetails(data) {
         if (!dateFound) {
             $("#thirtysystemcheck").append('<li title="' + dateDay + ': Keine Daten vorhanden" class=""></li>');
             $('#thirtyoffline').append('<li title="' + dateDay + ': Keine Daten vorhanden" class="orangeSq"></li>');
-            $('#thirtysync').append('<li title="' + dateDay + ': Keine Daten vorhanden" class="orangeSq"></li>');
             $('#thirtyicmp').append('<li title="' + dateDay + ': Keine Daten vorhanden" class="orangeSq"></li>');
             $('#thirtyssh').append('<li title="' + dateDay + ': Keine Daten vorhanden" class="orangeSq"></li>');
             $('#thirtyhttp').append('<li title="' + dateDay + ': Keine Daten vorhanden" class="orangeSq"></li>');
@@ -362,7 +356,7 @@ function setChecks(lastCheck) {
     $("#bootpartition").html(lastCheck.efiMountOk === "failed" ?'<span class="blueMark">' + lastCheck.efiMountOk + '</span>' :'<span class="orangeMark">' + lastCheck.efiMountOk + '</span>');
     $("#download").html(lastCheck.hasOwnProperty("download") ?lastCheck.download*_KIBIBITTOMBIT < 2 ?'<span class="blueMark">' + (lastCheck.download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>' :'<span class="orangeMark">' + (lastCheck.download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>' :"-");
     $("#upload").text(lastCheck.hasOwnProperty("upload") ?(lastCheck.upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + " Mbit" :"-");
-    $("#applicationuptodate").html('<span class="orangeMark">TODO</span>');
+    $("#applicationuptodate").html('<span class="">' + (lastCheck.hasOwnProperty("applicationVersion") ?lastCheck.applicationVersion :"unsupported") + '</span>'); // TODO compare with actual version
     $("#lastCheck").text("Letzter Check " + formatDate(lastCheck.timestamp) + " (" + lastCheck.timestamp.substring(11, 16) + " Uhr)");
     $("#pageloader").hide();
 }

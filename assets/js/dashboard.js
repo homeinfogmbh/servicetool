@@ -33,7 +33,7 @@ function setChecks(list) {
             observerItems.push(getObserveItem(check, "Mehr als 3 Monate offline", observerItems.length));
         //if (!isOnDate(check.lastSync, 24)) {
             if (!isOnDate(check.lastSync, THREE_MONTHS))
-                observerItems.push(getObserveItem(check, "Alte Daten", observerItems.length));
+                observerItems.push(getObserveItem(check, "Alte Daten", observerItems.length, " älter als 30 Tage"));
         //}
         if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState === "not running")
             observerItems.push(getObserveItem(check, "Schwarz-Bildmodus", observerItems.length));
@@ -64,12 +64,12 @@ function setChecks(list) {
     $("#pageloader").hide();
 }
 
-function getObserveItem(item, annotation, counter) {
+function getObserveItem(item, annotation, counter, title="") {
     let address = item.hasOwnProperty("deployment") ?item.deployment.hasOwnProperty("address") ?item.deployment.address.street + " " + item.deployment.address.houseNumber + ", " + item.deployment.address.zipCode + " " + item.deployment.address.city :'Keine Adresse' :'';
     return '<tr ' + (counter > 10 ?'class="observerItem" style="display:none"' :'') + '>' +
         '<td title="System-ID: ' + item.id  + '">' + (item.hasOwnProperty("deployment") ?item.deployment.customer.abbreviation :'Keine Zuordnung') + '</td>' +
         '<td title="' + address + '">' + address.substring(0, 12) + (address.length > 13 ? '...' :'') +  '</td>' +
-        '<td>' + annotation + '</td>' +
+        '<td' + (title ==="" ?"" :" title='" + title + "'") + '>' + annotation + '</td>' +
         '<td>' + (item.hasOwnProperty("checkResults") && item.checkResults.length > 0 ?formatDate(item.checkResults[0].timestamp) :"-") + '</td>' +
         '<td><a href="display-details.html?id=' + item.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>' +
     '</tr>';
