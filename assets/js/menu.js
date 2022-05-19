@@ -1,4 +1,5 @@
 var _paramsForEmail = ""
+var _list = [];
 //var _commonChecks import from common
 $(document).ready(function() {
 	let menu = '<div class="loader" id="pageloader"></div><div class="menu_content">' +
@@ -40,6 +41,29 @@ $(document).ready(function() {
     '</div>';
     $(".menu_sidebar").html(menu);
 
+    let searchTable = '<div class="search_container" style="display:none">' +
+        '<div class="table_contents">' +
+            '<div class="tableBox">' +
+                '<div class="table_container altosVers">' +
+                    '<table class="table">' +
+                        '<thead>' +
+                            '<tr>' +
+                                '<th>System-ID</a></th>' +
+                                '<th>Kunde</a></th>' +
+                                '<th>Kundenname</th>' +
+                                '<th>Adresse</th>' +
+                                '<th>Beschreibung</th>' +
+                                '<th></th>' +
+                            '</tr>' +
+                        '</thead>' +
+                        '<tbody id="searchlist"></tbody>' +
+                    '</table>' +
+                '</div>' +
+            '</div>' +
+        '</div>' +
+    '</div>';
+    $(".dashboard_content").append(searchTable);
+
     if (window.location.pathname.indexOf("dashboard") != -1)
         $("#dash").addClass("active");
     else if (window.location.pathname.indexOf("standorte-zuweisen") != -1)
@@ -47,7 +71,6 @@ $(document).ready(function() {
     else if (window.location.pathname.indexOf("bestelltool") != -1)
         $("#bestelltool").addClass("active");
     
-
     $('.sendBtn').click(function(e) {
         //$("#pageloader").show();
         let date = new Date();
@@ -62,22 +85,50 @@ $(document).ready(function() {
 		e.preventDefault();
 	}); 
 	$('#globalsearchfield').on('input',function(e) {
-		console.log("KK");
+        if ($(this).val() === "") {
+            $(".dash_bottomCont").show();
+            $(".search_container").hide();
+        } else {
+            let searchDom = '';
+            let address;
+            let abbreviation;
+            let name;
+            let annotation
+            $(".dash_bottomCont").hide();
+            for (let check of _list) {
+                address = check.deployment.hasOwnProperty("address") ?check.deployment.address.street + " " + check.deployment.address.houseNumber + " " + check.deployment.address.zipCode + " " + check.deployment.address.city :'Nicht angegeben';
+                abbreviation = check.deployment.customer.hasOwnProperty("abbreviation") ?check.deployment.customer.abbreviation :"Zuordnung nicht vorhanden";
+                name = check.deployment.customer.hasOwnProperty("company") && check.deployment.customer.company.hasOwnProperty("name") ?check.deployment.customer.company.name :"";
+                annotation = (check.deployment.hasOwnProperty("annotation") ?check.deployment.annotation :"");
+                if (check.id.toString().indexOf($('#globalsearchfield').val().toLowerCase()) !== -1 || address.toLowerCase().indexOf($('#globalsearchfield').val().toLowerCase()) !== -1 || abbreviation.toLowerCase().indexOf($('#globalsearchfield').val().toLowerCase()) !== -1 || name.toLowerCase().indexOf($('#globalsearchfield').val().toLowerCase()) !== -1 || annotation.toString().indexOf($('#globalsearchfield').val().toLowerCase()) !== -1) {
+                    searchDom += '<tr class="system" data-id="' + check.id + '">' +
+                        '<td>' + check.id + '</td>' +
+                        '<td>' + abbreviation + '</td>' +
+                        '<td>' + name + '</td>' +
+                        '<td style="white-space: nowrap;">' + address + '</td>' +
+                        '<td>' + annotation + '</td>' +
+                        '<td><a href="display-details.html?id=' + check.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>' +
+                    '</tr>';
+                }
+            }
+            $("#searchlist").html(searchDom);
+            $(".search_container").show();
+        }
 	});
     getListOfSystemChecks().then(setMenu);
 });
 
 function setMenu(list) {
-    list = setCheckList(list);
+    _list = setCheckList(list);
     let address;
     let addressComplete;
     let customers = {};
     let customerDom = "";
-    list.sort(function(a, b) {
+    _list.sort(function(a, b) {
         return compare(a.deployment.customer.abbreviation.toLowerCase(), b.deployment.customer.abbreviation.toLowerCase());
     });
     // Customerlist
-    for (let check of list) {
+    for (let check of _list) {
         addressComplete = check.hasOwnProperty("deployment") && check.deployment.hasOwnProperty("address") ?check.deployment.address.street + " " + check.deployment.address.houseNumber + " " + check.deployment.address.zipCode + " " + check.deployment.address.city :'Keine Adresse';
         address = check.hasOwnProperty("deployment") && check.deployment.hasOwnProperty("address") ?check.deployment.address.street + " " + check.deployment.address.houseNumber :'<i>Keine Adresse</i>';
         if (customers.hasOwnProperty(check.deployment.customer.abbreviation))
