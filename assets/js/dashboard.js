@@ -93,9 +93,9 @@ function setOrderings(orderings) {
             '<td><span class="Einge ' + (isOnDate(order.issued, 2160) ?"" :"EingeActive") + '">' + formatDate(order.issued) + '</span></td>' +
             '<td>' +
                 '<ul class="Umgebung">' +
-                    (order.hasOwnProperty('constructionSitePreparationFeedback') ?'<li title="Baustelle OK"></li>' :'<li class="active" title="Baustelle nicht OK"></li>') + 
-                    (order.hasOwnProperty('internetConnection') ?'<li title="Netzanbindung OK"></li>' :'<li class="active" title="Netzanbindung nicht OK"></li>') + 
-                    (order.hasOwnProperty('hardwareInstallation')?'<li title="Hardware installiert"></li>' :'<li class="active" title="Hardware nicht installiert"></li>') + 
+                    (order.hasOwnProperty('constructionSitePreparationFeedback') ?'<li title="Anlage Baustellenvorbeitung (OK)"></li>' :'<li class="active" title="Anlage Baustellenvorbeitung (nicht OK)"></li>') + 
+                    (order.hasOwnProperty('internetConnection') ?'<li title="Netzbindung (OK)"></li>' :'<li class="active" title="Netzbindung (nicht OK)"></li>') + 
+                    (order.hasOwnProperty('hardwareInstallation')?'<li title="Hardware Installation (installiert)"></li>' :'<li class="active" title="Hardware Installation (nicht installiert)"></li>') + 
                 '</ul>' +
             '</td>' +
             '<td><a href="bestelltool.html?id=' + order.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>' +

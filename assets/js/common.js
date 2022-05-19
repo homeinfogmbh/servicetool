@@ -10,6 +10,7 @@ var _commonChecks = {"ssdcarderror":{"title":"SSD Karten Fehler", "text":"Liste 
 	"oldApplication":{"title":"Alte Applicationen", "text":"Liste der Geräte auf denen eine alte Version der Applikation läuft", "systems":[], "show":true},
 	"systemchecksFailed":{"title":"Systemchecks fehlgeschlagen", "text":"Liste der Geräte die nicht gecheckt werden konnten", "systems":[], "show":true},
 	"air":{"title":"AIR Systeme", "text":"Liste der Geräte die noch die AIR-Application laufen haben", "systems":[], "show":true},
+	"ssd":{"title":"SSD-Karte defekt", "text":"Liste der Geräte deren SSD-Karte Fehler aufweisen", "systems":[], "show":true},
 	"system":{"title":"Displays", "text":"Liste aller Displays", "systems":[], "show":false}
 }; // -> also setCheckList() for filter
 var _showErrorMessages = true;
@@ -176,6 +177,9 @@ function setCheckList(list) {
 			_commonChecks.systemchecksFailed.systems.push(check);
 		if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState === "air")
 			_commonChecks.air.systems.push(check);
+		if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].smartCheck === "failed")
+			_commonChecks.ssd.systems.push(check);
+			
 		_commonChecks.system.systems.push(check);
 	}
 	return list;

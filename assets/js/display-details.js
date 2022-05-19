@@ -16,6 +16,7 @@ $(document).ready(function() {
 		e.preventDefault();
 	});
     $('.btn_connection').click(function(e) {
+        localStorage.removeItem("servicetool.systemchecks");
         $("#connectionsDropdown").removeClass("show");
         $("#internetconnection").text($(this).text());
         if (_display !== null && _display.hasOwnProperty("deployment"))
@@ -42,6 +43,7 @@ $(document).ready(function() {
                 return null;
             }
             setPublicTransport(address).then(() => {
+                localStorage.removeItem("servicetool.systemchecks");
                 if (address === null)
                     $("#publicTransportAddress").text("-");
                 else
@@ -53,11 +55,28 @@ $(document).ready(function() {
 		e.preventDefault();
 	});
     $('.btn_check').click(function(e) {
-        checkSystem().then(setChecks);
+        if (_display !== null && _display.hasOwnProperty("checkResults") && _display.checkResults.length > 0 && _display.checkResults[0].hasOwnProperty("offlineSince")) {
+            Swal.fire({
+                title: 'System war offline',
+                text: "Dieses System wurde beim letzten Check 'offline' gemessen. Ein Test kann aufgrund fehlender Erreichbarkeit unerwartet lange dauern.",
+                showCancelButton: true,
+                confirmButtonColor: '#009fe3',
+                cancelButtonColor: '#ff821d',
+                iconHtml: '<img src="assets/img/PopUp-Icon.png"></img>',
+                confirmButtonText: 'Fortsetzen!',
+                cancelButtonText: 'Abbrechen',
+                buttonsStyling: true
+            }).then(function(selection) {
+                if (selection.isConfirmed === true)
+                    checkSystem().then(setChecks);
+            });
+        } else
+            checkSystem().then(setChecks);
 		e.preventDefault();
 	});
 
     $('.btn_deployment').click(function(e) {
+        localStorage.removeItem("servicetool.systemchecks");
         if ($("#deploymentsDropdown").hasClass("show"))
             $("#deploymentsDropdown").removeClass("show");
         else if (_deployments === null)
@@ -71,7 +90,8 @@ $(document).ready(function() {
         e.preventDefault();
     });	
     $('.btn_deleteDeployment').click(function(e) {
-        if (_display !== null &&  _display.hasOwnProperty("deployment")) {
+        localStorage.removeItem("servicetool.systemchecks");
+        if (_display !== null && _display.hasOwnProperty("deployment")) {
             Swal.fire({
                 title: 'Sind Sie sicher?',
                 text: "Wollen Sie das System wirklich lösen?",
@@ -94,10 +114,12 @@ $(document).ready(function() {
 	});
 
     $('.btn_noice').click(function(e) {
+        localStorage.removeItem("servicetool.systemchecks");
         noice().then(()=>{$("#pageloader").hide()});
 		e.preventDefault();
 	}); 
     $('.btn_installed').click(function(e) {
+        localStorage.removeItem("servicetool.systemchecks");
         if (_checked.btn_installed)
             setFit().then(()=>{$("#pageloader").hide()});
 	}); 
@@ -123,6 +145,7 @@ $(document).ready(function() {
 		e.preventDefault();
 	}); 
     $('.btn_testsystem').click(function(e) {
+        localStorage.removeItem("servicetool.systemchecks");
         if (_display !== null && _display.hasOwnProperty("deployment") && _checked.btn_testsystem)
             changeDeployment("testing", $('input[name=Testgerät]:checked').val() !== 'on').then(()=>{$("#pageloader").hide()});
 	});
@@ -443,6 +466,7 @@ function listDeployments(deployments = null) {
         $('.btn_addDeployment').parent().remove();
         $("#deploymentsDropdown").append(deploymentList);
         $('.btn_addDeployment').click(function(e) {
+            localStorage.removeItem("servicetool.systemchecks");
             let id = $(this).data("id");
             if ($(this).data("used") == true) {
                 Swal.fire({
