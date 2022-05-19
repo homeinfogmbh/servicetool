@@ -144,7 +144,7 @@ class System {
         col1.appendChild(label);
         const span = document.createElement('span');
         span.classList.add('radioCircle');
-        span.setAttribute('style', 'margin-left:20px');
+        span.setAttribute('style', 'margin-left:250px');
         label.appendChild(span);
 
         const col2 = document.createElement('td');
@@ -153,7 +153,7 @@ class System {
         img.setAttribute('src', 'assets/img/circle-right.svg');
         img.setAttribute('alt', 'huntinglink');
         img.setAttribute('data-id', this.id);
-        img.setAttribute('style', 'cursor:pointer;padding-left:250px');
+        img.setAttribute('style', 'cursor:pointer;padding-left:15px');
         img.addEventListener('click', openSystemDetails);
         col2.appendChild(img);
         return li;

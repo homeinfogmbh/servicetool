@@ -3,10 +3,11 @@ var _id;
 var _display = null;
 var _checked = {"btn_installed":false, "btn_blackmodus":false, "btn_testsystem":false};
 var _deployments = null;
+var _applicationVersion = null;
 $(document).ready(function() {
     _id = getURLParameterByName('id');
-	getSystemChecks().then(systemCheckCompleted);
-    getDeploymentHistory().then(setHistory, denyHistory)
+    getApplicationVersion().then(getSystemChecks).then(systemCheckCompleted);
+    getDeploymentHistory().then(setHistory, denyHistory);
     $('.btn_internetconnection').click(function(e) {
         if ($("#connectionsDropdown").hasClass("show"))
             $("#connectionsDropdown").removeClass("show");
@@ -156,11 +157,16 @@ function systemCheckCompleted(data) {
         setDetails(data);
 }
 function setDetails(data) {
-    console.log(data)
     _display = data.hasOwnProperty(_id) ?data[_id] :data;
     let address = _display.hasOwnProperty("deployment") ?_display.deployment.hasOwnProperty("address") ?_display.deployment.address.street + " " + _display.deployment.address.houseNumber + ", " + _display.deployment.address.zipCode + " " + _display.deployment.address.city :'<i>Keine Adresse angegeben</i>' :'<i>Keinem Standort zugewiesen</i>';
     $("#displaytitle").html("Display: " + address);
-    try { $("#completecustomername").html(_display.deployment.customer.company.name + ' (Knr. ' + _display.deployment.customer.id + ')'); } catch(err) {   }
+    try {
+        $('#metadescription').attr("content", address);
+        $("#sitetitle").text(_display.deployment.customer.company.name + " " + _id);
+        $("#completecustomername").html(_display.deployment.customer.company.name + ' (Knr. ' + _display.deployment.customer.id + ')');
+    } catch(err) {   
+        console.log(err)
+    }
     // Overview
     $("#model").text(_display.hasOwnProperty("model") ?_display.model :'-');
     $("#serialNumber").text(_display.hasOwnProperty("serialNumber") ?_display.serialNumber :'-');
@@ -342,6 +348,10 @@ function setDetails(data) {
         }
         date.setDate(date.getDate()-1);
     };
+    if (_display.hasOwnProperty("checkResults") && _display.checkResults.length > 0 && _display.checkResults[0].httpRequest !== "unsupported")
+        $(".thirtyhttp").show();
+    else
+        $(".thirtyhttp").hide();
     $("#pageloader").hide();
 }
 function setChecks(lastCheck) {
@@ -355,8 +365,8 @@ function setChecks(lastCheck) {
     $("#baytrail").html(lastCheck.baytrailFreeze === "vulnerable" ?'<span class="blueMark">' + lastCheck.baytrailFreeze + '</span>' :'<span class="orangeMark">' + lastCheck.baytrailFreeze + '</span>');
     $("#bootpartition").html(lastCheck.efiMountOk === "failed" ?'<span class="blueMark">' + lastCheck.efiMountOk + '</span>' :'<span class="orangeMark">' + lastCheck.efiMountOk + '</span>');
     $("#download").html(lastCheck.hasOwnProperty("download") ?lastCheck.download*_KIBIBITTOMBIT < 2 ?'<span class="blueMark">' + (lastCheck.download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>' :'<span class="orangeMark">' + (lastCheck.download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>' :"-");
-    $("#upload").text(lastCheck.hasOwnProperty("upload") ?(lastCheck.upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + " Mbit" :"-");
-    $("#applicationuptodate").html('<span class="">' + (lastCheck.hasOwnProperty("applicationVersion") ?lastCheck.applicationVersion :"unsupported") + '</span>'); // TODO compare with actual version
+    $("#upload").text(lastCheck.hasOwnProperty("upload") ?(lastCheck.upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + " Mbit" :"-")
+    $("#applicationuptodate").html(lastCheck.hasOwnProperty("applicationVersion") ?_applicationVersion === lastCheck.applicationVersion ?'<span class="orangeMark">' + lastCheck.applicationVersion + '</span>' :'<span title="' + _applicationVersion + '" class="blueMark">' + lastCheck.applicationVersion + '</span>' :'<span class="orangeMark">unsupported</span>');
     $("#lastCheck").text("Letzter Check " + formatDate(lastCheck.timestamp) + " (" + lastCheck.timestamp.substring(11, 16) + " Uhr)");
     $("#pageloader").hide();
 }
@@ -605,6 +615,19 @@ function changeDeployment(key, value) {
 			setErrorMessage(msg, "Ändern eines Deployments");
 		}
 	});
+}
+function getApplicationVersion() {
+	return $.ajax({
+		url: "https://sysmon.homeinfo.de/current-application-version/html",
+		type: "GET",
+		cache: false,
+		success: function (data) {
+            _applicationVersion = data;
+		},
+		error: function (msg) {
+			setErrorMessage(msg, "Abrufen der Applicationsversion");
+		}
+    });
 }
 /*
 class ApplicationState(str, Enum):

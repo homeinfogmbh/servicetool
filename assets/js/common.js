@@ -9,6 +9,7 @@ var _commonChecks = {"ssdcarderror":{"title":"SSD Karten Fehler", "text":"Liste 
 	"blackscreen":{"title":"Im Schwarzbild-Modus", "text":"Liste der Geräte die schwarz geschaltet sind", "systems":[], "show":true},
 	"oldApplication":{"title":"Alte Applicationen", "text":"Liste der Geräte auf denen eine alte Version der Applikation läuft", "systems":[], "show":true},
 	"systemchecksFailed":{"title":"Systemchecks fehlgeschlagen", "text":"Liste der Geräte die nicht gecheckt werden konnten", "systems":[], "show":true},
+	"air":{"title":"AIR Systeme", "text":"Liste der Geräte die noch die AIR-Application laufen haben", "systems":[], "show":true},
 	"system":{"title":"Displays", "text":"Liste aller Displays", "systems":[], "show":false}
 }; // -> also setCheckList() for filter
 var _showErrorMessages = true;
@@ -173,9 +174,9 @@ function setCheckList(list) {
 			_commonChecks.blackscreen.systems.push(check);
 		if (!check.hasOwnProperty("checkResults") || (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && !isOnDate(check.checkResults[0].timestamp, 24)))
 			_commonChecks.systemchecksFailed.systems.push(check);
+		if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState === "air")
+			_commonChecks.air.systems.push(check);
 		_commonChecks.system.systems.push(check);
-		//TODOif (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState === "NOT_RUNNING")
-			//_commonChecks.oldApplication.systems.push(check);
 	}
 	return list;
 }
