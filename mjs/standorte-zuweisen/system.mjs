@@ -124,39 +124,39 @@ class System {
 
     toHTML () {
         const tr = document.createElement('tr');
-        tr.setAttribute("style", "width: 100% !important;");
         const col1 = document.createElement('td');
         tr.appendChild(col1);
 
         const li = document.createElement('li');
-        col1.appendChild(li);
+        li.appendChild(tr);
         const input = document.createElement('input');
         input.setAttribute('type', 'radio');
         input.setAttribute('name', 'system-select');
         input.setAttribute('id', 'system-' + this.id);
         input.setAttribute('data-id', this.id);
         input.style.display = 'none';
-        li.appendChild(input);
+        col1.appendChild(input);
         const label = document.createElement('label');
         label.setAttribute('for', 'system-' + this.id);
         label.setAttribute('data-id', this.id);
         label.style.cursor = 'pointer';
         label.textContent = this.id;
-        li.appendChild(label);
+        col1.appendChild(label);
         const span = document.createElement('span');
         span.classList.add('radioCircle');
+        span.setAttribute('style', 'margin-left:20px');
         label.appendChild(span);
 
         const col2 = document.createElement('td');
         tr.appendChild(col2);
         const img = document.createElement('img');
-        img.setAttribute("src", "assets/img/circle-right.svg");
-        img.setAttribute("alt", "huntinglink");
-        img.setAttribute("data-id", this.id);
-        img.setAttribute("style", "cursor:pointer");
+        img.setAttribute('src', 'assets/img/circle-right.svg');
+        img.setAttribute('alt', 'huntinglink');
+        img.setAttribute('data-id', this.id);
+        img.setAttribute('style', 'cursor:pointer;padding-left:250px');
         img.addEventListener('click', openSystemDetails);
         col2.appendChild(img);
-        return tr;
+        return li;
     }
 }
 
