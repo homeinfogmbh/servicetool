@@ -1,5 +1,6 @@
 var _paramsForEmail = ""
 var _list = [];
+var _lastSearchSort = null;
 //var _commonChecks import from common
 $(document).ready(function() {
 	let menu = '<div class="loader" id="pageloader"></div><div class="menu_content">' +
@@ -48,11 +49,11 @@ $(document).ready(function() {
                     '<table class="table">' +
                         '<thead>' +
                             '<tr>' +
-                                '<th>System-ID</a></th>' +
-                                '<th>Kunde</a></th>' +
-                                '<th>Kundenname</th>' +
-                                '<th>Adresse</th>' +
-                                '<th>Beschreibung</th>' +
+                                '<th class="searchSortCustomer pointer" data-id="sortsystemid" style="text-decoration:underline">System-ID</a></th>' +
+                                '<th class="searchSortCustomer pointer" data-id="sortcustomer" style="text-decoration:underline">Kunde</a></th>' +
+                                '<th class="searchSortCustomer pointer" data-id="sortcustomername" style="text-decoration:underline">Kundenname</th>' +
+                                '<th class="searchSortCustomer pointer" data-id="sortaddress" style="text-decoration:underline">Adresse</th>' +
+                                '<th class="searchSortCustomer pointer" data-id="sortannotation" style="text-decoration:underline">Beschreibung</th>' +
                                 '<th></th>' +
                             '</tr>' +
                         '</thead>' +
@@ -63,6 +64,11 @@ $(document).ready(function() {
         '</div>' +
     '</div>';
     $(".dashboard_content").append(searchTable);
+
+    $('.searchSortCustomer').click(function(e) {
+        setSearchList($(this).data("id"));
+        e.preventDefault();
+    }); 
 
     if (window.location.pathname.indexOf("dashboard") != -1)
         $("#dash").addClass("active");
@@ -89,29 +95,7 @@ $(document).ready(function() {
             $(".dash_bottomCont").show();
             $(".search_container").hide();
         } else {
-            let searchDom = '';
-            let address;
-            let abbreviation;
-            let name;
-            let annotation
-            $(".dash_bottomCont").hide();
-            for (let check of _list) {
-                address = check.deployment.hasOwnProperty("address") ?check.deployment.address.street + " " + check.deployment.address.houseNumber + " " + check.deployment.address.zipCode + " " + check.deployment.address.city :'Nicht angegeben';
-                abbreviation = check.deployment.customer.hasOwnProperty("abbreviation") ?check.deployment.customer.abbreviation :"Zuordnung nicht vorhanden";
-                name = check.deployment.customer.hasOwnProperty("company") && check.deployment.customer.company.hasOwnProperty("name") ?check.deployment.customer.company.name :"";
-                annotation = (check.deployment.hasOwnProperty("annotation") ?check.deployment.annotation :"");
-                if (check.id.toString().indexOf($('#globalsearchfield').val().toLowerCase()) !== -1 || address.toLowerCase().indexOf($('#globalsearchfield').val().toLowerCase()) !== -1 || abbreviation.toLowerCase().indexOf($('#globalsearchfield').val().toLowerCase()) !== -1 || name.toLowerCase().indexOf($('#globalsearchfield').val().toLowerCase()) !== -1 || annotation.toString().indexOf($('#globalsearchfield').val().toLowerCase()) !== -1) {
-                    searchDom += '<tr class="system" data-id="' + check.id + '">' +
-                        '<td>' + check.id + '</td>' +
-                        '<td>' + abbreviation + '</td>' +
-                        '<td>' + name + '</td>' +
-                        '<td style="white-space: nowrap;">' + address + '</td>' +
-                        '<td>' + annotation + '</td>' +
-                        '<td><a href="display-details.html?id=' + check.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>' +
-                    '</tr>';
-                }
-            }
-            $("#searchlist").html(searchDom);
+            setSearchList();
             $(".search_container").show();
         }
 	});
@@ -180,3 +164,91 @@ function setMenu(list) {
 function removeopenedlist() {
     localStorage.removeItem("servicetool.openedmenulist");
 };
+
+function setSearchList(sort = "sortcustomer") {
+    sortSearchList(sort);
+    let searchDom = '';
+    let address;
+    let abbreviation;
+    let name;
+    let annotation
+    $(".dash_bottomCont").hide();
+    for (let check of _list) {
+        address = check.deployment.hasOwnProperty("address") ?check.deployment.address.street + " " + check.deployment.address.houseNumber + " " + check.deployment.address.zipCode + " " + check.deployment.address.city :'Nicht angegeben';
+        abbreviation = check.deployment.customer.hasOwnProperty("abbreviation") ?check.deployment.customer.abbreviation :"Zuordnung nicht vorhanden";
+        name = check.deployment.customer.hasOwnProperty("company") && check.deployment.customer.company.hasOwnProperty("name") ?check.deployment.customer.company.name :"";
+        annotation = (check.deployment.hasOwnProperty("annotation") ?check.deployment.annotation :"");
+        if (check.id.toString().indexOf($('#globalsearchfield').val().toLowerCase()) !== -1 || address.toLowerCase().indexOf($('#globalsearchfield').val().toLowerCase()) !== -1 || abbreviation.toLowerCase().indexOf($('#globalsearchfield').val().toLowerCase()) !== -1 || name.toLowerCase().indexOf($('#globalsearchfield').val().toLowerCase()) !== -1 || annotation.toString().indexOf($('#globalsearchfield').val().toLowerCase()) !== -1) {
+            searchDom += '<tr class="system" data-id="' + check.id + '">' +
+                '<td>' + check.id + '</td>' +
+                '<td>' + abbreviation + '</td>' +
+                '<td>' + name + '</td>' +
+                '<td style="white-space: nowrap;">' + address + '</td>' +
+                '<td>' + annotation + '</td>' +
+                '<td><a href="display-details.html?id=' + check.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>' +
+            '</tr>';
+        }
+    }
+    searchDom = searchDom === '' ?"<tr><td>Keine Üereinstimmungen gefunden</td></tr>" :searchDom;
+    $("#searchlist").html(searchDom);
+}
+function sortSearchList(sort) {
+    _lastSearchSort = _lastSearchSort === sort && _lastSearchSort.indexOf('inverted' === -1) ? _lastSearchSort + "Inverted" :sort;
+    if (_lastSearchSort === "sortsystemid") {
+        _list.sort(function(a, b) {
+            return compare(a.id, b.id);
+        });
+    } else if (_lastSearchSort === "sortsystemidInverted") {
+        _list.sort(function(a, b) {
+            return compareInverted(a.id, b.id);
+        });
+    } else if (_lastSearchSort === "sortcustomer") {
+        _list.sort(function(a, b) {
+            let nameA = a.deployment.customer.hasOwnProperty("company") && a.deployment.customer.company.hasOwnProperty("name") ?a.deployment.customer.company.name :"";
+            let nameB = b.deployment.customer.hasOwnProperty("company") && b.deployment.customer.company.hasOwnProperty("name") ?b.deployment.customer.company.name :"";
+            return compare(nameA.toLowerCase(), nameB.toLowerCase());
+        });
+    } else if (_lastSearchSort === "sortcustomerInverted") {
+        _list.sort(function(a, b) {
+            let nameA = a.deployment.customer.hasOwnProperty("company") && a.deployment.customer.company.hasOwnProperty("name") ?a.deployment.customer.company.name :"";
+            let nameB = b.deployment.customer.hasOwnProperty("company") && b.deployment.customer.company.hasOwnProperty("name") ?b.deployment.customer.company.name :"";
+            return compareInverted(nameA.toLowerCase(), nameB.toLowerCase());
+        });
+    } else if (_lastSearchSort === "sortcustomername") {
+        _list.sort(function(a, b) {
+            let abbreviationA = a.deployment.customer.hasOwnProperty("abbreviation") ?a.deployment.customer.abbreviation :"Zuordnung nicht vorhanden";
+            let abbreviationB = b.deployment.customer.hasOwnProperty("abbreviation") ?b.deployment.customer.abbreviation :"Zuordnung nicht vorhanden";
+            return compare(abbreviationA.toLowerCase(), abbreviationB.toLowerCase());
+        });
+    } else if (_lastSearchSort === "sortcustomernameInverted") {
+        _list.sort(function(a, b) {
+            let abbreviationA = a.deployment.customer.hasOwnProperty("abbreviation") ?a.deployment.customer.abbreviation :"Zuordnung nicht vorhanden";
+            let abbreviationB = b.deployment.customer.hasOwnProperty("abbreviation") ?b.deployment.customer.abbreviation :"Zuordnung nicht vorhanden";
+            return compareInverted(abbreviationA.toLowerCase(), abbreviationB.toLowerCase());
+        });
+    } else if (_lastSearchSort == "sortaddress") {
+        _list.sort(function(a, b) {
+            let addressA = a.deployment.hasOwnProperty("address") ?a.deployment.address.street + " " + a.deployment.address.houseNumber + " " + a.deployment.address.zipCode + " " + a.deployment.address.city :'Nicht angegeben';
+            let addressB = b.deployment.hasOwnProperty("address") ?b.deployment.address.street + " " + b.deployment.address.houseNumber + " " + b.deployment.address.zipCode + " " + b.deployment.address.city :'Nicht angegeben';
+            return compare(addressA.toLowerCase(), addressB.toLowerCase());
+        });
+    } else if (_lastSearchSort == "sortaddressInverted") {
+        _list.sort(function(a, b) {
+            let addressA = a.deployment.hasOwnProperty("address") ?a.deployment.address.street + " " + a.deployment.address.houseNumber + " " + a.deployment.address.zipCode + " " + a.deployment.address.city :'Nicht angegeben';
+            let addressB = b.deployment.hasOwnProperty("address") ?b.deployment.address.street + " " + b.deployment.address.houseNumber + " " + b.deployment.address.zipCode + " " + b.deployment.address.city :'Nicht angegeben';
+            return compareInverted(addressA.toLowerCase(), addressB.toLowerCase());
+        });
+    } else if (_lastSearchSort == "sortannotation") {
+        _list.sort(function(a, b) {
+            let annotationA = (a.deployment.hasOwnProperty("annotation") ?a.deployment.annotation :"");
+            let annotationB = (b.deployment.hasOwnProperty("annotation") ?b.deployment.annotation :"");
+            return compare(annotationA.toLowerCase(), annotationB.toLowerCase());
+        });
+    } else if (_lastSearchSort == "sortannotationInverted") {
+        _list.sort(function(a, b) {
+            let annotationA = (a.deployment.hasOwnProperty("annotation") ?a.deployment.annotation :"");
+            let annotationB = (b.deployment.hasOwnProperty("annotation") ?b.deployment.annotation :"");
+            return compareInverted(annotationA.toLowerCase(), annotationB.toLowerCase());
+        });
+    }
+}

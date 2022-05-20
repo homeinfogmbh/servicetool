@@ -69,7 +69,7 @@ function sortCommonList(sort) {
         _commonChecks[_type].systems.sort(function(a, b) {
             return compare(a.id, b.id);
         });
-    } if (_lastsort === "sortsystemidInverted") {
+    } else if (_lastsort === "sortsystemidInverted") {
         _commonChecks[_type].systems.sort(function(a, b) {
             return compareInverted(a.id, b.id);
         });
@@ -77,7 +77,7 @@ function sortCommonList(sort) {
         _commonChecks[_type].systems.sort(function(a, b) {
             return compare(a.deployment.customer.abbreviation.toLowerCase(), b.deployment.customer.abbreviation.toLowerCase());
         });
-    } if (_lastsort === "sortcustomerInverted") {
+    } else if (_lastsort === "sortcustomerInverted") {
         _commonChecks[_type].systems.sort(function(a, b) {
             return compareInverted(a.deployment.customer.abbreviation.toLowerCase(), b.deployment.customer.abbreviation.toLowerCase());
         });
