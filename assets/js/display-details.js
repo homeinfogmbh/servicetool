@@ -201,7 +201,7 @@ function setDetails(data) {
     if (_display.hasOwnProperty("deployment")) {
         $("#screentype").text(_display.deployment.type);
         $("#internetconnection").text(_display.deployment.connection);
-        $("#publicTransportAddress").text(_display.deployment.hasOwnProperty("lptAddress") ?_display.deployment.lptAddress :"-");
+        $("#publicTransportAddress").text(_display.deployment.hasOwnProperty("lptAddress") ?_display.deployment.lptAddress :address);
         $("#deploymentID").text(_display.deployment.id);
         $("#annotation").html(_display.deployment.hasOwnProperty("annotation") ?_display.deployment.annotation :"-");
     }
