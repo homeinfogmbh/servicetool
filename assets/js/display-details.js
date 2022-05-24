@@ -195,7 +195,7 @@ function setDetails(data) {
     $("#serialNumber").text(_display.hasOwnProperty("serialNumber") ?_display.serialNumber :'-');
     $("#ipv6").text(_display.ipv6address);
     if (_display.hasOwnProperty("checkResults") && _display.checkResults.length > 0) {
-        $("#ram").text(_display.checkResults[0].hasOwnProperty("ramFree") ?_display.checkResults[0].ramFree/1024 + " (" + _display.checkResults[0].ramAvailable/1024 + ") / " + _display.checkResults[0].ramTotal/1024 :"-");
+        $("#ram").text(_display.checkResults[0].hasOwnProperty("ramFree") ?parseInt(_display.checkResults[0].ramFree/1024) + "MB / " + parseInt(_display.checkResults[0].ramTotal/1024) + "MB" :"-");
         $("#applicationDesign").text(_display.checkResults[0].hasOwnProperty("design") ?_display.checkResults[0].design :"-");
     }
     if (_display.hasOwnProperty("deployment")) {
@@ -320,7 +320,7 @@ function setDetails(data) {
     // Funktionen
     if (_display.fitted)
         $(".btn_installed").click();
-    if (_display.hasOwnProperty("checkResults") && _display.checkResults.length > 0 && (_display.checkResults[0].applicationState === "html" || _display.checkResults[0].applicationState === "air"))
+    if (_display.hasOwnProperty("checkResults") && _display.checkResults.length > 0 && _display.checkResults[0].applicationState !== "html" && _display.checkResults[0].applicationState !== "air")
         $(".btn_blackmodus").click();
     if (_display.hasOwnProperty("deployment") && _display.deployment.testing)
         $(".btn_testsystem").click();
