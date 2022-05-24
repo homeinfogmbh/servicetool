@@ -664,7 +664,7 @@ function changeDeployment(key, value) {
 	deployment.systems = [];
     */
 	return $.ajax({
-		url: "https://backend.homeinfo.de/deployments/" + _display.deployment.id,
+		url: "https://backend.homeinfo.de/deployments/" + _display.deployment.id + "?customer=" + _display.deployment.customer.id,
 		type: "PATCH",
 		cache: false,
 		contentType: 'application/json',
