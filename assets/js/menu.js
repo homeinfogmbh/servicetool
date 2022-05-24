@@ -29,6 +29,7 @@ $(document).ready(function() {
                 '</li>' +
             '</ul>' +
             '<a href="#" class="abmelden">abmelden</a>' +
+            
         '</div>' +
         '<div class="admin_box">' +
             '<div class="admin_content">' +
