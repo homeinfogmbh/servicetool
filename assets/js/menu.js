@@ -27,9 +27,13 @@ $(document).ready(function() {
                 '<li class="nav-item">' +
                     '<a class="nav-link" id="bestelltool" href="bestelltool.html" onclick="removeopenedlist()">Neuinstallationen</a>' +
                 '</li>' +
-            '</ul>' +
-            '<a href="#" class="abmelden">abmelden</a>' +
-            
+            '</ul><br>' +
+            '<div class="search_dash whiteSearch">' +
+                '<form action="#">' +
+                    '<button type="button" id="btn_menuSystem"><img src="assets/img/search_gray.svg"></button>' +
+                    '<input id="menusearch" type="search" placeholder="System suchen...">' +
+                '</form>' +
+            '</div>' +
         '</div>' +
         '<div class="admin_box">' +
             '<div class="admin_content">' +
@@ -69,7 +73,11 @@ $(document).ready(function() {
     $('.searchSortCustomer').click(function(e) {
         setSearchList($(this).data("id"));
         e.preventDefault();
-    }); 
+    });
+    $('#btn_menuSystem').click(function(e) {
+        if ($("#menusearch").val() !== "")
+            window.location.href = "display-details.html?id=" + $("#menusearch").val();
+    });
 
     if (window.location.pathname.indexOf("dashboard") != -1)
         $("#dash").addClass("active");

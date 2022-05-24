@@ -210,6 +210,17 @@ function getScreenShot(systemID) {
 }
 function setErrorMessage(msg, fromFunction) {
 	try {
+		Swal.fire({
+			title: 'Das hat nicht geklappt.',
+			text: msg === "System is offline." ?"Leider ist ein Fehler aufgetreten" : "Das System ist offline.",
+			showCancelButton: false,
+			confirmButtonColor: '#ff821d',
+			iconHtml: '<img src="assets/img/PopUp-Icon.png"></img>',
+			confirmButtonText: 'O.K.',
+			buttonsStyling: true
+		});
+	} catch(error) {	}
+	try {
 		console.log(msg);
 		if (_showErrorMessages) {
 			if (msg.statusText === "Forbidden" || (msg.hasOwnProperty('responseJSON') && msg.responseJSON.message === "Zugriff verweigert.")) {
