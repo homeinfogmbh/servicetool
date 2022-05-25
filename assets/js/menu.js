@@ -22,7 +22,7 @@ $(document).ready(function() {
                     '</ul>' +
                 '</li>' +
                 '<li class="nav-item">' +
-                    '<a class="nav-link" id="standorte-zuweisen" href="standorte-zuweisen.html" onclick="removeopenedlist()">Standorte zuweisen</a>' +
+                    '<a class="nav-link" id="standorte-zuweisen" href="standorte-zuweisen.html" onclick="removeopenedlist()">Standorte</a>' +
                 '</li>' +
                 '<li class="nav-item">' +
                     '<a class="nav-link" id="bestelltool" href="bestelltool.html" onclick="removeopenedlist()">Neuinstallationen</a>' +

@@ -210,6 +210,7 @@ function systemCheckCompleted(data) {
 }
 function setDetails(data) {
     _display = data.hasOwnProperty(_id) ?data[_id] :data;
+    console.log(data);
     let address = _display.hasOwnProperty("deployment") ?_display.deployment.hasOwnProperty("address") ?_display.deployment.address.street + " " + _display.deployment.address.houseNumber + ", " + _display.deployment.address.zipCode + " " + _display.deployment.address.city :'<i>Keine Adresse angegeben</i>' :'<i>Keinem Standort zugewiesen</i>';
     $("#displaytitle").html("Display: " + address);
     try {
