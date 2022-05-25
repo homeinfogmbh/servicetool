@@ -47,9 +47,10 @@ $(document).ready(function() {
             }
             setPublicTransport(address).then(() => {
                 localStorage.removeItem("servicetool.systemchecks");
-                if (address === null)
-                    $("#publicTransportAddress").text("-");
-                else
+                if (address === null) {
+                    address = _display.deployment.hasOwnProperty("address") ?_display.deployment.address.street + " " + _display.deployment.address.houseNumber + ", " + _display.deployment.address.zipCode + " " + _display.deployment.address.city :'<i>Keine Adresse angegeben</i>';
+                    $("#publicTransportAddress").text(address);
+                } else
                     $("#publicTransportAddress").text(address[0] + " " + address[1] + ", " + address[2] + " " + address[3]);
                 $("#addressfields").hide();
                 $("#pageloader").hide()
@@ -231,7 +232,7 @@ function setDetails(data) {
     if (_display.hasOwnProperty("deployment")) {
         $("#screentype").text(_display.deployment.type);
         $("#internetconnection").text(_display.deployment.connection);
-        $("#publicTransportAddress").text(_display.deployment.hasOwnProperty("lptAddress") ?_display.deployment.lptAddress :address);
+        $("#publicTransportAddress").text(_display.deployment.hasOwnProperty("lptAddress") ?_display.deployment.lptAddress.street + " " + _display.deployment.lptAddress.houseNumber + ", " + _display.deployment.lptAddress.zipCode + " " + _display.deployment.lptAddress.city :address);
         $("#deploymentID").text(_display.deployment.id);
         $("#annotation").html(_display.deployment.hasOwnProperty("annotation") ?_display.deployment.annotation :"-");
     }
@@ -417,18 +418,35 @@ function setDetails(data) {
     $("#pageloader").hide();
 }
 function setChecks(lastCheck) {
-    $("#offline").html(lastCheck.hasOwnProperty("offlineSince") || lastCheck.sshLogin !== "success" ?'<span class="orangeMark">offline</span>' :'<span class="blueMark">online</span>');
-    $("#ssd").html(lastCheck.smartCheck === "failed" ?'<span class="orangeMark">' + lastCheck.smartCheck + '</span>' :'<span class="blueMark">' + lastCheck.smartCheck + '</span>');
+    
+    if (isOnDate(lastCheck.timestamp, 24)) {
+        $("#systemcheck").html('<span class="blueMark">ok</span>');
+        $("#offline").html(lastCheck.hasOwnProperty("offlineSince") || lastCheck.sshLogin !== "success" ?'<span class="orangeMark">offline</span>' :'<span class="blueMark">online</span>');
+        $("#ssd").html(lastCheck.smartCheck === "failed" ?'<span class="orangeMark">' + lastCheck.smartCheck + '</span>' :'<span class="blueMark">' + lastCheck.smartCheck + '</span>');
+        $("#icmp").html(lastCheck.icmpRequest ?'<span class="blueMark">ok</span>' :'<span class="orangeMark">fehlgeschlagen</span>');
+        $("#ssh").html(lastCheck.sshLogin === "failed" ?'<span class="orangeMark">' + lastCheck.sshLogin + '</span>' :'<span class="blueMark">' + lastCheck.sshLogin +'</span>');
+        $("#http").html(lastCheck.httpRequest === "failed" ?'<span class="orangeMark">' + lastCheck.httpRequest + '</span>' :'<span class="blueMark">' + lastCheck.httpRequest + '</span>');
+        $("#application").html(lastCheck.applicationState === "conflict" || lastCheck.applicationState === "not enabled" || lastCheck.applicationState === "not running"?'<span class="orangeMark">' + lastCheck.applicationState +'</span>' :'<span class="blueMark">' + lastCheck.applicationState + '</span>');
+        $("#baytrail").html(lastCheck.baytrailFreeze === "vulnerable" ?'<span class="orangeMark">' + lastCheck.baytrailFreeze + '</span>' :'<span class="blueMark">' + lastCheck.baytrailFreeze + '</span>');
+        $("#bootpartition").html(lastCheck.efiMountOk === "failed" ?'<span class="orangeMark">' + lastCheck.efiMountOk + '</span>' :'<span class="blueMark">' + lastCheck.efiMountOk + '</span>');
+        $("#download").html(lastCheck.hasOwnProperty("download") ?lastCheck.download*_KIBIBITTOMBIT < 2 ?'<span class="orangeMark">' + (lastCheck.download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>' :'<span class="blueMark">' + (lastCheck.download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>' :"-");
+        $("#upload").text(lastCheck.hasOwnProperty("upload") ?(lastCheck.upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + " Mbit" :"-")
+        $("#applicationuptodate").html(lastCheck.hasOwnProperty("applicationVersion") ?_applicationVersion === lastCheck.applicationVersion ?'<span class="blueMark">' + lastCheck.applicationVersion + '</span>' :'<span title="' + _applicationVersion + '" class="orangeMark">' + lastCheck.applicationVersion + '</span>' :'<span class="blueMark">unsupported</span>');
+    } else {
+        $("#systemcheck").html('<span class="orangeMark">failed</span>');
+        $("#offline").text("-");
+        $("#ssd").text("-");
+        $("#icmp").text("-");
+        $("#ssh").text("-");
+        $("#http").text("-");
+        $("#application").text("-");
+        $("#baytrail").text("-");
+        $("#bootpartition").text("-");
+        $("#download").text("-");
+        $("#upload").text("-");
+        $("#applicationuptodate").text("-");
+    }
     $("#sync").text(_display.hasOwnProperty("lastSync") ?formatDate(_display.lastSync) + " (" + _display.lastSync.substring(11, 16) + "h)" :"noch nie");
-    $("#icmp").html(lastCheck.icmpRequest ?'<span class="blueMark">ok</span>' :'<span class="orangeMark">fehlgeschlagen</span>');
-    $("#ssh").html(lastCheck.sshLogin === "failed" ?'<span class="orangeMark">' + lastCheck.sshLogin + '</span>' :'<span class="blueMark">' + lastCheck.sshLogin +'</span>');
-    $("#http").html(lastCheck.httpRequest === "failed" ?'<span class="orangeMark">' + lastCheck.httpRequest + '</span>' :'<span class="blueMark">' + lastCheck.httpRequest + '</span>');
-    $("#application").html(lastCheck.applicationState === "conflict" || lastCheck.applicationState === "not enabled" || lastCheck.applicationState === "not running"?'<span class="orangeMark">' + lastCheck.applicationState +'</span>' :'<span class="blueMark">' + lastCheck.applicationState + '</span>');
-    $("#baytrail").html(lastCheck.baytrailFreeze === "vulnerable" ?'<span class="orangeMark">' + lastCheck.baytrailFreeze + '</span>' :'<span class="blueMark">' + lastCheck.baytrailFreeze + '</span>');
-    $("#bootpartition").html(lastCheck.efiMountOk === "failed" ?'<span class="orangeMark">' + lastCheck.efiMountOk + '</span>' :'<span class="blueMark">' + lastCheck.efiMountOk + '</span>');
-    $("#download").html(lastCheck.hasOwnProperty("download") ?lastCheck.download*_KIBIBITTOMBIT < 2 ?'<span class="orangeMark">' + (lastCheck.download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>' :'<span class="blueMark">' + (lastCheck.download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>' :"-");
-    $("#upload").text(lastCheck.hasOwnProperty("upload") ?(lastCheck.upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + " Mbit" :"-")
-    $("#applicationuptodate").html(lastCheck.hasOwnProperty("applicationVersion") ?_applicationVersion === lastCheck.applicationVersion ?'<span class="blueMark">' + lastCheck.applicationVersion + '</span>' :'<span title="' + _applicationVersion + '" class="orangeMark">' + lastCheck.applicationVersion + '</span>' :'<span class="blueMark">unsupported</span>');
     $("#lastCheck").text("Letzter Check " + formatDate(lastCheck.timestamp) + " (" + lastCheck.timestamp.substring(11, 16) + " Uhr)");
     $("#pageloader").hide();
 }
