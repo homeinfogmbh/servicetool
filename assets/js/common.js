@@ -210,9 +210,14 @@ function getScreenShot(systemID) {
 }
 function setErrorMessage(msg, fromFunction) {
 	try {
+		let message = "Leider ist ein Fehler aufgetreten";
+		if (msg.responseJSON.message === "System is offline.")
+			message = "Das System ist offline."
+		else if (msg.responseJSON.message === "No such system.")
+			message = "Das System existiert nicht."
 		Swal.fire({
 			title: 'Das hat nicht geklappt.',
-			text: msg === "System is offline." ?"Leider ist ein Fehler aufgetreten" : "Das System ist offline.",
+			text: message,
 			showCancelButton: false,
 			confirmButtonColor: '#ff821d',
 			iconHtml: '<img src="assets/img/PopUp-Icon.png"></img>',

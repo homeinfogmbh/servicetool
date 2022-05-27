@@ -118,7 +118,6 @@ $(document).ready(function() {
 	});
 
     $('.btn_noice').click(function(e) {
-        localStorage.removeItem("servicetool.systemchecks");
         noice().then(()=>{
             $("#pageloader").hide();
             Swal.fire({
@@ -217,9 +216,7 @@ function setDetails(data) {
         $('#metadescription').attr("content", address);
         $("#sitetitle").text(_display.deployment.customer.company.name + " " + _id);
         $("#completecustomername").html(_display.deployment.customer.company.name + ' (Knr. ' + _display.deployment.customer.id + ')');
-    } catch(err) {   
-        console.log(err)
-    }
+    } catch(err) {   }
     // Overview
     $("#model").text(_display.hasOwnProperty("model") ?_display.model :'-');
     $("#serialNumber").text(_display.hasOwnProperty("serialNumber") ?_display.serialNumber :'-');
