@@ -29,7 +29,7 @@ $(document).ready(function() {
                 '</li>' +
             '</ul><br>' +
             '<div class="search_dash whiteSearch">' +
-                '<form action="#">' +
+                '<form>' +
                     '<button type="button" id="btn_menuSystem"><img src="assets/img/search_gray.svg"></button>' +
                     '<input id="menusearch" type="search" placeholder="System suchen...">' +
                 '</form>' +
@@ -77,6 +77,16 @@ $(document).ready(function() {
     $('#btn_menuSystem').click(function(e) {
         if ($("#menusearch").val() !== "")
             window.location.href = "display-details.html?id=" + $("#menusearch").val();
+    });
+    $('#menusearch').keydown(function(e) {
+        if (e.which === 13) {
+            if ($(this).val() !== "")
+                window.location.href = "display-details.html?id=" + $(this).val();
+            return false;
+        }
+        console.log(isNaN(parseInt(e.key)))
+        if (isNaN(parseInt(e.key)))
+            e.preventDefault();
     });
 
     if (window.location.pathname.indexOf("dashboard") != -1)

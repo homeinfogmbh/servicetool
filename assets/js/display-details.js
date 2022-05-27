@@ -211,7 +211,6 @@ function systemCheckCompleted(data) {
 }
 function setDetails(data) {
     _display = data.hasOwnProperty(_id) ?data[_id] :data;
-    console.log(data);
     let address = _display.hasOwnProperty("deployment") ?_display.deployment.hasOwnProperty("address") ?_display.deployment.address.street + " " + _display.deployment.address.houseNumber + ", " + _display.deployment.address.zipCode + " " + _display.deployment.address.city :'<i>Keine Adresse angegeben</i>' :'<i>Keinem Standort zugewiesen</i>';
     $("#displaytitle").html("Display: " + address);
     try {
@@ -418,7 +417,6 @@ function setDetails(data) {
     $("#pageloader").hide();
 }
 function setChecks(lastCheck) {
-    
     if (isOnDate(lastCheck.timestamp, 24)) {
         $("#systemcheck").html('<span class="blueMark">ok</span>');
         $("#offline").html(lastCheck.hasOwnProperty("offlineSince") || lastCheck.sshLogin !== "success" ?'<span class="orangeMark">offline</span>' :'<span class="blueMark">online</span>');
