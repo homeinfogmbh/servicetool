@@ -15,7 +15,7 @@ $(document).ready(function() {
         $("#hipsterstatus").text("-");
         getHipsterStatus().then(setHipsterStatus);
 		e.preventDefault();
-	}); 
+	});
 });
 
 function setChecks(list) {

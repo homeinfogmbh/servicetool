@@ -133,8 +133,8 @@ $(document).ready(function() {
 		e.preventDefault();
 	}); 
     $('.btn_installed').click(function(e) {
-        localStorage.removeItem("servicetool.systemchecks");
         if (_checked.btn_installed) {
+            localStorage.removeItem("servicetool.systemchecks");
             setFit().then(()=>{$("#pageloader").hide()});
             if ($('input[name=Verbaut]:checked').val() === 'on')
                 $(this).attr("title", "Ist nicht verbaut");
@@ -144,6 +144,7 @@ $(document).ready(function() {
 	}); 
     $('.btn_blackmodus').click(function(e) {
         if (_checked.btn_blackmodus) {
+            localStorage.removeItem("servicetool.systemchecks");
             setApplicationState().then(()=>{$("#pageloader").hide()});
             if ($('input[name=Schwarzbildmodus]:checked').val() === 'on')
                 $(this).attr("title", "Ist nicht im Schwarzbildmodus");
@@ -169,8 +170,8 @@ $(document).ready(function() {
 		e.preventDefault();
 	}); 
     $('.btn_testsystem').click(function(e) {
-        localStorage.removeItem("servicetool.systemchecks");
         if (_display !== null && _display.hasOwnProperty("deployment") && _checked.btn_testsystem) {
+            localStorage.removeItem("servicetool.systemchecks");
             changeDeployment("testing", $('input[name=Testgerät]:checked').val() !== 'on').then(()=>{$("#pageloader").hide()});
             if ($('input[name=Testgerät]:checked').val() === 'on')
                 $(this).attr("title", "Ist kein Testsystem");
