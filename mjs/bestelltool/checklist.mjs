@@ -58,7 +58,7 @@ export function getCurrentOrderId () {
 */
 function getOrder (id) {
     return $.ajax({
-        url: getDeploymentURLL(id),
+        url: getDeploymentURL(id),
         dataType: 'json',
         error: handleError,
         xhrFields: {
@@ -104,7 +104,7 @@ function renderChecklist (order) {
 function setChecklistItem (endpoint) {
     return event => {
         return $.ajax({
-            url: getDeploymentURLL(getCurrentOrderId(), endpoint),
+            url: getDeploymentURL(getCurrentOrderId(), endpoint),
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(event.target.checked),
@@ -186,7 +186,7 @@ function delaySubmitAnnotation (event) {
         'submitAnnotation',
         function () {
             return $.ajax({
-                url: getDeploymentURLL(getCurrentOrderId(), 'annotation'),
+                url: getDeploymentURL(getCurrentOrderId(), 'annotation'),
                 method: 'PATCH',
                 contentType: 'application/json',
                 data: JSON.stringify(event.target.value),
