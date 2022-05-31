@@ -160,7 +160,6 @@ function setCheckList(list, applicationVersion) {
             check.deployment.customer = {"id":-1, "abbreviation": "Zuordnung nicht vorhanden"}
 		if (!check.deployment.hasOwnProperty("address"))
 			check.deployment.address = {"street":"Keine Adresse", "houseNumber":"", "zipCode":"", "city":""}
-
 		if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("offlineSince") && check.fitted) {
 			_commonChecks.offline.systems.push(check);
 			if (!isOnDate(check.checkResults[0].offlineSince, THREE_MONTHS))
@@ -168,7 +167,7 @@ function setCheckList(list, applicationVersion) {
 		}
 		if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].smartCheck === "failed")
 			_commonChecks.ssd.systems.push(check);
-		if (!isOnDate(check.lastSync, 24))
+		if (check.hasOwnProperty("lastSync") && !isOnDate(check.lastSync, 24) && check.fitted && (!check.hasOwnProperty("checkResults") || (check.checkResults.length > 0 && !check.checkResults[0].hasOwnProperty("offlineSince"))))
 			_commonChecks.noActualData.systems.push(check);
 		if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && ((check.checkResults[0].hasOwnProperty("ramAvailable") && check.checkResults[0].hasOwnProperty("ramTotal") && parseInt(check.checkResults[0].ramAvailable)*4 < parseInt(check.checkResults[0].ramTotal)) || (check.checkResults[0].hasOwnProperty("ramTotal") && parseInt(check.checkResults[0].ramTotal/1024) < 2000)))
 			_commonChecks.ram.systems.push(check);
