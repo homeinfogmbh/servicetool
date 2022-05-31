@@ -48,6 +48,7 @@ $(document).keypress(function(e) {
 function login() {
 	$('#pageloader').show();
 	localStorage.removeItem("servicetool.systemchecks");
+	localStorage.removeItem("servicetool.applicationversion");
 	$.ajax({
 		timeout: 15000,
 		url: "https://his.homeinfo.de/session", // duration=15 by default
@@ -151,21 +152,9 @@ function removeLocalStorage() {
 	localStorage.removeItem("servicetool.user");
 	localStorage.removeItem("servicetool.session.expired");
 	localStorage.removeItem("servicetool.systemchecks");
+	localStorage.removeItem("servicetool.applicationversion");
 	/*
-	localStorage.removeItem("customers");
-	localStorage.removeItem("customer");
-	localStorage.removeItem("customerid");
-	localStorage.removeItem("comcataccounts");
-	localStorage.removeItem("listofmenuitemsforcomcatchart");
-	localStorage.removeItem("clients");
-	localStorage.removeItem("clientsassoc");
-	localStorage.removeItem("groups");
-	//localStorage.removeItem("members");
-	localStorage.removeItem("charts");
-	localStorage.removeItem("menu");
-	localStorage.removeItem("configuration");
-	localStorage.removeItem("expandedgroupids");
-	localStorage.removeItem("services");
+
 	//localStorage.clear();
 	*/
 }

@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    getListOfSystemChecks().then(setChecks);
+    Promise.all(getListOfSystemChecks()).then(setChecks);
     getOrderings().then(setOrderings);
     getHipsterStatus().then(setHipsterStatus);
     $('#observercounter').click(function(e) {
@@ -18,8 +18,8 @@ $(document).ready(function() {
 	});
 });
 
-function setChecks(list) {
-    list = setCheckList(list);
+function setChecks(data) {
+    let list = setCheckList(data[0], data[1]);
     //Observer table
     let observerItems = [];
     for (let check of list) {

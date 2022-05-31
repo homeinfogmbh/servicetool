@@ -190,7 +190,9 @@ $(document).ready(function() {
 	});
 });
 
-function getSystemChecks() {
+function getSystemChecks(data = null) {
+    if (data !== null)
+        _applicationVersion = data;
     return $.ajax({
         url: "https://sysmon.homeinfo.de/checks/" + _id,
         type: "GET",
@@ -223,7 +225,8 @@ function setDetails(data) {
     $("#serialNumber").text(_display.hasOwnProperty("serialNumber") ?_display.serialNumber :'-');
     $("#ipv6").text(_display.ipv6address);
     if (_display.hasOwnProperty("checkResults") && _display.checkResults.length > 0) {
-        $("#ram").text(_display.checkResults[0].hasOwnProperty("ramFree") ?parseInt(_display.checkResults[0].ramFree/1024) + "MB / " + parseInt(_display.checkResults[0].ramTotal/1024) + "MB" :"-");
+        $("#ramtotal").text(_display.checkResults[0].hasOwnProperty("ramTotal") ?parseInt(_display.checkResults[0].ramTotal/1024) + "MB" :"-");
+        $("#ramAvailable").text(_display.checkResults[0].hasOwnProperty("ramAvailable") ?parseInt(_display.checkResults[0].ramAvailable/1024) + "MB":"-");
         $("#applicationDesign").text(_display.checkResults[0].hasOwnProperty("design") ?_display.checkResults[0].design :"-");
     }
     if (_display.hasOwnProperty("deployment")) {
@@ -426,7 +429,7 @@ function setChecks(lastCheck) {
         $("#baytrail").html(lastCheck.baytrailFreeze === "vulnerable" ?'<span class="orangeMark">' + lastCheck.baytrailFreeze + '</span>' :'<span class="blueMark">' + lastCheck.baytrailFreeze + '</span>');
         $("#bootpartition").html(lastCheck.efiMountOk === "failed" ?'<span class="orangeMark">' + lastCheck.efiMountOk + '</span>' :'<span class="blueMark">' + lastCheck.efiMountOk + '</span>');
         $("#download").html(lastCheck.hasOwnProperty("download") ?lastCheck.download*_KIBIBITTOMBIT < 2 ?'<span class="orangeMark">' + (lastCheck.download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>' :'<span class="blueMark">' + (lastCheck.download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>' :"-");
-        $("#upload").text(lastCheck.hasOwnProperty("upload") ?(lastCheck.upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + " Mbit" :"-")
+        $("#upload").html(lastCheck.hasOwnProperty("upload") ?lastCheck.upload*_KIBIBITTOMBIT < 0.4 ?'<span class="orangeMark">' + (lastCheck.upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>' :'<span class="blueMark">' + (lastCheck.upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>' :"-");
         $("#applicationuptodate").html(lastCheck.hasOwnProperty("applicationVersion") ?_applicationVersion === lastCheck.applicationVersion ?'<span class="blueMark">' + lastCheck.applicationVersion + '</span>' :'<span title="' + _applicationVersion + '" class="orangeMark">' + lastCheck.applicationVersion + '</span>' :'<span class="blueMark">unsupported</span>');
     } else {
         $("#systemcheck").html('<span class="orangeMark">failed</span>');
@@ -691,19 +694,7 @@ function changeDeployment(key, value) {
 		}
 	});
 }
-function getApplicationVersion() {
-	return $.ajax({
-		url: "https://sysmon.homeinfo.de/current-application-version/html",
-		type: "GET",
-		cache: false,
-		success: function (data) {
-            _applicationVersion = data;
-		},
-		error: function (msg) {
-			setErrorMessage(msg, "Abrufen der Applicationsversion");
-		}
-    });
-}
+
 /*
 class ApplicationState(str, Enum):
     AIR = 'air'

@@ -118,11 +118,11 @@ $(document).ready(function() {
             $(".search_container").show();
         }
 	});
-    getListOfSystemChecks().then(setMenu);
+    Promise.all(getListOfSystemChecks()).then(setMenu);
 });
 
-function setMenu(list) {
-    _list = setCheckList(list);
+function setMenu(data) {
+    _list = setCheckList(data[0], data[1]);
     let address;
     let addressComplete;
     let customers = {};

@@ -5,7 +5,7 @@ $(document).ready(function() {
     _type = _commonChecks.hasOwnProperty(getURLParameterByName('type')) ?getURLParameterByName('type') :'system';
     _customer = getURLParameterByName('customer');
     $('#searchfield').val(getURLParameterByName('filter') !== null ? getURLParameterByName('filter') :"");
-    getListOfSystemChecks().then((list)=>{setCheckList(list); setList()});
+    Promise.all(getListOfSystemChecks()).then((data)=>{setCheckList(data[0], data[1]); setList()});
     //$(".dashTopLeft").html('<h2>Listenansicht</h2><p>Liste der Geräte deren Betriebssystem veraltet ist</p>');
     $(".dashTopLeft").html('<h2>' + _commonChecks[_type].title + '</h2><p>' + _commonChecks[_type].text + '</p>');
 	$('#searchfield').on('input',function(e) {
