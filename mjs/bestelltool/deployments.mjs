@@ -34,7 +34,7 @@ let DEPLOYMENTS = [];
 */
 export function getDeployments () {
     return $.ajax({
-        url: 'https://ddborder.homeinfo.de/deployments',
+        url: 'https://backend.homeinfo.de/deployments/',
         dataType: 'json',
         error: handleError,
         xhrFields: {

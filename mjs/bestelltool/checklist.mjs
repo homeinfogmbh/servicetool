@@ -58,7 +58,7 @@ export function getCurrentOrderId () {
 */
 function getOrder (id) {
     return $.ajax({
-        url: getOrderURL(id),
+        url: getDeploymentURLL(id),
         dataType: 'json',
         error: handleError,
         xhrFields: {
@@ -69,17 +69,17 @@ function getOrder (id) {
 
 
 /*
-    Return a URL for the given order.
+    Return a URL for the given deployment.
     Optionally specify a trailing endpoint.
 */
-function getOrderURL (id, endpoint = null) {
+function getDeploymentURL (id, endpoint = null) {
     if (id == null)
         throw 'No order selected.';
 
     if (endpoint == null)
-        return 'https://ddborder.homeinfo.de/order/' + id;
+        return 'https://backend.homeinfo.de/deployments/' + id;
 
-    return getOrderURL(id) + '/' + endpoint;
+    return getDeploymentURL(id) + '/' + endpoint;
 }
 
 
@@ -104,7 +104,7 @@ function renderChecklist (order) {
 function setChecklistItem (endpoint) {
     return event => {
         return $.ajax({
-            url: getOrderURL(getCurrentOrderId(), endpoint),
+            url: getDeploymentURLL(getCurrentOrderId(), endpoint),
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(event.target.checked),
@@ -186,7 +186,7 @@ function delaySubmitAnnotation (event) {
         'submitAnnotation',
         function () {
             return $.ajax({
-                url: getOrderURL(getCurrentOrderId(), 'annotation'),
+                url: getDeploymentURLL(getCurrentOrderId(), 'annotation'),
                 method: 'PATCH',
                 contentType: 'application/json',
                 data: JSON.stringify(event.target.value),
