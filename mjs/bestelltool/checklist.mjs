@@ -92,7 +92,6 @@ function renderChecklist (order) {
     );
     $('#Netzbindung').prop('checked', order.internetConnection != null);
     $('#Hardware').prop('checked', order.hardwareInstallation != null);
-    $('#Abgeschlossen').prop('checked', order.finalized != null);
     $('#Bemerkung').val(order.annotation);
 }
 
@@ -209,12 +208,6 @@ function initButtons () {
     $('#Anlage').click(setChecklistItem('construction-site-preparation'));
     $('#Netzbindung').click(setChecklistItem('internet-connection'));
     $('#Hardware').click(setChecklistItem('hardware-installation'));
-    $('#Abgeschlossen').click(event => {
-        return setChecklistItem('finalize')(event).then((response) => {
-            window.location = 'dashboard.html';
-            return response;
-        });
-    });
     $('#Bemerkung').keyup(delaySubmitAnnotation);
 }
 
