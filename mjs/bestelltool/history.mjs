@@ -25,8 +25,8 @@
 /*
     Render history.
 */
-export function renderHistory (order) {
-    const historyItems = Array.from(HistoryItem.fromOrder(order));
+export function renderHistory (deployment) {
+    const historyItems = Array.from(HistoryItem.fromDeployment(deployment));
     historyItems.sort((lhs, rhs) => {
         return lhs.timestamp - rhs.timestamp;
     });
@@ -45,23 +45,17 @@ class HistoryItem {
         this.timestamp = timestamp;
     }
 
-    static * fromOrder (order) {
-        if (order.constructionSitePreparationFeedback != null)
+    static * fromDeployment (deployment) {
+        if (deployment.constructionSitePreparationFeedback != null)
             yield new this(
                 'Anlage Baustellenvorbeitung erledigt',
-                new Date(order.constructionSitePreparationFeedback)
+                new Date(deployment.constructionSitePreparationFeedback)
             );
 
-        if (order.internetConnection != null)
+        if (deployment.internetConnection != null)
             yield new this(
                 'Netzanbindung erfolgt',
-                new Date(order.internetConnection)
-            );
-
-        if (order.installationDateConfirmed != null)
-            yield new this(
-                'Datum Installation bestätigt',
-                new Date(order.installationDateConfirmed)
+                new Date(deployment.internetConnection)
             );
     }
 
