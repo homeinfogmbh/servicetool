@@ -29,7 +29,7 @@ import { getDeployments } from './deployments.mjs';
 
 
 /*
-    Render page for a new order.
+    Render page for a new deployments.
 */
 export function render () {
     disableChecklist();
@@ -40,19 +40,19 @@ export function render () {
 
 
 /*
-    Create a new order.
+    Create a new deployment.
 */
-function createNewOrder () {
-    const newOrder = getNewOrder();
+function createNewDeployment () {
+    const newDeployment = getNewDeployment();
 
-    if (!validateNewOrder(newOrder))
+    if (!validateNewDeployment(newDeployment))
         return Promise.reject('Fehlende Daten.');
 
     return $.ajax({
         url: 'https://backend.homeinfo.de/deployments/',
         method: 'POST',
         contentType: 'application/json',
-        data: JSON.stringify(newOrder),
+        data: JSON.stringify(newDeployment),
         dataType: 'json',
         error: handleError,
         xhrFields: {
@@ -78,9 +78,9 @@ function getCustomers () {
 
 
 /*
-    Construct a JSON object representing a new order.
+    Construct a JSON object representing a new deployment.
 */
-function getNewOrder () {
+function getNewDeployment () {
     return {
         customer: getSelectedCustomerId(),
         street: $('#street').val() || null,
@@ -93,27 +93,27 @@ function getNewOrder () {
 
 
 /*
-    Validate a JSON object representing a new order.
+    Validate a JSON object representing a new deployment.
 */
-function validateNewOrder (newOrder) {
+function validateNewDeployment (deployment) {
     const issues = [];
 
-    if (newOrder.customer == null || newOrder.customer < 1)
+    if (deployment.customer == null || newOrder.customer < 1)
         issues.push('Kein Kunde ausgewählt.');
 
-    if (!newOrder.street)
+    if (!deployment.street)
         issues.push('Keine Straße angegeben.');
 
-    if (!newOrder.houseNumber)
+    if (!deployment.houseNumber)
         issues.push('Keine Hausnummer angegeben.');
 
-    if (!newOrder.zipCode)
+    if (!deployment.zipCode)
         issues.push('Keine PLZ angegeben.');
 
-    if (!newOrder.city)
+    if (!deployment.city)
         issues.push('Kein Ort angegeben.');
 
-    if (!newOrder.connection)
+    if (!deployment.connection)
         issues.push('Keine Netzanbindung ausgewählt.');
 
     if (issues.length == 0)
@@ -165,10 +165,10 @@ function getSelectedConnection () {
 
 
 /*
-    Create new order or modify an existing order.
+    Create new deployment.
 */
 function onSubmit (event) {
-    return createNewOrder().then(response => {
+    return createNewDeployment().then(response => {
         window.location = window.location + '?id=' + response.id;
     });
 }
@@ -184,7 +184,7 @@ function initButtons () {
 
 
 /*
-    Disable the checklist and history columns for new orders.
+    Disable the checklist and history columns for deployments.
 */
 export function disableChecklist () {
     $('.checklist').prop('disabled', true);
