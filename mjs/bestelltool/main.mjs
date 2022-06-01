@@ -21,7 +21,7 @@
 
 'use strict';
 
-import { getCurrentOrderId, render as renderChecklist } from './checklist.mjs';
+import { getCurrentId, render as renderChecklist } from './checklist.mjs';
 import { render as renderNewOrder } from './order.mjs';
 
 
@@ -29,7 +29,7 @@ import { render as renderNewOrder } from './order.mjs';
     Render page dependent on requested view.
 */
 export function init () {
-    const id = getCurrentOrderId();
+    const id = getCurrentDeploymentId();
 
     if (id == null)
         return renderNewOrder();

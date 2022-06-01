@@ -36,14 +36,14 @@ const DELAYED_JOBS = new DelayedJobs();
 export function render (id) {
     disableBasisData();
     initButtons();
-    getOrder(id).then(renderOrder);
+    getDeployment(id).then(renderDeployment);
 }
 
 
 /*
-    Return the order ID.
+    Return the current deployment ID.
 */
-export function getCurrentOrderId () {
+export function getCurrentId () {
     const id = URL_PARAMS.get('id');
 
     if (id == null)
@@ -54,9 +54,9 @@ export function getCurrentOrderId () {
 
 
 /*
-    Query an order by its ID.
+    Query a deployment by its ID.
 */
-function getOrder (id) {
+function getDeployment (id) {
     return $.ajax({
         url: getDeploymentURL(id),
         dataType: 'json',
@@ -86,12 +86,12 @@ function getDeploymentURL (id, endpoint = null) {
 /*
     Render checklist.
 */
-function renderChecklist (order) {
+function renderChecklist (deployment) {
     $('#Anlage').prop(
-        'checked', order.constructionSitePreparationFeedback != null
+        'checked', deployment.constructionSitePreparationFeedback != null
     );
-    $('#Netzbindung').prop('checked', order.internetConnection != null);
-    $('#Bemerkung').val(order.annotation);
+    $('#Netzbindung').prop('checked', deployment.internetConnection != null);
+    $('#Bemerkung').val(deployment.technicianAnnotation);
 }
 
 
@@ -102,7 +102,7 @@ function renderChecklist (order) {
 function setChecklistItem (endpoint) {
     return event => {
         return $.ajax({
-            url: getDeploymentURL(getCurrentOrderId(), endpoint),
+            url: getDeploymentURL(getCurrentId(), endpoint),
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(event.target.checked),
@@ -153,26 +153,26 @@ function setSelectedConnection (connection) {
 
 
 /*
-    Render an order into the core data fields.
+    Render a deployment into the core data fields.
 */
-function renderOrder (order) {
-    renderBasicData(order);
-    renderChecklist(order);
-    renderHistory(order);
+function renderDeployment (deployment) {
+    renderBasicData(deployment);
+    renderChecklist(deployment);
+    renderHistory(deployment);
 }
 
 
 /*
     Render basic data block.
 */
-function renderBasicData (order) {
-    setSelectedCustomer(order.customer);
-    $('#street').val(order.street);
-    $('#houseNumber').val(order.houseNumber);
-    $('#zipCode').val(order.zipCode);
-    $('#city').val(order.city);
-    setSelectedModel(order.model);
-    setSelectedConnection(order.connection);
+function renderBasicData (deployment) {
+    setSelectedCustomer(deployment.customer);
+    $('#street').val(deployment.address.street);
+    $('#houseNumber').val(deployment.address.houseNumber);
+    $('#zipCode').val(deployment.address.zipCode);
+    $('#city').val(deployment.address.city);
+    setSelectedModel(deployment.model);
+    setSelectedConnection(deployment.connection);
 }
 
 
@@ -184,7 +184,7 @@ function delaySubmitAnnotation (event) {
         'submitAnnotation',
         function () {
             return $.ajax({
-                url: getDeploymentURL(getCurrentOrderId(), 'annotation'),
+                url: getDeploymentURL(getCurrentId(), 'annotation'),
                 method: 'PATCH',
                 contentType: 'application/json',
                 data: JSON.stringify(event.target.value),
