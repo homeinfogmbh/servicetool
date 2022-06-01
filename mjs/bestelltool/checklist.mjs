@@ -87,6 +87,7 @@ function getDeploymentURL (id, endpoint = null) {
     Render checklist.
 */
 function renderChecklist (deployment) {
+    console.log('Rendering checklist.');
     $('#Anlage').prop(
         'checked', deployment.constructionSitePreparationFeedback != null
     );
@@ -156,6 +157,7 @@ function setSelectedConnection (connection) {
     Render a deployment into the core data fields.
 */
 function renderDeployment (deployment) {
+    console.log('Rendering deployment.');
     renderBasicData(deployment);
     renderChecklist(deployment);
     renderHistory(deployment);
@@ -166,6 +168,7 @@ function renderDeployment (deployment) {
     Render basic data block.
 */
 function renderBasicData (deployment) {
+    console.log('Rendering basic data.');
     setSelectedCustomer(deployment.customer);
     $('#street').val(deployment.address.street);
     $('#houseNumber').val(deployment.address.houseNumber);
