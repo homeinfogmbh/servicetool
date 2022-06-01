@@ -29,7 +29,7 @@ import { render as renderNewOrder } from './order.mjs';
     Render page dependent on requested view.
 */
 export function init () {
-    const id = getCurrentDeploymentId();
+    const id = getCurrentId();
 
     if (id == null)
         return renderNewOrder();
