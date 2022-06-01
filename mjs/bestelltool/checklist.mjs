@@ -130,6 +130,9 @@ function setSelectedCustomer (customer) {
     Set the selected model.
 */
 function setSelectedModel (model) {
+    if (model == null)
+        return;
+
     const id = MODEL_TO_ID[model];
 
     if (id == null)
