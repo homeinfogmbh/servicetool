@@ -25,7 +25,7 @@ $(document).ready(function() {
                     '<a class="nav-link" id="standorte-zuweisen" href="standorte-zuweisen.html" onclick="removeopenedlist()">Standorte</a>' +
                 '</li>' +
                 '<li class="nav-item">' +
-                    '<a class="nav-link" id="bestelltool" href="bestelltool.html" onclick="removeopenedlist()">Neuinstallationen</a>' +
+                    '<a class="nav-link" id="bestelltool" href="bestelltool.html" onclick="removeopenedlist()">Standort anlegen (DDB)</a>' +
                 '</li>' +
             '</ul><br>' +
             '<div class="search_dash whiteSearch">' +
