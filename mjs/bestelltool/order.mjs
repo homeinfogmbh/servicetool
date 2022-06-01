@@ -87,7 +87,6 @@ function getNewOrder () {
         houseNumber: $('#houseNumber').val() || null,
         zipCode: $('#zipCode').val() || null,
         city: $('#city').val() || null,
-        model: getSelectedModel(),
         connection: getSelectedConnection()
     };
 }
@@ -113,9 +112,6 @@ function validateNewOrder (newOrder) {
 
     if (!newOrder.city)
         issues.push('Kein Ort angegeben.');
-
-    if (!newOrder.model)
-        issues.push('Keine Displayart ausgewählt.');
 
     if (!newOrder.connection)
         issues.push('Keine Netzanbindung ausgewählt.');
@@ -152,19 +148,6 @@ function renderCustomers (customers) {
 
     for (const customerListEntry of customerListEntries)
         $('#Kundenauswählen').append(customerListEntry.toHTML());
-}
-
-
-/*
-    Return the selected hardware model.
-*/
-function getSelectedModel () {
-    const key = $('input[name="Artdes"]:checked').attr('id');
-
-    if (key == null)
-        return null;
-
-    return ID_TO_MODEL[key];
 }
 
 

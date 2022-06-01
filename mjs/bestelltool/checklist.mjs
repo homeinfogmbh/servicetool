@@ -127,22 +127,6 @@ function setSelectedCustomer (customer) {
 
 
 /*
-    Set the selected model.
-*/
-function setSelectedModel (model) {
-    if (model == null)
-        return;
-
-    const id = MODEL_TO_ID[model];
-
-    if (id == null)
-        throw 'Cannot translate model to id: ' + model;
-
-    $('#' + id).prop("checked", true);
-}
-
-
-/*
     Set the selected connection.
 */
 function setSelectedConnection (connection) {
@@ -174,7 +158,6 @@ function renderBasicData (deployment) {
     $('#houseNumber').val(deployment.address.houseNumber);
     $('#zipCode').val(deployment.address.zipCode);
     $('#city').val(deployment.address.city);
-    setSelectedModel(deployment.model);
     setSelectedConnection(deployment.connection);
 }
 
