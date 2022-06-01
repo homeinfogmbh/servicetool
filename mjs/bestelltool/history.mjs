@@ -26,7 +26,6 @@
     Render history.
 */
 export function renderHistory (deployment) {
-    console.log('Rendering history.');
     const historyItems = Array.from(HistoryItem.fromDeployment(deployment));
     historyItems.sort((lhs, rhs) => {
         return lhs.timestamp - rhs.timestamp;
