@@ -63,18 +63,6 @@ class HistoryItem {
                 'Datum Installation bestätigt',
                 new Date(order.installationDateConfirmed)
             );
-
-        if (order.hardwareInstallation != null)
-            yield new this(
-                'Hardware installiert',
-                new Date(order.hardwareInstallation)
-            );
-
-        if (order.finalized != null)
-            yield new this(
-                'Bestellung abgeschlossen',
-                new Date(order.finalized)
-            );
     }
 
     toHTML () {
