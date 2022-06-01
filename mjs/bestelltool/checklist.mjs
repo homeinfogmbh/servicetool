@@ -36,14 +36,14 @@ const DELAYED_JOBS = new DelayedJobs();
 export function render (id) {
     disableBasisData();
     initButtons();
-    getOrder(id).then(renderOrder);
+    getDeployment(id).then(renderDeployment);
 }
 
 
 /*
-    Return the order ID.
+    Return the current deployment ID.
 */
-export function getCurrentOrderId () {
+export function getCurrentId () {
     const id = URL_PARAMS.get('id');
 
     if (id == null)
@@ -54,11 +54,11 @@ export function getCurrentOrderId () {
 
 
 /*
-    Query an order by its ID.
+    Query a deployment by its ID.
 */
-function getOrder (id) {
+function getDeployment (id) {
     return $.ajax({
-        url: getOrderURL(id),
+        url: getDeploymentURL(id),
         dataType: 'json',
         error: handleError,
         xhrFields: {
@@ -69,31 +69,29 @@ function getOrder (id) {
 
 
 /*
-    Return a URL for the given order.
+    Return a URL for the given deployment.
     Optionally specify a trailing endpoint.
 */
-function getOrderURL (id, endpoint = null) {
+function getDeploymentURL (id, endpoint = null) {
     if (id == null)
         throw 'No order selected.';
 
     if (endpoint == null)
-        return 'https://ddborder.homeinfo.de/order/' + id;
+        return 'https://backend.homeinfo.de/deployments/' + id;
 
-    return getOrderURL(id) + '/' + endpoint;
+    return getDeploymentURL(id) + '/' + endpoint;
 }
 
 
 /*
     Render checklist.
 */
-function renderChecklist (order) {
+function renderChecklist (deployment) {
     $('#Anlage').prop(
-        'checked', order.constructionSitePreparationFeedback != null
+        'checked', deployment.constructionSitePreparationFeedback != null
     );
-    $('#Netzbindung').prop('checked', order.internetConnection != null);
-    $('#Hardware').prop('checked', order.hardwareInstallation != null);
-    $('#Abgeschlossen').prop('checked', order.finalized != null);
-    $('#Bemerkung').val(order.annotation);
+    $('#Netzbindung').prop('checked', deployment.internetConnection != null);
+    $('#Bemerkung').val(deployment.technicianAnnotation);
 }
 
 
@@ -104,7 +102,7 @@ function renderChecklist (order) {
 function setChecklistItem (endpoint) {
     return event => {
         return $.ajax({
-            url: getOrderURL(getCurrentOrderId(), endpoint),
+            url: getDeploymentURL(getCurrentId(), endpoint),
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(event.target.checked),
@@ -132,6 +130,9 @@ function setSelectedCustomer (customer) {
     Set the selected model.
 */
 function setSelectedModel (model) {
+    if (model == null)
+        return;
+
     const id = MODEL_TO_ID[model];
 
     if (id == null)
@@ -155,26 +156,26 @@ function setSelectedConnection (connection) {
 
 
 /*
-    Render an order into the core data fields.
+    Render a deployment into the core data fields.
 */
-function renderOrder (order) {
-    renderBasicData(order);
-    renderChecklist(order);
-    renderHistory(order);
+function renderDeployment (deployment) {
+    renderBasicData(deployment);
+    renderChecklist(deployment);
+    renderHistory(deployment);
 }
 
 
 /*
     Render basic data block.
 */
-function renderBasicData (order) {
-    setSelectedCustomer(order.customer);
-    $('#street').val(order.street);
-    $('#houseNumber').val(order.houseNumber);
-    $('#zipCode').val(order.zipCode);
-    $('#city').val(order.city);
-    setSelectedModel(order.model);
-    setSelectedConnection(order.connection);
+function renderBasicData (deployment) {
+    setSelectedCustomer(deployment.customer);
+    $('#street').val(deployment.address.street);
+    $('#houseNumber').val(deployment.address.houseNumber);
+    $('#zipCode').val(deployment.address.zipCode);
+    $('#city').val(deployment.address.city);
+    setSelectedModel(deployment.model);
+    setSelectedConnection(deployment.connection);
 }
 
 
@@ -186,7 +187,7 @@ function delaySubmitAnnotation (event) {
         'submitAnnotation',
         function () {
             return $.ajax({
-                url: getOrderURL(getCurrentOrderId(), 'annotation'),
+                url: getDeploymentURL(getCurrentId(), 'annotation'),
                 method: 'PATCH',
                 contentType: 'application/json',
                 data: JSON.stringify(event.target.value),
@@ -208,13 +209,6 @@ function delaySubmitAnnotation (event) {
 function initButtons () {
     $('#Anlage').click(setChecklistItem('construction-site-preparation'));
     $('#Netzbindung').click(setChecklistItem('internet-connection'));
-    $('#Hardware').click(setChecklistItem('hardware-installation'));
-    $('#Abgeschlossen').click(event => {
-        return setChecklistItem('finalize')(event).then((response) => {
-            window.location = 'dashboard.html';
-            return response;
-        });
-    });
     $('#Bemerkung').keyup(delaySubmitAnnotation);
 }
 

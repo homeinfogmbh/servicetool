@@ -1,5 +1,5 @@
 /*
-  order.mjs - Orders management library.
+  order.mjs - Order new deployments.
 
   (C) 2022 HOMEINFO - Digitale Informationssysteme GmbH
 
@@ -49,7 +49,7 @@ function createNewOrder () {
         return Promise.reject('Fehlende Daten.');
 
     return $.ajax({
-        url: 'https://ddborder.homeinfo.de/order',
+        url: 'https://backend.homeinfo.de/deployments/',
         method: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(newOrder),
@@ -67,7 +67,7 @@ function createNewOrder () {
 */
 function getCustomers () {
     $.ajax({
-        url: 'https://ddborder.homeinfo.de/customers',
+        url: 'https://backend.homeinfo.de/deployments/customers/',
         dataType: 'json',
         error: handleError,
         xhrFields: {
