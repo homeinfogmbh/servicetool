@@ -91,7 +91,6 @@ function renderChecklist (order) {
         'checked', order.constructionSitePreparationFeedback != null
     );
     $('#Netzbindung').prop('checked', order.internetConnection != null);
-    $('#Hardware').prop('checked', order.hardwareInstallation != null);
     $('#Bemerkung').val(order.annotation);
 }
 
@@ -207,7 +206,6 @@ function delaySubmitAnnotation (event) {
 function initButtons () {
     $('#Anlage').click(setChecklistItem('construction-site-preparation'));
     $('#Netzbindung').click(setChecklistItem('internet-connection'));
-    $('#Hardware').click(setChecklistItem('hardware-installation'));
     $('#Bemerkung').keyup(delaySubmitAnnotation);
 }
 
