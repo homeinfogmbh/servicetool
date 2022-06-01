@@ -84,7 +84,6 @@ $(document).ready(function() {
                 window.location.href = "display-details.html?id=" + $(this).val();
             return false;
         }
-        console.log(isNaN(parseInt(e.key)))
         if (isNaN(parseInt(e.key)))
             e.preventDefault();
     });

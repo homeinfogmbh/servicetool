@@ -220,7 +220,7 @@ function setDetails(data) {
         $("#sitetitle").text(_display.deployment.customer.company.name + " " + _id);
         $("#completecustomername").html(_display.deployment.customer.company.name + ' (Knr. ' + _display.deployment.customer.id + ')');
     } catch(err) {   }
-    // Overview
+    // Display Overview
     $("#model").text(_display.hasOwnProperty("model") ?_display.model :'-');
     $("#serialNumber").text(_display.hasOwnProperty("serialNumber") ?_display.serialNumber :'-');
     $("#ipv6").text(_display.ipv6address);
@@ -354,11 +354,7 @@ function setDetails(data) {
         $(".btn_installed").click();
     } else
         $(".btn_installed").attr("title", "Ist nicht verbaut");
-    if (_display.hasOwnProperty("checkResults") && _display.checkResults.length > 0 && _display.checkResults[0].applicationState !== "html" && _display.checkResults[0].applicationState !== "air") {
-        $(".btn_blackmodus").click();
-        $(".btn_blackmodus").attr("title", "Ist im Schwarzbildmodus");
-    } else
-        $(".btn_blackmodus").attr("title", "Ist nicht im Schwarzbildmodus");
+
     if (_display.hasOwnProperty("deployment") && _display.deployment.testing) {
         $(".btn_testsystem").click();
         $(".btn_testsystem").attr("title", "Ist ein Testsystem");
@@ -404,10 +400,10 @@ function setDetails(data) {
         }
         if (!dateFound) {
             $("#thirtysystemcheck").append('<li title="' + dateDay + ': Kein Check durchgeführt" class="orangeSq"></li>');
-            $('#thirtyoffline').append('<li title="' + dateDay + ': Keine Daten vorhanden"></li>');
-            $('#thirtyicmp').append('<li title="' + dateDay + ': Keine Daten vorhanden"></li>');
-            $('#thirtyssh').append('<li title="' + dateDay + ': Keine Daten vorhanden"></li>');
-            $('#thirtyhttp').append('<li title="' + dateDay + ': Keine Daten vorhanden"></li>');
+            $('#thirtyoffline').append('<li title="' + dateDay + ': Keine Daten vorhanden" style="height:10px; margin-top:13px"></li>');
+            $('#thirtyicmp').append('<li title="' + dateDay + ': Keine Daten vorhanden" style="height:10px; margin-top:13px"></li>');
+            $('#thirtyssh').append('<li title="' + dateDay + ': Keine Daten vorhanden" style="height:10px; margin-top:13px"></li>');
+            $('#thirtyhttp').append('<li title="' + dateDay + ': Keine Daten vorhanden" style="height:10px; margin-top:13px"></li>');
         }
         date.setDate(date.getDate()-1);
     };
@@ -417,6 +413,7 @@ function setDetails(data) {
         $(".thirtyhttp").hide();
     $("#pageloader").hide();
 }
+
 function setChecks(lastCheck) {
     if (isOnDate(lastCheck.timestamp, 24)) {
         $("#systemcheck").html('<span class="blueMark">ok</span>');
@@ -445,6 +442,18 @@ function setChecks(lastCheck) {
         $("#upload").text("-");
         $("#applicationuptodate").text("-");
     }
+
+    $(".btn_blackmodus").show();
+    $("#unknownblackmodus").hide();
+    if (lastCheck.applicationState === "unknown") {
+        $(".btn_blackmodus").hide();
+        $("#unknownblackmodus").show();
+    } else if (lastCheck.applicationState !== "html" && lastCheck.applicationState !== "air") {
+        $(".btn_blackmodus").click();
+        $(".btn_blackmodus").attr("title", "Ist im Schwarzbildmodus");
+    } else
+        $(".btn_blackmodus").attr("title", "Ist nicht im Schwarzbildmodus");
+
     $("#sync").text(_display.hasOwnProperty("lastSync") ?formatDate(_display.lastSync) + " (" + _display.lastSync.substring(11, 16) + "h)" :"noch nie");
     $("#lastCheck").text("Letzter Check " + formatDate(lastCheck.timestamp) + " (" + lastCheck.timestamp.substring(11, 16) + " Uhr)");
     $("#pageloader").hide();

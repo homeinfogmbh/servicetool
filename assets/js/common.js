@@ -174,7 +174,7 @@ function setCheckList(list, applicationVersion) {
 			_commonChecks.ramfree.systems.push(check);
 		if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("ramTotal") && parseInt(check.checkResults[0].ramTotal/1024) < 2000)
 			_commonChecks.ram.systems.push(check);
-		if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState === "not running")
+		if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState !== "html" && check.checkResults[0].applicationState !== "air" && check.checkResults[0].applicationState !== "unknown")
 			_commonChecks.blackscreen.systems.push(check);
 		if (!check.fitted)
 			_commonChecks.notfitted.systems.push(check);
