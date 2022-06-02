@@ -1,6 +1,6 @@
 $(document).ready(function() {
     Promise.all(getListOfSystemChecks()).then(setChecks);
-    getOrderings().then(setOrderings);
+    getDeployments().then(setDeployments);
     getHipsterStatus().then(setHipsterStatus);
     $('#observercounter').click(function(e) {
         $(".observerItem").show();
@@ -37,7 +37,6 @@ function setChecks(data) {
         //}
         if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState === "not running")
             observerItems.push(getObserveItem(check, "Schwarz-Bildmodus", observerItems.length));
-        //TODOif (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState === "NOT_RUNNING")
     }
 
     // Widgets
@@ -82,25 +81,27 @@ function getObserverItems(observerItems) {
             dom += observerItems[item];           
     return dom;
 }
-function setOrderings(orderings) {
+function setDeployments(deployments) {
     let orderingsDom = "";
     let address;
-    for (let order of orderings) {
-        address = order.street + " " + order.houseNumber + ", " + order.zipCode + " " + order.city
-        orderingsDom += '<tr>' +
-            '<td>' + order.customer.abbreviation + '</td>' +
-            '<td title="' + address + '">' + address.substring(0, 12) + (address.length > 13 ? '...' :'') +  '</td>' +
-            '<td><span class="Einge ' + (isOnDate(order.issued, 2160) ?"" :"EingeActive") + '">' + formatDate(order.issued) + '</span></td>' +
-            '<td>' +
-                '<ul class="Umgebung">' +
-                    (order.hasOwnProperty('constructionSitePreparationFeedback') ?'<li title="Anlage Baustellenvorbeitung (OK)"></li>' :'<li class="active" title="Anlage Baustellenvorbeitung (nicht OK)"></li>') + 
-                    (order.hasOwnProperty('internetConnection') ?'<li title="Netzbindung (OK)"></li>' :'<li class="active" title="Netzbindung (nicht OK)"></li>') + 
-                    (order.hasOwnProperty('hardwareInstallation')?'<li title="Hardware Installation (installiert)"></li>' :'<li class="active" title="Hardware Installation (nicht installiert)"></li>') + 
-                '</ul>' +
-            '</td>' +
-            '<td><a href="bestelltool.html?id=' + order.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>' +
-        '</tr>';
+    for (let deployment of deployments) {
+        if (!deployment.hasOwnProperty("constructionSitePreparationFeedback") || !deployment.hasOwnProperty("internetConnection")) {
+            address = deployment.hasOwnProperty("address") ?deployment.address.street + " " + deployment.address.houseNumber + ", " + deployment.address.zipCode + " " + deployment.address.city :'<i>Keine Adresse angegeben</i>';
+            orderingsDom += '<tr>' +
+                '<td>' + deployment.customer.abbreviation + '</td>' +
+                '<td title="' + address + '">' + address.substring(0, 12) + (address.length > 13 ? '...' :'') +  '</td>' +
+                '<td><span class="' + (deployment.hasOwnProperty("created") && !isOnDate(deployment.created, 2160) ?"EingeActive" :"") + '">' + (deployment.hasOwnProperty("created") ?formatDate(deployment.created) :"-") + '</span></td>' +
+                '<td>' +
+                    '<ul class="Umgebung">' +
+                        (deployment.hasOwnProperty('constructionSitePreparationFeedback') ?'<li title="Anlage Baustellenvorbeitung (OK)"></li>' :'<li class="active" title="Anlage Baustellenvorbeitung (nicht OK)"></li>') + 
+                        (deployment.hasOwnProperty('internetConnection') ?'<li title="Netzbindung (OK)"></li>' :'<li class="active" title="Netzbindung (nicht OK)"></li>') + 
+                    '</ul>' +
+                '</td>' +
+                '<td><a href="bestelltool.html?id=' + deployment.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>' +
+            '</tr>';
+        }
     }
+    orderingsDom = orderingsDom === "" ?"<tr><td>Keine neuen Standorte gefunden</tr></td>" :orderingsDom;
     $("#registrations").html(orderingsDom);
 }
 function setHipsterStatus(data) {
@@ -110,16 +111,6 @@ function setHipsterStatus(data) {
         $(".btn_hipster").hide();
     else
         $(".btn_hipster").show();
-}
-function getOrderings() {
-	return $.ajax({
-		url: "https://ddborder.homeinfo.de/order",
-		type: "GET",
-		success: function (msg) {   },
-		error: function (msg) {
-			setErrorMessage(msg, "Abrufen der Bestellungen");
-		}
-	});
 }
 function getHipsterStatus() {
     return $.ajax({

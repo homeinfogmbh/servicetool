@@ -99,9 +99,10 @@ $(document).ready(function() {
         localStorage.removeItem("servicetool.systemchecks");
         if ($("#deploymentsDropdown").hasClass("show"))
             $("#deploymentsDropdown").removeClass("show");
-        else if (_deployments === null)
+        else if (_deployments === null) {
+            $("#pageloader").show();
             getDeployments().then(listDeployments);
-        else
+        } else
             listDeployments();
 		e.preventDefault();
 	});
@@ -579,18 +580,6 @@ function listDeployments(deployments = null) {
         $('#deploymentsearch').focus();
         $("#pageloader").hide();
     }
-}
-function getDeployments() {
-    $("#pageloader").show();
-    return $.ajax({
-        url: "https://termgr.homeinfo.de/list/deployments",
-        type: "GET",
-        cache: false,
-        success: function (data) {  },
-        error: function (msg) {
-            setErrorMessage(msg, "Listen der Standorte");
-        }
-    });
 }
 function setDeployments(deployment, exclusive = false) {
     $("#pageloader").show();

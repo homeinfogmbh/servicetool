@@ -230,6 +230,17 @@ function getScreenShot(systemID) {
         }
     });
 }
+function getDeployments() {
+    return $.ajax({
+        url: "https://termgr.homeinfo.de/list/deployments",
+        type: "GET",
+        cache: false,
+        success: function (data) {  },
+        error: function (msg) {
+            setErrorMessage(msg, "Listen der Standorte");
+        }
+    });
+}
 function setErrorMessage(msg, fromFunction) {
 	try {
 		let message = "Leider ist ein Fehler aufgetreten";
