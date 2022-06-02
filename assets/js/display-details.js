@@ -1,7 +1,6 @@
 const _KIBIBITTOMBIT = 1024/1000/1000;
 var _id;
 var _display = null;
-var _checked = {"btn_installed":false, "btn_blackmodus":false, "btn_testsystem":false};
 var _deployments = null;
 var _applicationVersion = null;
 $(document).ready(function() {
@@ -11,6 +10,22 @@ $(document).ready(function() {
         $("#errorlog").html("<tr><td>Keine Einträge geladen</td></tr>");
     });
     getDeploymentHistory().then(setHistory, denyHistory);
+    getSystemInfo().then((data)=>{
+        try { $("#applicationDesign").text('"' + data.presentation.configuration.design + '"'); } catch(error) { $("#applicationDesign").text("-"); }
+        $(".btn_blackmodus").show();
+        $("#unknownblackmodus").hide();
+        if (data.application.status.running.length === 0) {
+            $("#Schwarzbildmodus").prop("checked", true);
+            $(".btn_blackmodus").attr("title", "Ist im Schwarzbildmodus");
+        } else if (data.application.status.running[0] === "html" || data.application.status.running[0] === "air") {
+            $(".btn_blackmodus").attr("title", "Ist nicht im Schwarzbildmodus");
+            $("#Schwarzbildmodus").prop("checked", false);
+        } else {
+            $(".btn_blackmodus").hide();
+            $("#unknownblackmodus").text("-");
+            $("#unknownblackmodus").show();
+        }
+    });
     $('.btn_internetconnection').click(function(e) {
         if ($("#connectionsDropdown").hasClass("show"))
             $("#connectionsDropdown").removeClass("show");
@@ -59,6 +74,7 @@ $(document).ready(function() {
 		e.preventDefault();
 	});
     $('.btn_check').click(function(e) {
+        localStorage.removeItem("servicetool.systemchecks");
         if (_display !== null && _display.hasOwnProperty("checkResults") && _display.checkResults.length > 0 && _display.checkResults[0].hasOwnProperty("offlineSince")) {
             Swal.fire({
                 title: 'System war offline',
@@ -133,24 +149,19 @@ $(document).ready(function() {
 		e.preventDefault();
 	}); 
     $('.btn_installed').click(function(e) {
-        if (_checked.btn_installed) {
-            localStorage.removeItem("servicetool.systemchecks");
-            setFit().then(()=>{$("#pageloader").hide()});
-            if ($('input[name=Verbaut]:checked').val() === 'on')
-                $(this).attr("title", "Ist nicht verbaut");
-            else
-                $(this).attr("title", "Ist verbaut");
-        }
+        localStorage.removeItem("servicetool.systemchecks");
+        setFit().then(()=>{$("#pageloader").hide()});
+        if ($('input[name=Verbaut]:checked').val() === 'on')
+            $(this).attr("title", "Ist nicht verbaut");
+        else
+            $(this).attr("title", "Ist verbaut");
 	}); 
     $('.btn_blackmodus').click(function(e) {
-        if (_checked.btn_blackmodus) {
-            localStorage.removeItem("servicetool.systemchecks");
-            setApplicationState().then(()=>{$("#pageloader").hide()});
-            if ($('input[name=Schwarzbildmodus]:checked').val() === 'on')
-                $(this).attr("title", "Ist nicht im Schwarzbildmodus");
-            else
-                $(this).attr("title", "Ist im Schwarzbildmodus");
-        }
+        setApplicationState().then(()=>{$("#pageloader").hide()});
+        if ($('input[name=Schwarzbildmodus]:checked').val() === 'on')
+            $(this).attr("title", "Ist nicht im Schwarzbildmodus");
+        else
+            $(this).attr("title", "Ist im Schwarzbildmodus");
 	}); 
     $('.btn_restart').click(function(e) {
         Swal.fire({
@@ -170,7 +181,7 @@ $(document).ready(function() {
 		e.preventDefault();
 	}); 
     $('.btn_testsystem').click(function(e) {
-        if (_display !== null && _display.hasOwnProperty("deployment") && _checked.btn_testsystem) {
+        if (_display !== null && _display.hasOwnProperty("deployment")) {
             localStorage.removeItem("servicetool.systemchecks");
             changeDeployment("testing", $('input[name=Testgerät]:checked').val() !== 'on').then(()=>{$("#pageloader").hide()});
             if ($('input[name=Testgerät]:checked').val() === 'on')
@@ -227,7 +238,7 @@ function setDetails(data) {
     if (_display.hasOwnProperty("checkResults") && _display.checkResults.length > 0) {
         $("#ramtotal").text(_display.checkResults[0].hasOwnProperty("ramTotal") ?parseInt(_display.checkResults[0].ramTotal/1024) + "MB" :"-");
         $("#ramAvailable").text(_display.checkResults[0].hasOwnProperty("ramAvailable") ?parseInt(_display.checkResults[0].ramAvailable/1024) + "MB":"-");
-        $("#applicationDesign").text(_display.checkResults[0].hasOwnProperty("design") ?_display.checkResults[0].design :"-");
+        //$("#applicationDesign").text(_display.checkResults[0].hasOwnProperty("design") ?_display.checkResults[0].design :"-"); deprecated
     }
     if (_display.hasOwnProperty("deployment")) {
         $("#screentype").text(_display.deployment.type);
@@ -350,16 +361,20 @@ function setDetails(data) {
 
     // Funktionen
     if (_display.fitted) {
+        $("#Verbaut").prop("checked", true);
         $(".btn_installed").attr("title", "Ist verbaut");
-        $(".btn_installed").click();
-    } else
+    } else {
+        $("#Verbaut").prop("checked", false);
         $(".btn_installed").attr("title", "Ist nicht verbaut");
+    }
 
     if (_display.hasOwnProperty("deployment") && _display.deployment.testing) {
-        $(".btn_testsystem").click();
+        $("#Testgerät").prop("checked", true);
         $(".btn_testsystem").attr("title", "Ist ein Testsystem");
-    } else
+    } else {
+        $("#Testgerät").prop("checked", false);
         $(".btn_testsystem").attr("title", "Ist kein Testsystem");
+    }
     if (!_display.hasOwnProperty("deployment")) {
         $(".btn_testsystem").css("opacity", "0.3");
         $(".btn_testsystem").removeClass("pointer");
@@ -374,7 +389,6 @@ function setDetails(data) {
         $(".btn_deleteDeployment").removeClass("pointer");
         $(".btn_deleteDeployment").attr("title", "Keine Zuordnung vorhanden");
     }
-    _checked = {"btn_installed":true, "btn_blackmodus":true, "btn_testsystem":true};
 
     // Systemchecks über 30 Tage
     let date = new Date();
@@ -442,19 +456,6 @@ function setChecks(lastCheck) {
         $("#upload").text("-");
         $("#applicationuptodate").text("-");
     }
-
-    $(".btn_blackmodus").show();
-    $("#unknownblackmodus").hide();
-    console.log(lastCheck)
-    if (lastCheck.applicationState === "unknown") {
-        $(".btn_blackmodus").hide();
-        $("#unknownblackmodus").show();
-    } else if (lastCheck.applicationState !== "html" && lastCheck.applicationState !== "air") {
-        $(".btn_blackmodus").click();
-        $(".btn_blackmodus").attr("title", "Ist im Schwarzbildmodus");
-    } else
-        $(".btn_blackmodus").attr("title", "Ist nicht im Schwarzbildmodus");
-
     $("#sync").text(_display.hasOwnProperty("lastSync") ?formatDate(_display.lastSync) + " (" + _display.lastSync.substring(11, 16) + "h)" :"noch nie");
     $("#lastCheck").text("Letzter Check " + formatDate(lastCheck.timestamp) + " (" + lastCheck.timestamp.substring(11, 16) + " Uhr)");
     $("#pageloader").hide();
@@ -509,6 +510,17 @@ function checkSystem() {
         success: function (data) {  },
         error: function (msg) {
             setErrorMessage(msg, "Checken des Systems");
+        }
+    });
+}
+function getSystemInfo() {
+    return $.ajax({
+        url: "https://sysmon.homeinfo.de/sysinfo/" + _id,
+        type: "GET",
+        cache: false,
+        success: function (data) {  },
+        error: function (msg) {
+            setErrorMessage(msg, "Laden der Systeminfos");
         }
     });
 }
