@@ -445,6 +445,7 @@ function setChecks(lastCheck) {
 
     $(".btn_blackmodus").show();
     $("#unknownblackmodus").hide();
+    console.log(lastCheck)
     if (lastCheck.applicationState === "unknown") {
         $(".btn_blackmodus").hide();
         $("#unknownblackmodus").show();
@@ -654,7 +655,7 @@ function setApplicationState() {
     return $.ajax({
         url: 'https://termgr.homeinfo.de/administer/application',
         type: "POST",
-        data: JSON.stringify({'system': _id, 'state': $('input[name=Schwarzbildmodus]:checked').val() !== 'on'}),
+        data: JSON.stringify({'system': _id, 'state': $('input[name=Schwarzbildmodus]:checked').val() === 'on'}),
         contentType: 'application/json',
         success: function (data) {  },
         error: function (msg) {
