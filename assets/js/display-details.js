@@ -11,7 +11,7 @@ $(document).ready(function() {
     });
     getDeploymentHistory().then(setHistory, denyHistory);
     getSystemInfo().then((data)=>{
-        try { $("#applicationDesign").text('"' + data.presentation.configuration.design + '"'); } catch(error) { $("#applicationDesign").text("-"); }
+        try { $("#applicationDesign").text('"' + data.presentation.configuration.design.toUpperCase() + '"'); } catch(error) { $("#applicationDesign").text("-"); }
         $(".btn_blackmodus").show();
         $("#unknownblackmodus").hide();
         if (data.application.status.running.length === 0) {
@@ -26,6 +26,11 @@ $(document).ready(function() {
             $("#unknownblackmodus").show();
         }
     });
+    $('.btn_wireguard').click(function(e) {
+        if (_display.hasOwnProperty("pubkey"))
+            navigator.clipboard.writeText(_display.pubkey);
+		e.preventDefault();
+	});
     $('.btn_internetconnection').click(function(e) {
         if ($("#connectionsDropdown").hasClass("show"))
             $("#connectionsDropdown").removeClass("show");
@@ -64,9 +69,9 @@ $(document).ready(function() {
                 localStorage.removeItem("servicetool.systemchecks");
                 if (address === null) {
                     address = _display.deployment.hasOwnProperty("address") ?_display.deployment.address.street + " " + _display.deployment.address.houseNumber + ", " + _display.deployment.address.zipCode + " " + _display.deployment.address.city :'<i>Keine Adresse angegeben</i>';
-                    $("#publicTransportAddress").text(address);
+                    $("#publicTransportAddress").html('<span title="' + address + '">' + address.substring(0, 23) + '...</span>');
                 } else
-                    $("#publicTransportAddress").text(address[0] + " " + address[1] + ", " + address[2] + " " + address[3]);
+                    $("#publicTransportAddress").html('<span title="' + address[0] + " " + address[1] + ", " + address[2] + " " + address[3] + '">' + (address[0] + " " + address[1] + ", " + address[2] + " " + address[3]).substring(0, 23) + '...</span>');
                 $("#addressfields").hide();
                 $("#pageloader").hide()
             });
@@ -244,11 +249,12 @@ function setDetails(data) {
     if (_display.hasOwnProperty("deployment")) {
         $("#screentype").text(_display.deployment.type);
         $("#internetconnection").text(_display.deployment.connection);
-        $("#publicTransportAddress").text(_display.deployment.hasOwnProperty("lptAddress") ?_display.deployment.lptAddress.street + " " + _display.deployment.lptAddress.houseNumber + ", " + _display.deployment.lptAddress.zipCode + " " + _display.deployment.lptAddress.city :address);
+        let lptAddress = _display.deployment.hasOwnProperty("lptAddress") ?_display.deployment.lptAddress.street + " " + _display.deployment.lptAddress.houseNumber + ", " + _display.deployment.lptAddress.zipCode + " " + _display.deployment.lptAddress.city :address
+        $("#publicTransportAddress").html('<span title="' + lptAddress + '">' + lptAddress.substring(0, 20) + '...</span>');
         $("#deploymentID").text(_display.deployment.id);
-        $("#annotation").html(_display.deployment.hasOwnProperty("annotation") ?_display.deployment.annotation :"-");
+        $("#annotation").html(_display.deployment.hasOwnProperty("annotation") ?"<span title='" + _display.deployment.annotation + "'>" + _display.deployment.annotation.substring(0, 20) + "...</span>" :"-");
     }
-    $("#wireguard").html(_display.hasOwnProperty("pubkey") ?"<span title='" + _display.pubkey + "'>" + _display.pubkey.substring(0, 20) + " " + _display.pubkey.substring(20) + "</span>" :"-");
+    $("#wireguard").html(_display.hasOwnProperty("pubkey") ?"<span title='" + _display.pubkey + " (zum Kopieren klicken)'>" + _display.pubkey.substring(0, 20) + "...</span>" :"-");
     $("#systemID").text(_display.id);
     $("#os").text(_display.operatingSystem);
 
@@ -415,10 +421,10 @@ function setDetails(data) {
         }
         if (!dateFound) {
             $("#thirtysystemcheck").append('<li title="' + dateDay + ': Kein Check durchgeführt" class="orangeSq"></li>');
-            $('#thirtyoffline').append('<li title="' + dateDay + ': Keine Daten vorhanden" style="height:10px; margin-top:13px"></li>');
-            $('#thirtyicmp').append('<li title="' + dateDay + ': Keine Daten vorhanden" style="height:10px; margin-top:13px"></li>');
-            $('#thirtyssh').append('<li title="' + dateDay + ': Keine Daten vorhanden" style="height:10px; margin-top:13px"></li>');
-            $('#thirtyhttp').append('<li title="' + dateDay + ': Keine Daten vorhanden" style="height:10px; margin-top:13px"></li>');
+            $('#thirtyoffline').append('<li title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
+            $('#thirtyicmp').append('<li title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
+            $('#thirtyssh').append('<li title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
+            $('#thirtyhttp').append('<li title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
         }
         date.setDate(date.getDate()-1);
     };
@@ -682,16 +688,6 @@ function changeDeployment(key, value) {
     $("#pageloader").show();
 	let deployment = {};
     deployment[key] = value;
-    /*
-	if ($('#deploymentdescription').val().trim() != "")
-		deployment.annotation = $('#deploymentdescription').val();
-	if ($('#deploymentstreet').val().trim() != "" || $('#deploymenthousenumber').val().trim() != "" || $('#deploymentzipcode').val().trim() != "" || $('#deploymentcity').val().trim() != "")
-		deployment.address = {"street":$('#deploymentstreet').val(), "houseNumber":$('#deploymenthousenumber').val(), "zipCode":$('#deploymentzipcode').val(), "city":$('#deploymentcity').val()};
-	deployment.testing = $("input[name='deploymenttesting']:checked").val() === 'true' ?true :false;
-	deployment.connection = $("input[name='deploymentconnection']:checked").val();
-	deployment.type = $("input[name='deploymenttype']:checked").val();
-	deployment.systems = [];
-    */
 	return $.ajax({
 		url: "https://backend.homeinfo.de/deployments/" + _display.deployment.id + "?customer=" + _display.deployment.customer.id,
 		type: "PATCH",
