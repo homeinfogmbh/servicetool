@@ -244,10 +244,11 @@ function getDeployments() {
 function setErrorMessage(msg, fromFunction) {
 	try {
 		let message = "Leider ist ein Fehler aufgetreten";
-		if (msg.responseJSON.message === "System is offline.")
+		if (msg.responseText.indexOf("System is offline.") !== -1)
 			message = "Das System ist offline."
-		else if (msg.responseJSON.message === "No such system.")
+		else if (msg.responseText.indexOf("No such system.") !== -1)
 			message = "Das System existiert nicht."
+			console.log("kk")
 		Swal.fire({
 			title: 'Das hat nicht geklappt.',
 			text: message,
@@ -257,7 +258,7 @@ function setErrorMessage(msg, fromFunction) {
 			confirmButtonText: 'O.K.',
 			buttonsStyling: true
 		});
-	} catch(error) {	}
+	} catch(error) {console.log(error);	}
 	try {
 		console.log(msg);
 		if (_showErrorMessages) {

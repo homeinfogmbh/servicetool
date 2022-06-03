@@ -69,9 +69,9 @@ $(document).ready(function() {
                 localStorage.removeItem("servicetool.systemchecks");
                 if (address === null) {
                     address = _display.deployment.hasOwnProperty("address") ?_display.deployment.address.street + " " + _display.deployment.address.houseNumber + ", " + _display.deployment.address.zipCode + " " + _display.deployment.address.city :'<i>Keine Adresse angegeben</i>';
-                    $("#publicTransportAddress").html('<span title="' + address + '">' + address.substring(0, 23) + '...</span>');
+                    $("#publicTransportAddress").html('<span title="' + address + '">' + address.substring(0, 20) + '...</span>');
                 } else
-                    $("#publicTransportAddress").html('<span title="' + address[0] + " " + address[1] + ", " + address[2] + " " + address[3] + '">' + (address[0] + " " + address[1] + ", " + address[2] + " " + address[3]).substring(0, 23) + '...</span>');
+                    $("#publicTransportAddress").html('<span title="' + address[0] + " " + address[1] + ", " + address[2] + " " + address[3] + '">' + (address[0] + " " + address[1] + ", " + address[2] + " " + address[3]).substring(0, 20) + '...</span>');
                 $("#addressfields").hide();
                 $("#pageloader").hide()
             });
@@ -250,7 +250,7 @@ function setDetails(data) {
         $("#screentype").text(_display.deployment.type);
         $("#internetconnection").text(_display.deployment.connection);
         let lptAddress = _display.deployment.hasOwnProperty("lptAddress") ?_display.deployment.lptAddress.street + " " + _display.deployment.lptAddress.houseNumber + ", " + _display.deployment.lptAddress.zipCode + " " + _display.deployment.lptAddress.city :address
-        $("#publicTransportAddress").html('<span title="' + lptAddress + '">' + lptAddress.substring(0, 20) + '...</span>');
+        $("#publicTransportAddress").html('<span title="' + lptAddress + '">' + lptAddress.substring(0, 18) + '...</span>');
         $("#deploymentID").text(_display.deployment.id);
         $("#annotation").html(_display.deployment.hasOwnProperty("annotation") ?"<span title='" + _display.deployment.annotation + "'>" + _display.deployment.annotation.substring(0, 20) + "...</span>" :"-");
     }
