@@ -99,7 +99,6 @@ $(document).ready(function() {
         //$("#pageloader").show();
         let date = new Date();
         getUser().then((user)=>{
-            console.log(user)
             let body = "USER: " + user.fullName + " (" + user.email + ") LINK: " + window.location.href + (window.location.href.indexOf("?") === -1 ?"?" :"%26");
             try {
                 body += getParamsForEmail();

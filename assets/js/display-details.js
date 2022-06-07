@@ -3,28 +3,30 @@ var _id;
 var _display = null;
 var _deployments = null;
 var _applicationVersion = null;
+var _deploymentHistory = null;
 $(document).ready(function() {
     _id = getURLParameterByName('id');
-    getApplicationVersion().then(getSystemChecks).then(systemCheckCompleted, ()=>{
+    Promise.all(getListOfSystemChecks()).then((data)=> {
+        systemCheckCompleted(data);
+        getSystemInfo().then((data)=>{
+            try { $("#applicationDesign").text('"' + data.presentation.configuration.design.toUpperCase() + '"'); } catch(error) { $("#applicationDesign").text("-"); }
+            $(".btn_blackmodus").show();
+            $("#unknownblackmodus").hide();
+            if (data.application.status.running.length === 0) {
+                $("#Schwarzbildmodus").prop("checked", true);
+                $(".btn_blackmodus").attr("title", "Ist im Schwarzbildmodus");
+            } else if (data.application.status.running[0] === "html" || data.application.status.running[0] === "air") {
+                $(".btn_blackmodus").attr("title", "Ist nicht im Schwarzbildmodus");
+                $("#Schwarzbildmodus").prop("checked", false);
+            } else {
+                $(".btn_blackmodus").hide();
+                $("#unknownblackmodus").text("-");
+                $("#unknownblackmodus").show();
+            }
+        });
+    }, ()=>{
         $("#message").html('<font class="errormsg">System nicht gefunden.</font>');
         $("#errorlog").html("<tr><td>Keine Einträge geladen</td></tr>");
-    });
-    getDeploymentHistory().then(setHistory, denyHistory);
-    getSystemInfo().then((data)=>{
-        try { $("#applicationDesign").text('"' + data.presentation.configuration.design.toUpperCase() + '"'); } catch(error) { $("#applicationDesign").text("-"); }
-        $(".btn_blackmodus").show();
-        $("#unknownblackmodus").hide();
-        if (data.application.status.running.length === 0) {
-            $("#Schwarzbildmodus").prop("checked", true);
-            $(".btn_blackmodus").attr("title", "Ist im Schwarzbildmodus");
-        } else if (data.application.status.running[0] === "html" || data.application.status.running[0] === "air") {
-            $(".btn_blackmodus").attr("title", "Ist nicht im Schwarzbildmodus");
-            $("#Schwarzbildmodus").prop("checked", false);
-        } else {
-            $(".btn_blackmodus").hide();
-            $("#unknownblackmodus").text("-");
-            $("#unknownblackmodus").show();
-        }
     });
     $('.btn_wireguard').click(function(e) {
         if (_display.hasOwnProperty("pubkey"))
@@ -131,8 +133,7 @@ $(document).ready(function() {
             }).then(function(selection) {
                 if (selection.isConfirmed === true)
                     setDeployments(null).then(()=>{
-                        getSystemChecks().then(systemCheckCompleted);
-                        getDeploymentHistory().then(setHistory, denyHistory);
+                        Promise.all(getListOfSystemChecks()).then(systemCheckCompleted);
                     });
             });
         }
@@ -208,9 +209,10 @@ $(document).ready(function() {
 	});
 });
 
+/*
 function getSystemChecks(data = null) {
     if (data !== null)
-        _applicationVersion = data;
+        _applicationVersion = data[1];
     return $.ajax({
         url: "https://sysmon.homeinfo.de/checks/" + _id,
         type: "GET",
@@ -220,14 +222,23 @@ function getSystemChecks(data = null) {
             setErrorMessage(msg, "Laden der Checklist");
         }
     });
-    
 }
+*/
 
 function systemCheckCompleted(data) {
-    if ($.isEmptyObject(data))
+    _applicationVersion = data[1];
+    let foundsystem = {};
+    for (let system in data[0]) {
+        if (data[0][system].id == _id) {
+            foundsystem = data[0][system];
+            break;
+        }
+    }
+    if ($.isEmptyObject(foundsystem))
         getSystem().then(setDetails);
     else
-        setDetails(data);
+        setDetails(foundsystem);
+    getDeploymentHistory().then((data)=>setHistory(data), denyHistory);
 }
 function setDetails(data) {
     _display = data.hasOwnProperty(_id) ?data[_id] :data;
@@ -469,9 +480,15 @@ function setChecks(lastCheck) {
     $("#pageloader").hide();
 }
 
-function setHistory(history) {
+function setHistory(history, page = 1) {
+    if (_deploymentHistory === null) {
+        _deploymentHistory = [];
+        const chunkSize = 10;
+        for (let i = 0; i < history.length; i += chunkSize)
+            _deploymentHistory.push(history.slice(i, i + chunkSize));
+    }
     let historyEntries = "";
-    for (let entry of history) {
+    for (let entry of _deploymentHistory[page-1]) {
         historyEntries += "<tr>" +
             "<td>" + (entry.account.hasOwnProperty("fullName") ?entry.account.fullName :entry.account.name) + "</td>" +
             "<td>Zuordnung: " + (entry.oldDeployment === null ?"keine" :entry.oldDeployment) + "</td>" + // "k.Z." -> " "keine Zuordnung"
@@ -481,12 +498,28 @@ function setHistory(history) {
     historyEntries = historyEntries === "" ?"<tr><td>Keine Einträge vorhanden.</td></tr>" :historyEntries;
     $("#history").html(historyEntries);
 
+    $("#system-pages").html('<span class="previousPage pointer" data-page="' + page + '"><u><<</u></span> ' + page + ' / ' + _deploymentHistory.length + ' <span class="nextPage pointer" data-page="' + page + '"><u>>></u>');
+    $('.nextPage').click(function(e) {
+        if (_deploymentHistory !== null) {
+            if (parseInt($(this).data("page"))+1 > _deploymentHistory.length)
+                setHistory(null, 1);
+            else             
+                setHistory(null, parseInt($(this).data("page")) + 1);
+        }
+    });
+    $('.previousPage').click(function(e) {
+        if (_deploymentHistory !== null) {
+            if (parseInt($(this).data("page"))-1 < 1)
+                setHistory(null, _deploymentHistory.length);
+            else             
+                setHistory(null, parseInt($(this).data("page")) - 1);
+        }
+    });
 }
 function denyHistory() {
     $("#history").html("<tr><td>History nicht vorhanden</td></tr>");
 }
 function getDeploymentHistory() {
-    $("#pageloader").show();
     return $.ajax({
         url: "https://termgr.homeinfo.de/deployment-history/" + _id,
         type: "GET",
@@ -569,16 +602,14 @@ function listDeployments(deployments = null) {
                     if (selection.isConfirmed === true) {
                         setDeployments(id).then(()=>{
                             $("#deploymentsDropdown").removeClass("show");
-                            getSystemChecks().then(systemCheckCompleted);
-                            getDeploymentHistory().then(setHistory, denyHistory);
+                            Promise.all(getListOfSystemChecks()).then(systemCheckCompleted);
                         });
                     }
                 });
             } else {
                 setDeployments(id).then(()=>{
                     $("#deploymentsDropdown").removeClass("show");
-                    getSystemChecks().then(systemCheckCompleted);
-                    getDeploymentHistory().then(setHistory, denyHistory);
+                    Promise.all(getListOfSystemChecks()).then(systemCheckCompleted);
                 });  
             }
             e.preventDefault();

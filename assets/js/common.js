@@ -199,7 +199,9 @@ function getApplicationVersion() {
 			url: "https://sysmon.homeinfo.de/current-application-version/html",
 			type: "GET",
 			cache: false,
-			success: function (data) {	},
+			success: function (data) {
+				localStorage.setItem("servicetool.applicationversion", JSON.stringify(data));
+			},
 			error: function (msg) {
 				setErrorMessage(msg, "Abrufen der Applicationsversion");
 			}
@@ -248,6 +250,8 @@ function setErrorMessage(msg, fromFunction) {
 			message = "Das System ist offline."
 		else if (msg.responseText.indexOf("No such system.") !== -1)
 			message = "Das System existiert nicht."
+		else if (msg.responseText.indexOf("Sysinfo unsupported on this system.") !== -1)
+			message = "Das System wird nicht unterstützt."
 		Swal.fire({
 			title: 'Das hat nicht geklappt.',
 			text: message,
