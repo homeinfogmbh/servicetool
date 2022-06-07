@@ -248,7 +248,6 @@ function setErrorMessage(msg, fromFunction) {
 			message = "Das System ist offline."
 		else if (msg.responseText.indexOf("No such system.") !== -1)
 			message = "Das System existiert nicht."
-			console.log("kk")
 		Swal.fire({
 			title: 'Das hat nicht geklappt.',
 			text: message,
@@ -258,7 +257,7 @@ function setErrorMessage(msg, fromFunction) {
 			confirmButtonText: 'O.K.',
 			buttonsStyling: true
 		});
-	} catch(error) {console.log(error);	}
+	} catch(error) {	}
 	try {
 		console.log(msg);
 		if (_showErrorMessages) {

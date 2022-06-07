@@ -163,7 +163,8 @@ $(document).ready(function() {
             $(this).attr("title", "Ist verbaut");
 	}); 
     $('.btn_blackmodus').click(function(e) {
-        setApplicationState().then(()=>{$("#pageloader").hide()});
+        localStorage.removeItem("servicetool.systemchecks");
+        setApplicationState().then(checkSystem).then(()=>{$("#pageloader").hide()});
         if ($('input[name=Schwarzbildmodus]:checked').val() === 'on')
             $(this).attr("title", "Ist nicht im Schwarzbildmodus");
         else
