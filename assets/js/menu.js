@@ -104,7 +104,7 @@ $(document).ready(function() {
             try {
                 body += getParamsForEmail();
             } catch(err) {  }
-            window.location.href = "mailto:r.haupt@homeinfo.de?subject=Supportanfrage Servicetool " + date.getDate() + "." + date.getMonth() + "." + date.getFullYear() + "&body=" + body;
+            window.location.href = "mailto:r.haupt@homeinfo.de,p.gunkel@homeinfo.de?subject=Supportanfrage Servicetool " + date.getDate() + "." + date.getMonth() + "." + date.getFullYear() + "&body=" + body;
         });
 		e.preventDefault();
 	}); 
