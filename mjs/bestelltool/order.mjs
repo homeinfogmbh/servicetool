@@ -87,6 +87,7 @@ function getNewDeployment () {
         houseNumber: $('#houseNumber').val() || null,
         zipCode: $('#zipCode').val() || null,
         city: $('#city').val() || null,
+        annotation: $('#annotation').val() || null,
         connection: getSelectedConnection()
     };
 }
