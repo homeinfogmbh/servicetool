@@ -245,13 +245,13 @@ function getDeployments() {
 }
 function setErrorMessage(msg, fromFunction) {
 	try {
+		if (msg.responseText.indexOf("Sysinfo unsupported on this system.") !== -1)
+			throw true;
 		let message = "Leider ist ein Fehler aufgetreten";
 		if (msg.responseText.indexOf("System is offline.") !== -1)
 			message = "Das System ist offline."
 		else if (msg.responseText.indexOf("No such system.") !== -1)
 			message = "Das System existiert nicht."
-		else if (msg.responseText.indexOf("Sysinfo unsupported on this system.") !== -1)
-			message = "Das System wird nicht unterstützt."
 		Swal.fire({
 			title: 'Das hat nicht geklappt.',
 			text: message,

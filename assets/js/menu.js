@@ -84,8 +84,8 @@ $(document).ready(function() {
                 window.location.href = "display-details.html?id=" + $(this).val();
             return false;
         }
-        if (isNaN(parseInt(e.key)))
-            e.preventDefault();
+        //if (isNaN(parseInt(e.key)))
+            //e.preventDefault();
     });
 
     if (window.location.pathname.indexOf("dashboard") != -1)
