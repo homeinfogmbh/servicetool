@@ -84,8 +84,8 @@ $(document).ready(function() {
                 window.location.href = "display-details.html?id=" + $(this).val();
             return false;
         }
-        if (isNaN(parseInt(e.key)))
-            e.preventDefault();
+        //if (isNaN(parseInt(e.key)))
+            //e.preventDefault();
     });
 
     if (window.location.pathname.indexOf("dashboard") != -1)
@@ -99,12 +99,11 @@ $(document).ready(function() {
         //$("#pageloader").show();
         let date = new Date();
         getUser().then((user)=>{
-            console.log(user)
             let body = "USER: " + user.fullName + " (" + user.email + ") LINK: " + window.location.href + (window.location.href.indexOf("?") === -1 ?"?" :"%26");
             try {
                 body += getParamsForEmail();
             } catch(err) {  }
-            window.location.href = "mailto:r.haupt@homeinfo.de?subject=Supportanfrage Servicetool " + date.getDate() + "." + date.getMonth() + "." + date.getFullYear() + "&body=" + body;
+            window.location.href = "mailto:r.haupt@homeinfo.de,p.gunkel@homeinfo.de?subject=Supportanfrage Servicetool " + date.getDate() + "." + date.getMonth() + "." + date.getFullYear() + "&body=" + body;
         });
 		e.preventDefault();
 	}); 

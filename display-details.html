@@ -36,7 +36,6 @@
 			<div class="menu_sidebar"></div>
 			<div class="dashboard_containers">
 				<div class="dashboard_content">
-					<div id="message"></div>
 					<div class="dashboardTopbar">
 						<div class="mobileLogo">
 							<a href="dashboard.html"><img src="assets/img/sideLogo.png" alt="Logo"></a>
@@ -139,7 +138,7 @@
 												</tr>
 												<tr>
 													<td>Design</td>
-													<td id="applicationDesign">Wird geladen...</td>
+													<td id="applicationDesign"><i>Wird geladen...</i></td>
 												</tr>
 												<tr>
 													<td>Deployment-ID</td>
@@ -230,17 +229,18 @@
 											<table class="table border_none">
 												<tbody id="history">
 													<tr>
-														<td>Daten werden geladen...</td>
+														<td><i>Daten werden geladen...</i></td>
 													</tr>
 												</tbody>
 											</table>
+											<div id="system-pages" class="text-center"></div>
 										</div> <!-- /.LogfilesBox -->
 										<div class="LogfilesBox">
 											<h4 class="bg_title">Error Log</h4>
 											<table class="table border_none">
 												<tbody id="errorlog">
 													<tr>
-														<td>Einträge werden geladen...</td>
+														<td><i>Einträge werden geladen...</i></td>
 													</tr>
 												</tbody>
 											</table>
@@ -278,10 +278,10 @@
 													</td>
 												</tr>
 												<tr>
-													<td>Schwarzbildmodus</td>
+													<td>Schwarzbildmodus <i id="unknownblackmodus" title="Modus unbekannt">(Wird geladen...)</i></td>
 													<td>
 														<input type="checkbox" style="display:none;" name="Schwarzbildmodus" id="Schwarzbildmodus">
-														<label for="Schwarzbildmodus"><span id="unknownblackmodus" title="Modus unbekannt">Wird geladen...</span><span class="btn_blackmodus checkboxStyle whiteCheckbox" style="display:none"></span></label>
+														<label for="Schwarzbildmodus"><span class="btn_blackmodus checkboxStyle whiteCheckbox"></span></label>
 													</td>
 												</tr>
 												<tr>

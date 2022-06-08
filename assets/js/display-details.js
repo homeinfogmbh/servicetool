@@ -3,28 +3,34 @@ var _id;
 var _display = null;
 var _deployments = null;
 var _applicationVersion = null;
+var _deploymentHistory = null;
 $(document).ready(function() {
     _id = getURLParameterByName('id');
-    getApplicationVersion().then(getSystemChecks).then(systemCheckCompleted, ()=>{
-        $("#message").html('<font class="errormsg">System nicht gefunden.</font>');
+    Promise.all(getListOfSystemChecks()).then((data)=> {
+        systemCheckCompleted(data);
+        getSystemInfo().then((data)=>{
+            try { $("#applicationDesign").text('"' + data.presentation.configuration.design.toUpperCase() + '"'); } catch(error) { $("#applicationDesign").text("-"); }
+            $("#unknownblackmodus").hide();
+            if (data.application.status.running.length === 0) {
+                $("#Schwarzbildmodus").prop("checked", true);
+                $(".btn_blackmodus").attr("title", "Ist im Schwarzbildmodus");
+            } else if (data.application.status.running[0] === "html" || data.application.status.running[0] === "air") {
+                $(".btn_blackmodus").attr("title", "Ist nicht im Schwarzbildmodus");
+                $("#Schwarzbildmodus").prop("checked", false);
+            }
+        }, ()=>{
+            try {
+                if (_display.checkResults[0].applicationState === "html" || _display.checkResults[0].applicationState === "air") {
+                    $(".btn_blackmodus").attr("title", "Ist nicht im Schwarzbildmodus");
+                    $("#Schwarzbildmodus").prop("checked", false);
+                }
+            } catch(error) {    }
+            $("#applicationDesign").text("-");
+            $("#unknownblackmodus").text("unbekannt");
+        });
+    }, ()=>{
+        //$("#message").html('<font class="errormsg">System nicht gefunden.</font>');
         $("#errorlog").html("<tr><td>Keine Einträge geladen</td></tr>");
-    });
-    getDeploymentHistory().then(setHistory, denyHistory);
-    getSystemInfo().then((data)=>{
-        try { $("#applicationDesign").text('"' + data.presentation.configuration.design.toUpperCase() + '"'); } catch(error) { $("#applicationDesign").text("-"); }
-        $(".btn_blackmodus").show();
-        $("#unknownblackmodus").hide();
-        if (data.application.status.running.length === 0) {
-            $("#Schwarzbildmodus").prop("checked", true);
-            $(".btn_blackmodus").attr("title", "Ist im Schwarzbildmodus");
-        } else if (data.application.status.running[0] === "html" || data.application.status.running[0] === "air") {
-            $(".btn_blackmodus").attr("title", "Ist nicht im Schwarzbildmodus");
-            $("#Schwarzbildmodus").prop("checked", false);
-        } else {
-            $(".btn_blackmodus").hide();
-            $("#unknownblackmodus").text("-");
-            $("#unknownblackmodus").show();
-        }
     });
     $('.btn_wireguard').click(function(e) {
         if (_display.hasOwnProperty("pubkey"))
@@ -62,13 +68,13 @@ $(document).ready(function() {
             if (address[0].trim() === "" && address[1].trim() === "" && address[2].trim() === "" && address[3].trim() === "") {
                 address = null;
             } else if (address[0].trim() === "" || address[1].trim() === "" || address[2].trim() === "" || address[3].trim() === "") {
-                $("#message").html('<font class="errormsg">Bitte geben Sie die Adresse vollständig an.</font>');
+                //$("#message").html('<font class="errormsg">Bitte geben Sie die Adresse vollständig an.</font>');
                 return null;
             }
             setPublicTransport(address).then(() => {
                 localStorage.removeItem("servicetool.systemchecks");
                 if (address === null) {
-                    address = _display.deployment.hasOwnProperty("address") ?_display.deployment.address.street + " " + _display.deployment.address.houseNumber + ", " + _display.deployment.address.zipCode + " " + _display.deployment.address.city :'<i>Keine Adresse angegeben</i>';
+                    address = _display.deployment.hasOwnProperty("address") && _display.deployment.address.street !== "Keine Adresse" ?_display.deployment.address.street + " " + _display.deployment.address.houseNumber + ", " + _display.deployment.address.zipCode + " " + _display.deployment.address.city :'<i>Keine Adresse angegeben</i>';
                     $("#publicTransportAddress").html('<span title="' + address + '">' + address.substring(0, 20) + '...</span>');
                 } else
                     $("#publicTransportAddress").html('<span title="' + address[0] + " " + address[1] + ", " + address[2] + " " + address[3] + '">' + (address[0] + " " + address[1] + ", " + address[2] + " " + address[3]).substring(0, 20) + '...</span>');
@@ -131,8 +137,8 @@ $(document).ready(function() {
             }).then(function(selection) {
                 if (selection.isConfirmed === true)
                     setDeployments(null).then(()=>{
-                        getSystemChecks().then(systemCheckCompleted);
-                        getDeploymentHistory().then(setHistory, denyHistory);
+                        _systemChecksPromise = []; // in common
+                        Promise.all(getListOfSystemChecks()).then(systemCheckCompleted);
                     });
             });
         }
@@ -163,7 +169,8 @@ $(document).ready(function() {
             $(this).attr("title", "Ist verbaut");
 	}); 
     $('.btn_blackmodus').click(function(e) {
-        setApplicationState().then(()=>{$("#pageloader").hide()});
+        localStorage.removeItem("servicetool.systemchecks");
+        setApplicationState().then(checkSystem).then(()=>{$("#pageloader").hide()});
         if ($('input[name=Schwarzbildmodus]:checked').val() === 'on')
             $(this).attr("title", "Ist nicht im Schwarzbildmodus");
         else
@@ -207,9 +214,10 @@ $(document).ready(function() {
 	});
 });
 
+/*
 function getSystemChecks(data = null) {
     if (data !== null)
-        _applicationVersion = data;
+        _applicationVersion = data[1];
     return $.ajax({
         url: "https://sysmon.homeinfo.de/checks/" + _id,
         type: "GET",
@@ -219,18 +227,27 @@ function getSystemChecks(data = null) {
             setErrorMessage(msg, "Laden der Checklist");
         }
     });
-    
 }
+*/
 
 function systemCheckCompleted(data) {
-    if ($.isEmptyObject(data))
+    _applicationVersion = data[1];
+    let foundsystem = {};
+    for (let system in data[0]) {
+        if (data[0][system].id == _id) {
+            foundsystem = data[0][system];
+            break;
+        }
+    }
+    if ($.isEmptyObject(foundsystem))
         getSystem().then(setDetails);
     else
-        setDetails(data);
+        setDetails(foundsystem);
+    getDeploymentHistory().then((data)=>setHistory(data), denyHistory);
 }
 function setDetails(data) {
     _display = data.hasOwnProperty(_id) ?data[_id] :data;
-    let address = _display.hasOwnProperty("deployment") ?_display.deployment.hasOwnProperty("address") ?_display.deployment.address.street + " " + _display.deployment.address.houseNumber + ", " + _display.deployment.address.zipCode + " " + _display.deployment.address.city :'<i>Keine Adresse angegeben</i>' :'<i>Keinem Standort zugewiesen</i>';
+    let address = _display.hasOwnProperty("deployment") ?_display.deployment.hasOwnProperty("address") && _display.deployment.address.street !== "Keine Adresse" ?_display.deployment.address.street + " " + _display.deployment.address.houseNumber + ", " + _display.deployment.address.zipCode + " " + _display.deployment.address.city :'<i>Keine Adresse angegeben</i>' :'<i>Keinem Standort zugewiesen</i>';
     $("#displaytitle").html("Display: " + address);
     try {
         $('#metadescription').attr("content", address);
@@ -362,10 +379,6 @@ function setDetails(data) {
     logs = logs === "" ?"<tr><td>Keine Einträge vorhanden</td></tr>" :logs;
     $("#errorlog").html(logs);
 
-    // Systemchecks
-    if (_display.hasOwnProperty("checkResults") && _display.checkResults.length > 0)
-        setChecks(_display.checkResults[0]);
-
     // Funktionen
     if (_display.fitted) {
         $("#Verbaut").prop("checked", true);
@@ -382,19 +395,32 @@ function setDetails(data) {
         $("#Testgerät").prop("checked", false);
         $(".btn_testsystem").attr("title", "Ist kein Testsystem");
     }
-    if (!_display.hasOwnProperty("deployment")) {
+    if (_display.hasOwnProperty("deployment")) {
+        $(".btn_testsystem").css("opacity", "1");
+        $(".btn_testsystem").addClass("pointer");
+        $(".btn_testsystem").attr("title", "Keine Zuordnung vorhanden");
+        $(".btn_sync").css("opacity", "1");
+        $(".btn_sync").addClass("pointer");
+        $(".btn_sync").attr("title", "Keine Zuordnung vorhanden");
+        $(".btn_publictransport").css("opacity", "1");
+        $(".btn_publictransport").addClass("pointer");
+        $(".btn_publictransport").attr("title", "Keine Zuordnung vorhanden");
+        $(".btn_deleteDeployment").css("opacity", "1");
+        $(".btn_deleteDeployment").addClass("pointer");
+        $(".btn_deleteDeployment").attr("title", "Keine Zuordnung vorhanden");        
+    } else {
         $(".btn_testsystem").css("opacity", "0.3");
         $(".btn_testsystem").removeClass("pointer");
-        $(".btn_testsystem").attr("title", "Keine Zuordnung vorhanden");
+        $(".btn_testsystem").attr("title", "");
         $(".btn_sync").css("opacity", "0.3");
         $(".btn_sync").removeClass("pointer");
-        $(".btn_sync").attr("title", "Keine Zuordnung vorhanden");
+        $(".btn_sync").attr("title", "");
         $(".btn_publictransport").css("opacity", "0.3");
         $(".btn_publictransport").removeClass("pointer");
-        $(".btn_publictransport").attr("title", "Keine Zuordnung vorhanden");
+        $(".btn_publictransport").attr("title", "");
         $(".btn_deleteDeployment").css("opacity", "0.3");
         $(".btn_deleteDeployment").removeClass("pointer");
-        $(".btn_deleteDeployment").attr("title", "Keine Zuordnung vorhanden");
+        $(".btn_deleteDeployment").attr("title", "Deployment lösen");
     }
 
     // Systemchecks über 30 Tage
@@ -402,6 +428,11 @@ function setDetails(data) {
     let dateDay;
     let dateFound;
     let timestamp;
+    $("#thirtysystemcheck").html('');
+    $("#thirtyoffline").html('');
+    $("#thirtyicmp").html('');
+    $("#thirtyssh").html('');
+    $("#thirtyhttp").html('');
     for (let day = 0; day < 30; day++) {
         dateFound = false;
         dateDay = (date.getDate() < 10 ?"0" + date.getDate(): date.getDate()) + "." + (date.getMonth() < 9 ?"0" + (date.getMonth()+1) :date.getMonth()+1) + "." + date.getFullYear();
@@ -432,7 +463,10 @@ function setDetails(data) {
         $(".thirtyhttp").show();
     else
         $(".thirtyhttp").hide();
-    $("#pageloader").hide();
+        
+    // Systemchecks
+    if (_display.hasOwnProperty("checkResults") && _display.checkResults.length > 0)
+        setChecks(_display.checkResults[0]);
 }
 
 function setChecks(lastCheck) {
@@ -468,9 +502,15 @@ function setChecks(lastCheck) {
     $("#pageloader").hide();
 }
 
-function setHistory(history) {
+function setHistory(history, page = 1) {
+    if (_deploymentHistory === null) {
+        _deploymentHistory = [];
+        const chunkSize = 10;
+        for (let i = 0; i < history.length; i += chunkSize)
+            _deploymentHistory.push(history.slice(i, i + chunkSize));
+    }
     let historyEntries = "";
-    for (let entry of history) {
+    for (let entry of _deploymentHistory[page-1]) {
         historyEntries += "<tr>" +
             "<td>" + (entry.account.hasOwnProperty("fullName") ?entry.account.fullName :entry.account.name) + "</td>" +
             "<td>Zuordnung: " + (entry.oldDeployment === null ?"keine" :entry.oldDeployment) + "</td>" + // "k.Z." -> " "keine Zuordnung"
@@ -480,12 +520,28 @@ function setHistory(history) {
     historyEntries = historyEntries === "" ?"<tr><td>Keine Einträge vorhanden.</td></tr>" :historyEntries;
     $("#history").html(historyEntries);
 
+    $("#system-pages").html('<span class="previousPage pointer" data-page="' + page + '"><u><<</u></span> ' + page + ' / ' + _deploymentHistory.length + ' <span class="nextPage pointer" data-page="' + page + '"><u>>></u>');
+    $('.nextPage').click(function(e) {
+        if (_deploymentHistory !== null) {
+            if (parseInt($(this).data("page"))+1 > _deploymentHistory.length)
+                setHistory(null, 1);
+            else             
+                setHistory(null, parseInt($(this).data("page")) + 1);
+        }
+    });
+    $('.previousPage').click(function(e) {
+        if (_deploymentHistory !== null) {
+            if (parseInt($(this).data("page"))-1 < 1)
+                setHistory(null, _deploymentHistory.length);
+            else             
+                setHistory(null, parseInt($(this).data("page")) - 1);
+        }
+    });
 }
 function denyHistory() {
     $("#history").html("<tr><td>History nicht vorhanden</td></tr>");
 }
 function getDeploymentHistory() {
-    $("#pageloader").show();
     return $.ajax({
         url: "https://termgr.homeinfo.de/deployment-history/" + _id,
         type: "GET",
@@ -539,7 +595,7 @@ function listDeployments(deployments = null) {
             //return a.systems.length > 0 ?1 :b.systems.length > 0 ?-1 :0;
             return compare(a.address.street, b.address.street);
         });
-    }10
+    };
     if (_deployments !== null) {
         let deploymentList = "";
         let address;
@@ -566,19 +622,15 @@ function listDeployments(deployments = null) {
                     buttonsStyling: true
                 }).then(function(selection) {
                     if (selection.isConfirmed === true) {
-                        setDeployments(id).then(()=>{
-                            $("#deploymentsDropdown").removeClass("show");
-                            getSystemChecks().then(systemCheckCompleted);
-                            getDeploymentHistory().then(setHistory, denyHistory);
-                        });
+                        $("#deploymentsDropdown").removeClass("show");
+                        _systemChecksPromise = []; // in common
+                        setDeployments(id).then(()=>{Promise.all(getListOfSystemChecks()).then(systemCheckCompleted);});
                     }
                 });
             } else {
-                setDeployments(id).then(()=>{
-                    $("#deploymentsDropdown").removeClass("show");
-                    getSystemChecks().then(systemCheckCompleted);
-                    getDeploymentHistory().then(setHistory, denyHistory);
-                });  
+                $("#deploymentsDropdown").removeClass("show");
+                _systemChecksPromise = []; // in common
+                setDeployments(id).then(()=>{Promise.all(getListOfSystemChecks()).then(systemCheckCompleted);});  
             }
             e.preventDefault();
         });

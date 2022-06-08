@@ -180,7 +180,7 @@ function setCheckList(list, applicationVersion) {
 			_commonChecks.notfitted.systems.push(check);
 		if (check.hasOwnProperty("deployment") && check.deployment.testing)
 			_commonChecks.testsystem.systems.push(check);
-		if (check.hasOwnProperty("applicationVersion") && check.applicationVersion !== applicationVersion)
+		if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("applicationVersion") && check.checkResults[0].applicationVersion !== applicationVersion)
 			_commonChecks.oldApplication.systems.push(check);
 		if (!check.hasOwnProperty("checkResults") || (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && !isOnDate(check.checkResults[0].timestamp, 24)))
 			_commonChecks.systemchecksFailed.systems.push(check);
@@ -199,7 +199,9 @@ function getApplicationVersion() {
 			url: "https://sysmon.homeinfo.de/current-application-version/html",
 			type: "GET",
 			cache: false,
-			success: function (data) {	},
+			success: function (data) {
+				localStorage.setItem("servicetool.applicationversion", JSON.stringify(data));
+			},
 			error: function (msg) {
 				setErrorMessage(msg, "Abrufen der Applicationsversion");
 			}
@@ -243,12 +245,13 @@ function getDeployments() {
 }
 function setErrorMessage(msg, fromFunction) {
 	try {
+		if (msg.responseText.indexOf("Sysinfo unsupported on this system.") !== -1)
+			throw true;
 		let message = "Leider ist ein Fehler aufgetreten";
 		if (msg.responseText.indexOf("System is offline.") !== -1)
 			message = "Das System ist offline."
 		else if (msg.responseText.indexOf("No such system.") !== -1)
 			message = "Das System existiert nicht."
-			console.log("kk")
 		Swal.fire({
 			title: 'Das hat nicht geklappt.',
 			text: message,
@@ -258,7 +261,7 @@ function setErrorMessage(msg, fromFunction) {
 			confirmButtonText: 'O.K.',
 			buttonsStyling: true
 		});
-	} catch(error) {console.log(error);	}
+	} catch(error) {	}
 	try {
 		console.log(msg);
 		if (_showErrorMessages) {
