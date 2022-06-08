@@ -180,7 +180,7 @@ function setCheckList(list, applicationVersion) {
 			_commonChecks.notfitted.systems.push(check);
 		if (check.hasOwnProperty("deployment") && check.deployment.testing)
 			_commonChecks.testsystem.systems.push(check);
-		if (check.hasOwnProperty("applicationVersion") && check.applicationVersion !== applicationVersion)
+		if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("applicationVersion") && check.checkResults[0].applicationVersion !== applicationVersion)
 			_commonChecks.oldApplication.systems.push(check);
 		if (!check.hasOwnProperty("checkResults") || (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && !isOnDate(check.checkResults[0].timestamp, 24)))
 			_commonChecks.systemchecksFailed.systems.push(check);
