@@ -10,7 +10,7 @@ var _commonChecks = {	"offline":{"title":"Offline", "text":"Liste der Geräte di
  	"notfitted":{"title":"Nicht verbaute Displays", "text":"Liste der Geräte die nicht verbaut sind", "systems":[], "show":true},
 	"testsystem":{"title":"Testgeräte", "text":"Liste der Testgeräte", "systems":[], "show":true},
 	"oldApplication":{"title":"Alte Applicationen", "text":"Liste der Geräte auf denen eine alte Version der Applikation läuft", "systems":[], "show":true},
-	"systemchecksFailed":{"title":"Systemchecks fehlgeschlagen", "text":"Liste der Geräte die nicht gecheckt werden konnten", "systems":[], "show":true},
+	"systemchecksFailed":{"title":"Systemchecks fehlgeschlagen", "text":"Liste der Geräte die länger als 48h nicht überprüft werden konnten", "systems":[], "show":true},
 	"air":{"title":"AIR Systeme", "text":"Liste der Geräte die noch die AIR-Application laufen haben", "systems":[], "show":true},
 	"system":{"title":"Displays", "text":"Liste aller Displays", "systems":[], "show":false}
 }; // -> also setCheckList() for filter
@@ -104,9 +104,6 @@ function deleteSession() {
 }
 
 function getUser() {
-	// List all keys:values
-	//for (let i = 0, len = localStorage.length; i < len; ++i )
-		//console.log(localStorage.key(i) + ": " + localStorage.getItem(localStorage.key(i)));
 	if (localStorage.getItem("servicetool.user") !== null) {
 		return Promise.resolve(JSON.parse(localStorage.getItem("servicetool.user")));
 	} else {
@@ -182,7 +179,7 @@ function setCheckList(list, applicationVersion) {
 			_commonChecks.testsystem.systems.push(check);
 		if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("applicationVersion") && check.checkResults[0].applicationVersion !== applicationVersion)
 			_commonChecks.oldApplication.systems.push(check);
-		if (!check.hasOwnProperty("checkResults") || (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && !isOnDate(check.checkResults[0].timestamp, 24)))
+		if (!check.hasOwnProperty("checkResults") || (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && !isOnDate(check.checkResults[0].timestamp, 48)))
 			_commonChecks.systemchecksFailed.systems.push(check);
 		if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState === "air")
 			_commonChecks.air.systems.push(check);
