@@ -97,25 +97,7 @@ function getNewDeployment () {
     Validate a JSON object representing a new deployment.
 */
 function validateNewDeployment (deployment) {
-    const issues = [];
-
-    if (deployment.customer == null || deployment.customer < 1)
-        issues.push('Kein Kunde ausgewählt.');
-
-    if (!deployment.street)
-        issues.push('Keine Straße angegeben.');
-
-    if (!deployment.houseNumber)
-        issues.push('Keine Hausnummer angegeben.');
-
-    if (!deployment.zipCode)
-        issues.push('Keine PLZ angegeben.');
-
-    if (!deployment.city)
-        issues.push('Kein Ort angegeben.');
-
-    if (!deployment.connection)
-        issues.push('Keine Netzanbindung ausgewählt.');
+    const issues = Array.from(issues(deployment));
 
     if (issues.length == 0)
         return true;
@@ -128,6 +110,30 @@ function validateNewDeployment (deployment) {
         confirmButtonColor: '#0074A5'
     })
     return false;
+}
+
+
+/*
+    Yield issues with the new deployment data.
+*/
+function * issues (deployment) {
+    if (deployment.customer == null || deployment.customer < 1)
+        yield 'Kein Kunde ausgewählt.';
+
+    if (!deployment.street)
+        yield 'Keine Straße angegeben.';
+
+    if (!deployment.houseNumber)
+        yield 'Keine Hausnummer angegeben.';
+
+    if (!deployment.zipCode)
+        yield 'Keine PLZ angegeben.';
+
+    if (!deployment.city)
+        yield 'Kein Ort angegeben.';
+
+    if (!deployment.connection)
+        yield 'Keine Netzanbindung ausgewählt.';
 }
 
 
