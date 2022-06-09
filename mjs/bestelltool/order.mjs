@@ -97,7 +97,7 @@ function getNewDeployment () {
     Validate a JSON object representing a new deployment.
 */
 function validateNewDeployment (deployment) {
-    const issues = Array.from(issues(deployment));
+    const issues = Array.from(listIssues(deployment));
 
     if (issues.length == 0)
         return true;
@@ -116,7 +116,7 @@ function validateNewDeployment (deployment) {
 /*
     Yield issues with the new deployment data.
 */
-function * issues (deployment) {
+function * listIssues (deployment) {
     if (deployment.customer == null || deployment.customer < 1)
         yield 'Kein Kunde ausgewählt.';
 
