@@ -42,7 +42,7 @@ function setChecks(data) {
     // Widgets
     let errorsDOM = "";
     for (let item in _commonChecks) {
-        if (_commonChecks[item].systems.length !== 0 && _commonChecks[item].show) {
+        if (_commonChecks[item].show && _commonChecks[item].systems.length !== 0) {
             errorsDOM += '<div class="col btn_list pointer" data-id="' + item + '">' +
                 '<div class="number_box">' +
                     '<span class="theNumber">' + _commonChecks[item].systems.length + '</span>' +

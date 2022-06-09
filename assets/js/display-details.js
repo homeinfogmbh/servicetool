@@ -8,6 +8,8 @@ $(document).ready(function() {
     _id = getURLParameterByName('id');
     Promise.all(getListOfSystemChecks()).then((data)=> {
         systemCheckCompleted(data);
+        getDeploymentHistory().then((data)=>setHistory(data), denyHistory);
+        getSystemChecks().then(setThirtyDays);
         getSystemInfo().then((data)=>{
             try { $("#applicationDesign").text('"' + data.presentation.configuration.design.toUpperCase() + '"'); } catch(error) { $("#applicationDesign").text("-"); }
             $("#unknownblackmodus").hide();
@@ -26,7 +28,7 @@ $(document).ready(function() {
                 }
             } catch(error) {    }
             $("#applicationDesign").text("-");
-            $("#unknownblackmodus").text("unbekannt");
+            $("#unknownblackmodus").text("(Status: UNBEKANNT)");
         });
     }, ()=>{
         //$("#message").html('<font class="errormsg">System nicht gefunden.</font>');
@@ -214,10 +216,8 @@ $(document).ready(function() {
 	});
 });
 
-/*
-function getSystemChecks(data = null) {
-    if (data !== null)
-        _applicationVersion = data[1];
+
+function getSystemChecks() {
     return $.ajax({
         url: "https://sysmon.homeinfo.de/checks/" + _id,
         type: "GET",
@@ -228,7 +228,7 @@ function getSystemChecks(data = null) {
         }
     });
 }
-*/
+
 
 function systemCheckCompleted(data) {
     _applicationVersion = data[1];
@@ -243,7 +243,6 @@ function systemCheckCompleted(data) {
         getSystem().then(setDetails);
     else
         setDetails(foundsystem);
-    getDeploymentHistory().then((data)=>setHistory(data), denyHistory);
 }
 function setDetails(data) {
     _display = data.hasOwnProperty(_id) ?data[_id] :data;
@@ -422,47 +421,6 @@ function setDetails(data) {
         $(".btn_deleteDeployment").removeClass("pointer");
         $(".btn_deleteDeployment").attr("title", "Deployment lösen");
     }
-
-    // Systemchecks über 30 Tage
-    let date = new Date();
-    let dateDay;
-    let dateFound;
-    let timestamp;
-    $("#thirtysystemcheck").html('');
-    $("#thirtyoffline").html('');
-    $("#thirtyicmp").html('');
-    $("#thirtyssh").html('');
-    $("#thirtyhttp").html('');
-    for (let day = 0; day < 30; day++) {
-        dateFound = false;
-        dateDay = (date.getDate() < 10 ?"0" + date.getDate(): date.getDate()) + "." + (date.getMonth() < 9 ?"0" + (date.getMonth()+1) :date.getMonth()+1) + "." + date.getFullYear();
-        if (_display.hasOwnProperty("checkResults") && _display.checkResults.length > day) {
-            for (let log of _display.checkResults) {
-                timestamp = new Date(log.timestamp);
-                if (date.getFullYear() === timestamp.getFullYear() && date.getMonth() === timestamp.getMonth() && date.getDate() === timestamp.getDate()) {
-                    dateFound = true;
-                    $("#thirtysystemcheck").append('<li title="' + dateDay + '"></li>');
-                    $("#thirtyoffline").append(log.hasOwnProperty("offlineSince") || log.sshLogin !== "success" ?'<li title="' + dateDay + '" class="orangeSq"></li>' :'<li title="' + dateDay + '"></li>');
-                    $("#thirtyicmp").append(!log.icmpRequest ?'<li title="' + dateDay + '" class="orangeSq"></li>' :'<li title="' + dateDay + '"></li>');
-                    $("#thirtyssh").append(log.sshLogin === "failed" ?'<li title="' + dateDay + '" class="orangeSq"></li>' :'<li title="' + dateDay + '"></li>');
-                    $("#thirtyhttp").append(log.httpRequest === "failed" ?'<li title="' + dateDay + '" class="orangeSq"></li>' :'<li title="' + dateDay + '"></li>');
-                    break;
-                }
-            }
-        }
-        if (!dateFound) {
-            $("#thirtysystemcheck").append('<li title="' + dateDay + ': Kein Check durchgeführt" class="orangeSq"></li>');
-            $('#thirtyoffline').append('<li title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
-            $('#thirtyicmp').append('<li title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
-            $('#thirtyssh').append('<li title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
-            $('#thirtyhttp').append('<li title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
-        }
-        date.setDate(date.getDate()-1);
-    };
-    if (_display.hasOwnProperty("checkResults") && _display.checkResults.length > 0 && _display.checkResults[0].httpRequest !== "unsupported")
-        $(".thirtyhttp").show();
-    else
-        $(".thirtyhttp").hide();
         
     // Systemchecks
     if (_display.hasOwnProperty("checkResults") && _display.checkResults.length > 0)
@@ -510,16 +468,22 @@ function setHistory(history, page = 1) {
             _deploymentHistory.push(history.slice(i, i + chunkSize));
     }
     let historyEntries = "";
-    for (let entry of _deploymentHistory[page-1]) {
-        historyEntries += "<tr>" +
-            "<td>" + (entry.account.hasOwnProperty("fullName") ?entry.account.fullName :entry.account.name) + "</td>" +
-            "<td>Zuordnung: " + (entry.oldDeployment === null ?"keine" :entry.oldDeployment) + "</td>" + // "k.Z." -> " "keine Zuordnung"
-            "<td>" + formatDate(entry.timestamp) + " (" + entry.timestamp.substring(11, 16) + "Uhr)</td>" +
-        "</tr>";
+    if (_deploymentHistory.length > 0) {
+        for (let entry of _deploymentHistory[page-1]) {
+            historyEntries += "<tr>" +
+                "<td>" + (entry.account.hasOwnProperty("fullName") ?entry.account.fullName :entry.account.name) + "</td>" +
+                "<td>Zuordnung: " + (entry.oldDeployment === null ?"keine" :entry.oldDeployment) + "</td>" + // "k.Z." -> " "keine Zuordnung"
+                "<td>" + formatDate(entry.timestamp) + " (" + entry.timestamp.substring(11, 16) + "Uhr)</td>" +
+            "</tr>";
+        }
     }
     historyEntries = historyEntries === "" ?"<tr><td>Keine Einträge vorhanden.</td></tr>" :historyEntries;
     $("#history").html(historyEntries);
 
+    if (_deploymentHistory !== null && _deploymentHistory.length > 1)
+        $("#system-pages").show();
+    else
+        $("#system-pages").hide();
     $("#system-pages").html('<span class="previousPage pointer" data-page="' + page + '"><u><<</u></span> ' + page + ' / ' + _deploymentHistory.length + ' <span class="nextPage pointer" data-page="' + page + '"><u>>></u>');
     $('.nextPage').click(function(e) {
         if (_deploymentHistory !== null) {
@@ -553,6 +517,54 @@ function getDeploymentHistory() {
         }
     });
 }
+
+// Systemchecks über 30 Tage
+function setThirtyDays(data) {  
+    _display = data[_id];
+    let date = new Date();
+    let dateDay;
+    let dateFound;
+    let timestamp;
+    $("#thirtysystemcheck").html('');
+    $("#thirtyoffline").html('');
+    $("#thirtyicmp").html('');
+    $("#thirtyssh").html('');
+    $("#thirtyhttp").html('');
+    for (let day = 0; day < 30; day++) {
+        dateFound = false;
+        dateDay = (date.getDate() < 10 ?"0" + date.getDate(): date.getDate()) + "." + (date.getMonth() < 9 ?"0" + (date.getMonth()+1) :date.getMonth()+1) + "." + date.getFullYear();
+        if (_display.hasOwnProperty("checkResults") && _display.checkResults.length > day) {
+            for (let log of _display.checkResults) {
+                timestamp = new Date(log.timestamp);
+                if (date.getFullYear() === timestamp.getFullYear() && date.getMonth() === timestamp.getMonth() && date.getDate() === timestamp.getDate()) {
+                    dateFound = true;
+                    $("#thirtysystemcheck").append('<li title="' + dateDay + '"></li>');
+                    $("#thirtyoffline").append(log.hasOwnProperty("offlineSince") || log.sshLogin !== "success" ?'<li title="' + dateDay + '" class="orangeSq"></li>' :'<li title="' + dateDay + '"></li>');
+                    $("#thirtyicmp").append(!log.icmpRequest ?'<li title="' + dateDay + '" class="orangeSq"></li>' :'<li title="' + dateDay + '"></li>');
+                    $("#thirtyssh").append(log.sshLogin === "failed" ?'<li title="' + dateDay + '" class="orangeSq"></li>' :'<li title="' + dateDay + '"></li>');
+                    $("#thirtyhttp").append(log.httpRequest === "failed" ?'<li title="' + dateDay + '" class="orangeSq"></li>' :'<li title="' + dateDay + '"></li>');
+                    break;
+                }
+            }
+        }
+        if (!dateFound) {
+            $("#thirtysystemcheck").append('<li title="' + dateDay + ': Kein Check durchgeführt" class="orangeSq"></li>');
+            $('#thirtyoffline').append('<li title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
+            $('#thirtyicmp').append('<li title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
+            $('#thirtyssh').append('<li title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
+            $('#thirtyhttp').append('<li title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
+        }
+        date.setDate(date.getDate()-1);
+    };
+    if (_display.hasOwnProperty("checkResults") && _display.checkResults.length > 0 && _display.checkResults[0].httpRequest !== "unsupported")
+        $(".thirtyhttp").show();
+    else
+        $(".thirtyhttp").hide();
+        
+    $("#thirtyloading").hide();
+    $("#thirty").show();
+}
+
 function getSystem() {
     return $.ajax({
         url: "https://termgr.homeinfo.de/list/systems/" + _id,
