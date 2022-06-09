@@ -480,6 +480,10 @@ function setHistory(history, page = 1) {
     historyEntries = historyEntries === "" ?"<tr><td>Keine Einträge vorhanden.</td></tr>" :historyEntries;
     $("#history").html(historyEntries);
 
+    if (_deploymentHistory !== null && _deploymentHistory.length > 1)
+        $("#system-pages").show();
+    else
+        $("#system-pages").hide();
     $("#system-pages").html('<span class="previousPage pointer" data-page="' + page + '"><u><<</u></span> ' + page + ' / ' + _deploymentHistory.length + ' <span class="nextPage pointer" data-page="' + page + '"><u>>></u>');
     $('.nextPage').click(function(e) {
         if (_deploymentHistory !== null) {
