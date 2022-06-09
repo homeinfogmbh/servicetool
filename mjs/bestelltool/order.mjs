@@ -99,7 +99,7 @@ function getNewDeployment () {
 function validateNewDeployment (deployment) {
     const issues = [];
 
-    if (deployment.customer == null || newOrder.customer < 1)
+    if (deployment.customer == null || deployment.customer < 1)
         issues.push('Kein Kunde ausgewählt.');
 
     if (!deployment.street)
