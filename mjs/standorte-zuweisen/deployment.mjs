@@ -29,7 +29,7 @@ import { initSortElements, sortedDeployments } from './sorting.mjs';
 
 
 const DEPLOYMENT_DETAILS = 'bestelltool.html';
-const DISPLAY_DETAILS = 'display-details.html';
+const SYSTEM_DETAILS = 'display-details.html';
 const PAGE_SIZE = 15;
 let DEPLOYMENTS = [];
 let PAGER = null;
@@ -186,7 +186,7 @@ export function undeploy (event) {
 
 export function openSystemDetails (event) {
     window.location = (
-        DEPLOYMENT_DETAILS
+        SYSTEM_DETAILS
         + '?id='
         + event.target.getAttribute('data-id')
     );
@@ -195,7 +195,7 @@ export function openSystemDetails (event) {
 
 function openDeploymentDetails (event) {
     window.location = (
-        DISPLAY_DETAILS
+        DEPLOYMENT_DETAILS
         + '?id='
         + event.target.getAttribute('data-id')
     );
