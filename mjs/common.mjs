@@ -86,6 +86,18 @@ export function toHTMLList (items, type = 'ul') {
     Handle generic Ajax Query errors.
 */
 export function handleError (jqXHR, textStatus, errorThrown) {
+    if (jqXHR.responseJSON != null && jqXHR.responseJSON.message != null) {
+        switch (jqXHR.responseJSON.message) {
+        case 'Systems are already deployed here.':
+            Swal.fire({
+                icon: 'error',
+                title: 'Standort kann nicht gelöscht werden.',
+                text: 'An diesem Standort sind bereits Systeme verbaut.'
+            });
+            return;
+        }
+    }
+
     Swal.fire({
         icon: 'error',
         title: textStatus,
