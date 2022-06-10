@@ -209,7 +209,7 @@ function initButtons () {
     $('#Anlage').click(setChecklistItem('construction-site-preparation'));
     $('#Netzbindung').click(setChecklistItem('internet-connection'));
     $('#Bemerkung').keyup(delaySubmitAnnotation);
-    $('#delete').click(deleteDeployment)
+    $('#deleteDeployment').click(deleteDeployment)
 }
 
 
