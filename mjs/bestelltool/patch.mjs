@@ -1,5 +1,5 @@
 /*
-  checklist.mjs - Check list library.
+  patch.mjs - Patching of Deployments.
 
   (C) 2022 HOMEINFO - Digitale Informationssysteme GmbH
 
@@ -187,12 +187,29 @@ function delaySubmitAnnotation (event) {
 
 
 /*
+    Delete the current deployment.
+*/
+function deleteDeployment (event) {
+    return $.ajax({
+        url: getDeploymentURL(getCurrentId()),
+        method: 'DELETE',
+        contentType: 'application/json',
+        error: handleError,
+        xhrFields: {
+            withCredentials: true
+        }
+    });
+}
+
+
+/*
     Initialize the buttons on the page.
 */
 function initButtons () {
     $('#Anlage').click(setChecklistItem('construction-site-preparation'));
     $('#Netzbindung').click(setChecklistItem('internet-connection'));
     $('#Bemerkung').keyup(delaySubmitAnnotation);
+    $('#delete').click(deleteDeployment)
 }
 
 

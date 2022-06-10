@@ -21,8 +21,8 @@
 
 'use strict';
 
-import { getCurrentId, render as renderChecklist } from './checklist.mjs';
-import { render as renderNewOrder } from './order.mjs';
+import { getCurrentId, render as renderPatching } from './patch.mjs';
+import { render as renderCreation } from './create.mjs';
 
 
 /*
@@ -32,7 +32,7 @@ export function init () {
     const id = getCurrentId();
 
     if (id == null)
-        return renderNewOrder();
+        return renderCreation();
 
-    return renderChecklist(id);
+    return renderPatching(id);
 }
