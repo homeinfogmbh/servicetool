@@ -15,11 +15,11 @@ function setDeployments(deployments) {
                 '<td>' + (deployment.hasOwnProperty("created") ?formatDate(deployment.created) :"-") + '</td>' +
                 '<td>' +
                     '<input type="checkbox" style="display: none;" name="BaustelleOK' + deployment.id + '" id="BaustelleOK' + deployment.id + '" ' + (deployment.hasOwnProperty("constructionSitePreparationFeedback") ?' checked' :'') + '>' +
-                    '<label class="btn_change" data-id="' + deployment.id + '" data-kind="construction-site-preparation" for="BaustelleOK' + deployment.id + '"><span class="checkboxStyle"></span></label>' +
+                    '<label class="btn_change" ' + (deployment.hasOwnProperty("constructionSitePreparationFeedback") ?'title="Anlage Baustellenvorbeitung (OK)"' :'title="Anlage Baustellenvorbeitung (nicht OK)"') + ' data-id="' + deployment.id + '" data-kind="construction-site-preparation" for="BaustelleOK' + deployment.id + '"><span class="checkboxStyle"></span></label>' +
                 '</td>' +
                 '<td>' +
                     '<input type="checkbox" style="display: none;" name="NetzanbindungOK' + deployment.id + '" id="NetzanbindungOK' + deployment.id + '" ' + (deployment.hasOwnProperty("internetConnection") ?' checked' :'') + '>' +
-                    '<label class="btn_change" data-id="' + deployment.id + '" data-kind="internet-connection" for="NetzanbindungOK' + deployment.id + '"><span class="checkboxStyle"></span></label>' +
+                    '<label class="btn_change" ' + (deployment.hasOwnProperty("internetConnection") ?'title="Netzbindung (OK)"' :'title="Netzbindung (nicht OK)"') + ' data-id="' + deployment.id + '" data-kind="internet-connection" for="NetzanbindungOK' + deployment.id + '"><span class="checkboxStyle"></span></label>' +
                 '</td>' +
                 '<td><a href="bestelltool.html?id=' + deployment.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>' +
             '</tr>';
