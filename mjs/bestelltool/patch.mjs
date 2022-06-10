@@ -208,8 +208,8 @@ function deleteDeployment (event) {
 function initButtons () {
     $('#Anlage').click(setChecklistItem('construction-site-preparation'));
     $('#Netzbindung').click(setChecklistItem('internet-connection'));
+    $('#deleteDeployment').click(deleteDeployment);
     $('#Bemerkung').keyup(delaySubmitAnnotation);
-    $('#deleteDeployment').click(deleteDeployment)
 }
 
 
