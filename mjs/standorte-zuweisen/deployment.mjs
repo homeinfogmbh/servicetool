@@ -28,6 +28,7 @@ import { Address } from './address.mjs';
 import { initSortElements, sortedDeployments } from './sorting.mjs';
 
 
+const DEPLOYMENT_DETAILS = 'bestelltool.html';
 const DISPLAY_DETAILS = 'display-details.html';
 const PAGE_SIZE = 15;
 let DEPLOYMENTS = [];
@@ -106,6 +107,15 @@ export class Deployment {
         col5.classList.add('text-center');
         col5.textContent = this.systems.length;
         tr.appendChild(col5);
+        const col6 = document.createElement('td');
+        const img = document.createElement('img');
+        img.setAttribute('src', 'assets/img/circle-right.svg');
+        img.setAttribute('alt', 'huntinglink');
+        img.setAttribute('data-id', this.id);
+        img.setAttribute('style', 'cursor:pointer;padding-left:15px');
+        img.addEventListener('click', openDeploymentDetails);
+        col6.appendChild(img);
+        tr.appendChild(col6);
         return tr;
     }
 
@@ -175,6 +185,15 @@ export function undeploy (event) {
 
 
 export function openSystemDetails (event) {
+    window.location = (
+        DEPLOYMENT_DETAILS
+        + '?id='
+        + event.target.getAttribute('data-id')
+    );
+}
+
+
+function openDeploymentDetails (event) {
     window.location = (
         DISPLAY_DETAILS
         + '?id='
