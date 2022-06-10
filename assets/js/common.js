@@ -13,6 +13,7 @@ var _commonChecks = {"offline":{"title":"Offline", "text":"Liste der Geräte die
 	"oldApplication":{"title":"Alte Applicationen", "text":"Liste der Geräte auf denen eine alte Version der Applikation läuft", "systems":[], "show":true},
 	"systemchecksFailed":{"title":"Systemchecks fehlgeschlagen", "text":"Liste der Geräte die länger als 48h nicht überprüft werden konnten", "systems":[], "show":true},
 	"air":{"title":"AIR Systeme", "text":"Liste der Geräte die noch die AIR-Application laufen haben", "systems":[], "show":true},
+	"wireguard":{"title":"Kein Wireguard", "text":"Liste aller Systeme ohne Wireguard", "systems":[], "show":true},
 	"system":{"title":"Displays", "text":"Liste aller Displays", "systems":[], "show":false},
 	"done":{"title":"never toSee", "unfinished":true, "show":false}
 }; // -> also setCheckList() for filter
@@ -155,38 +156,41 @@ function setCheckList(list, applicationVersion) {
     if (_commonChecks.done.unfinished) {
 		for (let check of list) {
 			if (!check.hasOwnProperty("deployment")) {
-				_commonChecks.noDeployment.systems.push(check);
+				if (check.fitted)
+					_commonChecks.noDeployment.systems.push(check);
 				check.deployment = {"customer":{"id":-1, "abbreviation": "Zuordnung nicht vorhanden"}};
 				if (!check.deployment.hasOwnProperty("customer"))
 					check.deployment.customer = {"id":-1, "abbreviation": "Zuordnung nicht vorhanden"}
 				if (!check.deployment.hasOwnProperty("address"))
 					check.deployment.address = {"street":"Keine Adresse", "houseNumber":"", "zipCode":"", "city":""}
 			} else {
-				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("offlineSince") && check.fitted) {
+				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("offlineSince") && check.fitted && !check.deployment.testing) {
 					_commonChecks.offline.systems.push(check);
 					if (!isOnDate(check.checkResults[0].offlineSince, THREE_MONTHS))
 						_commonChecks.offlineThreeMonth.systems.push(check);
 				}
 				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].smartCheck === "failed")
 					_commonChecks.ssd.systems.push(check);
-				if (check.hasOwnProperty("lastSync") && !isOnDate(check.lastSync, 24) && check.fitted && (!check.hasOwnProperty("checkResults") || (check.checkResults.length > 0 && !check.checkResults[0].hasOwnProperty("offlineSince"))))
+				if (check.hasOwnProperty("lastSync") && !isOnDate(check.lastSync, 24) && check.fitted && !check.deployment.testing && (!check.hasOwnProperty("checkResults") || (check.checkResults.length > 0 && !check.checkResults[0].hasOwnProperty("offlineSince"))))
 					_commonChecks.noActualData.systems.push(check);
 				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("ramAvailable") && check.checkResults[0].hasOwnProperty("ramTotal") && parseInt(check.checkResults[0].ramAvailable)*4 < parseInt(check.checkResults[0].ramTotal))
 					_commonChecks.ramfree.systems.push(check);
 				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("ramTotal") && parseInt(check.checkResults[0].ramTotal/1024) < 2000)
 					_commonChecks.ram.systems.push(check);
-				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState !== "html" && check.checkResults[0].applicationState !== "air" && check.checkResults[0].applicationState !== "unknown")
+				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState !== "html" && check.checkResults[0].applicationState !== "air" && check.checkResults[0].applicationState !== "unknown" && check.fitted && !check.deployment.testing)
 					_commonChecks.blackscreen.systems.push(check);
-				if (!check.fitted)
+				if (!check.fitted && !check.deployment.testing)
 					_commonChecks.notfitted.systems.push(check);
 				if (check.deployment.testing)
 					_commonChecks.testsystem.systems.push(check);
-				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("applicationVersion") && check.checkResults[0].applicationVersion !== applicationVersion)
+				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("applicationVersion") && check.checkResults[0].applicationVersion !== applicationVersion && check.fitted && !check.deployment.testing)
 					_commonChecks.oldApplication.systems.push(check);
 				if (!check.hasOwnProperty("checkResults") || (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && !isOnDate(check.checkResults[0].timestamp, 48)))
 					_commonChecks.systemchecksFailed.systems.push(check);
 				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState === "air")
 					_commonChecks.air.systems.push(check);
+				if (!check.hasOwnProperty("pubkey"))
+					_commonChecks.wireguard.systems.push(check);
 				_commonChecks.system.systems.push(check);
 			}
 		}
