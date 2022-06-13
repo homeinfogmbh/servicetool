@@ -203,12 +203,39 @@ function deleteDeployment (event) {
 
 
 /*
+    Ask for confirmation of the deletion of the deployment.
+*/
+function confirmDeleteDeployment (event) {
+    Swal.fire({
+        title: 'Sind Sie sicher?',
+        text: 'Wollen Sie diesen Standort wirklich unwiderruflich löschen?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Ja, weg damit!',
+        cancelButtonText: 'Nein, doch nicht.'
+    }).then(
+        deleteDeployment
+    ),then(result => {
+        if (result.isConfirmed) {
+            Swal.fire(
+                'Standort gelöscht!',
+                'Der Standort wurde gelöscht.',
+                'success'
+            )
+        }
+    });
+}
+
+
+/*
     Initialize the buttons on the page.
 */
 function initButtons () {
     $('#Anlage').click(setChecklistItem('construction-site-preparation'));
     $('#Netzbindung').click(setChecklistItem('internet-connection'));
-    $('#deleteDeployment').click(deleteDeployment);
+    $('#deleteDeployment').click(confirmDeleteDeployment);
     $('#Bemerkung').keyup(delaySubmitAnnotation);
 }
 
