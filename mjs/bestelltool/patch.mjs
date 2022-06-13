@@ -217,7 +217,7 @@ function confirmDeleteDeployment (event) {
         cancelButtonText: 'Nein, doch nicht.'
     }).then(
         deleteDeployment
-    ),then(result => {
+    ).then(result => {
         if (result.isConfirmed) {
             Swal.fire(
                 'Standort gelöscht!',
