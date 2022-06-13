@@ -198,6 +198,14 @@ function deleteDeployment (event) {
         xhrFields: {
             withCredentials: true
         }
+    }).then(result => {
+        if (result.isConfirmed) {
+            Swal.fire(
+                'Standort gelöscht!',
+                'Der Standort wurde gelöscht.',
+                'success'
+            )
+        }
     });
 }
 
@@ -217,15 +225,7 @@ function confirmDeleteDeployment (event) {
         cancelButtonText: 'Nein, doch nicht.'
     }).then(
         deleteDeployment
-    ).then(result => {
-        if (result.isConfirmed) {
-            Swal.fire(
-                'Standort gelöscht!',
-                'Der Standort wurde gelöscht.',
-                'success'
-            )
-        }
-    });
+    );
 }
 
 
