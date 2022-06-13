@@ -223,9 +223,7 @@ function confirmDeleteDeployment (event) {
         cancelButtonColor: '#d33',
         confirmButtonText: 'Ja, weg damit!',
         cancelButtonText: 'Nein, doch nicht.'
-    }).then(
-        deleteDeployment
-    );
+    }).then(deleteDeployment, () => {});
 }
 
 
