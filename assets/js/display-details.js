@@ -1,4 +1,3 @@
-const _KIBIBITTOMBIT = 1024/1000/1000;
 var _id;
 var _display = null;
 var _deployments = null;
@@ -530,6 +529,7 @@ function setThirtyDays(data) {
     $("#thirtyicmp").html('');
     $("#thirtyssh").html('');
     $("#thirtyhttp").html('');
+    $("#thirtydownloadupload").html('');    
     for (let day = 0; day < 30; day++) {
         dateFound = false;
         dateDay = (date.getDate() < 10 ?"0" + date.getDate(): date.getDate()) + "." + (date.getMonth() < 9 ?"0" + (date.getMonth()+1) :date.getMonth()+1) + "." + date.getFullYear();
@@ -543,6 +543,7 @@ function setThirtyDays(data) {
                     $("#thirtyicmp").append(!log.icmpRequest ?'<li title="' + dateDay + '" class="orangeSq"></li>' :'<li title="' + dateDay + '"></li>');
                     $("#thirtyssh").append(log.sshLogin === "failed" ?'<li title="' + dateDay + '" class="orangeSq"></li>' :'<li title="' + dateDay + '"></li>');
                     $("#thirtyhttp").append(log.httpRequest === "failed" ?'<li title="' + dateDay + '" class="orangeSq"></li>' :'<li title="' + dateDay + '"></li>');
+                    $("#thirtydownloadupload").append((log.hasOwnProperty("download") && log.download*_KIBIBITTOMBIT < 2) || (log.hasOwnProperty("upload") && log.upload*_KIBIBITTOMBIT < 0.4)?'<li title="' + dateDay + '" class="orangeSq"></li>' :'<li title="' + dateDay + '"></li>');
                     break;
                 }
             }
@@ -553,6 +554,7 @@ function setThirtyDays(data) {
             $('#thirtyicmp').append('<li title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
             $('#thirtyssh').append('<li title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
             $('#thirtyhttp').append('<li title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
+            $('#thirtydownloadupload').append('<li title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
         }
         date.setDate(date.getDate()-1);
     };

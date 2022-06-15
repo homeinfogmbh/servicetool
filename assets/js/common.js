@@ -1,5 +1,6 @@
 const ONE_HOUR = 60 * 60 * 1000; // Milliseconds;
 const THREE_MONTHS = 3 * 30 * 24; // Hours
+const _KIBIBITTOMBIT = 1024/1000/1000;
 var _commonChecks = {"offline":{"title":"Offline", "text":"Liste der Geräte die offline sind", "systems":[], "show":true},
 	"offlineThreeMonth":{"title":"Offline mehr als 3 Monate", "text":"Liste der Geräte die länger als 3 Monate ausgefallen sind", "systems":[], "show":true},
 	"noDeployment":{"title":"Systeme ohne Zuordnung", "text":"Liste der Geräte die keine Zuordnung besitzen", "systems":[], "show":true},
@@ -14,6 +15,7 @@ var _commonChecks = {"offline":{"title":"Offline", "text":"Liste der Geräte die
 	"systemchecksFailed":{"title":"Systemchecks fehlgeschlagen", "text":"Liste der Geräte die länger als 48h nicht überprüft werden konnten", "systems":[], "show":true},
 	"air":{"title":"AIR Systeme", "text":"Liste der Geräte die noch die AIR-Application laufen haben", "systems":[], "show":true},
 	"wireguard":{"title":"Kein Wireguard", "text":"Liste aller Systeme ohne Wireguard", "systems":[], "show":true},
+	"downloadUpload":{"title":"Download/Upload kritisch", "text":"Liste aller Systeme, deren Downloadrate unter 2,0 Mbit oder Uploadrate unter 0,4 Mbit liegt", "systems":[], "show":true},
 	"system":{"title":"Displays", "text":"Liste aller Displays", "systems":[], "show":false},
 	"done":{"title":"never toSee", "unfinished":true, "show":false}
 }; // -> also setCheckList() for filter
@@ -191,6 +193,8 @@ function setCheckList(list, applicationVersion) {
 					_commonChecks.air.systems.push(check);
 				if (!check.hasOwnProperty("pubkey"))
 					_commonChecks.wireguard.systems.push(check);
+				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && (check.checkResults[0].hasOwnProperty("download") && check.checkResults[0].download*_KIBIBITTOMBIT < 2) || (check.checkResults[0].hasOwnProperty("upload") && check.checkResults[0].upload*_KIBIBITTOMBIT < 0.4))
+					_commonChecks.downloadUpload.systems.push(check);
 				_commonChecks.system.systems.push(check);
 			}
 		}
