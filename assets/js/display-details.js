@@ -519,6 +519,7 @@ function getDeploymentHistory() {
 
 // Systemchecks über 30 Tage
 function setThirtyDays(data) {  
+    console.log(data)
     _display = data[_id];
     let date = new Date();
     let dateDay;
