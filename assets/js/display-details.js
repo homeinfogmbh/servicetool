@@ -519,7 +519,6 @@ function getDeploymentHistory() {
 
 // Systemchecks über 30 Tage
 function setThirtyDays(data) {  
-    console.log(data)
     _display = data[_id];
     let date = new Date();
     let dateDay;
@@ -539,23 +538,23 @@ function setThirtyDays(data) {
                 timestamp = new Date(log.timestamp);
                 if (date.getFullYear() === timestamp.getFullYear() && date.getMonth() === timestamp.getMonth() && date.getDate() === timestamp.getDate()) {
                     dateFound = true;
-                    $("#thirtysystemcheck").append('<li title="' + dateDay + '"></li>');
-                    $("#thirtyoffline").append(log.hasOwnProperty("offlineSince") || log.sshLogin !== "success" ?'<li title="' + dateDay + '" class="orangeSq"></li>' :'<li title="' + dateDay + '"></li>');
-                    $("#thirtyicmp").append(!log.icmpRequest ?'<li title="' + dateDay + '" class="orangeSq"></li>' :'<li title="' + dateDay + '"></li>');
-                    $("#thirtyssh").append(log.sshLogin === "failed" ?'<li title="' + dateDay + '" class="orangeSq"></li>' :'<li title="' + dateDay + '"></li>');
-                    $("#thirtyhttp").append(log.httpRequest === "failed" ?'<li title="' + dateDay + '" class="orangeSq"></li>' :'<li title="' + dateDay + '"></li>');
-                    $("#thirtydownloadupload").append((log.hasOwnProperty("download") && log.download*_KIBIBITTOMBIT < 2) || (log.hasOwnProperty("upload") && log.upload*_KIBIBITTOMBIT < 0.4)?'<li title="' + dateDay + '" class="orangeSq"></li>' :'<li title="' + dateDay + '"></li>');
+                    $("#thirtysystemcheck").append('<li data-toggle="tooltip" title="' + dateDay + '"></li>');
+                    $("#thirtyoffline").append(log.hasOwnProperty("offlineSince") || log.sshLogin !== "success" ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
+                    $("#thirtyicmp").append(!log.icmpRequest ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
+                    $("#thirtyssh").append(log.sshLogin === "failed" ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
+                    $("#thirtyhttp").append(log.httpRequest === "failed" ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
+                    $("#thirtydownloadupload").append((log.hasOwnProperty("download") && log.download*_KIBIBITTOMBIT < 2) || (log.hasOwnProperty("upload") && log.upload*_KIBIBITTOMBIT < 0.4)?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
                     break;
                 }
             }
         }
         if (!dateFound) {
-            $("#thirtysystemcheck").append('<li title="' + dateDay + ': Kein Check durchgeführt" class="orangeSq"></li>');
-            $('#thirtyoffline').append('<li title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
-            $('#thirtyicmp').append('<li title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
-            $('#thirtyssh').append('<li title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
-            $('#thirtyhttp').append('<li title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
-            $('#thirtydownloadupload').append('<li title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
+            $("#thirtysystemcheck").append('<li data-toggle="tooltip" title="' + dateDay + ': Kein Check durchgeführt" class="orangeSq"></li>');
+            $('#thirtyoffline').append('<li data-toggle="tooltip" title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
+            $('#thirtyicmp').append('<li data-toggle="tooltip" title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
+            $('#thirtyssh').append('<li data-toggle="tooltip" title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
+            $('#thirtyhttp').append('<li data-toggle="tooltip" title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
+            $('#thirtydownloadupload').append('<li data-toggle="tooltip" title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
         }
         date.setDate(date.getDate()-1);
     };
@@ -565,6 +564,7 @@ function setThirtyDays(data) {
         $(".thirtyhttp").hide();
         
     $("#thirtyloading").hide();
+    $('[data-toggle="tooltip"]').tooltip();
     $("#thirty").show();
 }
 
