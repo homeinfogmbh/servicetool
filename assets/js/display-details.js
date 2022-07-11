@@ -1,4 +1,3 @@
-const _KIBIBITTOMBIT = 1024/1000/1000;
 var _id;
 var _display = null;
 var _deployments = null;
@@ -206,7 +205,24 @@ $(document).ready(function() {
         }
 	});
     $('.btn_screenshot').click(function(e) {
-        window.open('https://sysmon.homeinfo.de/screenshot/' + _id, "_blank"); // http://321.terminals.homeinfo.intra:8000/screenshot (faster)
+        if (_display !== null && _display.hasOwnProperty("checkResults") && _display.checkResults.length > 0 && _display.checkResults[0].hasOwnProperty("offlineSince")) {
+            Swal.fire({
+                title: 'System war offline',
+                text: "Dieses System wurde beim letzten Check 'offline' gemessen. Ein Screenshot kann aufgrund fehlender Erreichbarkeit unerwartet lange dauern.",
+                showCancelButton: true,
+                confirmButtonColor: '#009fe3',
+                cancelButtonColor: '#ff821d',
+                iconHtml: '<img src="assets/img/PopUp-Icon.png"></img>',
+                confirmButtonText: 'Fortsetzen!',
+                cancelButtonText: 'Abbrechen',
+                buttonsStyling: true
+            }).then(function(selection) {
+                if (selection.isConfirmed === true)
+                    window.open('https://sysmon.homeinfo.de/screenshot/' + _id, "_blank"); // http://321.terminals.homeinfo.intra:8000/screenshot (faster)
+            });
+        } else
+            window.open('https://sysmon.homeinfo.de/screenshot/' + _id, "_blank"); // http://321.terminals.homeinfo.intra:8000/screenshot (faster)
+        
 		e.preventDefault();
 	}); 
     $('.btn_sync').click(function(e) {
@@ -530,6 +546,7 @@ function setThirtyDays(data) {
     $("#thirtyicmp").html('');
     $("#thirtyssh").html('');
     $("#thirtyhttp").html('');
+    $("#thirtydownloadupload").html('');    
     for (let day = 0; day < 30; day++) {
         dateFound = false;
         dateDay = (date.getDate() < 10 ?"0" + date.getDate(): date.getDate()) + "." + (date.getMonth() < 9 ?"0" + (date.getMonth()+1) :date.getMonth()+1) + "." + date.getFullYear();
@@ -538,21 +555,23 @@ function setThirtyDays(data) {
                 timestamp = new Date(log.timestamp);
                 if (date.getFullYear() === timestamp.getFullYear() && date.getMonth() === timestamp.getMonth() && date.getDate() === timestamp.getDate()) {
                     dateFound = true;
-                    $("#thirtysystemcheck").append('<li title="' + dateDay + '"></li>');
-                    $("#thirtyoffline").append(log.hasOwnProperty("offlineSince") || log.sshLogin !== "success" ?'<li title="' + dateDay + '" class="orangeSq"></li>' :'<li title="' + dateDay + '"></li>');
-                    $("#thirtyicmp").append(!log.icmpRequest ?'<li title="' + dateDay + '" class="orangeSq"></li>' :'<li title="' + dateDay + '"></li>');
-                    $("#thirtyssh").append(log.sshLogin === "failed" ?'<li title="' + dateDay + '" class="orangeSq"></li>' :'<li title="' + dateDay + '"></li>');
-                    $("#thirtyhttp").append(log.httpRequest === "failed" ?'<li title="' + dateDay + '" class="orangeSq"></li>' :'<li title="' + dateDay + '"></li>');
+                    $("#thirtysystemcheck").append('<li data-toggle="tooltip" title="' + dateDay + '"></li>');
+                    $("#thirtyoffline").append(log.hasOwnProperty("offlineSince") || log.sshLogin !== "success" ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
+                    $("#thirtyicmp").append(!log.icmpRequest ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
+                    $("#thirtyssh").append(log.sshLogin === "failed" ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
+                    $("#thirtyhttp").append(log.httpRequest === "failed" ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
+                    $("#thirtydownloadupload").append((log.hasOwnProperty("download") && log.download*_KIBIBITTOMBIT < 2) || (log.hasOwnProperty("upload") && log.upload*_KIBIBITTOMBIT < 0.4)?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
                     break;
                 }
             }
         }
         if (!dateFound) {
-            $("#thirtysystemcheck").append('<li title="' + dateDay + ': Kein Check durchgeführt" class="orangeSq"></li>');
-            $('#thirtyoffline').append('<li title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
-            $('#thirtyicmp').append('<li title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
-            $('#thirtyssh').append('<li title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
-            $('#thirtyhttp').append('<li title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
+            $("#thirtysystemcheck").append('<li data-toggle="tooltip" title="' + dateDay + ': Kein Check durchgeführt" class="orangeSq"></li>');
+            $('#thirtyoffline').append('<li data-toggle="tooltip" title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
+            $('#thirtyicmp').append('<li data-toggle="tooltip" title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
+            $('#thirtyssh').append('<li data-toggle="tooltip" title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
+            $('#thirtyhttp').append('<li data-toggle="tooltip" title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
+            $('#thirtydownloadupload').append('<li data-toggle="tooltip" title="' + dateDay + ': Keine Daten vorhanden" style="height:5px; margin-top:18px"></li>');
         }
         date.setDate(date.getDate()-1);
     };
@@ -562,6 +581,7 @@ function setThirtyDays(data) {
         $(".thirtyhttp").hide();
         
     $("#thirtyloading").hide();
+    $('[data-toggle="tooltip"]').tooltip();
     $("#thirty").show();
 }
 
