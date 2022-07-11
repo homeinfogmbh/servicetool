@@ -83,10 +83,12 @@ function getCustomers () {
 function getNewDeployment () {
     return {
         customer: getSelectedCustomerId(),
-        street: $('#street').val() || null,
-        houseNumber: $('#houseNumber').val() || null,
-        zipCode: $('#zipCode').val() || null,
-        city: $('#city').val() || null,
+        address: {
+            street: $('#street').val() || null,
+            houseNumber: $('#houseNumber').val() || null,
+            zipCode: $('#zipCode').val() || null,
+            city: $('#city').val() || null
+        },
         annotation: $('#annotation').val() || null,
         connection: getSelectedConnection()
     };
