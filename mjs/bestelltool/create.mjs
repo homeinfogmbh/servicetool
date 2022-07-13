@@ -122,16 +122,16 @@ function * listIssues (deployment) {
     if (deployment.customer == null || deployment.customer < 1)
         yield 'Kein Kunde ausgewählt.';
 
-    if (!deployment.street)
+    if (!deployment.address.street)
         yield 'Keine Straße angegeben.';
 
-    if (!deployment.houseNumber)
+    if (!deployment.address.houseNumber)
         yield 'Keine Hausnummer angegeben.';
 
-    if (!deployment.zipCode)
+    if (!deployment.address.zipCode)
         yield 'Keine PLZ angegeben.';
 
-    if (!deployment.city)
+    if (!deployment.address.city)
         yield 'Kein Ort angegeben.';
 
     if (!deployment.connection)
