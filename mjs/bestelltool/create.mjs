@@ -83,10 +83,12 @@ function getCustomers () {
 function getNewDeployment () {
     return {
         customer: getSelectedCustomerId(),
-        street: $('#street').val() || null,
-        houseNumber: $('#houseNumber').val() || null,
-        zipCode: $('#zipCode').val() || null,
-        city: $('#city').val() || null,
+        address: {
+            street: $('#street').val() || null,
+            houseNumber: $('#houseNumber').val() || null,
+            zipCode: $('#zipCode').val() || null,
+            city: $('#city').val() || null
+        },
         annotation: $('#annotation').val() || null,
         connection: getSelectedConnection()
     };
@@ -120,16 +122,16 @@ function * listIssues (deployment) {
     if (deployment.customer == null || deployment.customer < 1)
         yield 'Kein Kunde ausgewählt.';
 
-    if (!deployment.street)
+    if (!deployment.address.street)
         yield 'Keine Straße angegeben.';
 
-    if (!deployment.houseNumber)
+    if (!deployment.address.houseNumber)
         yield 'Keine Hausnummer angegeben.';
 
-    if (!deployment.zipCode)
+    if (!deployment.address.zipCode)
         yield 'Keine PLZ angegeben.';
 
-    if (!deployment.city)
+    if (!deployment.address.city)
         yield 'Kein Ort angegeben.';
 
     if (!deployment.connection)
