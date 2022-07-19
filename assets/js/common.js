@@ -6,14 +6,17 @@ var _commonChecks = {"offline":{"title":"Offline", "text":"Liste der Geräte die
 	"noDeployment":{"title":"Systeme ohne Zuordnung", "text":"Liste der Geräte die keine Zuordnung besitzen", "systems":[], "show":true},
 	"ssd":{"title":"SSD Karten Fehler", "text":"Liste der Geräte die einen SSD-Karten-Fehler aufweisen", "systems":[], "show":true},
 	"noActualData":{"title":"Keine aktuellen Daten", "text":"Liste der Geräte die keine aktuellen Daten besitzen", "systems":[], "show":true},
+	"appRunning":{"title":"APP running", "text":"Liste aller Systeme auf dem die App nicht läuft", "systems":[], "show":true},
+	"blackscreen":{"title":"Im Schwarzbild-Modus", "text":"Liste der Geräte die schwarz geschaltet sind", "systems":[], "show":true},
 	"ramfree":{"title":"Geringer verfügbarer Speicher", "text":"Liste der Geräte die weniger als 1/4 des Speichers freihaben", "systems":[], "show":true},
 	"ram":{"title":"Zu wenig RAM verbaut", "text":"Liste der Geräte die wenige als 2 GB RAM aufweisen", "systems":[], "show":true},
-	"blackscreen":{"title":"Im Schwarzbild-Modus", "text":"Liste der Geräte die schwarz geschaltet sind", "systems":[], "show":true},
  	"notfitted":{"title":"Nicht verbaute Displays", "text":"Liste der Geräte die nicht verbaut sind", "systems":[], "show":true},
 	"testsystem":{"title":"Testgeräte", "text":"Liste der Testgeräte", "systems":[], "show":true},
 	//"oldApplication":{"title":"Alte Applicationen", "text":"Liste der Geräte auf denen eine alte Version der Applikation läuft", "systems":[], "show":true},
 	"systemchecksFailed":{"title":"Systemchecks fehlgeschlagen", "text":"Liste der Geräte die länger als 48h nicht überprüft werden konnten", "systems":[], "show":true},
 	"air":{"title":"AIR Systeme", "text":"Liste der Geräte die noch die AIR-Application laufen haben", "systems":[], "show":true},
+	"sensors":{"title":"Sensoren fehlerhaft", "text":"Liste der Geräte mit fehlerhaften Sensoren", "systems":[], "show":true},
+	"root":{"title":"Kein root", "text":"Liste der Geräte ohne root-Anmeldung", "systems":[], "show":true},
 	"wireguard":{"title":"Kein Wireguard", "text":"Liste aller Systeme ohne Wireguard", "systems":[], "show":true},
 	"downloadUpload":{"title":"Download/Upload kritisch", "text":"Liste aller Systeme, deren Downloadrate unter 2,0 Mbit oder Uploadrate unter 0,4 Mbit liegt", "systems":[], "show":true},
 	"system":{"title":"Displays", "text":"Liste aller Displays", "systems":[], "show":false},
@@ -175,12 +178,14 @@ function setCheckList(list, applicationVersion) {
 					_commonChecks.ssd.systems.push(check);
 				if (check.hasOwnProperty("lastSync") && !isOnDate(check.lastSync, 24) && check.fitted && !check.deployment.testing && (!check.hasOwnProperty("checkResults") || (check.checkResults.length > 0 && !check.checkResults[0].hasOwnProperty("offlineSince"))))
 					_commonChecks.noActualData.systems.push(check);
+				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && (check.checkResults[0].applicationState === "not running" || check.checkResults[0].applicationState === "not enabled") && check.fitted && !check.deployment.testing)
+					_commonChecks.appRunning.systems.push(check);
+				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState !== "html" && check.checkResults[0].applicationState !== "air" && check.checkResults[0].applicationState !== "unknown" && check.fitted && !check.deployment.testing)
+					_commonChecks.blackscreen.systems.push(check);
 				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("ramAvailable") && check.checkResults[0].hasOwnProperty("ramTotal") && parseInt(check.checkResults[0].ramAvailable)*4 < parseInt(check.checkResults[0].ramTotal))
 					_commonChecks.ramfree.systems.push(check);
 				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("ramTotal") && parseInt(check.checkResults[0].ramTotal/1024) < 2000)
 					_commonChecks.ram.systems.push(check);
-				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState !== "html" && check.checkResults[0].applicationState !== "air" && check.checkResults[0].applicationState !== "unknown" && check.fitted && !check.deployment.testing)
-					_commonChecks.blackscreen.systems.push(check);
 				if (!check.fitted && !check.deployment.testing)
 					_commonChecks.notfitted.systems.push(check);
 				if (check.deployment.testing)
@@ -191,6 +196,10 @@ function setCheckList(list, applicationVersion) {
 					_commonChecks.systemchecksFailed.systems.push(check);
 				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState === "air")
 					_commonChecks.air.systems.push(check);
+				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].sensors === "failed")
+					_commonChecks.sensors.systems.push(check);
+				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].rootNotRo === "failed")
+					_commonChecks.root.systems.push(check);
 				if (!check.hasOwnProperty("pubkey"))
 					_commonChecks.wireguard.systems.push(check);
 				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && (check.checkResults[0].hasOwnProperty("download") && check.checkResults[0].download*_KIBIBITTOMBIT < 2) || (check.checkResults[0].hasOwnProperty("upload") && check.checkResults[0].upload*_KIBIBITTOMBIT < 0.4))

@@ -19,7 +19,7 @@ $(document).ready(function() {
 });
 
 function setChecks(data) {
-    console.log(data)
+    //console.log(data)
     let list = setCheckList(data[0], data[1]);
     //Observer table
     let observerItems = [];
