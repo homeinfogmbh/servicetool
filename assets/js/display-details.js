@@ -5,11 +5,14 @@ var _applicationVersion = null;
 var _deploymentHistory = null;
 $(document).ready(function() {
     _id = getURLParameterByName('id');
-    Promise.all(getListOfSystemChecks()).then((data)=> {
+    Promise.all(getListOfSystemChecks()).then((data) => {
         systemCheckCompleted(data);
         getDeploymentHistory().then((data)=>setHistory(data), denyHistory);
-        getSystemChecks().then(setThirtyDays);
-        getSystemInfo().then((data)=>{
+        getSystemChecks().then((data)=> {
+            setThirtyDays(data);
+            setErrorLog(data);
+            });
+        getSystemInfo().then((data) => {
             try { $("#applicationDesign").text('"' + data.presentation.configuration.design.toUpperCase() + '"'); } catch(error) { $("#applicationDesign").text("-"); }
             $("#unknownblackmodus").hide();
             if (data.application.status.running.length === 0) {
@@ -171,7 +174,20 @@ $(document).ready(function() {
 	}); 
     $('.btn_blackmodus').click(function(e) {
         localStorage.removeItem("servicetool.systemchecks");
-        setApplicationState().then(checkSystem).then(()=>{$("#pageloader").hide()});
+        setApplicationState().then(checkSystem).then(()=>{
+            $("#pageloader").hide();
+        }, (msg) => {
+            if ($("#unknownblackmodus").is(":hidden")) {
+                if ($(".btn_blackmodus").attr("title") === "Ist im Schwarzbildmodus") {
+                    $(".btn_blackmodus").attr("title", "Ist nicht im Schwarzbildmodus");
+                    $("#Schwarzbildmodus").prop("checked", false);
+                } else {
+                    $("#Schwarzbildmodus").prop("checked", true);
+                    $(".btn_blackmodus").attr("title", "Ist im Schwarzbildmodus");
+                }
+            }
+            setErrorMessage(msg, "Schwarzbildmodus des Systems");
+        });
         if ($('input[name=Schwarzbildmodus]:checked').val() === 'on')
             $(this).attr("title", "Ist nicht im Schwarzbildmodus");
         else
@@ -276,7 +292,6 @@ function setDetails(data) {
     if (_display.hasOwnProperty("checkResults") && _display.checkResults.length > 0) {
         $("#ramtotal").text(_display.checkResults[0].hasOwnProperty("ramTotal") ?parseInt(_display.checkResults[0].ramTotal/1024) + "MB" :"-");
         $("#ramAvailable").text(_display.checkResults[0].hasOwnProperty("ramAvailable") ?parseInt(_display.checkResults[0].ramAvailable/1024) + "MB":"-");
-        //$("#applicationDesign").text(_display.checkResults[0].hasOwnProperty("design") ?_display.checkResults[0].design :"-"); deprecated
     }
     if (_display.hasOwnProperty("deployment")) {
         $("#screentype").text(_display.deployment.type);
@@ -289,110 +304,6 @@ function setDetails(data) {
     $("#wireguard").html(_display.hasOwnProperty("pubkey") ?"<span title='" + _display.pubkey + " (zum Kopieren klicken)'>" + _display.pubkey.substring(0, 20) + "...</span>" :"-");
     $("#systemID").text(_display.id);
     $("#os").text(_display.operatingSystem);
-
-    // Error Log
-    let logs = "";
-    let errorData = {"offline":[], "ssd":[], "baytrail":[], "icmp":[], "ssh":[], "http":[], "application":[]}; // [{"<days>, <timestamp>}]
-    let logsData = [];
-    if (_display.hasOwnProperty("checkResults") && _display.checkResults.length > 0) {
-        for (let log of _display.checkResults) {
-            // offline
-            if (log.hasOwnProperty("offlineSince")) {
-                if (errorData.offline.length === 0)
-                    errorData.offline.push({"days":1, "timestamp":log.timestamp});
-                else
-                    errorData.offline[errorData.offline.length-1].days++;
-            } else if (errorData.offline.length > 0)
-                logsData.push({"title":"Nicht Online", "timestamp":errorData.offline[errorData.offline.length-1].timestamp, "days":errorData.offline.pop().days});
-            // ssd
-            if (log.smartCheck === "failed") {
-                if (errorData.ssd.length === 0)
-                    errorData.ssd.push({"days":1, "timestamp":log.timestamp});
-                else
-                    errorData.ssd[errorData.ssd.length-1].days++;
-            } else if (errorData.ssd.length > 0)
-                logsData.push({"title":"SSD-Karten Fehler", "timestamp":errorData.ssd[errorData.ssd.length-1].timestamp, "days":errorData.ssd.pop().days});
-            // baytrail
-            if (log.baytrailFreeze === "vulnerable") {
-                if (errorData.baytrail.length === 0)
-                    errorData.baytrail.push({"days":1, "timestamp":log.timestamp});
-                else
-                    errorData.baytrail[errorData.baytrail.length-1].days++;
-            } else if (errorData.baytrail.length > 0)
-                logsData.push({"title":"Baytrail Fehler", "timestamp":errorData.baytrail[errorData.baytrail.length-1].timestamp, "days":errorData.baytrail.pop().days});
-            // icmp
-            if (!log.icmpRequest) {
-                if (errorData.icmp.length === 0)
-                    errorData.icmp.push({"days":1, "timestamp":log.timestamp});
-                else
-                    errorData.icmp[errorData.icmp.length-1].days++;
-            } else if (errorData.icmp.length > 0)
-                logsData.push({"title":"ICMP-Request Fehler", "timestamp":errorData.icmp[errorData.icmp.length-1].timestamp, "days":errorData.icmp.pop().days});
-            // ssh
-            if (log.sshLogin === "failed") {
-                if (errorData.ssh.length === 0)
-                    errorData.ssh.push({"days":1, "timestamp":log.timestamp});
-                else
-                    errorData.ssh[errorData.ssh.length-1].days++;
-            } else if (errorData.ssh.length > 0)
-                logsData.push({"title":"SSH Fehler", "timestamp":errorData.ssh[errorData.ssh.length-1].timestamp, "days":errorData.ssh.pop().days});
-            // http
-            if (log.httpRequest === "failed") {
-                if (errorData.http.length === 0)
-                    errorData.http.push({"days":1, "timestamp":log.timestamp});
-                else
-                    errorData.http[errorData.http.length-1].days++;
-            } else if (errorData.http.length > 0)
-                logsData.push({"title":"HTTP-Request Fehler", "timestamp":errorData.http[errorData.http.length-1].timestamp, "days":errorData.http.pop().days});
-            // application
-            if (log.applicationState === "conflict" || log.applicationState === "not enabled" || log.applicationState === "not running") {
-                if (errorData.application.length === 0)
-                    errorData.application.push({"days":1, "timestamp":log.timestamp});
-                else
-                    errorData.application[errorData.application.length-1].days++;
-            } else if (errorData.application.length > 0)
-                logsData.push({"title":"Application Status Fehler", "timestamp":errorData.application[errorData.application.length-1].timestamp, "days":errorData.application.pop().days});
-        }
-        if (errorData.offline.length > 0)
-            logsData.push({"title":"Nicht Online", "timestamp":errorData.offline[errorData.offline.length-1].timestamp, "days":errorData.offline.pop().days});
-        if (errorData.ssd.length > 0)
-            logsData.push({"title":"SSD-Karten Fehler", "timestamp":errorData.ssd[errorData.ssd.length-1].timestamp, "days":errorData.ssd.pop().days});
-        if (errorData.baytrail.length > 0)
-            logsData.push({"title":"Baytrail Fehler", "timestamp":errorData.baytrail[errorData.baytrail.length-1].timestamp, "days":errorData.baytrail.pop().days});
-        if (errorData.icmp.length > 0)
-            logsData.push({"title":"ICMP-Request Fehler", "timestamp":errorData.icmp[errorData.icmp.length-1].timestamp, "days":errorData.icmp.pop().days});
-        if (errorData.ssh.length > 0)
-            logsData.push({"title":"SSH Fehler", "timestamp":errorData.ssh[errorData.ssh.length-1].timestamp, "days":errorData.ssh.pop().days});
-        if (errorData.http.length > 0)
-            logsData.push({"title":"HTTP-Request Fehler", "timestamp":errorData.http[errorData.http.length-1].timestamp, "days":errorData.http.pop().days});
-        if (errorData.application.length > 0)
-            logsData.push({"title":"Application Status Fehler", "timestamp":errorData.application[errorData.application.length-1].timestamp, "days":errorData.application.pop().days});
-        logsData.sort(function(a, b) {
-            return compare(a.timestamp, b.timestamp);
-        });
-        for (let log of logsData) {
-            logs += '<tr>' +
-                '<td>' + log.title + ' (' + log.days + ' Tag' + (log.days > 1 ?'e' :'') + ')</td>' +
-                '<td>' + formatDate(log.timestamp) + '</td>' +
-            '</tr>';
-        }
-    }
-    if (!_display.hasOwnProperty("pubkey")) {
-        logs += '<tr>' +
-            '<td>WireGuard pubkey nicht gesetzt</td>' +
-            '<td></td>' +
-        '</tr>';
-    }
-    //lastSync
-    let daysLastSync = Math.ceil((new Date() - new Date(_display.lastSync)) / 86400000);
-    if (daysLastSync > 1) {
-        logs += '<tr>' +
-            '<td>Erfolglose Übertragung (' + daysLastSync + ' Tag' + (daysLastSync > 1 ?'e' :'') + ')</td>' +
-            '<td></td>' +
-        '</tr>';
-    }
-    logs = logs === "" ?"<tr><td>Keine Einträge vorhanden</td></tr>" :logs;
-    $("#errorlog").html(logs);
 
     // Funktionen
     if (_display.fitted) {
@@ -476,6 +387,112 @@ function setChecks(lastCheck) {
     $("#sync").text(_display.hasOwnProperty("lastSync") ?formatDate(_display.lastSync) + " (" + _display.lastSync.substring(11, 16) + "h)" :"noch nie");
     $("#lastCheck").text("Letzter Check " + formatDate(lastCheck.timestamp) + " (" + lastCheck.timestamp.substring(11, 16) + " Uhr)");
     $("#pageloader").hide();
+}
+
+function setErrorLog(display) {
+    display = display[_id];
+    let logs = "";
+    let errorData = {"offline":[], "ssd":[], "baytrail":[], "icmp":[], "ssh":[], "http":[], "application":[]}; // [{"<days>, <timestamp>}]
+    let logsData = [];
+    if (display.hasOwnProperty("checkResults") && display.checkResults.length > 0) {
+        for (let log of display.checkResults) {
+            // offline
+            if (log.hasOwnProperty("offlineSince")) {
+                if (errorData.offline.length === 0)
+                    errorData.offline.push({"days":Math.ceil((new Date() - new Date(log.offlineSince)) / 86400000), "timestamp":log.timestamp});
+                //else
+                    //errorData.offline[errorData.offline.length-1].days++;
+            } else if (errorData.offline.length > 0)
+                logsData.push({"title":"Nicht Online", "timestamp":errorData.offline[errorData.offline.length-1].timestamp, "days":errorData.offline.pop().days});
+            // ssd
+            if (log.smartCheck === "failed") {
+                if (errorData.ssd.length === 0)
+                    errorData.ssd.push({"days":1, "timestamp":log.timestamp});
+                else
+                    errorData.ssd[errorData.ssd.length-1].days++;
+            } else if (errorData.ssd.length > 0)
+                logsData.push({"title":"SSD-Karten Fehler", "timestamp":errorData.ssd[errorData.ssd.length-1].timestamp, "days":errorData.ssd.pop().days});
+            // baytrail
+            if (log.baytrailFreeze === "vulnerable") {
+                if (errorData.baytrail.length === 0)
+                    errorData.baytrail.push({"days":1, "timestamp":log.timestamp});
+                else
+                    errorData.baytrail[errorData.baytrail.length-1].days++;
+            } else if (errorData.baytrail.length > 0)
+                logsData.push({"title":"Baytrail Fehler", "timestamp":errorData.baytrail[errorData.baytrail.length-1].timestamp, "days":errorData.baytrail.pop().days});
+            // icmp
+            if (!log.icmpRequest) {
+                if (errorData.icmp.length === 0)
+                    errorData.icmp.push({"days":1, "timestamp":log.timestamp});
+                else
+                    errorData.icmp[errorData.icmp.length-1].days++;
+            } else if (errorData.icmp.length > 0)
+                logsData.push({"title":"ICMP-Request Fehler", "timestamp":errorData.icmp[errorData.icmp.length-1].timestamp, "days":errorData.icmp.pop().days});
+            // ssh
+            if (log.sshLogin === "failed") {
+                if (errorData.ssh.length === 0)
+                    errorData.ssh.push({"days":1, "timestamp":log.timestamp});
+                else
+                    errorData.ssh[errorData.ssh.length-1].days++;
+            } else if (errorData.ssh.length > 0)
+                logsData.push({"title":"SSH Fehler", "timestamp":errorData.ssh[errorData.ssh.length-1].timestamp, "days":errorData.ssh.pop().days});
+            // http
+            if (log.httpRequest === "failed") {
+                if (errorData.http.length === 0)
+                    errorData.http.push({"days":1, "timestamp":log.timestamp});
+                else
+                    errorData.http[errorData.http.length-1].days++;
+            } else if (errorData.http.length > 0)
+                logsData.push({"title":"HTTP-Request Fehler", "timestamp":errorData.http[errorData.http.length-1].timestamp, "days":errorData.http.pop().days});
+            // application
+            if (log.applicationState === "conflict" || log.applicationState === "not enabled" || log.applicationState === "not running") {
+                if (errorData.application.length === 0)
+                    errorData.application.push({"days":1, "timestamp":log.timestamp});
+                else
+                    errorData.application[errorData.application.length-1].days++;
+            } else if (errorData.application.length > 0)
+                logsData.push({"title":"Application Status Fehler", "timestamp":errorData.application[errorData.application.length-1].timestamp, "days":errorData.application.pop().days});
+        }
+        if (errorData.offline.length > 0)
+            logsData.push({"title":"Nicht Online", "timestamp":errorData.offline[errorData.offline.length-1].timestamp, "days":errorData.offline.pop().days});
+        if (errorData.ssd.length > 0)
+            logsData.push({"title":"SSD-Karten Fehler", "timestamp":errorData.ssd[errorData.ssd.length-1].timestamp, "days":errorData.ssd.pop().days});
+        if (errorData.baytrail.length > 0)
+            logsData.push({"title":"Baytrail Fehler", "timestamp":errorData.baytrail[errorData.baytrail.length-1].timestamp, "days":errorData.baytrail.pop().days});
+        if (errorData.icmp.length > 0)
+            logsData.push({"title":"ICMP-Request Fehler", "timestamp":errorData.icmp[errorData.icmp.length-1].timestamp, "days":errorData.icmp.pop().days});
+        if (errorData.ssh.length > 0)
+            logsData.push({"title":"SSH Fehler", "timestamp":errorData.ssh[errorData.ssh.length-1].timestamp, "days":errorData.ssh.pop().days});
+        if (errorData.http.length > 0)
+            logsData.push({"title":"HTTP-Request Fehler", "timestamp":errorData.http[errorData.http.length-1].timestamp, "days":errorData.http.pop().days});
+        if (errorData.application.length > 0)
+            logsData.push({"title":"Application Status Fehler", "timestamp":errorData.application[errorData.application.length-1].timestamp, "days":errorData.application.pop().days});
+        logsData.sort(function(a, b) {
+            return compare(a.timestamp, b.timestamp);
+        });
+        for (let log of logsData) {
+            logs += '<tr>' +
+                '<td>' + log.title + ' (' + log.days + ' Tag' + (log.days > 1 ?'e' :'') + ')</td>' +
+                '<td>' + formatDate(log.timestamp) + '</td>' +
+            '</tr>';
+        }
+    }
+    if (!display.hasOwnProperty("pubkey")) {
+        logs += '<tr>' +
+            '<td>WireGuard pubkey nicht gesetzt</td>' +
+            '<td></td>' +
+        '</tr>';
+    }
+    //lastSync
+    let daysLastSync = Math.ceil((new Date() - new Date(display.lastSync)) / 86400000);
+    if (daysLastSync > 1) {
+        logs += '<tr>' +
+            '<td>Erfolglose Übertragung (' + daysLastSync + ' Tag' + (daysLastSync > 1 ?'e' :'') + ')</td>' +
+            '<td></td>' +
+        '</tr>';
+    }
+    logs = logs === "" ?"<tr><td>Keine Einträge vorhanden</td></tr>" :logs;
+    $("#errorlog").html(logs);
 }
 
 function setHistory(history, page = 1) {
@@ -749,11 +766,7 @@ function setApplicationState() {
         url: 'https://termgr.homeinfo.de/administer/application',
         type: "POST",
         data: JSON.stringify({'system': _id, 'state': $('input[name=Schwarzbildmodus]:checked').val() === 'on'}),
-        contentType: 'application/json',
-        success: function (data) {  },
-        error: function (msg) {
-            setErrorMessage(msg, "Schwarzbildmodus des Systems");
-        }
+        contentType: 'application/json'
     });  
 }
 function setPublicTransport(address) {
