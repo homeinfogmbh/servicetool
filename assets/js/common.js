@@ -169,7 +169,7 @@ function setCheckList(list, applicationVersion) {
 				if (!check.deployment.hasOwnProperty("address"))
 					check.deployment.address = {"street":"Keine Adresse", "houseNumber":"", "zipCode":"", "city":""}
 			} else {
-				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("offlineSince") && check.fitted && !check.deployment.testing) {
+				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("offlineSince") && check.checkResults[0].sshLogin !== "success" && !check.checkResults[0].icmpRequest && check.fitted && !check.deployment.testing && check.operatingSystem.toLowerCase().indexOf("windows") === -1) {
 					_commonChecks.offline.systems.push(check);
 					if (!isOnDate(check.checkResults[0].offlineSince, THREE_MONTHS))
 						_commonChecks.offlineThreeMonth.systems.push(check);

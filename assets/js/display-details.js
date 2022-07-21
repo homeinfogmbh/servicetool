@@ -358,7 +358,7 @@ function setChecks(lastCheck) {
     if (isOnDate(lastCheck.timestamp, 24)) {
         $("#systemcheck").html('<span class="blueMark">ok</span>');
         $("#offline").html(lastCheck.hasOwnProperty("offlineSince") || lastCheck.sshLogin !== "success" ?'<span class="orangeMark">offline</span>' :'<span class="blueMark">online</span>');
-        $("#sensors").html(lastCheck.sensors === "failed" ?'<span class="orangeMark">' + lastCheck.sensors + '</span>' :'<span class="blueMark">' + lastCheck.sensors + '</span>');
+        $("#sensors").html(lastCheck.sensors === "failed" ?'<span class="orangeMark">overheated</span>' :lastCheck.sensors === "success" ?'<span class="blueMark">ok</span>' :'<span class="blueMark">' + lastCheck.sensors + '</span>');
         $("#root").html(lastCheck.rootNotRo === "failed" ?'<span class="orangeMark">' + lastCheck.rootNotRo + '</span>' :'<span class="blueMark">' + lastCheck.rootNotRo + '</span>');
         $("#ssd").html(lastCheck.smartCheck === "failed" ?'<span class="orangeMark">' + lastCheck.smartCheck + '</span>' :'<span class="blueMark">' + lastCheck.smartCheck + '</span>');
         $("#icmp").html(lastCheck.icmpRequest ?'<span class="blueMark">ok</span>' :'<span class="orangeMark">fehlgeschlagen</span>');
