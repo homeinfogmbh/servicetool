@@ -19,6 +19,7 @@ var _commonChecks = {"offline":{"title":"Offline", "text":"Liste der Geräte die
 	"root":{"title":"Kein Schreibzugriff", "text":'Liste der Geräte mit Root-Partitionen, die im "nur-lesen-Modus" gemountet sind.', "systems":[], "show":true},
 	"wireguard":{"title":"Kein Wireguard", "text":"Liste aller Systeme ohne Wireguard", "systems":[], "show":true},
 	"downloadUpload":{"title":"Download/Upload kritisch", "text":"Liste aller Systeme, deren Downloadrate unter 2,0 Mbit oder Uploadrate unter 0,4 Mbit liegt", "systems":[], "show":true},
+	"updating":{"title":"Updating", "text":"Liste aller Systeme die geupdated werden", "systems":[], "show":true},
 	"system":{"title":"Displays", "text":"Liste aller Displays", "systems":[], "show":false},
 	"done":{"title":"never toSee", "unfinished":true, "show":false}
 }; // -> also setCheckList() for filter
@@ -204,6 +205,8 @@ function setCheckList(list, applicationVersion) {
 					_commonChecks.wireguard.systems.push(check);
 				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && (check.checkResults[0].hasOwnProperty("download") && check.checkResults[0].download*_KIBIBITTOMBIT < 2) || (check.checkResults[0].hasOwnProperty("upload") && check.checkResults[0].upload*_KIBIBITTOMBIT < 0.4))
 					_commonChecks.downloadUpload.systems.push(check);
+				if (check.updating)
+					_commonChecks.updating.systems.push(check);
 				_commonChecks.system.systems.push(check);
 			}
 		}
