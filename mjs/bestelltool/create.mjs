@@ -132,20 +132,31 @@ function * listIssues (deployment) {
     if (deployment.customer == null || deployment.customer < 1)
         yield 'Kein Kunde ausgewählt.';
 
-    if (!deployment.address.street)
-        yield 'Keine Straße angegeben.';
-
-    if (!deployment.address.houseNumber)
-        yield 'Keine Hausnummer angegeben.';
-
-    if (!deployment.address.zipCode)
-        yield 'Keine PLZ angegeben.';
-
-    if (!deployment.address.city)
-        yield 'Kein Ort angegeben.';
+    if (!deployment.address)
+        yield 'Keine Adresse angegeben.';
+    else
+        yield * listAddressIssues(deployment.address);
 
     if (!deployment.connection)
         yield 'Keine Netzanbindung ausgewählt.';
+}
+
+
+/*
+    Yield issues with the address.
+*/
+function * listAddressIssues (address) {
+    if (!address.street)
+        yield 'Keine Straße angegeben.';
+
+    if (!address.houseNumber)
+        yield 'Keine Hausnummer angegeben.';
+
+    if (!address.zipCode)
+        yield 'Keine PLZ angegeben.';
+
+    if (!address.city)
+        yield 'Kein Ort angegeben.';
 }
 
 
