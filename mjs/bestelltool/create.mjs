@@ -40,6 +40,16 @@ export function render () {
 
 
 /*
+    Disable the checklist and history columns for deployments.
+*/
+export function disableChecklist () {
+    $('.checklist').prop('disabled', true);
+    $('#checklist').find('*').css({opacity: 0.7});
+    $('#history-col').find('*').css({opacity: 0.7});
+}
+
+
+/*
     Create a new deployment.
 */
 function createNewDeployment () {
@@ -189,14 +199,4 @@ function initButtons () {
     $('#street').keyup(regenerateAutocompleteList);
     $('#street').click(regenerateAutocompleteList);
     $('#submit').click(onSubmit);
-}
-
-
-/*
-    Disable the checklist and history columns for deployments.
-*/
-export function disableChecklist () {
-    $('.checklist').prop('disabled', true);
-    $('#checklist').find('*').css({opacity: 0.7});
-    $('#history-col').find('*').css({opacity: 0.7});
 }
