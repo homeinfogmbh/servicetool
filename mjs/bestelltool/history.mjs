@@ -59,8 +59,8 @@ class HistoryItem {
             );
     }
 
-    * columns () {
-        let col = document.createElement('td');
+    get timestampColumn () {
+        const col = document.createElement('td');
         col.classList.add('w130');
         col.textContent = (
             this.timestamp.getDate()
@@ -69,18 +69,19 @@ class HistoryItem {
             + '.'
             + this.timestamp.getFullYear()
         );
-        yield col;
-        col = document.createElement('td');
+        return col;
+    }
+
+    get captionColumn () {
+        const col = document.createElement('td');
         col.textContent = this.caption;
-        yield col;
+        return col;
     }
 
     toHTML () {
         const tr = document.createElement('tr');
-
-        for (const col of this.columns())
-            tr.appendChild(col);
-
+        tr.appendChild(this.timestampColumn);
+        tr.appendChild(this.captionColumn);
         return tr;
     }
 }
