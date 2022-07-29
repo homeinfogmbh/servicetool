@@ -59,21 +59,28 @@ class HistoryItem {
             );
     }
 
-    toHTML () {
-        const tr = document.createElement('tr');
-        const col1 = document.createElement('td');
-        col1.classList.add('w130');
-        col1.textContent = (
+    * columns () {
+        let col = document.createElement('td');
+        col.classList.add('w130');
+        col.textContent = (
             this.timestamp.getDate()
             + '.'
             + (this.timestamp.getMonth() + 1)
             + '.'
             + this.timestamp.getFullYear()
         );
-        tr.appendChild(col1);
-        const col2 = document.createElement('td');
-        col2.textContent = this.caption;
-        tr.appendChild(col2);
+        yield col;
+        col = document.createElement('td');
+        col.textContent = this.caption;
+        yield col;
+    }
+
+    toHTML () {
+        const tr = document.createElement('tr');
+
+        for (const col of this.columns())
+            tr.appendChild(col);
+
         return tr;
     }
 }
