@@ -14,7 +14,7 @@ var _commonChecks = {"offline":{"title":"Offline", "text":"Liste der Geräte die
 	//"oldApplication":{"title":"Alte Applicationen", "text":"Liste der Geräte auf denen eine alte Version der Applikation läuft", "systems":[], "show":true},
 	"systemchecksFailed":{"title":"Systemchecks fehlgeschlagen", "text":"Liste der Geräte die länger als 48h nicht überprüft werden konnten", "systems":[], "show":true},
 	"air":{"title":"AIR Systeme", "text":"Liste der Geräte die noch die AIR-Application laufen haben", "systems":[], "show":true},
-	"sensors":{"title":"Temperatur", "text":"Liste der Geräte mit Sensoren, die ihre Grenzwerte überschritten haben.", "systems":[], "show":true},
+	"sensors":{"title":"Überhitzt", "text":"Liste der Geräte mit Sensoren, die ihre Grenzwerte überschritten haben.", "systems":[], "show":true},
 	"root":{"title":"Kein Schreibzugriff", "text":'Liste der Geräte mit Root-Partitionen, die im "nur-lesen-Modus" gemountet sind.', "systems":[], "show":true},
 	"wireguard":{"title":"Kein Wireguard", "text":"Liste aller Systeme ohne Wireguard", "systems":[], "show":true},
 	"downloadUpload":{"title":"Download/Upload kritisch", "text":"Liste aller Systeme, deren Downloadrate unter 2,0 Mbit oder Uploadrate unter 0,4 Mbit liegt", "systems":[], "show":true},
@@ -58,6 +58,7 @@ $(document).ready(function() {
         localStorage.removeItem("servicetool.session.expired");
 		localStorage.removeItem("servicetool.systemchecks");
 		localStorage.removeItem("servicetool.applicationversion");
+		localStorage.removeItem("servicetool.blacklist");
         deleteSession();
     });	
 });  
@@ -132,6 +133,7 @@ function getListOfSystemChecks() {
 	if (_systemChecksPromise.length === 0) {
 		_systemChecksPromise.push(getCheckPromis());
 		_systemChecksPromise.push(getApplicationVersion());
+		_systemChecksPromise.push(getBlacklist());
 	}
 	return _systemChecksPromise;
 }
@@ -225,6 +227,24 @@ function getApplicationVersion() {
 			},
 			error: function (msg) {
 				setErrorMessage(msg, "Abrufen der Applicationsversion");
+			}
+		});
+	}
+}
+
+function getBlacklist() {
+	if (localStorage.getItem("servicetool.blacklist") !== null) {
+		return Promise.resolve(JSON.parse(localStorage.getItem("servicetool.blacklist")));
+	} else {
+		return $.ajax({
+			url: "https://sysmon.homeinfo.de/blacklist",
+			type: "GET",
+			cache: false,
+			success: function (data) {
+				localStorage.setItem("servicetool.blacklist", JSON.stringify(data));
+			},
+			error: function (msg) {
+				setErrorMessage(msg, "Abrufen der Blackliste");
 			}
 		});
 	}
