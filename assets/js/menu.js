@@ -120,7 +120,7 @@ $(document).ready(function() {
 });
 
 function setMenu(data) {
-    _list = setCheckList(data[0], data[1]);
+    _list = setCheckList(data[0], data[1], data[2]);
     let address;
     let addressComplete;
     let customers = {};

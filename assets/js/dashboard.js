@@ -1,7 +1,11 @@
+var _hipsterIsOnline = true;
 $(document).ready(function() {
     Promise.all(getListOfSystemChecks()).then(setChecks);
     getDeployments().then(setDeployments);
-    getHipsterStatus().then(setHipsterStatus);
+    getHipsterStatus().then((data)=>{
+        _hipsterIsOnline = data;
+        setWidgets();
+    });
     $('#observercounter').click(function(e) {
         $(".observerItem").show();
 		e.preventDefault();
@@ -10,18 +14,13 @@ $(document).ready(function() {
         window.location.href = "bestelltool-list.html";
 		e.preventDefault();
 	}); 
-    $('.btn_hipster').click(function(e) {
-        $("#hipsterstatus").css("border-color", "#009fe3");
-        $("#hipsterstatus").text("-");
-        getHipsterStatus().then(setHipsterStatus);
-		e.preventDefault();
-	});
+    if (localStorage.getItem("servicetool.systemchecks") !== null)
+        intervalChecks();
+    setInterval(intervalChecks, 60000);
 });
 
 function setChecks(data) {
-    console.log(data)
-    //console.log(data)
-    let list = setCheckList(data[0], data[1]);
+    let list = setCheckList(data[0], data[1], data[2]);
     //Observer table
     let observerItems = [];
     for (let check of list) {
@@ -42,6 +41,16 @@ function setChecks(data) {
     }
 
     // Widgets
+    setWidgets();
+
+    $("#observations").html(getObserverItems(observerItems));
+    if (observerItems.length > 10)
+        $("#observercounter").text("Alle " + observerItems.length + " Meldungen anzeigen");
+    $("#pageloader").hide();
+}
+
+function setWidgets() {
+    $("#widgets").html("");
     let errorsDOM = "";
     for (let item in _commonChecks) {
         if (_commonChecks[item].show && _commonChecks[item].systems.length !== 0) {
@@ -53,16 +62,30 @@ function setChecks(data) {
             '</div>';
         }
     }
-    $("#widgets").append(errorsDOM);
+    
+    if (!_hipsterIsOnline) {
+        errorsDOM += '<div class="col btn_hipster pointer">' +
+            '<div class="number_box">' +
+                '<span class="theNumber" id="hipsterstatus">offline</span>' +
+                '<h5>Hipster</h5>' +
+            '</div>' +
+        '</div>';
+    }
+    $("#widgets").html(errorsDOM);
     $('.btn_list').click(function(e) {
+        if ($(this).data("id") === "updating")
+            localStorage.removeItem("servicetool.systemchecks");
         window.location.href = "listenansicht.html?type=" + $(this).data("id");
 		e.preventDefault();
 	}); 
-
-    $("#observations").html(getObserverItems(observerItems));
-    if (observerItems.length > 10)
-        $("#observercounter").text("Alle " + observerItems.length + " Meldungen anzeigen");
-    $("#pageloader").hide();
+    $('.btn_hipster').click(function(e) {
+        $("#hipsterstatus").text("-");
+        getHipsterStatus().then((data)=>{
+            _hipsterIsOnline = data;
+            setWidgets();
+        });
+		e.preventDefault();
+	});
 }
 
 function getObserveItem(item, annotation, counter, title="") {
@@ -106,14 +129,7 @@ function setDeployments(deployments) {
     orderingsDom = orderingsDom === "" ?"<tr><td>Keine neuen Standorte gefunden</tr></td>" :orderingsDom;
     $("#registrations").html(orderingsDom);
 }
-function setHipsterStatus(data) {
-    $("#hipsterstatus").css("border-color", data ?"#ff821d" :"#009fe3");
-    $("#hipsterstatus").text(data ?"running" :"offline");
-    if (data)
-        $(".btn_hipster").hide();
-    else
-        $(".btn_hipster").show();
-}
+
 function getHipsterStatus() {
     return $.ajax({
 		url: "https://sysmon.homeinfo.de/hipster-status",
@@ -123,4 +139,20 @@ function getHipsterStatus() {
 			setErrorMessage(msg, "Abrufen des Hipster-Status");
 		}
 	});   
+}
+
+function intervalChecks() {
+    //hwadm toggle-updating <tid>
+    getHipsterStatus().then((data)=>{
+        _hipsterIsOnline = data;
+        setWidgets();
+    });
+    getSystems().then((systems)=>{
+        _commonChecks.updating.systems = [];
+        for (let system of systems) {
+            if (system.updating)
+                _commonChecks.updating.systems.push(system);
+        };
+        setWidgets();
+    });
 }

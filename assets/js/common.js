@@ -19,6 +19,7 @@ var _commonChecks = {"offline":{"title":"Offline", "text":"Liste der Geräte die
 	"wireguard":{"title":"Kein Wireguard", "text":"Liste aller Systeme ohne Wireguard", "systems":[], "show":true},
 	"downloadUpload":{"title":"Download/Upload kritisch", "text":"Liste aller Systeme, deren Downloadrate unter 2,0 Mbit oder Uploadrate unter 0,4 Mbit liegt", "systems":[], "show":true},
 	"updating":{"title":"Patching", "text":"Liste aller Systeme die gepatched werden", "systems":[], "show":true},
+	"blacklist":{"title":"Blacklist", "text":"Liste aller Systeme auf der Blacklist", "systems":[], "show":true},
 	"system":{"title":"Displays", "text":"Liste aller Displays", "systems":[], "show":false},
 	"done":{"title":"never toSee", "unfinished":true, "show":false}
 }; // -> also setCheckList() for filter
@@ -155,13 +156,28 @@ function getCheckPromis() {
 		});
 	}
 }
-function setCheckList(list, applicationVersion) {
+function setCheckList(list, applicationVersion, blacklist) {
     list = $.map(list, function(value, index){
         return [value];
     });
-
+	let check;
+	let blacklistitem;
+	let found;
+	let newlist = [];
+	// Substract blacklist from checklist
+	for (check of list) {
+		found = false;
+		for (blacklistitem of blacklist) {
+			if (check.id === blacklistitem.id) {
+				found = true;
+				break;
+			}
+		}
+		if (!found)
+			newlist.push(check);
+	}
     if (_commonChecks.done.unfinished) {
-		for (let check of list) {
+		for (check of newlist) {
 			if (!check.hasOwnProperty("deployment")) {
 				if (check.fitted)
 					_commonChecks.noDeployment.systems.push(check);
@@ -209,9 +225,19 @@ function setCheckList(list, applicationVersion) {
 				_commonChecks.system.systems.push(check);
 			}
 		}
+		for (blacklistitem of blacklist) {
+			if (!blacklistitem.hasOwnProperty("deployment")) {
+				blacklistitem.deployment = {"customer":{"id":-1, "abbreviation": "Zuordnung nicht vorhanden"}};
+				if (!blacklistitem.deployment.hasOwnProperty("customer"))
+					blacklistitem.deployment.customer = {"id":-1, "abbreviation": "Zuordnung nicht vorhanden"}
+				if (!blacklistitem.deployment.hasOwnProperty("address"))
+					blacklistitem.deployment.address = {"street":"Keine Adresse", "houseNumber":"", "zipCode":"", "city":""}
+			} 
+			_commonChecks.blacklist.systems.push(blacklistitem);
+		}
 	}
 	_commonChecks.done.unfinished = false;
-	return list;
+	return newlist;
 }
 
 function getApplicationVersion() {
@@ -281,6 +307,17 @@ function getDeployments() {
         success: function (data) {  },
         error: function (msg) {
             setErrorMessage(msg, "Listen der Standorte");
+        }
+    });
+}
+function getSystems() {
+    return $.ajax({
+        url: "https://termgr.homeinfo.de/list/systems",
+        type: "GET",
+        cache: false,
+        success: function (data) {  },
+        error: function (msg) {
+            setErrorMessage(msg, "Listen der Systeme");
         }
     });
 }

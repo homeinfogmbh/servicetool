@@ -241,6 +241,23 @@ $(document).ready(function() {
         
 		e.preventDefault();
 	}); 
+	$('.btn_eye').click(function(e) {
+		let data = {'type':'deployment','id':_display.deployment.id};
+		$("#pageloader").show();
+		$.ajax({
+			url: "https://backend.homeinfo.de/preview/token?customer=" + _display.deployment.customer.id,
+			type: "POST",
+			data: JSON.stringify(data),
+			contentType: 'application/json',
+			success: function (msg) {
+				window.open('https://cms.homeinfo.de/preview/preview.html?token=' + msg.token, '_blank');
+				$("#pageloader").hide();
+			},
+			error: function (msg) {
+				setErrorMessage(msg, "Generieren der Vorschau");
+			}
+		});
+	});
     $('.btn_sync').click(function(e) {
         if (_display !== null && _display.hasOwnProperty("deployment"))
             sync().then(()=>{$("#pageloader").hide()});
@@ -324,29 +341,32 @@ function setDetails(data) {
     if (_display.hasOwnProperty("deployment")) {
         $(".btn_testsystem").css("opacity", "1");
         $(".btn_testsystem").addClass("pointer");
-        $(".btn_testsystem").attr("title", "Keine Zuordnung vorhanden");
+        $(".btn_testsystem").attr("title", "");
         $(".btn_sync").css("opacity", "1");
         $(".btn_sync").addClass("pointer");
-        $(".btn_sync").attr("title", "Keine Zuordnung vorhanden");
+        $(".btn_sync").attr("title", "");
         $(".btn_publictransport").css("opacity", "1");
         $(".btn_publictransport").addClass("pointer");
-        $(".btn_publictransport").attr("title", "Keine Zuordnung vorhanden");
+        $(".btn_publictransport").attr("title", "");
         $(".btn_deleteDeployment").css("opacity", "1");
         $(".btn_deleteDeployment").addClass("pointer");
-        $(".btn_deleteDeployment").attr("title", "Keine Zuordnung vorhanden");        
+        $(".btn_deleteDeployment").attr("title", "Deployment lösen");
     } else {
         $(".btn_testsystem").css("opacity", "0.3");
         $(".btn_testsystem").removeClass("pointer");
-        $(".btn_testsystem").attr("title", "");
+        $(".btn_testsystem").attr("title", "Keine Zuordnung vorhanden");
         $(".btn_sync").css("opacity", "0.3");
         $(".btn_sync").removeClass("pointer");
-        $(".btn_sync").attr("title", "");
+        $(".btn_sync").attr("title", "Keine Zuordnung vorhanden");
         $(".btn_publictransport").css("opacity", "0.3");
         $(".btn_publictransport").removeClass("pointer");
-        $(".btn_publictransport").attr("title", "");
+        $(".btn_publictransport").attr("title", "Keine Zuordnung vorhanden");
         $(".btn_deleteDeployment").css("opacity", "0.3");
         $(".btn_deleteDeployment").removeClass("pointer");
-        $(".btn_deleteDeployment").attr("title", "Deployment lösen");
+        $(".btn_deleteDeployment").attr("title", "Keine Zuordnung vorhanden");  
+        $(".btn_eye").css("opacity", "0.3");
+        $(".btn_eye").removeClass("pointer");
+        $(".btn_eye").attr("title", "Keine Zuordnung vorhanden");
     }
         
     // Systemchecks

@@ -31,12 +31,12 @@ function setDeployments(deployments) {
         let id = $(this).data("id");
         let kind = $(this).data('kind');
         let data = !$(this).prev().is(':checked');
-        setChecklist(id, kind, data).then(getDeployments).then(setDeployments);
+        setChecklistDeployments(id, kind, data).then(getDeployments).then(setDeployments);
 	}); 
     $("#pageloader").hide();
 }
 
-function setChecklist(id, kind, data) {
+function setChecklistDeployments(id, kind, data) {
 	$('#pageloader').show();
 	return $.ajax({
 		url: "https://backend.homeinfo.de/deployments/" + id + "/" + kind,
