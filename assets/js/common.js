@@ -323,9 +323,9 @@ function getSystems() {
 }
 function setErrorMessage(msg, fromFunction) {
 	try {
+		let message = "Leider ist ein Fehler " + fromFunction + " aufgetreten: ";
 		if (msg.responseText.indexOf("Sysinfo unsupported on this system.") !== -1)
-			throw true;
-		let message = "Leider ist ein Fehler aufgetreten";
+			message = "Das System wird nicht unterstützt."
 		if (msg.responseText.indexOf("System is offline.") !== -1)
 			message = "Das System ist offline."
 		else if (msg.responseText.indexOf("No such system.") !== -1)
@@ -340,27 +340,6 @@ function setErrorMessage(msg, fromFunction) {
 			buttonsStyling: true
 		});
 	} catch(error) {	}
-	try {
-		console.log(msg);
-		if (_showErrorMessages) {
-			if (msg.statusText === "Forbidden" || (msg.hasOwnProperty('responseJSON') && msg.responseJSON.message === "Zugriff verweigert.")) {
-				if (fromFunction !== "die Services anzuzeigen")
-					$("#message").html('<font class="errormsg">Sie haben leider keine Berechtigung zum <b>' + fromFunction + '</b>.</font>');
-			} else if (msg.hasOwnProperty('responseJSON') && msg.responseJSON.message === "Inhalt existiert bereits.") {
-				$("#message").html('<font class="errormsg">Sie haben nicht die Möglichkeit zum <b>' + fromFunction + '</b>.</font>');
-			} else if (msg.hasOwnProperty('responseJSON') && msg.responseJSON.message === "Kein solcher Inhalt.") {
-				$("#message").html('<font class="errormsg">Dieser Inhalt wurde bereits gelöscht.</font>');
-			} else if (msg.hasOwnProperty('responseJSON') && msg.responseJSON.message === "Not authorized.") {
-				$("#message").html('<font class="errormsg">Sie haben leider <b>keine Berechtigung</b> diese Seite anzuzeigen.</font>');
-			} else if (msg.statusText !== "error" || msg.status !== 0) {
-				$("#message").html('<font class="errormsg">Leider ist ein Fehler beim <b>"' + fromFunction + '"</b> aufgetreten. Bitte versuchen Sie es erneut oder kontaktieren Sie uns.</font>');
-			}
-		}
-	} catch(error) {
-		console.log('Fehler in: "' + fromFunction + "':");
-		console.log(msg);
-		$("#message").html('<font class="errormsg">Leider ist ein Fehler beim <b>"' + fromFunction + '"</b> aufgetreten. Bitte versuchen Sie es erneut oder kontaktieren Sie uns.</font>');
-	}
 	$('#pageloader').hide();
 }
 function compare(a, b) {

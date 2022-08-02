@@ -33,7 +33,6 @@ $(document).ready(function() {
             $("#unknownblackmodus").text("(Status: UNBEKANNT)");
         });
     }, ()=>{
-        //$("#message").html('<font class="errormsg">System nicht gefunden.</font>');
         $("#errorlog").html("<tr><td>Keine Einträge geladen</td></tr>");
     });
     $('.btn_wireguard').click(function(e) {
@@ -72,7 +71,6 @@ $(document).ready(function() {
             if (address[0].trim() === "" && address[1].trim() === "" && address[2].trim() === "" && address[3].trim() === "") {
                 address = null;
             } else if (address[0].trim() === "" || address[1].trim() === "" || address[2].trim() === "" || address[3].trim() === "") {
-                //$("#message").html('<font class="errormsg">Bitte geben Sie die Adresse vollständig an.</font>');
                 return null;
             }
             setPublicTransport(address).then(() => {
