@@ -24,20 +24,22 @@ function setChecks(data) {
     //Observer table
     let observerItems = [];
     for (let check of list) {
-        if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].smartCheck === "failed")
-            observerItems.push(getObserveItem(check, "SSD Fehler", observerItems.length));
-        if (!check.fitted)
-            observerItems.push(getObserveItem(check, "Nicht verbaut", observerItems.length));
-        if (check.hasOwnProperty("deployment") && check.deployment.testing)
-            observerItems.push(getObserveItem(check, "Testsystem", observerItems.length));
-        if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("offlineSince") && !isOnDate(check.checkResults[0].offlineSince, THREE_MONTHS))
-            observerItems.push(getObserveItem(check, "Mehr als 3 Monate offline", observerItems.length));
-        //if (!isOnDate(check.lastSync, 24)) {
-            if (!isOnDate(check.lastSync, THREE_MONTHS))
-                observerItems.push(getObserveItem(check, "Alte Daten", observerItems.length, " älter als 30 Tage"));
-        //}
-        if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState === "not running")
-            observerItems.push(getObserveItem(check, "Schwarz-Bildmodus", observerItems.length));
+        if (check.deployment.customer.id !== -1) {
+            if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].smartCheck === "failed")
+                observerItems.push(getObserveItem(check, "SSD Fehler", observerItems.length));
+            if (!check.fitted)
+                observerItems.push(getObserveItem(check, "Nicht verbaut", observerItems.length));
+            if (check.hasOwnProperty("deployment") && check.deployment.testing)
+                observerItems.push(getObserveItem(check, "Testsystem", observerItems.length));
+            if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("offlineSince") && !isOnDate(check.checkResults[0].offlineSince, THREE_MONTHS))
+                observerItems.push(getObserveItem(check, "Mehr als 3 Monate offline", observerItems.length));
+            //if (!isOnDate(check.lastSync, 24)) {
+                if (!isOnDate(check.lastSync, THREE_MONTHS))
+                    observerItems.push(getObserveItem(check, "Alte Daten", observerItems.length, " älter als 30 Tage"));
+            //}
+            if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState !== "html" && check.checkResults[0].applicationState !== "air" && check.checkResults[0].applicationState !== "unknown" && check.fitted && !check.deployment.testing)
+                observerItems.push(getObserveItem(check, "Schwarz-Bildmodus", observerItems.length));
+        }
     }
 
     // Widgets
