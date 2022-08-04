@@ -13,6 +13,9 @@ $(document).ready(function() {
                 '<li class="nav-item">' +
                     '<a class="nav-link" id="dash" aria-current="page" href="dashboard.html" onclick="removeopenedlist()">Dashboard</a>' +
                 '</li>' +
+                '<li class="nav-item">' +
+                    '<a class="nav-link" id="chart" aria-current="page" href="chart.html" onclick="removeopenedlist()">Chart</a>' +
+                '</li>' +
                 '<li class="nav-item dropdown">' +
                     '<a class="nav-link dropdown-toggle btn_openedlist" href="#" id="navbarDropdown" role="button" data-openedlist="customerlist" data-bs-toggle="dropdown" aria-expanded="false">' +
                         'Kundenliste' +
@@ -90,8 +93,10 @@ $(document).ready(function() {
 
     if (window.location.pathname.indexOf("dashboard") != -1)
         $("#dash").addClass("active");
+        else if (window.location.pathname.indexOf("chart") != -1)
+        $("#chart").addClass("active");
     else if (window.location.pathname.indexOf("standorte-zuweisen") != -1)
-        $("#standorte-zuweisen.html").addClass("active");
+        $("#standorte-zuweisen").addClass("active");
     else if (window.location.pathname.indexOf("bestelltool") != -1)
         $("#bestelltool").addClass("active");
     

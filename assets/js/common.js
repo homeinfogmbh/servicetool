@@ -323,15 +323,18 @@ function getSystems() {
 }
 function setErrorMessage(msg, fromFunction) {
 	try {
+		let title = "Das hat nicht geklappt";
 		let message = "Leider ist ein Fehler " + fromFunction + " aufgetreten: ";
-		if (msg.responseText.indexOf("Sysinfo unsupported on this system.") !== -1)
+		if (msg.responseText.indexOf("Sysinfo unsupported on this system.") !== -1) {
+			title = "Systeminfos können nicht geladen werden";
 			message = "Das System wird nicht unterstützt."
+		}
 		if (msg.responseText.indexOf("System is offline.") !== -1)
 			message = "Das System ist offline."
 		else if (msg.responseText.indexOf("No such system.") !== -1)
 			message = "Das System existiert nicht."
 		Swal.fire({
-			title: 'Das hat nicht geklappt.',
+			title: title,
 			text: message,
 			showCancelButton: false,
 			confirmButtonColor: '#ff821d',
