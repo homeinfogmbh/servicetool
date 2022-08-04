@@ -53,8 +53,8 @@
 							</div>
 						</div>
 					</div>
-					<div class="dash_bottomCont">
-						<canvas id="myChart" style="width:100%; max-width:1000px; height:300px"></canvas>
+					<div class="dash_bottomCont" id="sysChart">
+						<canvas id="canvas" style="width:100%; max-width:1000px; height:300px"></canvas>
 					</div>
 					<div class="table_contents">
 						<div class="row">
@@ -63,7 +63,7 @@
 									<h3>Anzeige</h3>
 									<p>Welche Daten sollen visualisiert werden?</p>
 									<div class="select">
-										<select name="Kundenauswählen" id="Kundenauswählen" class="basic-data">
+										<select name="days" id="days" class="basic-data">
 											<option value="7">Letzten 7 Tage</option>
 											<option value="30" selected>Letzten 30 Tage</option>
 											<option value="60">Letzten 60 Tage</option>
