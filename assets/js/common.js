@@ -156,6 +156,7 @@ function getCheckPromis() {
 		});
 	}
 }
+
 function setCheckList(list, applicationVersion, blacklist) {
     list = $.map(list, function(value, index){
         return [value];
@@ -274,6 +275,17 @@ function getBlacklist() {
 			}
 		});
 	}
+}
+
+function getCheckByDays(days) {
+    return $.ajax({
+        url: "https://sysmon.homeinfo.de/checks?days-ago=" + days,
+        type: "GET",
+        cache: false,
+        error: function (msg) {
+            setErrorMessage(msg, "Laden der Systemliste für Tag" + days + (days > 1 ?"e" :""));
+        }
+    });
 }
 
 function getCustomerView() {

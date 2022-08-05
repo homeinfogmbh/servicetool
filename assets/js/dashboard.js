@@ -1,6 +1,27 @@
 var _hipsterIsOnline = true;
+var _systemchecksByDays = null;
 $(document).ready(function() {
-    Promise.all(getListOfSystemChecks()).then(setChecks);
+    Promise.all(getListOfSystemChecks()).then((data) => {
+        setChecks(data);
+        getCheckByDays(1).then((checkday)=> {
+            _systemchecksByDays = {};
+            _systemchecksByDays[1] = [];
+            let found;
+            let blacklistitem;
+            for (let check in checkday) {
+                found = false;
+                for (blacklistitem of data[2]) {
+                    if (data[0][check].id === blacklistitem.id) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found && checkday[check].hasOwnProperty("checkResults") && checkday[check].checkResults.length > 0 && checkday[check].checkResults[0].hasOwnProperty("offlineSince") && checkday[check].checkResults[0].sshLogin !== "success" && !checkday[check].checkResults[0].icmpRequest && checkday[check].fitted && checkday[check].hasOwnProperty("deployment") && !checkday[check].deployment.testing && checkday[check].operatingSystem.toLowerCase().indexOf("windows") === -1)
+                    _systemchecksByDays[1].push(checkday[check]);
+            }
+            setWidgets();
+        });
+    });
     getDeployments().then(setDeployments);
     getHipsterStatus().then((data)=>{
         _hipsterIsOnline = data;
@@ -59,8 +80,15 @@ function setWidgets() {
             errorsDOM += '<div class="col btn_list pointer" data-id="' + item + '">' +
                 '<div class="number_box">' +
                     '<span class="theNumber">' + _commonChecks[item].systems.length + '</span>' +
-                    '<h5>' + _commonChecks[item].title + '</h5>' +
-                '</div>' +
+                    '<h5>' + _commonChecks[item].title + '</h5>';
+                    if (item === "offline" && _systemchecksByDays !== null) {
+                        let diff = _commonChecks[item].systems.length - _systemchecksByDays[1].length;
+                        if (diff > 0)
+                            errorsDOM += '<span style="margin:35px 0 0 -53px">' + Math.abs(diff) + ' mehr als gestern</span>';
+                        else if (diff < 0)
+                            errorsDOM += '<span style="margin:35px 0 0 -53px">' + Math.abs(diff) + ' weniger als gestern</span>';
+                    }
+                errorsDOM += '</div>' +
             '</div>';
         }
     }
@@ -74,6 +102,7 @@ function setWidgets() {
         '</div>';
     }
     $("#widgets").html(errorsDOM);
+
     $('.btn_list').click(function(e) {
         if ($(this).data("id") === "updating")
             localStorage.removeItem("servicetool.systemchecks");

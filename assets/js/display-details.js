@@ -570,7 +570,7 @@ function getDeploymentHistory() {
 }
 
 // Systemchecks über 30 Tage
-function setThirtyDays(data) {  
+function setThirtyDays(data) {
     _display = data[_id];
     let date = new Date();
     let dateDay;
@@ -625,7 +625,6 @@ function getSystem() {
         url: "https://termgr.homeinfo.de/list/systems/" + _id,
         type: "GET",
         cache: false,
-        success: function (data) {  },
         error: function (msg) {
             setErrorMessage(msg, "Anzeigen des Systems");
         }
@@ -637,7 +636,6 @@ function checkSystem() {
         url: "https://sysmon.homeinfo.de/check/" + _id,
         type: "GET",
         cache: false,
-        success: function (data) {  },
         error: function (msg) {
             setErrorMessage(msg, "Checken des Systems");
         }
@@ -648,7 +646,6 @@ function getSystemInfo() {
         url: "https://sysmon.homeinfo.de/sysinfo/" + _id,
         type: "GET",
         cache: false,
-        success: function (data) {  },
         error: function (msg) {
             setErrorMessage(msg, "Laden der Systeminfos");
         }

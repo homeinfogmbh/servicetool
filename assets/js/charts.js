@@ -1,23 +1,53 @@
+var _systemchecksByDays = null;
 $(document).ready(function() {
-  let values = getXYValues(300);
-
+  getAllDaysChecks(30);
+  
   $("#days").change(function() {
-    let days = $("#days option:selected").val() === "allTime" ?values.xValues.length :parseInt($("#days option:selected").val());
-    //$("#canvas").remove();
-    $("#sysChart").html('<canvas id="canvas" style="width:100%; max-width:1000px; height:300px"></canvas>');
-    renderChart(values.xValues.slice(0, days), values.yValues.slice(0, days));
-  });
-
-  renderChart(values.xValues.slice(0, 30), values.yValues.slice(0, 30));
-  $("#pageloader").hide();
+	$("#pageloader").show();
+	// TODO allTime?
+    let days = $("#days option:selected").val() === "allTime" ?365 :parseInt($("#days option:selected").val());
+    getAllDaysChecks(days);
+  })
 });
 
-function getXYValues(days) {
+function getAllDaysChecks(days) {
+	let promises = [];
+	promises.push(getBlacklist());
+	for (let day = 0; day < days; day++)
+		promises.push(getCheckByDays(day));
+	
+	Promise.all(promises).then((data) => {
+    	_systemchecksByDays = {};
+    	let found;
+		let daysCheck
+    	let blacklistitem;
+    	for (let dataDaysCounter = 0; dataDaysCounter < data.length-1; dataDaysCounter++) {
+      		_systemchecksByDays[dataDaysCounter] = [];
+			for (daysCheck in data[dataDaysCounter+1]) {
+				found = false;
+				for (blacklistitem of data[0]) {
+					if (data[dataDaysCounter+1][daysCheck].id === blacklistitem.id) {
+						found = true;
+						break;
+					}
+				}
+				if (!found && data[dataDaysCounter+1][daysCheck].hasOwnProperty("checkResults") && data[dataDaysCounter+1][daysCheck].checkResults.length > 0 && data[dataDaysCounter+1][daysCheck].checkResults[0].hasOwnProperty("offlineSince") && data[dataDaysCounter+1][daysCheck].checkResults[0].sshLogin !== "success" && !data[dataDaysCounter+1][daysCheck].checkResults[0].icmpRequest && data[dataDaysCounter+1][daysCheck].fitted && data[dataDaysCounter+1][daysCheck].hasOwnProperty("deployment") && !data[dataDaysCounter+1][daysCheck].deployment.testing && data[dataDaysCounter+1][daysCheck].operatingSystem.toLowerCase().indexOf("windows") === -1)
+					_systemchecksByDays[dataDaysCounter].push(data[dataDaysCounter+1][daysCheck]);
+			}
+		}
+		$("#sysChart").html('<canvas id="canvas" style="width:100%; max-width:1000px; height:300px"></canvas>');
+  		let values = getXYValues(_systemchecksByDays);
+  		renderChart(values.xValues, values.yValues); // TODO splice array, if less then rendered
+  		$("#pageloader").hide();
+	});
+}
+
+function getXYValues(dataForDays) {
   let x = [];
   let y = [];
-  for (let day = 1; day < days+1; day++) {
-    x.push(day);
-    y.push(Math.floor(Math.random() * 100) + 1);
+  for (let day in dataForDays) {
+    x.push(parseInt(day)+1);
+    y.push(dataForDays[day].length);
   }
   return {"xValues":x, "yValues":y};
 }
@@ -57,7 +87,7 @@ function renderChart(xValues, yValues) {
           }
         }],
         yAxes: [{
-          ticks: {fontColor:'white'},
+          ticks: {min:0, fontColor:'white'},
           gridLines: {
             lineWidth: 0,
             display: true,
