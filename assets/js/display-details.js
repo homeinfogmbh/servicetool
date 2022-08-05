@@ -11,7 +11,7 @@ $(document).ready(function() {
         getSystemChecks().then((data)=> {
             setThirtyDays(data);
             setErrorLog(data);
-            });
+        });
         getSystemInfo().then((data) => {
             try { $("#applicationDesign").text('"' + data.presentation.configuration.design.toUpperCase() + '"'); } catch(error) { $("#applicationDesign").text("-"); }
             $("#unknownblackmodus").hide();
@@ -417,9 +417,7 @@ function setErrorLog(display) {
             // offline
             if (log.hasOwnProperty("offlineSince")) {
                 if (errorData.offline.length === 0)
-                    errorData.offline.push({"days":Math.ceil((new Date() - new Date(log.offlineSince)) / 86400000), "timestamp":log.timestamp});
-                //else
-                    //errorData.offline[errorData.offline.length-1].days++;
+                    errorData.offline.push({"days":Math.ceil((new Date(log.timestamp) - new Date(log.offlineSince))) === 0 ?1 :Math.ceil((new Date(log.timestamp) - new Date(log.offlineSince)) / 86400000), "timestamp":log.timestamp});
             } else if (errorData.offline.length > 0)
                 logsData.push({"title":"Nicht Online", "timestamp":errorData.offline[errorData.offline.length-1].timestamp, "days":errorData.offline.pop().days});
             // ssd
@@ -583,7 +581,7 @@ function setThirtyDays(data) {
     $("#thirtyicmp").html('');
     $("#thirtyssh").html('');
     $("#thirtyhttp").html('');
-    $("#thirtydownloadupload").html('');    
+    $("#thirtydownloadupload").html('');
     for (let day = 0; day < 30; day++) {
         dateFound = false;
         dateDay = (date.getDate() < 10 ?"0" + date.getDate(): date.getDate()) + "." + (date.getMonth() < 9 ?"0" + (date.getMonth()+1) :date.getMonth()+1) + "." + date.getFullYear();
