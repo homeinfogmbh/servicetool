@@ -9,18 +9,21 @@ $(document).ready(function() {
         systemCheckCompleted(data);
         getDeploymentHistory().then((data)=>setHistory(data), denyHistory);
         getSystemChecks().then((data)=> {
+            setDetails(data);
             setThirtyDays(data);
             setErrorLog(data);
         });
         getSystemInfo().then((data) => {
             try { $("#applicationDesign").text('"' + data.presentation.configuration.design.toUpperCase() + '"'); } catch(error) { $("#applicationDesign").text("-"); }
             $("#unknownblackmodus").hide();
-            if (data.application.status.running.length === 0) {
-                $("#Schwarzbildmodus").prop("checked", true);
-                $(".btn_blackmodus").attr("title", "Ist im Schwarzbildmodus");
-            } else if (data.application.status.running[0] === "html" || data.application.status.running[0] === "air") {
-                $(".btn_blackmodus").attr("title", "Ist nicht im Schwarzbildmodus");
-                $("#Schwarzbildmodus").prop("checked", false);
+            if (data.hasOwnProperty("application")) {
+                if (data.application.status.running.length === 0) {
+                    $("#Schwarzbildmodus").prop("checked", true);
+                    $(".btn_blackmodus").attr("title", "Ist im Schwarzbildmodus");
+                } else if (data.application.status.running[0] === "html" || data.application.status.running[0] === "air") {
+                    $(".btn_blackmodus").attr("title", "Ist nicht im Schwarzbildmodus");
+                    $("#Schwarzbildmodus").prop("checked", false);
+                }
             }
         }, ()=>{
             try {
@@ -370,12 +373,17 @@ function setDetails(data) {
     // Systemchecks
     if (_display.hasOwnProperty("checkResults") && _display.checkResults.length > 0)
         setChecks(_display.checkResults[0]);
+    else
+        $("#pageloader").hide();
 }
 
 function setChecks(lastCheck) {
+    console.log(lastCheck)
     if (isOnDate(lastCheck.timestamp, 24)) {
         $("#systemcheck").html('<span class="blueMark">ok</span>');
-        $("#offline").html(lastCheck.hasOwnProperty("offlineSince") || lastCheck.sshLogin !== "success" ?'<span class="orangeMark">offline</span>' :'<span class="blueMark">online</span>');
+        //lastCheck.hasOwnProperty("offlineSince") && lastCheck.sshLogin !== "success" && !lastCheck.icmpRequest
+        //$("#offline").html(lastCheck.hasOwnProperty("offlineSince") && lastCheck.sshLogin !== "success" ?'<span class="orangeMark">offline</span>' :'<span class="blueMark">online</span>');
+        $("#offline").html(lastCheck.sshLogin === "failed" && !lastCheck.icmpRequest ?'<span class="orangeMark">offline</span>' :'<span class="blueMark">online</span>');
         $("#sensors").html(lastCheck.sensors === "failed" ?'<span class="orangeMark">overheated</span>' :lastCheck.sensors === "success" ?'<span class="blueMark">ok</span>' :'<span class="blueMark">' + lastCheck.sensors + '</span>');
         $("#root").html(lastCheck.rootNotRo === "failed" ?'<span class="orangeMark">' + lastCheck.rootNotRo + '</span>' :'<span class="blueMark">' + lastCheck.rootNotRo + '</span>');
         $("#ssd").html(lastCheck.smartCheck === "failed" ?'<span class="orangeMark">' + lastCheck.smartCheck + '</span>' :'<span class="blueMark">' + lastCheck.smartCheck + '</span>');
@@ -415,7 +423,8 @@ function setErrorLog(display) {
     if (display.hasOwnProperty("checkResults") && display.checkResults.length > 0) {
         for (let log of display.checkResults) {
             // offline
-            if (log.hasOwnProperty("offlineSince")) {
+            //if (log.hasOwnProperty("offlineSince")) {
+            if (log.sshLogin === "failed" && !log.icmpRequest) {    
                 if (errorData.offline.length === 0)
                     errorData.offline.push({"days":Math.ceil((new Date(log.timestamp) - new Date(log.offlineSince))) === 0 ?1 :Math.ceil((new Date(log.timestamp) - new Date(log.offlineSince)) / 86400000), "timestamp":log.timestamp});
             } else if (errorData.offline.length > 0)
@@ -591,7 +600,8 @@ function setThirtyDays(data) {
                 if (date.getFullYear() === timestamp.getFullYear() && date.getMonth() === timestamp.getMonth() && date.getDate() === timestamp.getDate()) {
                     dateFound = true;
                     $("#thirtysystemcheck").append('<li data-toggle="tooltip" title="' + dateDay + '"></li>');
-                    $("#thirtyoffline").append(log.hasOwnProperty("offlineSince") || log.sshLogin !== "success" ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
+                    //$("#thirtyoffline").append(log.hasOwnProperty("offlineSince") || log.sshLogin !== "success" ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
+                    $("#thirtyoffline").append(log.sshLogin === "failed" && !log.icmpRequest ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
                     $("#thirtyicmp").append(!log.icmpRequest ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
                     $("#thirtyssh").append(log.sshLogin === "failed" ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
                     $("#thirtyhttp").append(log.httpRequest === "failed" ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');

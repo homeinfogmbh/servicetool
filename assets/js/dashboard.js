@@ -4,21 +4,7 @@ $(document).ready(function() {
     Promise.all(getListOfSystemChecks()).then((data) => {
         setChecks(data);
         getCheckByDays(1).then((checkday)=> {
-            _systemchecksByDays = {};
-            _systemchecksByDays[1] = [];
-            let found;
-            let blacklistitem;
-            for (let check in checkday) {
-                found = false;
-                for (blacklistitem of data[2]) {
-                    if (data[0][check].id === blacklistitem.id) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found && checkday[check].hasOwnProperty("checkResults") && checkday[check].checkResults.length > 0 && checkday[check].checkResults[0].hasOwnProperty("offlineSince") && checkday[check].checkResults[0].sshLogin !== "success" && !checkday[check].checkResults[0].icmpRequest && checkday[check].fitted && checkday[check].hasOwnProperty("deployment") && !checkday[check].deployment.testing && checkday[check].operatingSystem.toLowerCase().indexOf("windows") === -1)
-                    _systemchecksByDays[1].push(checkday[check]);
-            }
+            _systemchecksByDays = checkday[1][0].offline + checkday[2][0].offline;
             setWidgets();
         });
     });
@@ -82,11 +68,11 @@ function setWidgets() {
                     '<span class="theNumber">' + _commonChecks[item].systems.length + '</span>' +
                     '<h5>' + _commonChecks[item].title + '</h5>';
                     if (item === "offline" && _systemchecksByDays !== null) {
-                        let diff = _commonChecks[item].systems.length - _systemchecksByDays[1].length;
+                        let diff = _commonChecks[item].systems.length - _systemchecksByDays;
                         if (diff > 0)
-                            errorsDOM += '<span style="margin:35px 0 0 -53px">' + Math.abs(diff) + ' mehr als gestern</span>';
+                            errorsDOM += '<span style="margin:53px 0 0 -53px">' + Math.abs(diff) + ' mehr als gestern</span>';
                         else if (diff < 0)
-                            errorsDOM += '<span style="margin:35px 0 0 -53px">' + Math.abs(diff) + ' weniger als gestern</span>';
+                            errorsDOM += '<span style="margin:53px 0 0 -53px">' + Math.abs(diff) + ' weniger als gestern</span>';
                     }
                 errorsDOM += '</div>' +
             '</div>';

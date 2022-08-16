@@ -188,14 +188,16 @@ function setCheckList(list, applicationVersion, blacklist) {
 				if (!check.deployment.hasOwnProperty("address"))
 					check.deployment.address = {"street":"Keine Adresse", "houseNumber":"", "zipCode":"", "city":""}
 			} else {
-				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("offlineSince") && check.checkResults[0].sshLogin !== "success" && !check.checkResults[0].icmpRequest && check.fitted && !check.deployment.testing && check.operatingSystem.toLowerCase().indexOf("windows") === -1) {
+				//if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("offlineSince") && check.checkResults[0].sshLogin !== "success" && !check.checkResults[0].icmpRequest && check.fitted && !check.deployment.testing && check.operatingSystem.toLowerCase().indexOf("windows") === -1) {
+				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].sshLogin === "failed" && !check.checkResults[0].icmpRequest && check.fitted && !check.deployment.testing) {
 					_commonChecks.offline.systems.push(check);
 					if (!isOnDate(check.checkResults[0].offlineSince, THREE_MONTHS))
 						_commonChecks.offlineThreeMonth.systems.push(check);
 				}
 				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].smartCheck === "failed")
 					_commonChecks.ssd.systems.push(check);
-				if (check.hasOwnProperty("lastSync") && !isOnDate(check.lastSync, 24) && check.fitted && !check.deployment.testing && (!check.hasOwnProperty("checkResults") || (check.checkResults.length > 0 && !check.checkResults[0].hasOwnProperty("offlineSince"))))
+				//if (check.hasOwnProperty("lastSync") && !isOnDate(check.lastSync, 24) && check.fitted && !check.deployment.testing && (!check.hasOwnProperty("checkResults") || (check.checkResults.length > 0 && !check.checkResults[0].hasOwnProperty("offlineSince"))))
+				if (check.hasOwnProperty("lastSync") && !isOnDate(check.lastSync, 24) && check.fitted && !check.deployment.testing && (!check.hasOwnProperty("checkResults") || (check.checkResults.length > 0 && check.checkResults[0].sshLogin !== "failed" && check.checkResults[0].icmpRequest)))
 					_commonChecks.noActualData.systems.push(check);
 				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState !== "html" && check.checkResults[0].applicationState !== "air" && check.checkResults[0].applicationState !== "unknown" && check.fitted && !check.deployment.testing)
 					_commonChecks.blackscreen.systems.push(check);
@@ -277,9 +279,9 @@ function getBlacklist() {
 	}
 }
 
-function getCheckByDays(days) {
+function getCheckByDays(days) { // 1:DDB; 2:Exposé-TV
     return $.ajax({
-        url: "https://sysmon.homeinfo.de/checks?days-ago=" + days,
+        url: "https://sysmon.homeinfo.de/offline-history/" + days, //"https://sysmon.homeinfo.de/checks?days-ago=" + days,
         type: "GET",
         cache: false,
         error: function (msg) {
