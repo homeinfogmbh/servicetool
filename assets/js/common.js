@@ -183,8 +183,7 @@ function setCheckList(list, applicationVersion, blacklist) {
     if (_commonChecks.done.unfinished) {
 		for (check of newlist) {
 			if (!check.hasOwnProperty("deployment")) {
-				console.log(check.fitted)
-				//if (check.fitted)
+				if (check.fitted)
 					_commonChecks.noDeployment.systems.push(check);
 				check.deployment = {"customer":{"id":-1, "abbreviation": "Zuordnung nicht vorhanden"}};
 				if (!check.deployment.hasOwnProperty("customer"))
