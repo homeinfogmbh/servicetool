@@ -5,35 +5,32 @@ var _lastsort = null;
 $(document).ready(function() {
     _type = _commonChecks.hasOwnProperty(getURLParameterByName('type')) ?getURLParameterByName('type') :'system';
     _customer = getURLParameterByName('customer');
-    if (_customer === null) {
-        Promise.all(getListOfSystemChecks()).then((data)=>{
-            _applicationVersion = data[1];
-            setCheckList(data[0], data[1], data[2]);
+    Promise.all(getListOfSystemChecks()).then((data)=>{
+        _applicationVersion = data[1];
+        setCheckList(data[0], data[1], data[2]);
+        if (_customer === null) {
             setList();
-        });
-    } else {
-        getSystems().then((systems) => {
-            let found;
-            for (let system of systems) {
-                if (system.hasOwnProperty("deployment")) {
-                    found = false;
-                    for (let checkedSystem of _commonChecks.system.systems) {
-                        if (system.id === checkedSystem.id) {
-                            found = true;
-                            break;
+        } else {
+            getSystems().then((systems) => {
+                let found;
+                for (let system of systems) {
+                    if (system.hasOwnProperty("deployment")) {
+                        found = false;
+                        for (let checkedSystem of _commonChecks.system.systems) {
+                            if (system.id === checkedSystem.id) {
+                                found = true;
+                                break;
+                            }
                         }
+                        if (!found)
+                            _commonChecks.system.systems.push(system);
                     }
-                    if (!found)
-                        _commonChecks.system.systems.push(system);
                 }
-            }
-            Promise.all(getListOfSystemChecks()).then((data)=>{
-                _applicationVersion = data[1];
-                setCheckList(data[0], data[1], data[2]);
                 setList();
             });
-        });
-    }
+        }
+            
+    });
     $('#searchfield').val(getURLParameterByName('filter') !== null ? getURLParameterByName('filter') :"");
     $(".dashTopLeft").html('<h2>' + _commonChecks[_type].title + '</h2><p>' + _commonChecks[_type].text + '</p>');
 	$('#searchfield').on('input',function(e) {
@@ -95,6 +92,8 @@ function setList(sort = "sortcustomer") {
             if ($('#searchfield').val().length === 0 || (check.id.toString().indexOf($('#searchfield').val().toLowerCase()) !== -1 || addressComplete.toLowerCase().indexOf($('#searchfield').val().toLowerCase()) !== -1 || check.deployment.customer.abbreviation.toLowerCase().indexOf($('#searchfield').val().toLowerCase()) !== -1 || name.toLowerCase().indexOf($('#searchfield').val().toLowerCase()) !== -1 || check.deployment.customer.id.toString().indexOf($('#searchfield').val().toLowerCase()) !== -1)) {
                 address = check.deployment.hasOwnProperty("address") ?check.deployment.address.street + " " + check.deployment.address.houseNumber :'';
                 abbreviation = check.deployment.customer.abbreviation === "Zuordnung nicht vorhanden" ?'<i>' + check.deployment.customer.abbreviation + '</i>' :check.deployment.customer.abbreviation;
+                if (check.id === 24)
+                    console.log(check)
                 systemlistDOM += '<tr class="system" data-id="' + check.id + '">' +
                     '<td>' + check.id + '</td>' +
                     '<td>' + abbreviation + '</td>' +
@@ -104,7 +103,7 @@ function setList(sort = "sortcustomer") {
                     '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].smartCheck === "failed" ?'orangeCircle' :'blueCircle') + '"></span></td>' +
                     '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].sshLogin === "failed" ?"orangeCircle":"blueCircle") + '"></span></td>' +
                     '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && (check.checkResults[0].applicationState === "conflict" || check.checkResults[0].applicationState === "not enabled" || check.checkResults[0].applicationState === "not running") ?"orangeCircle":"blueCircle") + '"></span></td>' +
-                    '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && _applicationVersion === check.checkResults[0].applicationVersion ?"blueCircle":"orangeCircle") + '"></span></td>' +
+                    '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("applicationVersion") && _applicationVersion === check.checkResults[0].applicationVersion ?"blueCircle":"orangeCircle") + '"></span></td>' +
                     '<td>' + (check.hasOwnProperty("lastSync") ?formatDate(check.lastSync) + " (" + check.lastSync.substring(11, 16) + "h)": "noch nie") + '</td>' +
                     '<td><a href="display-details.html?id=' + check.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>' +
                 '</tr>';

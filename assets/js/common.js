@@ -19,7 +19,9 @@ var _commonChecks = {"offline":{"title":"Offline", "text":"Liste der Geräte die
 	"wireguard":{"title":"Kein Wireguard", "text":"Liste aller Systeme ohne Wireguard", "systems":[], "show":true},
 	"downloadUpload":{"title":"Download/Upload kritisch", "text":"Liste aller Systeme, deren Downloadrate unter 2,0 Mbit oder Uploadrate unter 0,4 Mbit liegt", "systems":[], "show":true},
 	"updating":{"title":"Patching", "text":"Liste aller Systeme die gepatched werden", "systems":[], "show":true},
-	"blacklist":{"title":"Blacklist", "text":"Liste aller Systeme auf der Blacklist", "systems":[], "show":true},
+	"blacklist":{"title":"Blacklist", "text":"Displays (Standorte) auf denen 3 Tage keine Klicks registriert wurden", "systems":[], "show":true},
+	"lessTouches":{"title":"3 Tage ohne Touch", "text":"Liste aller Systeme auf der Blacklist", "systems":[], "show":true},
+	"toMuchTouches":{"title":"Touch Überflutung", "text":"Displays (Standorte) auf denen in den letzten 3 Tag mehr  als 500 Klicks registriert wurden", "systems":[], "show":true},
 	"system":{"title":"Displays", "text":"Liste aller Displays", "systems":[], "show":false},
 	"done":{"title":"never toSee", "unfinished":true, "show":false}
 }; // -> also setCheckList() for filter
@@ -226,6 +228,11 @@ function setCheckList(list, applicationVersion, blacklist) {
 					_commonChecks.wireguard.systems.push(check);
 				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && (check.checkResults[0].hasOwnProperty("download") && check.checkResults[0].download*_KIBIBITTOMBIT < 2) || (check.checkResults[0].hasOwnProperty("upload") && check.checkResults[0].upload*_KIBIBITTOMBIT < 0.4))
 					_commonChecks.downloadUpload.systems.push(check);
+					console.log(check.checkResults[0].recentTouchEvents)
+				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("recentTouchEvents") && check.checkResults[0].recentTouchEvents === 0)
+					_commonChecks.lessTouches.systems.push(check);
+				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("recentTouchEvents") && check.checkResults[0].recentTouchEvents > 500)
+					_commonChecks.toMuchTouches.systems.push(check);
 				if (check.updating)
 					_commonChecks.updating.systems.push(check);
 				_commonChecks.system.systems.push(check);
