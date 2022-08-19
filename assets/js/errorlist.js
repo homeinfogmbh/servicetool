@@ -29,7 +29,6 @@ $(document).ready(function() {
                 setList();
             });
         }
-            
     });
     $('#searchfield').val(getURLParameterByName('filter') !== null ? getURLParameterByName('filter') :"");
     $(".dashTopLeft").html('<h2>' + _commonChecks[_type].title + '</h2><p>' + _commonChecks[_type].text + '</p>');
@@ -92,13 +91,11 @@ function setList(sort = "sortcustomer") {
             if ($('#searchfield').val().length === 0 || (check.id.toString().indexOf($('#searchfield').val().toLowerCase()) !== -1 || addressComplete.toLowerCase().indexOf($('#searchfield').val().toLowerCase()) !== -1 || check.deployment.customer.abbreviation.toLowerCase().indexOf($('#searchfield').val().toLowerCase()) !== -1 || name.toLowerCase().indexOf($('#searchfield').val().toLowerCase()) !== -1 || check.deployment.customer.id.toString().indexOf($('#searchfield').val().toLowerCase()) !== -1)) {
                 address = check.deployment.hasOwnProperty("address") ?check.deployment.address.street + " " + check.deployment.address.houseNumber :'';
                 abbreviation = check.deployment.customer.abbreviation === "Zuordnung nicht vorhanden" ?'<i>' + check.deployment.customer.abbreviation + '</i>' :check.deployment.customer.abbreviation;
-                if (check.id === 24)
-                    console.log(check)
                 systemlistDOM += '<tr class="system" data-id="' + check.id + '">' +
                     '<td>' + check.id + '</td>' +
                     '<td>' + abbreviation + '</td>' +
                     '<td title="' + addressComplete + '" style="white-space: nowrap;">' + address +  '</td>' + //'<td title="' + address + '">' + address.substring(0, 12) + (address != '' ?'...' :'') +  '</td>' +
-                    '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].sshLogin === "failed" && !check.checkResults[0].icmpRequest && check.fitted && !check.deployment.testing ?'orangeCircle' :'blueCircle') + '"></span></td>' +
+                    '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].sshLogin === "failed" && !check.checkResults[0].icmpRequest /*&& check.fitted && !check.deployment.testing*/ ?'orangeCircle' :'blueCircle') + '"></span></td>' +
                     '<td><span class="' + (!check.fitted ?'orangeCircle' :'blueCircle') + '"></span></td>' +
                     '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].smartCheck === "failed" ?'orangeCircle' :'blueCircle') + '"></span></td>' +
                     '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].sshLogin === "failed" ?"orangeCircle":"blueCircle") + '"></span></td>' +
@@ -148,11 +145,11 @@ function sortCommonList(sort) {
         });
     } else if (_lastsort == "sortonline") {
         _commonChecks[_type].systems.sort(function(a, b) {
-            return a.hasOwnProperty("checkResults") && a.checkResults[0].hasOwnProperty("offlineSince") ?-1 :b.hasOwnProperty("checkResults") && b.checkResults[0].hasOwnProperty("offlineSince")?1 :0
+            return a.hasOwnProperty("checkResults") && a.checkResults[0].sshLogin === "failed" && !a.checkResults[0].icmpRequest /*&& a.fitted && !a.deployment.testing*/ ?-1 :b.hasOwnProperty("checkResults") && b.checkResults[0].sshLogin === "failed" && !b.checkResults[0].icmpRequest /*&& b.fitted && !b.deployment.testing*/ ?1 :0
         });
     } else if (_lastsort == "sortonlineInverted") {
         _commonChecks[_type].systems.sort(function(a, b) {
-            return b.hasOwnProperty("checkResults") && b.checkResults[0].hasOwnProperty("offlineSince") ?-1 :a.hasOwnProperty("checkResults") && a.checkResults[0].hasOwnProperty("offlineSince")? 1 :0
+            return a.hasOwnProperty("checkResults") && b.checkResults[0].sshLogin === "failed" && !b.checkResults[0].icmpRequest /*&& b.fitted && !b.deployment.testing*/ ?-1 :a.hasOwnProperty("checkResults") && a.checkResults[0].sshLogin === "failed" && !a.checkResults[0].icmpRequest /*&& b.fitted && !a.deployment.testing*/ ?1 :0
         });
     } else if (_lastsort == "sortfitted") {
         _commonChecks[_type].systems.sort(function(a, b) {
