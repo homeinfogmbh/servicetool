@@ -91,6 +91,7 @@ $(document).ready(function() {
 	});
     $('.btn_check').click(function(e) {
         localStorage.removeItem("servicetool.systemchecks");
+        localStorage.removeItem("servicetool.applicationversion");
         if (_display !== null && _display.hasOwnProperty("checkResults") && _display.checkResults.length > 0 && _display.checkResults[0].hasOwnProperty("offlineSince")) {
             Swal.fire({
                 title: 'System war offline',

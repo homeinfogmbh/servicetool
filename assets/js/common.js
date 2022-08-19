@@ -176,11 +176,15 @@ function setCheckList(list, applicationVersion, blacklist) {
 		}
 		if (!found)
 			newlist.push(check);
+		else if (check.hasOwnProperty("deployment") && _commonChecks.done.unfinished)
+			_commonChecks.blacklist.systems.push(check);
 	}
+
     if (_commonChecks.done.unfinished) {
 		for (check of newlist) {
 			if (!check.hasOwnProperty("deployment")) {
-				if (check.fitted)
+				console.log(check.fitted)
+				//if (check.fitted)
 					_commonChecks.noDeployment.systems.push(check);
 				check.deployment = {"customer":{"id":-1, "abbreviation": "Zuordnung nicht vorhanden"}};
 				if (!check.deployment.hasOwnProperty("customer"))
@@ -227,16 +231,6 @@ function setCheckList(list, applicationVersion, blacklist) {
 					_commonChecks.updating.systems.push(check);
 				_commonChecks.system.systems.push(check);
 			}
-		}
-		for (blacklistitem of blacklist) {
-			if (!blacklistitem.hasOwnProperty("deployment")) {
-				blacklistitem.deployment = {"customer":{"id":-1, "abbreviation": "Zuordnung nicht vorhanden"}};
-				if (!blacklistitem.deployment.hasOwnProperty("customer"))
-					blacklistitem.deployment.customer = {"id":-1, "abbreviation": "Zuordnung nicht vorhanden"}
-				if (!blacklistitem.deployment.hasOwnProperty("address"))
-					blacklistitem.deployment.address = {"street":"Keine Adresse", "houseNumber":"", "zipCode":"", "city":""}
-			} 
-			_commonChecks.blacklist.systems.push(blacklistitem);
 		}
 	}
 	_commonChecks.done.unfinished = false;

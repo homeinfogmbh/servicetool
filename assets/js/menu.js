@@ -121,6 +121,8 @@ $(document).ready(function() {
         }
 	});
     Promise.all(getListOfSystemChecks()).then(setMenu);
+
+    // TODO only load system, if opened?
     getSystems().then((systems) => {
         let customerList = {};
         let sortedList = [];

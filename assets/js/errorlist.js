@@ -1,11 +1,16 @@
 var _type;
 var _customer;
+var _applicationVersion = null;
 var _lastsort = null;
 $(document).ready(function() {
     _type = _commonChecks.hasOwnProperty(getURLParameterByName('type')) ?getURLParameterByName('type') :'system';
     _customer = getURLParameterByName('customer');
     if (_customer === null) {
-        Promise.all(getListOfSystemChecks()).then((data)=>{setCheckList(data[0], data[1], data[2]); setList()});
+        Promise.all(getListOfSystemChecks()).then((data)=>{
+            _applicationVersion = data[1];
+            setCheckList(data[0], data[1], data[2]);
+            setList();
+        });
     } else {
         getSystems().then((systems) => {
             let found;
@@ -22,7 +27,11 @@ $(document).ready(function() {
                         _commonChecks.system.systems.push(system);
                 }
             }
-            Promise.all(getListOfSystemChecks()).then((data)=>{setCheckList(data[0], data[1], data[2]); setList()});
+            Promise.all(getListOfSystemChecks()).then((data)=>{
+                _applicationVersion = data[1];
+                setCheckList(data[0], data[1], data[2]);
+                setList();
+            });
         });
     }
     $('#searchfield').val(getURLParameterByName('filter') !== null ? getURLParameterByName('filter') :"");
@@ -90,12 +99,12 @@ function setList(sort = "sortcustomer") {
                     '<td>' + check.id + '</td>' +
                     '<td>' + abbreviation + '</td>' +
                     '<td title="' + addressComplete + '" style="white-space: nowrap;">' + address +  '</td>' + //'<td title="' + address + '">' + address.substring(0, 12) + (address != '' ?'...' :'') +  '</td>' +
-                    '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("offlineSince") ?'orangeCircle' :'blueCircle') + '"></span></td>' +
+                    '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].sshLogin === "failed" && !check.checkResults[0].icmpRequest && check.fitted && !check.deployment.testing ?'orangeCircle' :'blueCircle') + '"></span></td>' +
                     '<td><span class="' + (!check.fitted ?'orangeCircle' :'blueCircle') + '"></span></td>' +
                     '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].smartCheck === "failed" ?'orangeCircle' :'blueCircle') + '"></span></td>' +
                     '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].sshLogin === "failed" ?"orangeCircle":"blueCircle") + '"></span></td>' +
                     '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && (check.checkResults[0].applicationState === "conflict" || check.checkResults[0].applicationState === "not enabled" || check.checkResults[0].applicationState === "not running") ?"orangeCircle":"blueCircle") + '"></span></td>' +
-                    '<td><span class="' + (isOnDate(check.lastSync, 24) ?"blueCircle":"orangeCircle") + '"></span></td>' +
+                    '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && _applicationVersion === check.checkResults[0].applicationVersion ?"blueCircle":"orangeCircle") + '"></span></td>' +
                     '<td>' + (check.hasOwnProperty("lastSync") ?formatDate(check.lastSync) + " (" + check.lastSync.substring(11, 16) + "h)": "noch nie") + '</td>' +
                     '<td><a href="display-details.html?id=' + check.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>' +
                 '</tr>';
@@ -140,11 +149,11 @@ function sortCommonList(sort) {
         });
     } else if (_lastsort == "sortonline") {
         _commonChecks[_type].systems.sort(function(a, b) {
-            return a.checkResults[0].hasOwnProperty("offlineSince") ?-1 : b.checkResults[0].hasOwnProperty("offlineSince")?1 :0
+            return a.hasOwnProperty("checkResults") && a.checkResults[0].hasOwnProperty("offlineSince") ?-1 :b.hasOwnProperty("checkResults") && b.checkResults[0].hasOwnProperty("offlineSince")?1 :0
         });
     } else if (_lastsort == "sortonlineInverted") {
         _commonChecks[_type].systems.sort(function(a, b) {
-            return b.checkResults[0].hasOwnProperty("offlineSince") ?-1 : a.checkResults[0].hasOwnProperty("offlineSince")? 1 :0
+            return b.hasOwnProperty("checkResults") && b.checkResults[0].hasOwnProperty("offlineSince") ?-1 :a.hasOwnProperty("checkResults") && a.checkResults[0].hasOwnProperty("offlineSince")? 1 :0
         });
     } else if (_lastsort == "sortfitted") {
         _commonChecks[_type].systems.sort(function(a, b) {
@@ -156,27 +165,27 @@ function sortCommonList(sort) {
         });
     } else if (_lastsort == "sortssd") {
         _commonChecks[_type].systems.sort(function(a, b) {
-            return a.checkResults[0].smartCheck === "failed" ?-1 : b.checkResults[0].smartCheck === "failed"?1 :0
+            return a.hasOwnProperty("checkResults") && a.checkResults[0].smartCheck === "failed" ?-1 :b.hasOwnProperty("checkResults") && b.checkResults[0].smartCheck === "failed"?1 :0
         });
     } else if (_lastsort == "sortssdInverted") {
         _commonChecks[_type].systems.sort(function(a, b) {
-            return b.checkResults[0].smartCheck === "failed" ?-1 : a.checkResults[0].smartCheck === "failed"?1 :0
+            return b.hasOwnProperty("checkResults") && b.checkResults[0].smartCheck === "failed" ?-1 :a.hasOwnProperty("checkResults") && a.checkResults[0].smartCheck === "failed"?1 :0
         });
     } else if (_lastsort == "sortssh") {
         _commonChecks[_type].systems.sort(function(a, b) {
-            return a.checkResults[0].sshLogin === "failed" ?-1 : b.checkResults[0].sshLogin === "failed" ?1 :0
+            return a.hasOwnProperty("checkResults") && a.checkResults[0].sshLogin === "failed" ?-1 :b.hasOwnProperty("checkResults") && b.checkResults[0].sshLogin === "failed" ?1 :0
         });
     } else if (_lastsort == "sortsshInverted") {
         _commonChecks[_type].systems.sort(function(a, b) {
-            return b.checkResults[0].sshLogin === "failed" ?-1 : a.checkResults[0].sshLogin === "failed" ?1 :0
+            return b.hasOwnProperty("checkResults") && b.checkResults[0].sshLogin === "failed" ?-1 :a.hasOwnProperty("checkResults") && a.checkResults[0].sshLogin === "failed" ?1 :0
         });
     } else if (_lastsort == "sortapprunning") {
         _commonChecks[_type].systems.sort(function(a, b) {
-            return a.checkResults[0].applicationState === "not running" ?-1 :b.checkResults[0].applicationState === "not running" ?1 :0
+            return a.hasOwnProperty("checkResults") && a.checkResults[0].applicationState === "not running" ?-1 :b.hasOwnProperty("checkResults") && b.checkResults[0].applicationState === "not running" ?1 :0
         });
     } else if (_lastsort == "sortapprunningInverted") {
         _commonChecks[_type].systems.sort(function(a, b) {
-            return b.checkResults[0].applicationState === "not running" ?-1 :a.checkResults[0].applicationState === "not running" ?1 :0
+            return b.hasOwnProperty("checkResults") && b.checkResults[0].applicationState === "not running" ?-1 :a.hasOwnProperty("checkResults") && a.checkResults[0].applicationState === "not running" ?1 :0
         });
     } else if (_lastsort == "sortappuptodate") {
         _commonChecks[_type].systems.sort(function(a, b) {
