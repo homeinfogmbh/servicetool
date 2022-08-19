@@ -17,7 +17,7 @@ $(document).ready(function() {
                     '<a class="nav-link" id="chart" aria-current="page" href="chart.html" onclick="removeopenedlist()">Chart</a>' +
                 '</li>' +
                 '<li class="nav-item dropdown">' +
-                    '<a class="nav-link dropdown-toggle btn_openedlist" href="#" id="navbarDropdown" role="button" data-openedlist="customerlist" data-bs-toggle="dropdown" aria-expanded="false">' +
+                    '<a class="nav-link dropdown-toggle btn_openedlist customerlistLabel" href="#" id="navbarDropdown" role="button" data-openedlist="customerlist" data-bs-toggle="dropdown" aria-expanded="false">' +
                         'Kundenliste' +
                     '</a>' +
                     '<ul class="dropdown-menu" id="menucustomerlist" aria-labelledby="navbarDropdown">' +
@@ -101,7 +101,6 @@ $(document).ready(function() {
         $("#bestelltool").addClass("active");
     
     $('.sendBtn').click(function(e) {
-        //$("#pageloader").show();
         let date = new Date();
         getUser().then((user)=>{
             let body = "USER: " + user.fullName + " (" + user.email + ") LINK: " + window.location.href + (window.location.href.indexOf("?") === -1 ?"?" :"%26");
@@ -122,30 +121,39 @@ $(document).ready(function() {
         }
 	});
     Promise.all(getListOfSystemChecks()).then(setMenu);
+    getSystems().then((systems) => {
+        let customerList = {};
+        let sortedList = [];
+        for (let system of systems) {
+            if (system.hasOwnProperty("deployment")) {
+                if (!customerList.hasOwnProperty(system.deployment.customer.id))
+                    customerList[system.deployment.customer.id] = {"id":system.deployment.customer.id, "name":(system.deployment.customer.hasOwnProperty("abbreviation") ?system.deployment.customer.abbreviation :system.deployment.customer.company.name), "count":1};
+                else
+                    customerList[system.deployment.customer.id].count++;
+            }
+        }
+        for (let customer in customerList)
+            sortedList.push(customerList[customer]);
+            sortedList.sort(function(a, b) {
+            return compare(a.name.toLowerCase(), b.name.toLowerCase());
+        });
+        setCustomerListWithTerminals(sortedList);
+    });
 });
+
+function setCustomerListWithTerminals(customerList) {
+    let customerDom = "";
+    for (let customer in customerList)
+        customerDom += '<li><a class="dropdown-item" href="listenansicht.html?customer=' + customerList[customer].id + '">' + customerList[customer].name + ' (' + customerList[customer].count + ')</a></li>'
+    $(".customerlistLabel").text("Kundenliste (" + Object.keys(customerList).length + ")");
+    $('#menucustomerlist').html(customerDom);
+}
 
 function setMenu(data) {
     _list = setCheckList(data[0], data[1], data[2]);
-    let address;
-    let addressComplete;
-    let customers = {};
-    let customerDom = "";
     _list.sort(function(a, b) {
         return compare(a.deployment.customer.abbreviation.toLowerCase(), b.deployment.customer.abbreviation.toLowerCase());
     });
-    // Customerlist
-    for (let check of _list) {
-        addressComplete = check.hasOwnProperty("deployment") && check.deployment.hasOwnProperty("address") ?check.deployment.address.street + " " + check.deployment.address.houseNumber + " " + check.deployment.address.zipCode + " " + check.deployment.address.city :'Keine Adresse';
-        address = check.hasOwnProperty("deployment") && check.deployment.hasOwnProperty("address") ?check.deployment.address.street + " " + check.deployment.address.houseNumber :'<i>Keine Adresse</i>';
-        if (customers.hasOwnProperty(check.deployment.customer.abbreviation))
-            customers[check.deployment.customer.abbreviation].count++;
-        else if (check.deployment.customer.abbreviation !== "Zuordnung nicht vorhanden")
-            customers[check.deployment.customer.abbreviation] = {'count':1, 'dom':'<li><a class="dropdown-item" href="listenansicht.html?customer=' + check.deployment.customer.id + '">' + (check.deployment.customer.hasOwnProperty("abbreviation") ?check.deployment.customer.abbreviation :check.deployment.customer.company.name)};
-    }
-    for (let customer in customers)
-        customerDom += customers[customer].dom + ' (' + customers[customer].count + ')</a></li>'
-    $('#menucustomerlist').html(customerDom);
-
     // Error list menu
     let customerErrors;
     let additionalMenu = "";
@@ -175,7 +183,6 @@ function setMenu(data) {
     $('#additionalMenu').append(additionalMenu);
 
     $('.btn_openedlist[data-openedlist="' + localStorage.getItem("servicetool.openedmenulist") + '"]').dropdown("toggle");
-    //$("#menucustomerlist").css("max-height", "100px");
     $('.btn_openedlist').click(function(e) {
         if ($(this).data("openedlist") == localStorage.getItem("servicetool.openedmenulist"))
             removeopenedlist();

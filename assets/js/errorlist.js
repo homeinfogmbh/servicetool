@@ -4,9 +4,28 @@ var _lastsort = null;
 $(document).ready(function() {
     _type = _commonChecks.hasOwnProperty(getURLParameterByName('type')) ?getURLParameterByName('type') :'system';
     _customer = getURLParameterByName('customer');
+    if (_customer === null) {
+        Promise.all(getListOfSystemChecks()).then((data)=>{setCheckList(data[0], data[1], data[2]); setList()});
+    } else {
+        getSystems().then((systems) => {
+            let found;
+            for (let system of systems) {
+                if (system.hasOwnProperty("deployment")) {
+                    found = false;
+                    for (let checkedSystem of _commonChecks.system.systems) {
+                        if (system.id === checkedSystem.id) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found)
+                        _commonChecks.system.systems.push(system);
+                }
+            }
+            Promise.all(getListOfSystemChecks()).then((data)=>{setCheckList(data[0], data[1], data[2]); setList()});
+        });
+    }
     $('#searchfield').val(getURLParameterByName('filter') !== null ? getURLParameterByName('filter') :"");
-    Promise.all(getListOfSystemChecks()).then((data)=>{setCheckList(data[0], data[1], data[2]); setList()});
-    //$(".dashTopLeft").html('<h2>Listenansicht</h2><p>Liste der Geräte deren Betriebssystem veraltet ist</p>');
     $(".dashTopLeft").html('<h2>' + _commonChecks[_type].title + '</h2><p>' + _commonChecks[_type].text + '</p>');
 	$('#searchfield').on('input',function(e) {
 		setList();

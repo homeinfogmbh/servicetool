@@ -378,7 +378,6 @@ function setDetails(data) {
 }
 
 function setChecks(lastCheck) {
-    console.log(lastCheck)
     if (isOnDate(lastCheck.timestamp, 24)) {
         $("#systemcheck").html('<span class="blueMark">ok</span>');
         //lastCheck.hasOwnProperty("offlineSince") && lastCheck.sshLogin !== "success" && !lastCheck.icmpRequest
