@@ -244,12 +244,10 @@ $(document).ready(function() {
 		e.preventDefault();
 	}); 
 	$('.btn_eye').click(function(e) {
-		let data = {'type':'deployment','id':_display.deployment.id};
 		$("#pageloader").show();
 		$.ajax({
-			url: "https://backend.homeinfo.de/preview/token?customer=" + _display.deployment.customer.id,
-			type: "POST",
-			data: JSON.stringify(data),
+			url: "https://sysmon.homeinfo.de/preview/" + _display.deployment.id,
+			type: "GET",
 			contentType: 'application/json',
 			success: function (msg) {
 				window.open('https://cms.homeinfo.de/preview/preview.html?token=' + msg.token, '_blank');
