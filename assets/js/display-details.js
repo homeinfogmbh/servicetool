@@ -113,6 +113,34 @@ $(document).ready(function() {
 	});
 
     $('.btn_deployment').click(function(e) {
+        /*
+        if (_display.hasOwnProperty("deployment")) {
+            Swal.fire({
+                iconHtml: '<img src="assets/img/PopUp-Icon.png"></img>',
+                title: 'Display ist bereits zugewiesen',
+                text: "Wollen Sie die bestehende Zuweisung löschen",
+                confirmButtonColor: '#009fe3',
+                confirmButtonText: 'Alte löschen',
+                showDenyButton: true,
+                denyButtonText: "Hinzufügen",
+                denyButtonColor: '#009fe3',
+                showCancelButton: true,
+                cancelButtonColor: '#ff821d',
+                cancelButtonText: 'Abbrechen',
+                buttonsStyling: true
+            }).then(function(selection) {
+                console.log(selection)
+                if (selection.isConfirmed === true) {
+                } else if (selection.isDenied === true) {
+
+                } else {
+
+                }
+                    
+            });
+        }
+        */
+        
         localStorage.removeItem("servicetool.systemchecks");
         if ($("#deploymentsDropdown").hasClass("show"))
             $("#deploymentsDropdown").removeClass("show");

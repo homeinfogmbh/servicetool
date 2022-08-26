@@ -72,7 +72,27 @@ $(document).ready(function() {
         '</div>' +
     '</div>';
     $(".dashboard_content").append(searchTable);
-
+    $('.customerlistLabel').click(function(e) {
+        getSystems().then((systems) => {
+            let customerList = {};
+            let sortedList = [];
+            for (let system of systems) {
+                if (system.hasOwnProperty("deployment")) {
+                    if (!customerList.hasOwnProperty(system.deployment.customer.id))
+                        customerList[system.deployment.customer.id] = {"id":system.deployment.customer.id, "name":(system.deployment.customer.hasOwnProperty("abbreviation") ?system.deployment.customer.abbreviation :system.deployment.customer.company.name), "count":1};
+                    else
+                        customerList[system.deployment.customer.id].count++;
+                }
+            }
+            for (let customer in customerList)
+                sortedList.push(customerList[customer]);
+                sortedList.sort(function(a, b) {
+                return compare(a.name.toLowerCase(), b.name.toLowerCase());
+            });
+            setCustomerListWithTerminals(sortedList);
+        });
+        e.preventDefault();
+    });
     $('.searchSortCustomer').click(function(e) {
         setSearchList($(this).data("id"));
         e.preventDefault();
@@ -121,25 +141,6 @@ $(document).ready(function() {
         }
 	});
     Promise.all(getListOfSystemChecks()).then(setMenu);
-
-    getSystems().then((systems) => {
-        let customerList = {};
-        let sortedList = [];
-        for (let system of systems) {
-            if (system.hasOwnProperty("deployment")) {
-                if (!customerList.hasOwnProperty(system.deployment.customer.id))
-                    customerList[system.deployment.customer.id] = {"id":system.deployment.customer.id, "name":(system.deployment.customer.hasOwnProperty("abbreviation") ?system.deployment.customer.abbreviation :system.deployment.customer.company.name), "count":1};
-                else
-                    customerList[system.deployment.customer.id].count++;
-            }
-        }
-        for (let customer in customerList)
-            sortedList.push(customerList[customer]);
-            sortedList.sort(function(a, b) {
-            return compare(a.name.toLowerCase(), b.name.toLowerCase());
-        });
-        setCustomerListWithTerminals(sortedList);
-    });
 });
 
 function setCustomerListWithTerminals(customerList) {
@@ -184,6 +185,8 @@ function setMenu(data) {
     $('#additionalMenu').append(additionalMenu);
 
     $('.btn_openedlist[data-openedlist="' + localStorage.getItem("servicetool.openedmenulist") + '"]').dropdown("toggle");
+    if ($('.btn_openedlist').hasClass('customerlistLabel'))
+        $(".customerlistLabel").click();
     $('.btn_openedlist').click(function(e) {
         if ($(this).data("openedlist") == localStorage.getItem("servicetool.openedmenulist"))
             removeopenedlist();
