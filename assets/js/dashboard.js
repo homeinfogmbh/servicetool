@@ -4,7 +4,11 @@ $(document).ready(function() {
     Promise.all(getListOfSystemChecks()).then((data) => {
         setChecks(data);
         getCheckByDays(1).then((checkday)=> {
-            _systemchecksByDays = checkday[1][0].offline + checkday[2][0].offline;
+            try {
+                _systemchecksByDays = checkday[1][0].offline + checkday[2][0].offline;
+            } catch(error) {
+                _systemchecksByDays = checkday[1][0].offline;
+            }
             setWidgets();
         });
     });

@@ -20,7 +20,7 @@ var _commonChecks = {"offline":{"title":"Offline", "text":"Liste der Geräte die
 	"downloadUpload":{"title":"Download/Upload kritisch", "text":"Liste aller Systeme, deren Downloadrate unter 2,0 Mbit oder Uploadrate unter 0,4 Mbit liegt", "systems":[], "show":true},
 	"updating":{"title":"Patching", "text":"Liste aller Systeme die gepatched werden", "systems":[], "show":true},
 	"blacklist":{"title":"Blacklist", "text":"Liste aller Systeme auf der Blacklist", "systems":[], "show":true},
-	"lessTouches":{"title":"3 Tage ohne Touch", "text":"Displays (Standorte) auf denen 3 Tage keine Klicks registriert wurden", "systems":[], "show":true},
+	"lessTouches":{"title":"7 Tage ohne Touch", "text":"Displays (Standorte) auf denen 7 Tage keine Klicks registriert wurden", "systems":[], "show":true},
 	"toMuchTouches":{"title":"Touch Überflutung", "text":"Displays (Standorte) auf denen in den letzten 3 Tag mehr  als 500 Klicks registriert wurden", "systems":[], "show":true},
 	"system":{"title":"Displays", "text":"Liste aller Displays", "systems":[], "show":false},
 	"done":{"title":"never toSee", "unfinished":true, "show":false}
@@ -202,7 +202,7 @@ function setCheckList(list, applicationVersion, blacklist) {
 					check.deployment.address = {"street":"Keine Adresse", "houseNumber":"", "zipCode":"", "city":""}
 			} else {
 				//if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("offlineSince") && check.checkResults[0].sshLogin !== "success" && !check.checkResults[0].icmpRequest && check.fitted && !check.deployment.testing && check.operatingSystem.toLowerCase().indexOf("windows") === -1) {
-				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].sshLogin === "failed" && !check.checkResults[0].icmpRequest && check.fitted && !check.deployment.testing) {
+				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && !check.checkResults[0].online && check.fitted && !check.deployment.testing) {
 					_commonChecks.offline.systems.push(check);
 					if (!isOnDate(check.checkResults[0].offlineSince, THREE_MONTHS))
 						_commonChecks.offlineThreeMonth.systems.push(check);

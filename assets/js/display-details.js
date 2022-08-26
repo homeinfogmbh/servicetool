@@ -10,7 +10,7 @@ $(document).ready(function() {
         getDeploymentHistory().then((data)=>setHistory(data), denyHistory);
         getSystemChecks().then((data)=> {
             setDetails(data);
-            setThirtyDays(data);
+            setThirtyDays(data);errorlog
             setErrorLog(data);
         });
         getSystemInfo().then((data) => {
@@ -381,7 +381,7 @@ function setChecks(lastCheck) {
         $("#systemcheck").html('<span class="blueMark">ok</span>');
         //lastCheck.hasOwnProperty("offlineSince") && lastCheck.sshLogin !== "success" && !lastCheck.icmpRequest
         //$("#offline").html(lastCheck.hasOwnProperty("offlineSince") && lastCheck.sshLogin !== "success" ?'<span class="orangeMark">offline</span>' :'<span class="blueMark">online</span>');
-        $("#offline").html(lastCheck.sshLogin === "failed" && !lastCheck.icmpRequest ?'<span class="orangeMark">offline</span>' :'<span class="blueMark">online</span>');
+        $("#offline").html(!lastCheck.online /*lastCheck.sshLogin === "failed" && !lastCheck.icmpRequest*/ ?'<span class="orangeMark">offline</span>' :'<span class="blueMark">online</span>');
         $("#sensors").html(lastCheck.sensors === "failed" ?'<span class="orangeMark">overheated</span>' :lastCheck.sensors === "success" ?'<span class="blueMark">ok</span>' :'<span class="blueMark">' + lastCheck.sensors + '</span>');
         $("#root").html(lastCheck.rootNotRo === "failed" ?'<span class="orangeMark">' + lastCheck.rootNotRo + '</span>' :'<span class="blueMark">' + lastCheck.rootNotRo + '</span>');
         $("#ssd").html(lastCheck.smartCheck === "failed" ?'<span class="orangeMark">' + lastCheck.smartCheck + '</span>' :'<span class="blueMark">' + lastCheck.smartCheck + '</span>');
@@ -422,7 +422,8 @@ function setErrorLog(display) {
         for (let log of display.checkResults) {
             // offline
             //if (log.hasOwnProperty("offlineSince")) {
-            if (log.sshLogin === "failed" && !log.icmpRequest) {    
+            //if (log.sshLogin === "failed" && !log.icmpRequest) {    
+            if (!log.online) {
                 if (errorData.offline.length === 0)
                     errorData.offline.push({"days":Math.ceil((new Date(log.timestamp) - new Date(log.offlineSince))) === 0 ?1 :Math.ceil((new Date(log.timestamp) - new Date(log.offlineSince)) / 86400000), "timestamp":log.timestamp});
             } else if (errorData.offline.length > 0)
@@ -599,7 +600,7 @@ function setThirtyDays(data) {
                     dateFound = true;
                     $("#thirtysystemcheck").append('<li data-toggle="tooltip" title="' + dateDay + '"></li>');
                     //$("#thirtyoffline").append(log.hasOwnProperty("offlineSince") || log.sshLogin !== "success" ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
-                    $("#thirtyoffline").append(log.sshLogin === "failed" && !log.icmpRequest ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
+                    $("#thirtyoffline").append(!log.online /*log.sshLogin === "failed" && !log.icmpRequest*/ ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
                     $("#thirtyicmp").append(!log.icmpRequest ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
                     $("#thirtyssh").append(log.sshLogin === "failed" ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
                     $("#thirtyhttp").append(log.httpRequest === "failed" ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');

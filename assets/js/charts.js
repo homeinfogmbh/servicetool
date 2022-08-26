@@ -11,11 +11,12 @@ $(document).ready(function() {
 function getAllDaysChecks(days) {
 	// Todo save for not double loadings?
 	getCheckByDays(days).then((data) => {
+    console.log(data)
 		let values = {"xValues":[], "ddbyValues":[], "exposeyValues":[]};
 		for (let day in data[1]) {
-			values.xValues.push(day);
+			values.xValues.push(new Date());
 			values.ddbyValues.push(data[1][day].offline);
-			values.exposeyValues.push(data[2][day].offline);
+			values.exposeyValues.push(data[2][day].offline); // TODO error, if no rights
 		}
 		$("#sysChart").html('<canvas id="canvas" style="width:100%; max-width:1000px; height:300px"></canvas>');
   		
