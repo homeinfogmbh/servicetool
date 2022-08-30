@@ -10,7 +10,7 @@ $(document).ready(function() {
         getDeploymentHistory().then((data)=>setHistory(data), denyHistory);
         getSystemChecks().then((data)=> {
             setDetails(data);
-            setThirtyDays(data);errorlog
+            setThirtyDays(data);
             setErrorLog(data);
         });
         getSystemInfo().then((data) => {
@@ -38,6 +38,28 @@ $(document).ready(function() {
     }, ()=>{
         $("#errorlog").html("<tr><td>Keine Einträge geladen</td></tr>");
     });
+    $('.btn_serialNumber').click(function(e) {
+        $("#serialNumberInput").val($("#serialNumber").text() === "-" ?"" :$("#serialNumber").text());
+        if ($("#serialNumberfields").is(":visible"))
+            $("#serialNumberfields").hide();
+        else
+            $("#serialNumberfields").show();
+        $("#serialNumberInput").focus(); 
+		e.preventDefault();
+	});
+    $('.btn_saveSerialNumber').click(function(e) {
+        if (_display !== null) { 
+            let serialNumber = $("#serialNumberInput").val().trim() === "" ?null :$("#serialNumberInput").val();
+            changeSerialNumber(serialNumber).then(() => {
+                localStorage.removeItem("servicetool.systemchecks");
+                $("#serialNumber").text(serialNumber === null ?"-" :serialNumber);
+                $("#serialNumberfields").hide();
+                $("#pageloader").hide()
+            });
+        }
+		e.preventDefault();
+	});
+    
     $('.btn_wireguard').click(function(e) {
         if (_display.hasOwnProperty("pubkey"))
             navigator.clipboard.writeText(_display.pubkey);
@@ -64,6 +86,7 @@ $(document).ready(function() {
                 $("#addressfields").hide();
             else
                 $("#addressfields").show();
+            $("#street").focus(); 
         }
 		e.preventDefault();
 	});
@@ -328,7 +351,7 @@ function setDetails(data) {
     try {
         $('#metadescription').attr("content", address);
         $("#sitetitle").text(_display.deployment.customer.company.name + " " + _id);
-        $("#completecustomername").html(_display.deployment.customer.company.name + ' (Knr. ' + _display.deployment.customer.id + ')');
+        $("#completecustomername").html(_display.deployment.customer.company.name + ' (Knr. <a target="_self" style="color:white;" href="https://testing.homeinfo.de/sysmon2/listenansicht.html?customer=' + _display.deployment.customer.id + '">' + _display.deployment.customer.id + '</a>)');
     } catch(err) {   }
     // Display Overview
     $("#model").text(_display.hasOwnProperty("model") ?_display.model :'-');
@@ -448,6 +471,7 @@ function setErrorLog(display) {
     let logsData = [];
     if (display.hasOwnProperty("checkResults") && display.checkResults.length > 0) {
         for (let log of display.checkResults) {
+            //console.log(log)
             // offline
             //if (log.hasOwnProperty("offlineSince")) {
             //if (log.sshLogin === "failed" && !log.icmpRequest) {    
@@ -628,7 +652,8 @@ function setThirtyDays(data) {
                     dateFound = true;
                     $("#thirtysystemcheck").append('<li data-toggle="tooltip" title="' + dateDay + '"></li>');
                     //$("#thirtyoffline").append(log.hasOwnProperty("offlineSince") || log.sshLogin !== "success" ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
-                    $("#thirtyoffline").append(!log.online /*log.sshLogin === "failed" && !log.icmpRequest*/ ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
+                    //$("#thirtyoffline").append(log.sshLogin === "failed" && !log.icmpRequest ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
+                    $("#thirtyoffline").append(!log.online ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
                     $("#thirtyicmp").append(!log.icmpRequest ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
                     $("#thirtyssh").append(log.sshLogin === "failed" ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
                     $("#thirtyhttp").append(log.httpRequest === "failed" ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
@@ -851,6 +876,21 @@ function changeDeployment(key, value) {
 	});
 }
 
+function changeSerialNumber(serialNumber) {
+    $("#pageloader").show();
+	let data = {"system":_display.id, "serialNumber":serialNumber};
+	return $.ajax({
+		url: "https://termgr.homeinfo.de/administer/serial-number",
+		type: "POST",
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+		success: function (data) {
+		},
+		error: function (msg) {
+			setErrorMessage(msg, "Ändern eines Deployments");
+		}
+	});   
+}
 /*
 class ApplicationState(str, Enum):
     AIR = 'air'

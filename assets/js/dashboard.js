@@ -2,14 +2,17 @@ var _hipsterIsOnline = true;
 var _systemchecksByDays = null;
 $(document).ready(function() {
     Promise.all(getListOfSystemChecks()).then((data) => {
+        console.log(data)
         setChecks(data);
         getCheckByDays(1).then((checkday)=> {
-            try {
-                _systemchecksByDays = checkday[1][0].offline + checkday[2][0].offline;
-            } catch(error) {
-                _systemchecksByDays = checkday[1][0].offline;
+            if (!$.isEmptyObject(checkday)) {
+                try {
+                    _systemchecksByDays = checkday[1][0].offline + checkday[2][0].offline;
+                } catch(error) {
+                    _systemchecksByDays = checkday[1][0].offline;
+                }
+                setWidgets();
             }
-            setWidgets();
         });
     });
     getDeployments().then(setDeployments);
