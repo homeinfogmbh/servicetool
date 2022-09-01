@@ -44,7 +44,7 @@ $(document).ready(function() {
             $("#serialNumberfields").hide();
         else
             $("#serialNumberfields").show();
-        $("#serialNumberInput").focus(); 
+        $("#serialNumberInput").focus();
 		e.preventDefault();
 	});
     $('.btn_saveSerialNumber').click(function(e) {
@@ -136,34 +136,6 @@ $(document).ready(function() {
 	});
 
     $('.btn_deployment').click(function(e) {
-        /*
-        if (_display.hasOwnProperty("deployment")) {
-            Swal.fire({
-                iconHtml: '<img src="assets/img/PopUp-Icon.png"></img>',
-                title: 'Display ist bereits zugewiesen',
-                text: "Wollen Sie die bestehende Zuweisung löschen",
-                confirmButtonColor: '#009fe3',
-                confirmButtonText: 'Alte löschen',
-                showDenyButton: true,
-                denyButtonText: "Hinzufügen",
-                denyButtonColor: '#009fe3',
-                showCancelButton: true,
-                cancelButtonColor: '#ff821d',
-                cancelButtonText: 'Abbrechen',
-                buttonsStyling: true
-            }).then(function(selection) {
-                console.log(selection)
-                if (selection.isConfirmed === true) {
-                } else if (selection.isDenied === true) {
-
-                } else {
-
-                }
-                    
-            });
-        }
-        */
-        
         localStorage.removeItem("servicetool.systemchecks");
         if ($("#deploymentsDropdown").hasClass("show"))
             $("#deploymentsDropdown").removeClass("show");
@@ -193,7 +165,7 @@ $(document).ready(function() {
                 buttonsStyling: true
             }).then(function(selection) {
                 if (selection.isConfirmed === true)
-                    setDeployments(null).then(()=>{
+                    setDeployments(_id).then(()=>{
                         _systemChecksPromise = []; // in common
                         Promise.all(getListOfSystemChecks()).then(systemCheckCompleted);
                     });
@@ -725,38 +697,54 @@ function listDeployments(deployments = null) {
     if (_deployments !== null) {
         let deploymentList = "";
         let address;
-        for (let item of _deployments) {
-            address = item.hasOwnProperty("address") ?item.address.street + " " + item.address.houseNumber + ", " + item.address.zipCode + " " + item.address.city :'<i>Keine Adresse angegeben</i>';
-            if (address.toLowerCase().indexOf($('#deploymentsearch').val().toLowerCase()) !== -1 || item.customer.id.toString().indexOf($('#deploymentsearch').val()) !== -1 || (item.customer.hasOwnProperty("abbreviation") && item.customer.abbreviation.toString().toLowerCase().indexOf($('#deploymentsearch').val()) !== -1) || item.customer.company.name.toString().toLowerCase().indexOf($('#deploymentsearch').val()) !== -1 || item.id.toString().indexOf($('#deploymentsearch').val()) !== -1) 
-                deploymentList += '<li><a class="dropdown-item btn_addDeployment" data-id="' + item.id + '" data-used="' + (item.systems.length > 0 ?"true" :false) + '" title="' + item.id + '"href="#">' + address + ' (' + item.systems.length + ')</a></li>';
+        for (let item in _deployments) {
+            address = _deployments[item].hasOwnProperty("address") ?_deployments[item].address.street + " " + _deployments[item].address.houseNumber + ", " + _deployments[item].address.zipCode + " " + _deployments[item].address.city :'<i>Keine Adresse angegeben</i>';
+            if (address.toLowerCase().indexOf($('#deploymentsearch').val().toLowerCase()) !== -1 || _deployments[item].customer.id.toString().indexOf($('#deploymentsearch').val()) !== -1 || (_deployments[item].customer.hasOwnProperty("abbreviation") && _deployments[item].customer.abbreviation.toString().toLowerCase().indexOf($('#deploymentsearch').val()) !== -1) || _deployments[item].customer.company.name.toString().toLowerCase().indexOf($('#deploymentsearch').val()) !== -1 || _deployments[item].id.toString().indexOf($('#deploymentsearch').val()) !== -1) 
+                deploymentList += '<li><a class="dropdown-item btn_addDeployment" data-id="' + item + '" title="' + _deployments[item].id + '"href="#">' + address + ' (' + _deployments[item].systems.length + ')</a></li>';
         }
         $('.btn_addDeployment').parent().remove();
         $("#deploymentsDropdown").append(deploymentList);
         $('.btn_addDeployment').click(function(e) {
             localStorage.removeItem("servicetool.systemchecks");
             let id = $(this).data("id");
-            if ($(this).data("used") == true) {
+            if (_deployments[id].systems.length > 0) {
                 Swal.fire({
-                    title: 'Dieser Standort wird bereits genutzt',
-                    text: "Wollen Sie das System dennoch zuweisen?",
+                    title: 'Dieser Standort wird bereits ' + _deployments[id].systems.length + 'mal genutzt',
+                    text: "Was wollen Sie machen?",
+                    showDenyButton: true,
+                    denyButtonText: _deployments[id].systems.length === 1 ?"Anderen Standort lösen!" :"ALLE anderen Standorte lösen!!",
+                    denyButtonColor: '#009fe3',
                     showCancelButton: true,
                     confirmButtonColor: '#009fe3',
                     cancelButtonColor: '#ff821d',
                     iconHtml: '<img src="assets/img/PopUp-Icon.png"></img>',
-                    confirmButtonText: 'Ja, zuweisen!',
+                    confirmButtonText: 'Zusätzlich zuweisen!',
                     cancelButtonText: 'Vorgang abbrechen!',
                     buttonsStyling: true
                 }).then(function(selection) {
                     if (selection.isConfirmed === true) {
-                        $("#deploymentsDropdown").removeClass("show");
                         _systemChecksPromise = []; // in common
-                        setDeployments(id).then(()=>{Promise.all(getListOfSystemChecks()).then(systemCheckCompleted);});
+                        setDeployments(_id, _deployments[id].id).then(()=>{Promise.all(getListOfSystemChecks()).then(systemCheckCompleted);});
+                    } else if (selection.isDenied === true) {
+                        $("#deploymentsDropdown").removeClass("show");
+                        let promises = [];
+                        let alreadyDeployed = false;
+                        for (let system of _deployments[id].systems) {
+                            if (system == _id)
+                                alreadyDeployed = true;
+                            else
+                                promises.push (setDeployments(system));
+                        }
+                        if (!alreadyDeployed)
+                            promises.push(setDeployments(_id, _deployments[id].id));
+                        _systemChecksPromise = []; // in common
+                        Promise.all(getListOfSystemChecks()).then(systemCheckCompleted);
                     }
                 });
             } else {
                 $("#deploymentsDropdown").removeClass("show");
                 _systemChecksPromise = []; // in common
-                setDeployments(id).then(()=>{Promise.all(getListOfSystemChecks()).then(systemCheckCompleted);});  
+                setDeployments(_id, _deployments[id].id).then(()=>{Promise.all(getListOfSystemChecks()).then(systemCheckCompleted);});  
             }
             e.preventDefault();
         });
@@ -765,12 +753,12 @@ function listDeployments(deployments = null) {
         $("#pageloader").hide();
     }
 }
-function setDeployments(deployment, exclusive = false) {
+function setDeployments(id, deployment = null, exclusive = false) {
     $("#pageloader").show();
     const data = {
-        'system': _id,
+        'system': id,
         'deployment':deployment,
-        'exclusive': false
+        'exclusive': exclusive
     };
     return $.ajax({
         url: 'https://termgr.homeinfo.de/administer/deploy',
@@ -779,7 +767,7 @@ function setDeployments(deployment, exclusive = false) {
         contentType: 'application/json',
         success: function (data) {  },
         error: function (msg) {
-            setErrorMessage(msg, "Zuweisen des Stanortes");
+            setErrorMessage(msg, "Zuweisen/Lösen des Stanortes");
         }
     });
 }
