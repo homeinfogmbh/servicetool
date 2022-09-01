@@ -2,7 +2,6 @@ var _hipsterIsOnline = true;
 var _systemchecksByDays = null;
 $(document).ready(function() {
     Promise.all(getListOfSystemChecks()).then((data) => {
-        console.log(data)
         setChecks(data);
         getCheckByDays(1).then((checkday)=> {
             if (!$.isEmptyObject(checkday)) {

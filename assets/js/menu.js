@@ -5,7 +5,7 @@ var _lastSearchSort = null;
 $(document).ready(function() {
 	let menu = '<div class="loader" id="pageloader"></div><div class="menu_content">' +
         '<div class="side_logo">' +
-            '<a href="dashboard.html" onclick="removeopenedlist()"><img src="assets/img/sideLogo.png" alt="Logo"></a>' +
+            '<a href="dashboard.html" onclick="removeopenedlist()"><img id="sysmonlogo" src="assets/img/sideLogo.png" alt="Logo"></a>' +
         '</div>' +
         '<div class="side_menu">' +
             '<h3 class="menu_title">Menu</h3>' +
@@ -49,7 +49,10 @@ $(document).ready(function() {
         '</div>' +
     '</div>';
     $(".menu_sidebar").html(menu);
-
+    checkSysmon().then((sysmonIsRunning) => {
+        if (sysmonIsRunning)
+            $("#sysmonlogo").attr("src", "assets/img/Sysmon_check_running.png")
+    });
     let searchTable = '<div class="search_container" style="display:none">' +
         '<div class="table_contents">' +
             '<div class="tableBox">' +
@@ -142,6 +145,17 @@ $(document).ready(function() {
 	});
     Promise.all(getListOfSystemChecks()).then(setMenu);
 });
+
+function checkSysmon() {
+    return $.ajax({
+        url: "https://sysmon.homeinfo.de/sysmon-status",
+        type: "GET",
+        cache: false,
+        error: function (msg) {
+            setErrorMessage(msg, "Laden von Sysmon");
+        }
+    });
+}
 
 function setCustomerListWithTerminals(customerList) {
     let customerDom = "";
