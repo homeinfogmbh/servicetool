@@ -51,7 +51,7 @@ $(document).ready(function() {
     $(".menu_sidebar").html(menu);
     checkSysmon().then((sysmonIsRunning) => {
         if (sysmonIsRunning)
-            $("#sysmonlogo").attr("src", "assets/img/Sysmon_check_running.png")
+            $("#sysmonlogo").attr("src", "assets/img/Sysmon_check_active.gif")
     });
     let searchTable = '<div class="search_container" style="display:none">' +
         '<div class="table_contents">' +
@@ -198,6 +198,7 @@ function setMenu(data) {
     }
     $('#additionalMenu').append(additionalMenu);
 
+    $("#sysmonlogo").attr("title", _commonChecks.checkedToday.systems.length + " / " + _commonChecks.systemReducedByBlacklist.systems.length)
     $('.btn_openedlist[data-openedlist="' + localStorage.getItem("servicetool.openedmenulist") + '"]').dropdown("toggle");
     if ($('.btn_openedlist').hasClass('customerlistLabel'))
         $(".customerlistLabel").click();

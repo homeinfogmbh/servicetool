@@ -23,6 +23,8 @@ var _commonChecks = {"offline":{"title":"Offline", "text":"Liste der Geräte die
 	"lessTouches":{"title":"21 Tage ohne Touch", "text":"Displays (Standorte) auf denen 21 Tage keine Klicks registriert wurden", "systems":[], "show":true},
 	"toMuchTouches":{"title":"Touch Überflutung", "text":"Displays (Standorte) auf denen in den letzten 3 Tagen mehr  als 500 Klicks registriert wurden", "systems":[], "show":true},
 	"system":{"title":"Displays", "text":"Liste aller Displays", "systems":[], "show":false},
+	"systemReducedByBlacklist":{"title":"Displays", "text":"Liste aller Displays ohne Blacklist", "systems":[], "show":false},
+	"checkedToday":{"title":"Displays", "text":"Liste aller Displays ohne Blacklist", "systems":[], "show":false},
 	"done":{"title":"never toSee", "unfinished":true, "show":false}
 }; // -> also setCheckList() for filter
 var _showErrorMessages = true;
@@ -242,6 +244,11 @@ function setCheckList(list, applicationVersion, blacklist) {
 					_commonChecks.toMuchTouches.systems.push(check);
 				if (check.updating)
 					_commonChecks.updating.systems.push(check);
+				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0) {
+					_commonChecks.systemReducedByBlacklist.systems.push(check);
+					if (new Date(check.checkResults[0].timestamp).setHours(0,0,0,0) == new Date().setHours(0,0,0,0))
+						_commonChecks.checkedToday.systems.push(check);	
+				}
 			}
 		}
 	}
