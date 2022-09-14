@@ -67,20 +67,22 @@ function setChecks(data) {
 function setWidgets() {
     $("#widgets").html("");
     let errorsDOM = "";
+    let subTxt;
     for (let item in _commonChecks) {
         if (_commonChecks[item].show && _commonChecks[item].systems.length !== 0) {
+            if (item === "offline" && _systemchecksByDays !== null) {
+                let diff = _commonChecks[item].systems.length - _systemchecksByDays;
+                if (diff > 0)
+                    subTxt = '<span style="font-size:14px; font-weight:normal">' + Math.abs(diff) + ' mehr als gestern</span>';
+                else if (diff < 0)
+                    subTxt = '<span style="font-size:14px; font-weight:normal">' + Math.abs(diff) + ' weniger als gestern</span>';
+            } else
+                subTxt = "";
             errorsDOM += '<div class="col btn_list pointer" data-id="' + item + '">' +
                 '<div class="number_box">' +
                     '<span class="theNumber">' + _commonChecks[item].systems.length + '</span>' +
-                    '<h5>' + _commonChecks[item].title + '</h5>';
-                    if (item === "offline" && _systemchecksByDays !== null) {
-                        let diff = _commonChecks[item].systems.length - _systemchecksByDays;
-                        if (diff > 0)
-                            errorsDOM += '<span style="margin:53px 0 0 -53px">' + Math.abs(diff) + ' mehr als gestern</span>';
-                        else if (diff < 0)
-                            errorsDOM += '<span style="margin:53px 0 0 -53px">' + Math.abs(diff) + ' weniger als gestern</span>';
-                    }
-                errorsDOM += '</div>' +
+                    '<h5>' + _commonChecks[item].title + '<br>' + subTxt + '</h5>' +
+                '</div>' +
             '</div>';
         }
     }
