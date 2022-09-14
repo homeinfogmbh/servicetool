@@ -178,8 +178,11 @@ function setCheckList(list, applicationVersion, blacklist) {
 				break;
 			}
 		}
-		if (check.hasOwnProperty("deployment") && _commonChecks.done.unfinished)
+		if (check.hasOwnProperty("deployment") && _commonChecks.done.unfinished) {
 			_commonChecks.system.systems.push(check);
+			if (check.updating)
+				_commonChecks.updating.systems.push(check);
+		}
 		if (!found)
 			listReducedByBlacklist.push(check);
 		else if (check.hasOwnProperty("deployment") && _commonChecks.done.unfinished)
@@ -191,6 +194,8 @@ function setCheckList(list, applicationVersion, blacklist) {
 			if (!check.deployment.hasOwnProperty("address"))
 				check.deployment.address = {"street":"Keine Adresse", "houseNumber":"", "zipCode":"", "city":""}
 			_commonChecks.noDeployment.systems.push(check);
+			if (check.updating)
+				_commonChecks.updating.systems.push(check);	
 		}
 	}
 
@@ -242,8 +247,6 @@ function setCheckList(list, applicationVersion, blacklist) {
 					_commonChecks.lessTouches.systems.push(check);
 				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("recentTouchEvents") && check.checkResults[0].recentTouchEvents > 500)
 					_commonChecks.toMuchTouches.systems.push(check);
-				if (check.updating)
-					_commonChecks.updating.systems.push(check);
 				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0) {
 					_commonChecks.systemReducedByBlacklist.systems.push(check);
 					if (new Date(check.checkResults[0].timestamp).setHours(0,0,0,0) == new Date().setHours(0,0,0,0))
@@ -308,7 +311,6 @@ function getCustomerView() {
         url: "https://sysmon.homeinfo.de/enduser",  // ?customer=1030020
         type: "GET",
         cache: false,
-        success: function (data) {  },
         error: function (msg) {
             setErrorMessage(msg, "Laden der Kundenansicht ");
         }
@@ -320,7 +322,6 @@ function getScreenShot(systemID) {
         url: "https://sysmon.homeinfo.de/screenshot" + systemID,
         type: "GET",
         cache: false,
-        success: function (data) {  },
         error: function (msg) {
             setErrorMessage(msg, "Laden des Screenshots");
         }
@@ -331,7 +332,6 @@ function getDeployments() {
         url: "https://termgr.homeinfo.de/list/deployments",
         type: "GET",
         cache: false,
-        success: function (data) {  },
         error: function (msg) {
             setErrorMessage(msg, "Listen der Standorte");
         }
@@ -342,7 +342,6 @@ function getSystems() {
         url: "https://termgr.homeinfo.de/list/systems",
         type: "GET",
         cache: false,
-        success: function (data) {  },
         error: function (msg) {
             setErrorMessage(msg, "Listen der Systeme");
         }
