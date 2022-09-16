@@ -707,9 +707,10 @@ function listDeployments(deployments = null) {
         $('.btn_addDeployment').click(function(e) {
             localStorage.removeItem("servicetool.systemchecks");
             let id = $(this).data("id");
+            let address = _deployments[id].hasOwnProperty("address") ?_deployments[id].address.street + " " + _deployments[id].address.houseNumber + ", " + _deployments[id].address.zipCode + " " + _deployments[id].address.city :'<i>Keine Adresse angegeben</i>';
             if (_deployments[id].systems.length > 0) {
                 Swal.fire({
-                    title: 'Dieser Standort wird bereits ' + _deployments[id].systems.length + 'mal genutzt',
+                    title: 'Der Standort: <i>"' + address + '"</i> wird bereits ' + _deployments[id].systems.length + 'mal genutzt',
                     text: "Was wollen Sie machen?",
                     showDenyButton: true,
                     denyButtonText: _deployments[id].systems.length === 1 ?"Anderen Standort lösen!" :"ALLE anderen Standorte lösen!!",
@@ -724,6 +725,7 @@ function listDeployments(deployments = null) {
                 }).then(function(selection) {
                     if (selection.isConfirmed === true) {
                         _systemChecksPromise = []; // in common
+                        $("#deploymentsDropdown").removeClass("show");
                         setDeployments(_id, _deployments[id].id).then(()=>{Promise.all(getListOfSystemChecks()).then(systemCheckCompleted);});
                     } else if (selection.isDenied === true) {
                         $("#deploymentsDropdown").removeClass("show");
