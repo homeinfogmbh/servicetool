@@ -27,16 +27,16 @@ $(document).ready(function() {
                 '<li class="nav-item">' +
                     '<a class="nav-link" id="standorte-zuweisen" href="standorte-zuweisen.html" onclick="removeopenedlist()">Standorte</a>' +
                 '</li>' +
+                '<li class="nav-item">' +
+                    '<a class="nav-link" id="bestelltool" href="bestelltool.html" onclick="removeopenedlist()">Standort anlegen (DDB)</a>' +
+                '</li>' +
                 '<li class="search_dash whiteSearch" style="margin: -20px 0px 30px 0px">' +
                     '<form>' +
                         '<button type="button" id="btn_menuSystem"><img src="assets/img/search_gray.svg"></button>' +
                         '<input id="menusearch" type="search" placeholder="System suchen...">' +
                     '</form>' +
                 '</li>' +
-                '<li class="nav-item">' +
-                    '<a class="nav-link" id="bestelltool" href="bestelltool.html" onclick="removeopenedlist()">Standort anlegen (DDB)</a>' +
-                '</li>' +
-            '</ul><br>' +
+            '</ul>' +
         '</div>' +
         '<div class="admin_box">' +
             '<div class="admin_content">' +
