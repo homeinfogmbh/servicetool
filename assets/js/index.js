@@ -47,8 +47,9 @@ $(document).keypress(function(e) {
 
 function login() {
 	$('#pageloader').show();
-	localStorage.removeItem("servicetool.systemchecks");
-	localStorage.removeItem("servicetool.applicationversion");
+	removeLocalStorage();
+	//localStorage.removeItem("servicetool.systemchecks");
+	//localStorage.removeItem("servicetool.applicationversion");
 	$.ajax({
 		timeout: 15000,
 		url: "https://his.homeinfo.de/session", // duration=15 by default
