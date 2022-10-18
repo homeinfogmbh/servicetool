@@ -174,6 +174,7 @@ function setCheckList(list, applicationVersion, blacklist) {
 		found = false;
 		for (blacklistitem of blacklist) {
 			if (check.id === blacklistitem.id) {
+				check.blacklist = true;
 				found = true;
 				break;
 			}
@@ -229,6 +230,9 @@ function setCheckList(list, applicationVersion, blacklist) {
 					_commonChecks.notfitted.systems.push(check);
 				if (check.deployment.testing)
 					_commonChecks.testsystem.systems.push(check);
+				//console.log(check.checkResults[0].applicationVersion)
+				//if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("applicationVersion") && (check.checkResults[0].applicationVersion === "2.88.0-1" || check.checkResults[0].applicationVersion === "2.90.0-1") && check.fitted && !check.deployment.testing)
+					//console.log(check.deployment.customer.id + " // " + check.id);
 				//if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("applicationVersion") && check.checkResults[0].applicationVersion !== applicationVersion && check.fitted && !check.deployment.testing)
 				//	_commonChecks.oldApplication.systems.push(check);
 				if (!check.hasOwnProperty("checkResults") || (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && !isOnDate(check.checkResults[0].timestamp, 48)))
@@ -350,7 +354,7 @@ function getSystems() {
 function setErrorMessage(msg, fromFunction) {
 	try {
 		let title = "Das hat nicht geklappt";
-		let message = "Leider ist ein Fehler " + fromFunction + " aufgetreten: ";
+		let message = "Leider ist ein Fehler beim " + fromFunction + " aufgetreten: ";
 		if (msg.responseText.indexOf("Sysinfo unsupported on this system.") !== -1) {
 			title = "Systeminfos können nicht geladen werden";
 			message = "Das System wird nicht unterstützt."

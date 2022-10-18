@@ -166,7 +166,8 @@ function setCustomerListWithTerminals(customerList) {
 }
 
 function setMenu(data) {
-    _list = setCheckList(data[0], data[1], data[2]);
+    /*_list = */setCheckList(data[0], data[1], data[2]);
+    _list = _commonChecks.system.systems;
     _list.sort(function(a, b) {
         return compare(a.deployment.customer.abbreviation.toLowerCase(), b.deployment.customer.abbreviation.toLowerCase());
     });
@@ -237,7 +238,7 @@ function setSearchList(sort = "sortcustomer") {
             '</tr>';
         }
     }
-    searchDom = searchDom === '' ?"<tr><td>Keine Üereinstimmungen gefunden</td></tr>" :searchDom;
+    searchDom = searchDom === '' ?"<tr><td>Keine Übereinstimmungen gefunden</td></tr>" :searchDom;
     $("#searchlist").html(searchDom);
 }
 function sortSearchList(sort) {
