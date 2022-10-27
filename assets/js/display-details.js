@@ -1,5 +1,6 @@
 var _id;
 var _display = null;
+var _isInBlacklist = false;
 var _deployments = null;
 var _applicationVersion = null;
 var _deploymentHistory = null;
@@ -308,6 +309,12 @@ function systemCheckCompleted(data) {
     for (let system in data[0]) {
         if (data[0][system].id == _id) {
             foundsystem = data[0][system];
+            for (let blacklistitem of data[2]) {
+                if (_id == blacklistitem.id) {
+                    _isInBlacklist = true;
+                    break;
+                }
+            }
             break;
         }
     }
@@ -404,7 +411,7 @@ function setChecks(lastCheck) {
         $("#systemcheck").html('<span class="blueMark">ok</span>');
         //lastCheck.hasOwnProperty("offlineSince") && lastCheck.sshLogin !== "success" && !lastCheck.icmpRequest
         //$("#offline").html(lastCheck.hasOwnProperty("offlineSince") && lastCheck.sshLogin !== "success" ?'<span class="orangeMark">offline</span>' :'<span class="blueMark">online</span>');
-        $("#offline").html(!lastCheck.online /*lastCheck.sshLogin === "failed" && !lastCheck.icmpRequest*/ ?'<span class="orangeMark">offline</span>' :'<span class="blueMark">online</span>');
+        $("#offline").html("<div style='float:left'>" + (!lastCheck.online /*lastCheck.sshLogin === "failed" && !lastCheck.icmpRequest*/ ?'<span class="orangeMark">offline</span>' :'<span class="blueMark">online</span>') + '<span title="System befindet sich in der Blacklist" style="width:24px; display:block; float:right">' + (_isInBlacklist ?_coffin :'') + '</span></div>');
         $("#sensors").html(lastCheck.sensors === "failed" ?'<span class="orangeMark">overheated</span>' :lastCheck.sensors === "success" ?'<span class="blueMark">ok</span>' :'<span class="blueMark">' + lastCheck.sensors + '</span>');
         $("#root").html(lastCheck.rootNotRo === "failed" ?'<span class="orangeMark">' + lastCheck.rootNotRo + '</span>' :'<span class="blueMark">' + lastCheck.rootNotRo + '</span>');
         $("#ssd").html(lastCheck.smartCheck === "failed" ?'<span class="orangeMark">' + lastCheck.smartCheck + '</span>' :'<span class="blueMark">' + lastCheck.smartCheck + '</span>');

@@ -1,6 +1,7 @@
 const ONE_HOUR = 60 * 60 * 1000; // Milliseconds;
 const THREE_MONTHS = 3 * 30 * 24; // Hours
 const _KIBIBITTOMBIT = 1024/1000/1000;
+var _coffin = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#fff" d="M8,22L5,8L8,2H16L19,8L16,22H8M11,6V8H9V10H11V15H13V10H15V8H13V6H11Z" /></svg>';
 var _commonChecks = {"offline":{"title":"Offline", "text":"Liste der Geräte die offline sind", "systems":[], "show":true},
 	"offlineThreeMonth":{"title":"Offline mehr als 3 Monate", "text":"Liste der Geräte die länger als 3 Monate ausgefallen sind", "systems":[], "show":true},
 	"noDeployment":{"title":"Systeme ohne Zuordnung", "text":"Liste der Geräte die keine Zuordnung besitzen", "systems":[], "show":true},

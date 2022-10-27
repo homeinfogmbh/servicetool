@@ -66,6 +66,7 @@ $(document).ready(function() {
                                 '<th class="searchSortCustomer pointer" data-id="sortaddress" style="text-decoration:underline">Adresse</th>' +
                                 '<th class="searchSortCustomer pointer" data-id="sortannotation" style="text-decoration:underline">Beschreibung</th>' +
                                 '<th></th>' +
+                                '<th></th>' +
                             '</tr>' +
                         '</thead>' +
                         '<tbody id="searchlist"></tbody>' +
@@ -227,13 +228,14 @@ function setSearchList(sort = "sortcustomer") {
         abbreviation = check.deployment.customer.hasOwnProperty("abbreviation") ?check.deployment.customer.abbreviation :"Zuordnung nicht vorhanden";
         name = check.deployment.customer.hasOwnProperty("company") && check.deployment.customer.company.hasOwnProperty("name") ?check.deployment.customer.company.name :"";
         annotation = (check.deployment.hasOwnProperty("annotation") ?check.deployment.annotation :"");
-        if (check.id.toString().indexOf($('#globalsearchfield').val().toLowerCase()) !== -1 || address.toLowerCase().indexOf($('#globalsearchfield').val().toLowerCase()) !== -1 || abbreviation.toLowerCase().indexOf($('#globalsearchfield').val().toLowerCase()) !== -1 || name.toLowerCase().indexOf($('#globalsearchfield').val().toLowerCase()) !== -1 || annotation.toString().indexOf($('#globalsearchfield').val().toLowerCase()) !== -1) {
+        if (check.id.toString().indexOf($('#globalsearchfield').val().toLowerCase()) !== -1 || address.toLowerCase().indexOf($('#globalsearchfield').val().toLowerCase()) !== -1 || abbreviation.toLowerCase().indexOf($('#globalsearchfield').val().toLowerCase()) !== -1 || name.toLowerCase().indexOf($('#globalsearchfield').val().toLowerCase()) !== -1 || annotation.toString().toLowerCase().indexOf($('#globalsearchfield').val().toLowerCase()) !== -1) {
             searchDom += '<tr class="system" data-id="' + check.id + '">' +
                 '<td>' + check.id + '</td>' +
                 '<td>' + abbreviation + '</td>' +
                 '<td>' + name + '</td>' +
                 '<td style="white-space: nowrap;">' + address + '</td>' +
                 '<td>' + annotation + '</td>' +
+                '<td width="50px"><span title="System befindet sich in der Blacklist">' + (check.hasOwnProperty("blacklist") ?_coffin :'') + '</span></td>' +
                 '<td><a href="display-details.html?id=' + check.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>' +
             '</tr>';
         }

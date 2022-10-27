@@ -2,7 +2,6 @@ var _type;
 var _customer;
 var _applicationVersion = null;
 var _lastsort = null;
-var _coffin = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#fff" d="M8,22L5,8L8,2H16L19,8L16,22H8M11,6V8H9V10H11V15H13V10H15V8H13V6H11Z" /></svg>';
 var _operatingSystemsShorts = {"Arch Linux":"Arch", "Windows XP Embedded":"XPe", "Windows XP":"XP", "Windows 8":"Win8", "Windows 7 Embedded":"Win7e", "Windows 7":"Win7", "Windows 10":"Win10"};
 $(document).ready(function() {
     _type = _commonChecks.hasOwnProperty(getURLParameterByName('type')) ?getURLParameterByName('type') :'system';
