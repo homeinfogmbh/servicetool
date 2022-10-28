@@ -3,7 +3,7 @@ const THREE_MONTHS = 3 * 30 * 24; // Hours
 const _KIBIBITTOMBIT = 1024/1000/1000;
 var _coffin = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#fff" d="M8,22L5,8L8,2H16L19,8L16,22H8M11,6V8H9V10H11V15H13V10H15V8H13V6H11Z" /></svg>';
 var _commonChecks = {"offline":{"title":"Offline", "text":"Liste der Geräte die offline sind", "systems":[], "show":true},
-	"offlineThreeMonth":{"title":"Offline mehr als 3 Monate", "text":"Liste der Geräte die länger als 3 Monate ausgefallen sind", "systems":[], "show":true},
+	"offlineThreeMonth":{"title":"Lange offline", "text":"Liste der Geräte die länger als 3 Monate offline sind", "systems":[], "show":true},
 	"noDeployment":{"title":"Systeme ohne Zuordnung", "text":"Liste der Geräte die keine Zuordnung besitzen", "systems":[], "show":true},
 	"ssd":{"title":"SSD Karten Fehler", "text":"Liste der Geräte die einen SSD-Karten-Fehler aufweisen", "systems":[], "show":true},
 	"noActualData":{"title":"Keine aktuellen Daten", "text":"Liste der Geräte die keine aktuellen Daten besitzen", "systems":[], "show":true},
@@ -23,6 +23,7 @@ var _commonChecks = {"offline":{"title":"Offline", "text":"Liste der Geräte die
 	"blacklist":{"title":"Blacklist", "text":"Liste aller Systeme auf der Blacklist", "systems":[], "show":true},
 	"lessTouches":{"title":"21 Tage ohne Touch", "text":"Displays (Standorte) auf denen 21 Tage keine Klicks registriert wurden", "systems":[], "show":true},
 	"toMuchTouches":{"title":"Touch Überflutung", "text":"Displays (Standorte) auf denen in den letzten 3 Tagen mehr  als 500 Klicks registriert wurden", "systems":[], "show":true},
+	"fsckRepair":{"title":"Autom. Dateisystemreparatur deaktiviert", "text":"Alle Systeme, deren Dateisystemreparatur nicht aktiviert ist.", "systems":[], "show":true},
 	"system":{"title":"Displays", "text":"Liste aller Displays", "systems":[], "show":false},
 	"systemReducedByBlacklist":{"title":"Displays", "text":"Liste aller Displays ohne Blacklist", "systems":[], "show":false},
 	"checkedToday":{"title":"Displays", "text":"Liste aller Displays ohne Blacklist", "systems":[], "show":false},
@@ -252,6 +253,8 @@ function setCheckList(list, applicationVersion, blacklist) {
 					_commonChecks.lessTouches.systems.push(check);
 				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("recentTouchEvents") && check.checkResults[0].recentTouchEvents > 500)
 					_commonChecks.toMuchTouches.systems.push(check);
+				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && (!check.checkResults[0].hasOwnProperty("fsckRepair") || (check.checkResults[0].hasOwnProperty("fsckRepair") && check.checkResults[0].fsckRepair !== "yes")))
+					_commonChecks.fsckRepair.systems.push(check);
 				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0) {
 					_commonChecks.systemReducedByBlacklist.systems.push(check);
 					if (new Date(check.checkResults[0].timestamp).setHours(0,0,0,0) == new Date().setHours(0,0,0,0))
