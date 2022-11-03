@@ -78,6 +78,7 @@ $(document).ready(function() {
     $(".dashboard_content").append(searchTable);
     $('.customerlistLabel').click(function(e) {
         getSystems().then((systems) => {
+            $("#sysmonlogo").attr("title", "Systeme gecheckt / von (gesamt): " + _commonChecks.checkedToday.systems.length + " / " + _commonChecks.systemReducedByBlacklist.systems.length + " (" + systems.length + ")")
             let customerList = {};
             let sortedList = [];
             for (let system of systems) {
