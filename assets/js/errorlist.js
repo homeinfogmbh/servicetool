@@ -96,7 +96,7 @@ function setList(sort = "sortcustomer") {
             if ($('#searchfield').val().length === 0 || (check.id.toString().indexOf($('#searchfield').val().toLowerCase()) !== -1 || addressComplete.toLowerCase().indexOf($('#searchfield').val().toLowerCase()) !== -1 || check.deployment.customer.abbreviation.toLowerCase().indexOf($('#searchfield').val().toLowerCase()) !== -1 || name.toLowerCase().indexOf($('#searchfield').val().toLowerCase()) !== -1 || check.deployment.customer.id.toString().indexOf($('#searchfield').val().toLowerCase()) !== -1)) {
                 address = check.deployment.hasOwnProperty("address") ?check.deployment.address.street + " " + check.deployment.address.houseNumber :'';
                 abbreviation = check.deployment.customer.abbreviation === "Zuordnung nicht vorhanden" ?'<i>' + check.deployment.customer.abbreviation + '</i>' :check.deployment.customer.abbreviation;
-                versionPath = $(location).attr('pathname') + $(location).attr('search') + ($(location).attr('search') !== "" ?"?" :"&") + "version=true";
+                versionPath = $(location).attr('pathname') + $(location).attr('search') + ($(location).attr('search') === "" ?"?" :"&") + "version=true";
                 systemlistDOM += '<tr class="system" data-id="' + check.id + '">' +
                     '<td>' + check.id + '</td>' +
                     '<td>' + abbreviation + '</td>' +
