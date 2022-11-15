@@ -295,10 +295,18 @@
 													</td>
 												</tr>
 												<tr>
-													<td>Schwarzbildmodus <i id="unknownblackmodus" title="Modus unbekannt">(Wird geladen...)</i></td>
+													<td>Schwarzbildmodus </td>
 													<td>
-														<input type="checkbox" style="display:none;" name="Schwarzbildmodus" id="Schwarzbildmodus">
-														<label for="Schwarzbildmodus"><span class="btn_blackmodus checkboxStyle whiteCheckbox"></span></label>
+														<i id="display-mode-unknown" title="Modus unbekannt">(Wird geladen...)</i>
+														<div class="tw-toggle">
+															<input id="black-mode" type="radio" name="display-mode" value="OFF">
+															<label class="toggle toggle-yes"><i class="fa fa-eye-slash"></i></label>
+															<input id="installation-instructions-mode" type="radio" name="display-mode" value="INSTALLATION_INSTRUCTIONS">
+															<label class="toggle toggle-yes"><i class="fa fa-info"></i></label>
+															<input id="productive-mode" type="radio" name="display-mode" value="PRODUCTIVE">
+															<label class="toggle toggle-yes"><i class="fa fa-check"></i></label>
+															<span></span>
+														</div>
 													</td>
 												</tr>
 												<tr>

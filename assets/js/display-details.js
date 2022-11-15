@@ -16,25 +16,36 @@ $(document).ready(function() {
         });
         getSystemInfo().then((data) => {
             try { $("#applicationDesign").text('"' + data.presentation.configuration.design.toUpperCase() + '"'); } catch(error) { $("#applicationDesign").text("-"); }
-            $("#unknownblackmodus").hide();
-            if (data.hasOwnProperty("application")) {
-                if (data.application.status.running.length === 0) {
-                    $("#Schwarzbildmodus").prop("checked", true);
-                    $(".btn_blackmodus").attr("title", "Ist im Schwarzbildmodus");
-                } else if (data.application.status.running[0] === "html" || data.application.status.running[0] === "air") {
-                    $(".btn_blackmodus").attr("title", "Ist nicht im Schwarzbildmodus");
-                    $("#Schwarzbildmodus").prop("checked", false);
+            $("#display-mode-unknown").hide();
+            if (data.hasOwnProperty("application") && data.application.hasOwnProperty("mode")) {
+                switch (data.application.mode) {
+                case "PRODUCTIVE":
+                    $("#black-mode").prop("checked", false);
+                    $("#installation-instructions-mode").prop("checked", false);
+                    $("#productive-mode").prop("checked", true);
+                    break;
+                case "INSTALLATION_INSTRUCTIONS":
+                    $("#black-mode").prop("checked", false);
+                    $("#installation-instructions-mode").prop("checked", true);
+                    $("#productive-mode").prop("checked", false);
+                    break;
+                default:
+                    $("#black-mode").prop("checked", true);
+                    $("#installation-instructions-mode").prop("checked", false);
+                    $("#productive-mode").prop("checked", false);
+                    break;
                 }
             }
         }, ()=>{
             try {
                 if (_display.checkResults[0].applicationState === "html" || _display.checkResults[0].applicationState === "air") {
-                    $(".btn_blackmodus").attr("title", "Ist nicht im Schwarzbildmodus");
-                    $("#Schwarzbildmodus").prop("checked", false);
+                    $("#black-mode").prop("checked", false);
+                    $("#installation-instructions-mode").prop("checked", false);
+                    $("#productive-mode").prop("checked", true);
                 }
             } catch(error) {    }
             $("#applicationDesign").text("-");
-            $("#unknownblackmodus").text("(Status: UNBEKANNT)");
+            $("#display-mode-unknown").text("(Status: UNBEKANNT)");
         });
     }, ()=>{
         $("#errorlog").html("<tr><td>Keine Einträge geladen</td></tr>");
@@ -198,21 +209,10 @@ $(document).ready(function() {
         else
             $(this).attr("title", "Ist verbaut");
 	}); 
-    $('.btn_blackmodus').click(function(e) {
+    $('[name="display-mode"]').click(function(e) {
         localStorage.removeItem("servicetool.systemchecks");
         setApplicationState().then(checkSystem).then(()=>{
             $("#pageloader").hide();
-        }, (msg) => {
-            if ($("#unknownblackmodus").is(":hidden")) {
-                if ($(".btn_blackmodus").attr("title") === "Ist im Schwarzbildmodus") {
-                    $(".btn_blackmodus").attr("title", "Ist nicht im Schwarzbildmodus");
-                    $("#Schwarzbildmodus").prop("checked", false);
-                } else {
-                    $("#Schwarzbildmodus").prop("checked", true);
-                    $(".btn_blackmodus").attr("title", "Ist im Schwarzbildmodus");
-                }
-            }
-            setErrorMessage(msg, "Schwarzbildmodus des Systems");
         });
         if ($('input[name=Schwarzbildmodus]:checked').val() === 'on')
             $(this).attr("title", "Ist nicht im Schwarzbildmodus");
@@ -837,7 +837,7 @@ function setApplicationState() {
     return $.ajax({
         url: 'https://termgr.homeinfo.de/administer/application',
         type: "POST",
-        data: JSON.stringify({'system': _id, 'state': $('input[name=Schwarzbildmodus]:checked').val() === 'on'}),
+        data: JSON.stringify({'system': _id, 'mode': $('input[name=display-mode]:checked').val()}),
         contentType: 'application/json'
     });  
 }
