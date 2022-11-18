@@ -1070,3 +1070,74 @@ ul.flexContent li {
     opacity: 1;
     visibility: visible;
 }
+
+.tw-toggle {
+  display: none;
+  padding: 2px 3px;
+  border-radius: 20px;
+  position:relative;
+  border: 2px solid #ffffff;
+  width: 100px;
+}
+
+.tw-toggle label {
+  text-align: center;
+  font-family: sans-serif;
+  display: inline-block;
+  color: #ffffff;
+  position:relative;
+  z-index:2;
+  margin: 0;
+  text-align: center;
+  padding: 2px 5.8px;
+  font-size: 20px;
+}
+
+.tw-toggle input {
+  scale: 2;
+  top: 7px;
+  margin-left: 7px;
+  position: absolute;
+  z-index: 3;
+  opacity: 0;
+  cursor: pointer;
+}
+.tw-toggle input[value="INSTALLATION_INSTRUCTIONS"] {
+  margin-left:5px;
+}
+.tw-toggle input[value="PRODUCTIVE"] {
+  margin-left:13px;
+}
+
+.tw-toggle span {
+  height: 24px;
+  width: 24px;
+  line-height: 24px;
+  border-radius: 50%;
+  background:rgb(255, 0, 0, 0);
+  display:block;
+  position:absolute;
+  left: 22px;
+  top: 2px;
+  transition:all 0.3s ease-in-out;
+}
+
+.tw-toggle input[value="OFF"]:checked ~ span{
+  background:#ff0000;
+  left: 7px;
+  color:#fff;
+}
+.tw-toggle input[value="INSTALLATION_INSTRUCTIONS"]:checked ~ span{
+  background:#ffee00;
+  left: 36px;
+}
+.tw-toggle input[value="PRODUCTIVE"]:checked ~ span{
+  background:#27ae60;
+  left: 66px;
+}
+.tw-toggle input[value="OFF"]:checked + label,.tw-toggle input[value="PRODUCTIVE"]:checked + label{
+  color:#fff;
+}
+.tw-toggle input[value="INSTALLATION_INSTRUCTIONS"]:checked + label{
+  color:#fff;
+}

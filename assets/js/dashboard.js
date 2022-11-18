@@ -72,7 +72,7 @@ function setWidgets() {
         if (_commonChecks[item].show && _commonChecks[item].systems.length !== 0) {
             if (item === "offline" && _systemchecksByDays !== null) {
                 let diff = _commonChecks[item].systems.length - _systemchecksByDays;
-                if (diff > 0)
+                if (diff >= 0)
                     subTxt = '<span style="font-size:14px; font-weight:normal">' + Math.abs(diff) + ' mehr als gestern</span>';
                 else if (diff < 0)
                     subTxt = '<span style="font-size:14px; font-weight:normal">' + Math.abs(diff) + ' weniger als gestern</span>';

@@ -17,6 +17,7 @@ $(document).ready(function() {
         getSystemInfo().then((data) => {
             try { $("#applicationDesign").text('"' + data.presentation.configuration.design.toUpperCase() + '"'); } catch(error) { $("#applicationDesign").text("-"); }
             $("#display-mode-unknown").hide();
+            $(".tw-toggle").show();
             if (data.hasOwnProperty("application") && data.application.hasOwnProperty("mode")) {
                 switch (data.application.mode) {
                 case "PRODUCTIVE":
@@ -214,10 +215,6 @@ $(document).ready(function() {
         setApplicationState().then(checkSystem).then(()=>{
             $("#pageloader").hide();
         });
-        if ($('input[name=Schwarzbildmodus]:checked').val() === 'on')
-            $(this).attr("title", "Ist nicht im Schwarzbildmodus");
-        else
-            $(this).attr("title", "Ist im Schwarzbildmodus");
 	}); 
     $('.btn_restart').click(function(e) {
         Swal.fire({
