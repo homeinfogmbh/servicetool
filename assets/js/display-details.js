@@ -17,8 +17,8 @@ $(document).ready(function() {
         getSystemInfo().then((data) => {
             try { $("#applicationDesign").text('"' + data.presentation.configuration.design.toUpperCase() + '"'); } catch(error) { $("#applicationDesign").text("-"); }
             $("#display-mode-unknown").hide();
-            $(".tw-toggle").show();
             if (data.hasOwnProperty("application") && data.application.hasOwnProperty("mode")) {
+                $(".tw-toggle").show();
                 switch (data.application.mode) {
                 case "PRODUCTIVE":
                     $("#black-mode").prop("checked", false);
@@ -36,6 +36,9 @@ $(document).ready(function() {
                     $("#productive-mode").prop("checked", false);
                     break;
                 }
+            } else {
+                $("#display-mode-unknown").show();
+                $("#display-mode-unknown").text("(Status: UNBEKANNT)");
             }
         }, ()=>{
             try {
@@ -213,6 +216,8 @@ $(document).ready(function() {
     $('[name="display-mode"]').click(function(e) {
         localStorage.removeItem("servicetool.systemchecks");
         setApplicationState().then(checkSystem).then(()=>{
+            $("#pageloader").hide();
+        }, ()=>{
             $("#pageloader").hide();
         });
 	}); 

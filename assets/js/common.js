@@ -1,6 +1,6 @@
 const ONE_HOUR = 60 * 60 * 1000; // Milliseconds;
 const THREE_MONTHS = 3 * 30 * 24; // Hours
-const _KIBIBITTOMBIT = 1024/1000/1000;//test
+const _KIBIBITTOMBIT = 1024/1000/1000;
 var _coffin = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#fff" d="M8,22L5,8L8,2H16L19,8L16,22H8M11,6V8H9V10H11V15H13V10H15V8H13V6H11Z" /></svg>';
 var _commonChecks = {"offline":{"title":"Offline", "text":"Liste der Geräte die offline sind", "systems":[], "show":true},
 	"offlineThreeMonth":{"title":"Lange offline", "text":"Liste der Geräte die länger als 3 Monate offline sind", "systems":[], "show":true},
@@ -232,7 +232,6 @@ function setCheckList(list, applicationVersion, blacklist) {
 					_commonChecks.notfitted.systems.push(check);
 				if (check.deployment.testing)
 					_commonChecks.testsystem.systems.push(check);
-				//console.log(check.checkResults[0].applicationVersion)
 				//if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("applicationVersion") && (check.checkResults[0].applicationVersion === "2.88.0-1" || check.checkResults[0].applicationVersion === "2.90.0-1") && check.fitted && !check.deployment.testing)
 					//console.log(check.deployment.customer.id + " // " + check.id);
 				//if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("applicationVersion") && check.checkResults[0].applicationVersion !== applicationVersion && check.fitted && !check.deployment.testing)
