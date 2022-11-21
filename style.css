@@ -1123,7 +1123,7 @@ ul.flexContent li {
 }
 
 .tw-toggle input[value="OFF"]:checked ~ span{
-  background:#ff0000;
+  background:#000000;
   left: 7px;
   color:#fff;
 }
