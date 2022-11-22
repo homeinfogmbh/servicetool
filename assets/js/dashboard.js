@@ -15,6 +15,7 @@ $(document).ready(function() {
         });
     });
     getDeployments().then(setDeployments);
+    getImageVersions().then(setImageVersions);
     getHipsterStatus().then((data)=>{
         _hipsterIsOnline = data;
         setWidgets();
@@ -165,6 +166,32 @@ function getHipsterStatus() {
 		}
 	});   
 }
+
+function getImageVersions() {
+    return $.ajax({
+		url: "https://backend.homeinfo.de/ddbfiles/list",
+		type: "GET",
+		success: function (msg) {   },
+		error: function (msg) {
+			setErrorMessage(msg, "Abrufen der Image-Versionen");
+		}
+	}); 
+}
+function setImageVersions(data) {
+    let titles = {"HIDSL":"Image x86_64", "HIDSL-ARM":"Image ARM", "manual":"Installationsanleitung DDB"};
+    let imageDom = "";
+    console.log(data)
+    for (let image in data[0]) {
+        for (let version of data[0][image]) {
+            imageDom += "<tr>" +
+                "<td>" + titles[image] + " (" + formatDate(version) + ")</td>" + 
+                "<td>" + '<a href="https://backend.homeinfo.de/ddbfiles/' + image + "/" + version + '" class="huntinglink"> <img src="assets/img/download.svg" alt="Download"></a></td>' + 
+                "</tr>";
+        }
+    }
+    $(".imageversions").html("<tbody>" + imageDom + "</tbody>");
+}
+
 
 function intervalChecks() {
     //hwadm toggle-updating <tid>
