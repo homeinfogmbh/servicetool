@@ -181,12 +181,12 @@ function setImageVersions(data) {
     let titles = {"HIDSL":"Image x86_64", "HIDSL-ARM":"Image ARM", "manual":"Installationsanleitung DDB"};
     let imageDom = "";
     for (let image in data[0]) {
-        //for (let version of data[0][image]) {
+        if (data[0][image].length > 0) {
             imageDom += "<tr>" +
                 "<td>" + titles[image] + " (" + formatDate(data[0][image][data[0][image].length-1]) + ")</td>" + 
                 "<td>" + '<a href="https://backend.homeinfo.de/ddbfiles/' + image + "/" + data[0][image][data[0][image].length-1] + '" class="huntinglink"> <img src="assets/img/download.svg" alt="Download"></a></td>' + 
                 "</tr>";
-        //}
+        }
     }
     $(".imageversions").html("<tbody>" + imageDom + "</tbody>");
 }
