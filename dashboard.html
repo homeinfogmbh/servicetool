@@ -16,6 +16,7 @@
 	<link rel="stylesheet" href="style.css">
 	<link rel="stylesheet" href="assets/css/common.css">
 	<link rel="stylesheet" href="assets/css/responsive.css">
+	<link rel="stylesheet" href="assets/css/sweetalert2.min.css">
 
 </head>
 <body class="">
@@ -25,7 +26,7 @@
 			<img src="assets/img/mobile-close.svg" class="close_menu" style="display: none;">
 		</div>
 		<div class="dashboard_container">
-			<div class="menu_sidebar"></div>
+			<div class="menu_sidebar rights" style="display:none"></div>
 			<div class="dashboard_containers">
 				<div class="dashboard_content">
 					<div class="dashboardTopbar">
@@ -37,7 +38,7 @@
 							<p>Homeinfo Servicetool für digitale Informationssysteme</p>
 						</div>
 						<div class="dashTopRight">
-							<div class="search_dash">
+							<div class="search_dash rights" style="display:none">
 								<form action="#">
 									<button type="button"><img src="assets/img/search.svg"></button>
 									<input type="search" id="globalsearchfield" placeholder="Suche...">
@@ -53,12 +54,12 @@
 						</div>
 					</div>
 					<div class="dash_bottomCont">
-						<div class="number_boxes">
+						<div class="number_boxes rights" style="display:none">
 							<div class="row" id="widgets"></div>
 						</div>
 						<div class="table_contents">
 							<div class="row">
-								<div class="col60">
+								<div class="col60 rights" style="display:none">
 									<div class="tableBox BeobachtTable">
 										<h3>Beobachtungsliste <span>(8 Wochen)</span></h3>
 										<p>Displays mit Handlungsbedarf</p>
@@ -80,7 +81,7 @@
 									</div>
 								</div>
 								<div class="col40">
-									<div class="tableBox">
+									<div class="tableBox rights" style="display:none">
 										<h3>Neue Standorte</h3>
 										<p>Liste der noch nicht im LiveSystem angemeldeten Displays</p>
 										<div class="table_container Neuinsta">
@@ -132,6 +133,7 @@
 	<script src="assets/js/bootstrap.bundle.min.js"></script>
 	<script src="assets/js/owl.carousel.min.js"></script>
 	<script src="assets/js/active.js"></script>
+	<script src="assets/js/sweetalert2.min.js"></script>
 	<script src="assets/js/common.js"></script>
 	<script src="assets/js/menu.js"></script>
 	<script src="assets/js/dashboard.js"></script>

@@ -357,15 +357,16 @@ function getSystems() {
 function setErrorMessage(msg, fromFunction) {
 	try {
 		let title = "Das hat nicht geklappt";
-		let message = "Leider ist ein Fehler beim " + fromFunction + " aufgetreten: ";
+		let message = "Leider ist ein Fehler beim " + fromFunction + " aufgetreten.";
 		if (msg.responseText.indexOf("Sysinfo unsupported on this system.") !== -1) {
 			title = "Systeminfos können nicht geladen werden";
 			message = "Das System wird nicht unterstützt."
-		}
-		if (msg.responseText.indexOf("System is offline.") !== -1)
+		} else if (msg.responseText.indexOf("System is offline.") !== -1)
 			message = "Das System ist offline."
 		else if (msg.responseText.indexOf("No such system.") !== -1)
 			message = "Das System existiert nicht."
+		else if (msg.responseText.indexOf("Not authorized.") !== -1)
+			message += " Sie haben keine Rechte."
 		Swal.fire({
 			title: title,
 			text: message,
@@ -375,7 +376,7 @@ function setErrorMessage(msg, fromFunction) {
 			confirmButtonText: 'O.K.',
 			buttonsStyling: true
 		});
-	} catch(error) {	}
+	} catch(error) {console.log(error)	}
 	$('#pageloader').hide();
 }
 function compare(a, b) {

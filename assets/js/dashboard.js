@@ -1,6 +1,47 @@
 var _hipsterIsOnline = true;
 var _systemchecksByDays = null;
 $(document).ready(function() {
+    getAccountServices().then((data)=>{
+        if (localStorage.getItem("servicetool.user") && JSON.parse(localStorage.getItem("servicetool.user")).root) {
+            $(".rights").show();
+            loadPageData();
+        } else {
+            let rights = false;
+            for (let id of data) {
+                if (id.service === 30) {
+                    rights = true;
+                    break;
+                }
+            }
+            if (rights) {
+                $(".rights").show();
+                loadPageData();
+            } else {
+                getImageVersions().then(setImageVersions);
+                $("#pageloader").hide();
+            }
+        }
+    });
+});
+
+function getAccountServices() {
+	if (localStorage.getItem("servicetool.services") !== null)
+		return Promise.resolve(JSON.parse(localStorage.getItem("servicetool.services")));
+	else {
+		return $.ajax({
+			url: "https://his.homeinfo.de/service/account",
+			type: "GET",
+			success: function (services) {
+				localStorage.setItem("servicetool.services", JSON.stringify(services));
+			},
+			error: function (msg) {
+				setErrorMessage(msg, "Auflisten der Services");
+			}
+		});		
+	}
+}
+
+function loadPageData() {
     Promise.all(getListOfSystemChecks()).then((data) => {
         setChecks(data);
         getCheckByDays(1).then((checkday)=> {
@@ -31,8 +72,7 @@ $(document).ready(function() {
     if (localStorage.getItem("servicetool.systemchecks") !== null)
         intervalChecks();
     setInterval(intervalChecks, 60000);
-});
-
+}
 function setChecks(data) {
     let list = setCheckList(data[0], data[1], data[2]);
     //Observer table
