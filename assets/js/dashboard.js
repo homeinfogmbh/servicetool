@@ -1,5 +1,7 @@
 var _hipsterIsOnline = true;
 var _systemchecksByDays = null;
+var _registrations = [];
+var _lastRegistrationSort = null;
 $(document).ready(function() {
     getAccountServices().then((data)=>{
         if (localStorage.getItem("servicetool.user") && JSON.parse(localStorage.getItem("servicetool.user")).root) {
@@ -23,23 +25,6 @@ $(document).ready(function() {
         }
     });
 });
-
-function getAccountServices() {
-	if (localStorage.getItem("servicetool.services") !== null)
-		return Promise.resolve(JSON.parse(localStorage.getItem("servicetool.services")));
-	else {
-		return $.ajax({
-			url: "https://his.homeinfo.de/service/account",
-			type: "GET",
-			success: function (services) {
-				localStorage.setItem("servicetool.services", JSON.stringify(services));
-			},
-			error: function (msg) {
-				setErrorMessage(msg, "Auflisten der Services");
-			}
-		});		
-	}
-}
 
 function loadPageData() {
     Promise.all(getListOfSystemChecks()).then((data) => {
@@ -65,6 +50,14 @@ function loadPageData() {
         $(".observerItem").show();
 		e.preventDefault();
 	});
+    $('#registrationcounter').click(function(e) {
+        $(".registrationItem").show();
+		e.preventDefault();
+	});
+    $('.sortregistrations').click(function(e) {
+        setDeployments(null, $(this).data("sort"));
+		e.preventDefault();
+	}); 
     $('.btn_registration').click(function(e) {
         window.location.href = "bestelltool-list.html";
 		e.preventDefault();
@@ -172,28 +165,65 @@ function getObserverItems(observerItems) {
             dom += observerItems[item];           
     return dom;
 }
-function setDeployments(deployments) {
+function setDeployments(deployments, sort = "sortcreated") {
+    if (deployments !== null) {
+        for (let registration of deployments) {
+            if (!registration.hasOwnProperty("constructionSitePreparationFeedback") || !registration.hasOwnProperty("internetConnection"))
+                _registrations.push(registration);
+        }
+    }
+    sortRegistrations(sort);
     let orderingsDom = "";
     let address;
-    for (let deployment of deployments) {
-        if (!deployment.hasOwnProperty("constructionSitePreparationFeedback") || !deployment.hasOwnProperty("internetConnection")) {
-            address = deployment.hasOwnProperty("address") ?deployment.address.street + " " + deployment.address.houseNumber + ", " + deployment.address.zipCode + " " + deployment.address.city :'<i>Keine Adresse angegeben</i>';
-            orderingsDom += '<tr>' +
-                '<td>' + deployment.customer.abbreviation + '</td>' +
-                '<td title="' + address + '">' + address.substring(0, 12) + (address.length > 13 ? '...' :'') +  '</td>' +
-                '<td><span class="' + (deployment.hasOwnProperty("created") && !isOnDate(deployment.created, 2160) ?"EingeActive" :"") + '">' + (deployment.hasOwnProperty("created") ?formatDate(deployment.created) :"-") + '</span></td>' +
-                '<td>' +
-                    '<ul class="Umgebung">' +
-                        (deployment.hasOwnProperty('constructionSitePreparationFeedback') ?'<li title="Anlage Baustellenvorbeitung (OK)"></li>' :'<li class="active" title="Anlage Baustellenvorbeitung (nicht OK)"></li>') + 
-                        (deployment.hasOwnProperty('internetConnection') ?'<li title="Netzbindung (OK)"></li>' :'<li class="active" title="Netzbindung (nicht OK)"></li>') + 
-                    '</ul>' +
-                '</td>' +
-                '<td><a href="bestelltool.html?id=' + deployment.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>' +
-            '</tr>';
-        }
+    let counter = 0;
+    for (let deployment of _registrations) {
+        address = deployment.hasOwnProperty("address") ?deployment.address.street + " " + deployment.address.houseNumber + ", " + deployment.address.zipCode + " " + deployment.address.city :'<i>Keine Adresse angegeben</i>';
+        orderingsDom += '<tr ' + (counter > 8 ?'class="registrationItem" style="display:none"':'') + '>' +
+            '<td>' + deployment.customer.abbreviation + '</td>' +
+            '<td title="' + address + '">' + address.substring(0, 12) + (address.length > 13 ? '...' :'') +  '</td>' +
+            '<td><span class="' + (deployment.hasOwnProperty("created") && !isOnDate(deployment.created, 2160) ?"EingeActive" :"") + '">' + (deployment.hasOwnProperty("created") ?formatDate(deployment.created) :"-") + '</span></td>' +
+            '<td>' +
+                '<ul class="Umgebung">' +
+                    (deployment.hasOwnProperty('constructionSitePreparationFeedback') ?'<li title="Anlage Baustellenvorbeitung (OK)"></li>' :'<li class="active" title="Anlage Baustellenvorbeitung (nicht OK)"></li>') + 
+                    (deployment.hasOwnProperty('internetConnection') ?'<li title="Netzbindung (OK)"></li>' :'<li class="active" title="Netzbindung (nicht OK)"></li>') + 
+                '</ul>' +
+            '</td>' +
+            '<td><a href="bestelltool.html?id=' + deployment.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>' +
+        '</tr>';
+        counter++;
     }
     orderingsDom = orderingsDom === "" ?"<tr><td>Keine neuen Standorte gefunden</tr></td>" :orderingsDom;
     $("#registrations").html(orderingsDom);
+    if (counter > 10)
+        $("#registrationcounter").text("Alle " + counter + " Standorte anzeigen");
+}
+function sortRegistrations(sort) {
+    _lastRegistrationSort = _lastRegistrationSort === sort && _lastRegistrationSort.indexOf('inverted' === -1) ? _lastRegistrationSort + "Inverted" :sort;
+    if (_lastRegistrationSort === "sortcustomer") {
+        _registrations.sort(function(a, b) {
+            return compare(a.customer.abbreviation.toLowerCase(), b.customer.abbreviation.toLowerCase());
+        });
+    } else if (_lastRegistrationSort === "sortcustomerInverted") {
+        _registrations.sort(function(a, b) {
+            return compareInverted(a.customer.abbreviation.toLowerCase(), b.customer.abbreviation.toLowerCase());
+        });
+    } else if (_lastRegistrationSort === "sortaddress") {
+        _registrations.sort(function(a, b) {
+            return compare(a.address.street.toLowerCase(), b.address.street.toLowerCase());
+        });
+    } else if (_lastRegistrationSort === "sortaddressInverted") {
+        _registrations.sort(function(a, b) {
+            return compareInverted(a.address.street.toLowerCase(), b.address.street.toLowerCase());
+        });
+    } else if (_lastRegistrationSort == "sortcreated") {
+        _registrations.sort(function(a, b) {
+            return compare(a.created, b.created);
+        });
+    } else if (_lastRegistrationSort == "sortcreatedInverted") {
+        _registrations.sort(function(a, b) {
+            return compareInverted(a.created, b.created);
+        });
+    }
 }
 
 function getHipsterStatus() {

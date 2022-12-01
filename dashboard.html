@@ -26,7 +26,7 @@
 			<img src="assets/img/mobile-close.svg" class="close_menu" style="display: none;">
 		</div>
 		<div class="dashboard_container">
-			<div class="menu_sidebar rights" style="display:none"></div>
+			<div class="menu_sidebar"></div>
 			<div class="dashboard_containers">
 				<div class="dashboard_content">
 					<div class="dashboardTopbar">
@@ -88,9 +88,9 @@
 											<table class="table">
 												<thead>
 													<tr>
-														<th>Kunde</th>
-														<th>Adresse</th>
-														<th>Erstellt</th>
+														<th class="sortregistrations pointer" data-sort="sortcustomer" style="text-decoration:underline">Kunde</th>
+														<th class="sortregistrations pointer" data-sort="sortaddress" style="text-decoration:underline">Adresse</th>
+														<th class="sortregistrations pointer" data-sort="sortcreated" style="text-decoration:underline">Erstellt</th>
 														<th>Umgebung</th>
 														<th></th>
 													</tr>
@@ -106,6 +106,7 @@
 												</tbody>
 											</table>
 										</div>
+											<p class="fz12 text-right mb-mt-1 pointer" id="registrationcounter"></p>
 											<p class="fz12 text-right mb-mt-1 btn_registration pointer">Neue Standorte anzeigen</p>
 									</div>
 									<div class="tableBox downloadTable">

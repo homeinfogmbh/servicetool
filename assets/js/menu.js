@@ -48,7 +48,51 @@ $(document).ready(function() {
             '<p class="fz8">Ein Dienst der HOMEINFO GmbH (c) 2022</p>' +
         '</div>' +
     '</div>';
-    $(".menu_sidebar").html(menu);
+    getAccountServices().then((data)=>{
+        if (localStorage.getItem("servicetool.user") && JSON.parse(localStorage.getItem("servicetool.user")).root) {
+            $(".menu_sidebar").html(menu);
+            loadMenuData();
+        } else {
+            let rights = false;
+            for (let id of data) {
+                if (id.service === 30) {
+                    rights = true;
+                    break;
+                }
+            }
+            if (rights) {
+                $(".menu_sidebar").html(menu);
+                loadMenuData();
+            } else {
+                menu = '<div class="loader" id="pageloader"></div><div class="menu_content">' +
+                    '<div class="side_logo">' +
+                        '<a href="dashboard.html" onclick="removeopenedlist()"><img id="sysmonlogo" src="assets/img/sideLogo.png" alt="Logo"></a>' +
+                    '</div>' +
+                    '<div class="side_menu">' +
+                        '<h3 class="menu_title">Menu</h3>' +
+                        '<ul class="navbar-nav">' +
+                            '<li class="nav-item">' +
+                                '<a class="nav-link" id="dash" aria-current="page" href="dashboard.html" onclick="removeopenedlist()">Dashboard</a>' +
+                            '</li>' +
+                        '</ul>' +
+                    '</div>' +
+                    '<div class="admin_box">' +
+                        '<div class="admin_content">' +
+                            '<img src="assets/img/rocket.svg" alt="Admin">' +
+                            '<h5>Supportanfrage</h5>' +
+                            '<p class="fz12">Serviceanfrage zu dieser <br>Seite an den Admin</p>' +
+                            '<span class="whiteBtn sendBtn pointer">SENDEN</span>' +
+                        '</div>' +
+                        '<p class="fz8">Ein Dienst der HOMEINFO GmbH (c) 2022</p>' +
+                    '</div>' +
+                '</div>';
+                $(".menu_sidebar").html(menu);
+            }
+        }
+    });
+});
+
+function loadMenuData() {
     checkSysmon().then((sysmonIsRunning) => {
         if (sysmonIsRunning)
             $("#sysmonlogo").attr("src", "assets/img/Sysmon_check_active.gif")
@@ -146,7 +190,7 @@ $(document).ready(function() {
         }
 	});
     Promise.all(getListOfSystemChecks()).then(setMenu);
-});
+}
 
 function checkSysmon() {
     return $.ajax({

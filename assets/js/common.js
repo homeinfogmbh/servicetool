@@ -24,6 +24,7 @@ var _commonChecks = {"offline":{"title":"Offline", "text":"Liste der Geräte die
 	"lessTouches":{"title":"21 Tage ohne Touch", "text":"Displays (Standorte) auf denen 21 Tage keine Klicks registriert wurden", "systems":[], "show":true},
 	"toMuchTouches":{"title":"Touch Überflutung", "text":"Displays (Standorte) auf denen in den letzten 3 Tagen mehr  als 500 Klicks registriert wurden", "systems":[], "show":true},
 	"fsckRepair":{"title":"Autom. Dateisystemreparatur deaktiviert", "text":"Alle Systeme, deren Dateisystemreparatur nicht aktiviert ist.", "systems":[], "show":true},
+	"checked":{"title":"Nicht gescheckte Geräte", "text":"Alle Systeme, die heute nicht gecheckt wurden.", "systems":[], "show":true},
 	"system":{"title":"Displays", "text":"Liste aller Displays", "systems":[], "show":false},
 	"systemReducedByBlacklist":{"title":"Displays", "text":"Liste aller Displays ohne Blacklist", "systems":[], "show":false},
 	"checkedToday":{"title":"Displays", "text":"Liste aller Displays ohne Blacklist", "systems":[], "show":false},
@@ -133,6 +134,23 @@ function getUser() {
 			error: function (msg) {
 			}
 		});
+	}
+}
+
+function getAccountServices() {
+	if (localStorage.getItem("servicetool.services") !== null)
+		return Promise.resolve(JSON.parse(localStorage.getItem("servicetool.services")));
+	else {
+		return $.ajax({
+			url: "https://his.homeinfo.de/service/account",
+			type: "GET",
+			success: function (services) {
+				localStorage.setItem("servicetool.services", JSON.stringify(services));
+			},
+			error: function (msg) {
+				setErrorMessage(msg, "Auflisten der Services");
+			}
+		});		
 	}
 }
 
@@ -254,6 +272,8 @@ function setCheckList(list, applicationVersion, blacklist) {
 					_commonChecks.toMuchTouches.systems.push(check);
 				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && (!check.checkResults[0].hasOwnProperty("fsckRepair") || (check.checkResults[0].hasOwnProperty("fsckRepair") && check.checkResults[0].fsckRepair !== "yes")))
 					_commonChecks.fsckRepair.systems.push(check);
+				if (!check.hasOwnProperty("checkResults") && check.fitted && !check.deployment.testing)
+					_commonChecks.checked.systems.push(check);
 				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0) {
 					_commonChecks.systemReducedByBlacklist.systems.push(check);
 					if (new Date(check.checkResults[0].timestamp).setHours(0,0,0,0) == new Date().setHours(0,0,0,0))
