@@ -195,7 +195,7 @@ function setDeployments(deployments, sort = "sortcreated") {
     orderingsDom = orderingsDom === "" ?"<tr><td>Keine neuen Standorte gefunden</tr></td>" :orderingsDom;
     $("#registrations").html(orderingsDom);
     if (counter > 10)
-        $("#registrationcounter").text("Alle " + counter + " Standorte anzeigen | ");
+        $("#registrationcounter").html("Alle " + counter + " Standorte anzeigen&nbsp;&nbsp;|&nbsp;&nbsp;");
 }
 function sortRegistrations(sort) {
     _lastRegistrationSort = _lastRegistrationSort === sort && _lastRegistrationSort.indexOf('inverted' === -1) ? _lastRegistrationSort + "Inverted" :sort;
