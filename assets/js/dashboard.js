@@ -46,10 +46,6 @@ function loadPageData() {
         _hipsterIsOnline = data;
         setWidgets();
     });
-    $('#observercounter').click(function(e) {
-        $(".observerItem").show();
-		e.preventDefault();
-	});
     $('#registrationcounter').click(function(e) {
         $(".registrationItem").show();
 		e.preventDefault();
@@ -68,33 +64,25 @@ function loadPageData() {
 }
 function setChecks(data) {
     let list = setCheckList(data[0], data[1], data[2]);
-    //Observer table
-    let observerItems = [];
-    for (let check of list) {
-        if (check.deployment.customer.id !== -1) {
-            if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].smartCheck === "failed")
-                observerItems.push(getObserveItem(check, "SSD Fehler", observerItems.length));
-            if (!check.fitted)
-                observerItems.push(getObserveItem(check, "Nicht verbaut", observerItems.length));
-            if (check.hasOwnProperty("deployment") && check.deployment.testing)
-                observerItems.push(getObserveItem(check, "Testsystem", observerItems.length));
-            if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("offlineSince") && !isOnDate(check.checkResults[0].offlineSince, THREE_MONTHS))
-                observerItems.push(getObserveItem(check, "Mehr als 3 Monate offline", observerItems.length));
-            //if (!isOnDate(check.lastSync, 24)) {
-                if (!isOnDate(check.lastSync, THREE_MONTHS))
-                    observerItems.push(getObserveItem(check, "Alte Daten", observerItems.length, " älter als 30 Tage"));
-            //}
-            if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState !== "html" && check.checkResults[0].applicationState !== "air" && check.checkResults[0].applicationState !== "unknown" && check.fitted && !check.deployment.testing)
-                observerItems.push(getObserveItem(check, "Schwarz-Bildmodus", observerItems.length));
+    //Widgetlist table
+    let listDOM = "";
+    for (let item in _commonChecks) {
+        if (_commonChecks[item].list && _commonChecks[item].systems.length !== 0) {
+            listDOM += '<tr>' +
+                '<td>' + _commonChecks[item].title + '</td>' +
+                '<td><span class="EingeActive" style="background:#fff; color:black">' + _commonChecks[item].systems.length + '</span></td>' +
+                '<td><a href="listenansicht.html?type=' + item + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>' +
+            '</tr>';
         }
     }
+    if (listDOM === "")
+        listDOM = "<tr><td>Keine Warnungen vorhanden.</td></tr>"
+    $("#warnings").html(listDOM);
 
     // Widgets
     setWidgets();
 
-    $("#observations").html(getObserverItems(observerItems));
-    if (observerItems.length > 10)
-        $("#observercounter").text("Alle " + observerItems.length + " Meldungen anzeigen");
+    
     $("#pageloader").hide();
 }
 
@@ -103,7 +91,7 @@ function setWidgets() {
     let errorsDOM = "";
     let subTxt;
     for (let item in _commonChecks) {
-        if (_commonChecks[item].show && _commonChecks[item].systems.length !== 0) {
+        if (_commonChecks[item].widget && _commonChecks[item].systems.length !== 0) {
             if (item === "offline" && _systemchecksByDays !== null) {
                 let diff = _commonChecks[item].systems.length - _systemchecksByDays;
                 if (diff >= 0)
@@ -147,24 +135,6 @@ function setWidgets() {
 	});
 }
 
-function getObserveItem(item, annotation, counter, title="") {
-    let address = item.hasOwnProperty("deployment") ?item.deployment.hasOwnProperty("address") ?item.deployment.address.street + " " + item.deployment.address.houseNumber + ", " + item.deployment.address.zipCode + " " + item.deployment.address.city :'Keine Adresse' :'';
-    return '<tr ' + (counter > 10 ?'class="observerItem" style="display:none"' :'') + '>' +
-        '<td title="System-ID: ' + item.id  + '">' + (item.hasOwnProperty("deployment") ?item.deployment.customer.abbreviation :'Keine Zuordnung') + '</td>' +
-        '<td title="' + address + '">' + address.substring(0, 12) + (address.length > 13 ? '...' :'') +  '</td>' +
-        '<td' + (title ==="" ?"" :" title='" + title + "'") + '>' + annotation + '</td>' +
-        '<td>' + (item.hasOwnProperty("checkResults") && item.checkResults.length > 0 ?formatDate(item.checkResults[0].timestamp) :"-") + '</td>' +
-        '<td><a href="display-details.html?id=' + item.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>' +
-    '</tr>';
-}
-function getObserverItems(observerItems) {
-    if (observerItems.length === 0)
-        return '<font color="white">Keine Systeme zur Beobachtung</font>';
-    let dom = "";
-    for (let item = 0; item < observerItems.length; item++)
-            dom += observerItems[item];           
-    return dom;
-}
 function setDeployments(deployments, sort = "sortcreated") {
     if (deployments !== null) {
         for (let registration of deployments) {
@@ -178,7 +148,7 @@ function setDeployments(deployments, sort = "sortcreated") {
     let counter = 0;
     for (let deployment of _registrations) {
         address = deployment.hasOwnProperty("address") ?deployment.address.street + " " + deployment.address.houseNumber + ", " + deployment.address.zipCode + " " + deployment.address.city :'<i>Keine Adresse angegeben</i>';
-        orderingsDom += '<tr ' + (counter > 8 ?'class="registrationItem" style="display:none"':'') + '>' +
+        orderingsDom += '<tr ' + (counter > 9 ?'class="registrationItem" style="display:none"':'') + '>' +
             '<td>' + deployment.customer.abbreviation + '</td>' +
             '<td title="' + address + '">' + address.substring(0, 12) + (address.length > 13 ? '...' :'') +  '</td>' +
             '<td><span class="' + (deployment.hasOwnProperty("created") && !isOnDate(deployment.created, 2160) ?"EingeActive" :"") + '">' + (deployment.hasOwnProperty("created") ?formatDate(deployment.created) :"-") + '</span></td>' +

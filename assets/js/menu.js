@@ -221,7 +221,7 @@ function setMenu(data) {
     let customerErrors;
     let additionalMenu = "";
     for (let item in _commonChecks) {
-        if (_commonChecks[item].show && _commonChecks[item].systems.length !== 0) {
+        if (_commonChecks[item].widget && _commonChecks[item].systems.length !== 0) {
             _commonChecks[item].systems.sort(function(a, b) {
                 return compare(a.deployment.customer.abbreviation.toLowerCase(), b.deployment.customer.abbreviation.toLowerCase());
             });
