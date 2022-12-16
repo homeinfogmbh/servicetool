@@ -94,6 +94,7 @@ function checkSession() {
 		url: "https://his.homeinfo.de/session/!",
 		type: "GET",
 		success: function (msg) {
+			removeLocalStorage();
 			if (localStorage.getItem("servicetool.url") !== null)
 				window.location.href = localStorage.getItem("servicetool.url");
 			else
