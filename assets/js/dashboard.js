@@ -66,14 +66,21 @@ function setChecks(data) {
     let list = setCheckList(data[0], data[1], data[2]);
     //Widgetlist table
     let listDOM = "";
-    for (let item in _commonChecks) {
-        if (_commonChecks[item].list && _commonChecks[item].systems.length !== 0) {
-            listDOM += '<tr>' +
-                '<td>' + _commonChecks[item].title + '</td>' +
-                '<td><span class="EingeActive" style="background:#fff; color:black">' + _commonChecks[item].systems.length + '</span></td>' +
-                '<td><a href="listenansicht.html?type=' + item + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>' +
-            '</tr>';
-        }
+    let sortLength = [];
+    let item;
+    for (item in _commonChecks) {
+        if (_commonChecks[item].list && _commonChecks[item].systems.length !== 0)
+            sortLength.push({"systemlength":_commonChecks[item].systems.length, "item":item});
+    }
+    sortLength.sort(function(a, b) {
+        return compareInverted(a.systemlength, b.systemlength);
+    });
+    for (item of sortLength) {
+        listDOM += '<tr>' +
+            '<td>' + _commonChecks[item.item].title + '</td>' +
+            '<td><span class="EingeActive" style="background:#fff; color:black">' + _commonChecks[item.item].systems.length + '</span></td>' +
+            '<td><a href="listenansicht.html?type=' + item.item + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>' +
+        '</tr>';
     }
     if (listDOM === "")
         listDOM = "<tr><td>Keine Warnungen vorhanden.</td></tr>"
