@@ -46,7 +46,18 @@ $(document).ready(function() {
                 '<span class="whiteBtn sendBtn pointer">SENDEN</span>' +
             '</div>' +
             '<p class="fz8">Ein Dienst der HOMEINFO GmbH (c) 2022</p>' +
-        '</div>' +
+        '</div><br>' +
+        '<table>' +
+            '<tbody>' +
+                '<tr>' +
+                    '<td>Blacklist</td>' +
+                    '<td>' +
+                        '<input type="checkbox" style="display:none;" name="blacklist" id="blacklist">' +
+                        '<label for="blacklist"><span class="btn_blacklist checkboxStyle whiteCheckbox"></span></label>' +
+                    '</td>' +
+                '</tr>' +
+            '</tbody>' +
+        '</table>' +
     '</div>';
     getAccountServices().then((data)=>{
         if (localStorage.getItem("servicetool.user") && JSON.parse(localStorage.getItem("servicetool.user")).root) {
@@ -190,6 +201,17 @@ function loadMenuData() {
         }
 	});
     Promise.all(getListOfSystemChecks()).then(setMenu);
+    if (localStorage.getItem("servicetool.userSettings") !== null && JSON.parse(localStorage.getItem("servicetool.userSettings")).blacklist) {
+        $("#blacklist").prop("checked", true);
+        $(".btn_blacklist").attr("title", "Blacklist deaktivieren");
+    } else {
+        $("#blacklist").prop("checked", false);
+        $(".btn_blacklist").attr("title", "Blacklist aktivieren");
+    }
+    $('.btn_blacklist').click(function(e) {
+        localStorage.setItem("servicetool.userSettings", JSON.stringify({"blacklist":!$("#blacklist").prop("checked")}));
+        location.reload();
+    });
 }
 
 function checkSysmon() {

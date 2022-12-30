@@ -67,6 +67,7 @@ $(document).ready(function() {
 		localStorage.removeItem("servicetool.systemchecks");
 		localStorage.removeItem("servicetool.applicationversion");
 		localStorage.removeItem("servicetool.blacklist");
+		//localStorage.removeItem("servicetool.userSettings");
         deleteSession();
     });	
 });  
@@ -195,7 +196,8 @@ function setCheckList(list, applicationVersion, blacklist) {
 		for (blacklistitem of blacklist) {
 			if (check.id === blacklistitem.id) {
 				check.blacklist = true;
-				found = true;
+				if (localStorage.getItem("servicetool.userSettings") !== null && JSON.parse(localStorage.getItem("servicetool.userSettings")).blacklist)
+					found = true;
 				break;
 			}
 		}
