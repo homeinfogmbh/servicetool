@@ -100,7 +100,14 @@ function setWidgets() {
     for (let item in _commonChecks) {
         if (_commonChecks[item].widget && _commonChecks[item].systems.length !== 0) {
             if (item === "offline" && _systemchecksByDays !== null) {
-                let diff = _commonChecks[item].systems.length - _systemchecksByDays;
+                let blacklistOfflineCounter = 0;                
+                if (localStorage.getItem("servicetool.userSettings") === null || !JSON.parse(localStorage.getItem("servicetool.userSettings")).blacklist) {
+                    for (let offlineBlacklist of _commonChecks["offline"].systems) {
+                        if (offlineBlacklist.hasOwnProperty("blacklist"))
+                            blacklistOfflineCounter++;
+                    }   
+                }
+                let diff = _commonChecks["offline"].systems.length - blacklistOfflineCounter - _systemchecksByDays;
                 if (diff >= 0)
                     subTxt = '<span style="font-size:14px; font-weight:normal">' + Math.abs(diff) + ' mehr als gestern</span>';
                 else if (diff < 0)
