@@ -150,9 +150,22 @@ function setWidgets() {
 }
 
 function setDeployments(deployments, sort = "sortcreated") {
+    let fitted;
+    let systemsNotFitted = {};
+    let system;
     if (deployments !== null) {
+        for (system of _commonChecks.system.systems) {
+            if (!system.fitted)
+                systemsNotFitted[system.id] = system;
+        }
+
         for (let registration of deployments) {
-            if (!registration.hasOwnProperty("constructionSitePreparationFeedback") || !registration.hasOwnProperty("internetConnection"))
+            fitted = false;
+            for (let system of registration.systems) {
+                if (!systemsNotFitted.hasOwnProperty(system))
+                    fitted = true;
+            }
+            if (!fitted && (!registration.hasOwnProperty("constructionSitePreparationFeedback") || !registration.hasOwnProperty("internetConnection")))
                 _registrations.push(registration);
         }
     }
