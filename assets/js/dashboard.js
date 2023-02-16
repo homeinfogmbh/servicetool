@@ -28,6 +28,7 @@ $(document).ready(function() {
 
 function loadPageData() {
     Promise.all(getListOfSystemChecks()).then((data) => {
+        getDeployments().then(setDeployments);
         setChecks(data);
         getCheckByDays(1).then((checkday)=> {
             if (!$.isEmptyObject(checkday)) {
@@ -40,7 +41,7 @@ function loadPageData() {
             }
         });
     });
-    getDeployments().then(setDeployments);
+    //getDeployments().then(setDeployments);
     getImageVersions().then(setImageVersions);
     getHipsterStatus().then((data)=>{
         _hipsterIsOnline = data;
@@ -150,7 +151,6 @@ function setWidgets() {
 }
 
 function setDeployments(deployments, sort = "sortcreated") {
-    let fitted;
     let systemsNotFitted = {};
     let system;
     if (deployments !== null) {
@@ -160,13 +160,14 @@ function setDeployments(deployments, sort = "sortcreated") {
         }
 
         for (let registration of deployments) {
-            fitted = false;
-            for (let system of registration.systems) {
-                if (!systemsNotFitted.hasOwnProperty(system))
-                    fitted = true;
+            for (system of registration.systems) {
+                if (systemsNotFitted.hasOwnProperty(system)) {
+                    registration.system = system;
+                    _registrations.push(registration);
+                }
             }
-            if (!fitted && (!registration.hasOwnProperty("constructionSitePreparationFeedback") || !registration.hasOwnProperty("internetConnection")))
-                _registrations.push(registration);
+            //if (!fitted && (!registration.hasOwnProperty("constructionSitePreparationFeedback") || !registration.hasOwnProperty("internetConnection")))
+                //_registrations.push(registration);
         }
     }
     sortRegistrations(sort);
@@ -179,13 +180,17 @@ function setDeployments(deployments, sort = "sortcreated") {
             '<td>' + deployment.customer.abbreviation + '</td>' +
             '<td title="' + address + '">' + address.substring(0, 12) + (address.length > 13 ? '...' :'') +  '</td>' +
             '<td><span class="' + (deployment.hasOwnProperty("created") && !isOnDate(deployment.created, 2160) ?"EingeActive" :"") + '">' + (deployment.hasOwnProperty("created") ?formatDate(deployment.created) :"-") + '</span></td>' +
+            /*
             '<td>' +
                 '<ul class="Umgebung">' +
                     (deployment.hasOwnProperty('constructionSitePreparationFeedback') ?'<li title="Anlage Baustellenvorbeitung (OK)"></li>' :'<li class="active" title="Anlage Baustellenvorbeitung (nicht OK)"></li>') + 
                     (deployment.hasOwnProperty('internetConnection') ?'<li title="Netzbindung (OK)"></li>' :'<li class="active" title="Netzbindung (nicht OK)"></li>') + 
                 '</ul>' +
             '</td>' +
-            '<td><a href="bestelltool.html?id=' + deployment.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>' +
+            */
+           '<td></td>' +
+            //'<td><a href="bestelltool.html?id=' + deployment.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>' +
+            '<td><a href="display-details.html?id=' + deployment.system + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>' +
         '</tr>';
         counter++;
     }
@@ -195,7 +200,7 @@ function setDeployments(deployments, sort = "sortcreated") {
         $("#registrationcounter").html("Alle " + counter + " Standorte anzeigen&nbsp;&nbsp;|&nbsp;&nbsp;");
 }
 function sortRegistrations(sort) {
-    _lastRegistrationSort = _lastRegistrationSort === sort && _lastRegistrationSort.indexOf('inverted' === -1) ? _lastRegistrationSort + "Inverted" :sort;
+    _lastRegistrationSort = _lastRegistrationSort === sort && _lastRegistrationSort.indexOf('inverted' === -1) ?_lastRegistrationSort + "Inverted" :sort;
     if (_lastRegistrationSort === "sortcustomer") {
         _registrations.sort(function(a, b) {
             return compare(a.customer.abbreviation.toLowerCase(), b.customer.abbreviation.toLowerCase());
@@ -214,10 +219,14 @@ function sortRegistrations(sort) {
         });
     } else if (_lastRegistrationSort == "sortcreated") {
         _registrations.sort(function(a, b) {
+            if (a.hasOwnProperty("created"))
+                return -1;
             return compare(a.created, b.created);
         });
     } else if (_lastRegistrationSort == "sortcreatedInverted") {
         _registrations.sort(function(a, b) {
+            if (a.hasOwnProperty("created"))
+                return -1;
             return compareInverted(a.created, b.created);
         });
     }

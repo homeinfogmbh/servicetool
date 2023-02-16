@@ -89,6 +89,8 @@ function setList(sort = "sortcustomer") {
     let name;
     let errorColor;
     let versionPath;
+    let download;
+    let upload;
     for (let check of _commonChecks[_type].systems) {
         addressComplete = check.deployment.hasOwnProperty("address") ?check.deployment.address.street + " " + check.deployment.address.houseNumber + ", " + check.deployment.address.zipCode + " " + check.deployment.address.city :'Nicht angegeben';
         if (_customer == null || _customer == check.deployment.customer.id) {
@@ -97,6 +99,8 @@ function setList(sort = "sortcustomer") {
                 address = check.deployment.hasOwnProperty("address") ?check.deployment.address.street + " " + check.deployment.address.houseNumber :'';
                 abbreviation = check.deployment.customer.abbreviation === "Zuordnung nicht vorhanden" ?'<i>' + check.deployment.customer.abbreviation + '</i>' :check.deployment.customer.abbreviation;
                 versionPath = $(location).attr('pathname') + $(location).attr('search') + ($(location).attr('search') === "" ?"?" :"&") + "version=true";
+                download = check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("download") ?"" :"-";
+                upload = check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("upload") ?"" :"-";
                 systemlistDOM += '<tr class="system" data-id="' + check.id + '">' +
                     '<td>' + check.id + '</td>' +
                     '<td>' + abbreviation + '</td>' +
@@ -112,6 +116,8 @@ function setList(sort = "sortcustomer") {
                     } else
                         systemlistDOM += '<td><a href="' + versionPath + '"><span class="blueCircle"></span></a></td>';
                     systemlistDOM += '<td>' + (check.hasOwnProperty("lastSync") ?formatDate(check.lastSync) + " (" + check.lastSync.substring(11, 16) + "h)": "noch nie") + '</td>' +
+                    '<td>' + (download === "" && check.checkResults[0].download*_KIBIBITTOMBIT < 2?'<span class="orangeMark">' + (check.checkResults[0].download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':'') +
+                    (upload === "" && check.checkResults[0].upload*_KIBIBITTOMBIT < 0.4?'<span class="orangeMark">' + (check.checkResults[0].upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':'') + '</td>' +
                     //'<td style="white-space:nowrap"><span class="whiteMark" style="min-width:auto; display:block; float:left" title="Betriebssystem">' + (_operatingSystemsShorts.hasOwnProperty(check.operatingSystem) ?_operatingSystemsShorts[check.operatingSystem] :check.operatingSystem) + '</span>' + (check.hasOwnProperty("blacklist") ?'<span style="max-width:24px; display:block" title="System befindet sich in der Blacklist">' + _coffin + '</span>' :'') + '</td>' +
                     '<td><span class="whiteMark" style="min-width:auto; display:block" title="Betriebssystem">' + (_operatingSystemsShorts.hasOwnProperty(check.operatingSystem) ?_operatingSystemsShorts[check.operatingSystem] :check.operatingSystem) + '</span></td>' +
                     '<td width="50px"><span title="System befindet sich in der Blacklist">' + (check.hasOwnProperty("blacklist") ?_coffin :'') + '</span></td>' +
