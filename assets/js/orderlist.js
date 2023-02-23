@@ -10,9 +10,10 @@ function setDeployments(deployments) {
             address = deployment.hasOwnProperty("address") ?deployment.address.street + " " + deployment.address.houseNumber + ", " + deployment.address.zipCode + " " + deployment.address.city :'<i>Keine Adresse angegeben</i>';
             orderingsDom += '<tr>' +
                 '<td title=' + deployment.id + '>' + deployment.customer.abbreviation + '</td>' +
-                '<td title="' + address + '">' + address.substring(0, 12) + (address.length > 13 ? '...' :'') +  '</td>' +
+                '<td title="' + address + '">' + deployment.address.street + " " + deployment.address.houseNumber +  '</td>' +
                 '<td>' + deployment.type + '</td>' +
                 '<td>' + (deployment.hasOwnProperty("created") ?formatDate(deployment.created) :"-") + '</td>' +
+                /*
                 '<td>' +
                     '<input type="checkbox" style="display: none;" name="BaustelleOK' + deployment.id + '" id="BaustelleOK' + deployment.id + '" ' + (deployment.hasOwnProperty("constructionSitePreparationFeedback") ?' checked' :'') + '>' +
                     '<label class="btn_change" ' + (deployment.hasOwnProperty("constructionSitePreparationFeedback") ?'title="Anlage Baustellenvorbeitung (OK)"' :'title="Anlage Baustellenvorbeitung (nicht OK)"') + ' data-id="' + deployment.id + '" data-kind="construction-site-preparation" for="BaustelleOK' + deployment.id + '"><span class="checkboxStyle"></span></label>' +
@@ -21,6 +22,7 @@ function setDeployments(deployments) {
                     '<input type="checkbox" style="display: none;" name="NetzanbindungOK' + deployment.id + '" id="NetzanbindungOK' + deployment.id + '" ' + (deployment.hasOwnProperty("internetConnection") ?' checked' :'') + '>' +
                     '<label class="btn_change" ' + (deployment.hasOwnProperty("internetConnection") ?'title="Netzbindung (OK)"' :'title="Netzbindung (nicht OK)"') + ' data-id="' + deployment.id + '" data-kind="internet-connection" for="NetzanbindungOK' + deployment.id + '"><span class="checkboxStyle"></span></label>' +
                 '</td>' +
+                */
                 '<td><a href="bestelltool.html?id=' + deployment.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>' +
             '</tr>';
         }

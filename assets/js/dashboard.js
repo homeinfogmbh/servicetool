@@ -55,10 +55,12 @@ function loadPageData() {
         setDeployments(null, $(this).data("sort"));
 		e.preventDefault();
 	}); 
+    /*
     $('.btn_registration').click(function(e) {
         window.location.href = "bestelltool-list.html";
 		e.preventDefault();
 	}); 
+    */
     if (localStorage.getItem("servicetool.systemchecks") !== null)
         intervalChecks();
     setInterval(intervalChecks, 60000);
@@ -178,7 +180,7 @@ function setDeployments(deployments, sort = "sortcreated") {
         address = deployment.hasOwnProperty("address") ?deployment.address.street + " " + deployment.address.houseNumber + ", " + deployment.address.zipCode + " " + deployment.address.city :'<i>Keine Adresse angegeben</i>';
         orderingsDom += '<tr ' + (counter > 9 ?'class="registrationItem" style="display:none"':'') + '>' +
             '<td>' + deployment.customer.abbreviation + '</td>' +
-            '<td title="' + address + '">' + address.substring(0, 12) + (address.length > 13 ? '...' :'') +  '</td>' +
+            '<td title="' + address + '">' + deployment.address.street + " " + deployment.address.houseNumber +  '</td>' +
             '<td><span class="' + (deployment.hasOwnProperty("created") && !isOnDate(deployment.created, 2160) ?"EingeActive" :"") + '">' + (deployment.hasOwnProperty("created") ?formatDate(deployment.created) :"-") + '</span></td>' +
             /*
             '<td>' +
@@ -197,7 +199,8 @@ function setDeployments(deployments, sort = "sortcreated") {
     orderingsDom = orderingsDom === "" ?"<tr><td>Keine neuen Standorte gefunden</tr></td>" :orderingsDom;
     $("#registrations").html(orderingsDom);
     if (counter > 10)
-        $("#registrationcounter").html("Alle " + counter + " Standorte anzeigen&nbsp;&nbsp;|&nbsp;&nbsp;");
+    $("#registrationcounter").html("Alle " + counter + " Standorte anzeigen");
+        //$("#registrationcounter").html("Alle " + counter + " Standorte anzeigen&nbsp;&nbsp;|&nbsp;&nbsp;");
 }
 function sortRegistrations(sort) {
     _lastRegistrationSort = _lastRegistrationSort === sort && _lastRegistrationSort.indexOf('inverted' === -1) ?_lastRegistrationSort + "Inverted" :sort;

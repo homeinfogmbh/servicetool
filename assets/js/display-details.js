@@ -409,6 +409,7 @@ function setDetails(data) {
 }
 
 function setChecks(lastCheck) {
+    console.log(lastCheck)
     if (isOnDate(lastCheck.timestamp, 24)) {
         $("#systemcheck").html('<span class="blueMark">ok</span>');
         //lastCheck.hasOwnProperty("offlineSince") && lastCheck.sshLogin !== "success" && !lastCheck.icmpRequest
@@ -617,6 +618,7 @@ function setThirtyDays(data) {
     let dateDay;
     let dateFound;
     let timestamp;
+    let title;
     $("#thirtysystemcheck").html('');
     $("#thirtyoffline").html('');
     $("#thirtyicmp").html('');
@@ -638,7 +640,8 @@ function setThirtyDays(data) {
                     $("#thirtyicmp").append(!log.icmpRequest ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
                     $("#thirtyssh").append(log.sshLogin === "failed" ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
                     $("#thirtyhttp").append(log.httpRequest === "failed" ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
-                    $("#thirtydownloadupload").append((log.hasOwnProperty("download") && log.download*_KIBIBITTOMBIT < 2) || (log.hasOwnProperty("upload") && log.upload*_KIBIBITTOMBIT < 0.4)?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
+                    title = dateDay + '<br>' + (log.hasOwnProperty("download")?(log.download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit':"-") + '<br>' + (log.hasOwnProperty("upload") ?(log.upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit' :'-')
+                    $("#thirtydownloadupload").append((log.hasOwnProperty("download") && log.download*_KIBIBITTOMBIT < 2) || (log.hasOwnProperty("upload") && log.upload*_KIBIBITTOMBIT < 0.4)?'<li data-toggle="tooltip" title="' + title + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + title + '"></li>');
                     break;
                 }
             }
@@ -659,7 +662,7 @@ function setThirtyDays(data) {
         $(".thirtyhttp").hide();
         
     $("#thirtyloading").hide();
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-toggle="tooltip"]').tooltip({html:true});
     $("#thirty").show();
 }
 
