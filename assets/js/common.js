@@ -266,7 +266,7 @@ function setCheckList(list, applicationVersion, blacklist) {
 					_commonChecks.root.systems.push(check);
 				if (!check.hasOwnProperty("pubkey"))
 					_commonChecks.wireguard.systems.push(check);
-				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && (check.checkResults[0].hasOwnProperty("download") && check.checkResults[0].download*_KIBIBITTOMBIT < 2) || (check.checkResults[0].hasOwnProperty("upload") && check.checkResults[0].upload*_KIBIBITTOMBIT < 0.4))
+				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && (check.checkResults[0].hasOwnProperty("download") && check.checkResults[0].download*_KIBIBITTOMBIT < 2) || (check.checkResults[0].hasOwnProperty("upload") && check.checkResults[0].upload*_KIBIBITTOMBIT < 0.5))
 					_commonChecks.downloadUpload.systems.push(check);
 				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("recentTouchEvents") && check.checkResults[0].recentTouchEvents === 0)
 					_commonChecks.lessTouches.systems.push(check);
