@@ -4,6 +4,7 @@ var _applicationVersion = null;
 var _lastsort = null;
 var _operatingSystemsShorts = {"Arch Linux":"Arch", "Windows XP Embedded":"XPe", "Windows XP":"XP", "Windows 8":"Win8", "Windows 7 Embedded":"Win7e", "Windows 7":"Win7", "Windows 10":"Win10"};
 var _showVersion = false;
+var _imagesLoaded = {'simultaneous':25, 'started':0, 'finished':0, 'systemsToCheck':[]};
 $(document).ready(function() {
     _type = _commonChecks.hasOwnProperty(getURLParameterByName('type')) ?getURLParameterByName('type') :'system';
     _customer = getURLParameterByName('customer');
@@ -47,6 +48,9 @@ $(document).ready(function() {
         setList($(this).data("id"));
 		e.preventDefault();
 	}); 
+    $('#btn_screenshot_online').click(function() {
+        screenshotLoader();
+    });
     $('.btn_copyID').click(function(e) {
         let copy = "";
         let addressComplete;
@@ -91,6 +95,7 @@ function setList(sort = "sortcustomer") {
     let versionPath;
     let downloadAvailable;
     let uploadAvailable;
+    let noCheckStyle;
     for (let check of _commonChecks[_type].systems) {
         addressComplete = check.deployment.hasOwnProperty("address") ?check.deployment.address.street + " " + check.deployment.address.houseNumber + ", " + check.deployment.address.zipCode + " " + check.deployment.address.city :'Nicht angegeben';
         if (_customer == null || _customer == check.deployment.customer.id) {
@@ -101,15 +106,16 @@ function setList(sort = "sortcustomer") {
                 versionPath = $(location).attr('pathname') + $(location).attr('search') + ($(location).attr('search') === "" ?"?" :"&") + "version=true";
                 downloadAvailable = check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("download") ?true :false;
                 uploadAvailable = check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("upload") ?true :false;
+                noCheckStyle = check.hasOwnProperty("checkResults") && check.checkResults.length > 0 ?"" :'style="background-color:gray"';
                 systemlistDOM += '<tr class="system" data-id="' + check.id + '">' +
                     '<td>' + check.id + '</td>' +
                     '<td>' + abbreviation + '</td>' +
                     '<td title="' + addressComplete + '" style="white-space: nowrap;">' + address +  '</td>' + 
-                    '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && !check.checkResults[0].online /*check.checkResults[0].sshLogin === "failed" && !check.checkResults[0].icmpRequest*/ /*&& check.fitted && !check.deployment.testing*/ ?'orangeCircle' :'blueCircle') + '"></span></td>' +
+                    '<td><span ' + noCheckStyle + ' class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && !check.checkResults[0].online /*check.checkResults[0].sshLogin === "failed" && !check.checkResults[0].icmpRequest*/ /*&& check.fitted && !check.deployment.testing*/ ?'orangeCircle' :'blueCircle') + '"></span></td>' +
                     '<td><span class="' + (!check.fitted ?'orangeCircle' :'blueCircle') + '"></span></td>' +
-                    '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].smartCheck === "failed" ?'orangeCircle' :'blueCircle') + '"></span></td>' +
-                    '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].sshLogin === "failed" ?"orangeCircle":"blueCircle") + '"></span></td>' +
-                    '<td><span class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && (check.checkResults[0].applicationState === "conflict" || check.checkResults[0].applicationState === "not enabled" || check.checkResults[0].applicationState === "not running") ?"orangeCircle":"blueCircle") + '"></span></td>';
+                    '<td><span ' + noCheckStyle + ' class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].smartCheck === "failed" ?'orangeCircle' :'blueCircle') + '"></span></td>' +
+                    '<td><span ' + noCheckStyle + ' class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].sshLogin === "failed" ?"orangeCircle":"blueCircle") + '"></span></td>' +
+                    '<td><span ' + noCheckStyle + ' class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && (check.checkResults[0].applicationState === "conflict" || check.checkResults[0].applicationState === "not enabled" || check.checkResults[0].applicationState === "not running") ?"orangeCircle":"blueCircle") + '"></span></td>';
                     if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("applicationVersion")) {
                         errorColor = _applicationVersion === check.checkResults[0].applicationVersion ?"blue" :"orange";
                         systemlistDOM += '<td>' + (_showVersion ?'<span class="' + errorColor + 'Mark" style="white-space:nowrap">' + check.checkResults[0].applicationVersion + '</span>' :'<a href="' + versionPath + '"><span class="' + errorColor + 'Circle"></a></span>') + '</td>';
@@ -121,7 +127,7 @@ function setList(sort = "sortcustomer") {
                     //'<td style="white-space:nowrap"><span class="whiteMark" style="min-width:auto; display:block; float:left" title="Betriebssystem">' + (_operatingSystemsShorts.hasOwnProperty(check.operatingSystem) ?_operatingSystemsShorts[check.operatingSystem] :check.operatingSystem) + '</span>' + (check.hasOwnProperty("blacklist") ?'<span style="max-width:24px; display:block" title="System befindet sich in der Blacklist">' + _coffin + '</span>' :'') + '</td>' +
                     '<td><span class="whiteMark" style="min-width:auto; display:block" title="Betriebssystem">' + (_operatingSystemsShorts.hasOwnProperty(check.operatingSystem) ?_operatingSystemsShorts[check.operatingSystem] :check.operatingSystem) + '</span></td>' +
                     '<td width="50px"><span title="System befindet sich in der Blacklist">' + (check.hasOwnProperty("blacklist") ?_coffin :'') + '</span></td>' +
-                    '<td><a href="display-details.html?id=' + check.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>' +
+                    '<td><span class="screenshot" data-id="' + check.id + '"></span><a href="display-details.html?id=' + check.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>' +
                 '</tr>';
                 counter++;
             }
@@ -218,6 +224,38 @@ function sortCommonList(sort) {
         _commonChecks[_type].systems.sort(function(a, b) {
             return !a.hasOwnProperty("lastSync") ?-1 :!b.hasOwnProperty("lastSync") ?1 :compare(a.lastSync.toLowerCase(), b.lastSync.toLowerCase());            
         });
+    } else if (_lastsort == "sortdownupload") {
+        let downloadAvailableA;
+        let downloadAvailableB;
+        let downloadNOTOKA;
+        let downloadNOTOKB;
+        _commonChecks[_type].systems.sort(function(a, b) {
+            downloadAvailableA = a.hasOwnProperty("checkResults") && a.checkResults.length > 0 && a.checkResults[0].hasOwnProperty("download") ?true :false;
+            downloadAvailableB = b.hasOwnProperty("checkResults") && b.checkResults.length > 0 && b.checkResults[0].hasOwnProperty("download") ?true :false;
+            downloadNOTOKA = downloadAvailableA && a.checkResults[0].download*_KIBIBITTOMBIT < 2;
+            downloadNOTOKB = downloadAvailableB && b.checkResults[0].download*_KIBIBITTOMBIT < 2;
+            if (!downloadAvailableA)
+                return 1;
+            if (!downloadAvailableB)
+                return -1;
+            return downloadNOTOKA ?-1 :downloadNOTOKB ?1 :0;
+        });
+    } else if (_lastsort == "sortdownuploadInverted") {
+        let downloadAvailableA;
+        let downloadAvailableB;
+        let downloadNOTOKA;
+        let downloadNOTOKB;
+        _commonChecks[_type].systems.sort(function(a, b) {
+            downloadAvailableA = a.hasOwnProperty("checkResults") && a.checkResults.length > 0 && a.checkResults[0].hasOwnProperty("download") ?true :false;
+            downloadAvailableB = b.hasOwnProperty("checkResults") && b.checkResults.length > 0 && b.checkResults[0].hasOwnProperty("download") ?true :false;
+            downloadNOTOKA = downloadAvailableA && a.checkResults[0].download*_KIBIBITTOMBIT < 2;
+            downloadNOTOKB = downloadAvailableB && b.checkResults[0].download*_KIBIBITTOMBIT < 2;
+            if (!downloadAvailableB)
+                return 1;
+            if (!downloadAvailableA)
+                return -1;
+            return downloadNOTOKB ?-1 :downloadNOTOKA ?1 :0;
+        });
     }
 }
 
@@ -225,4 +263,48 @@ function sortCommonList(sort) {
 function getParamsForEmail() {
     return "sort=" + _lastsort + "%26filter=" + $('#searchfield').val();
     
+}
+
+function screenshotLoader() {
+	$('#pageloader').show();
+	_imagesLoaded.started = 0;
+	_imagesLoaded.finished = 0;
+    let name;
+    _imagesLoaded.systemsToCheck = [];
+    for (let check of _commonChecks[_type].systems) {
+        addressComplete = check.deployment.hasOwnProperty("address") ?check.deployment.address.street + " " + check.deployment.address.houseNumber + ", " + check.deployment.address.zipCode + " " + check.deployment.address.city :'Nicht angegeben';
+        if (_customer == null || _customer == check.deployment.customer.id) {
+            name = check.deployment.customer.hasOwnProperty("company") && check.deployment.customer.company.hasOwnProperty("name") ?check.deployment.customer.company.name :"";
+            if ($('#searchfield').val().length === 0 || (check.id.toString().indexOf($('#searchfield').val().toLowerCase()) !== -1 || addressComplete.toLowerCase().indexOf($('#searchfield').val().toLowerCase()) !== -1 || check.deployment.customer.abbreviation.toLowerCase().indexOf($('#searchfield').val().toLowerCase()) !== -1 || name.toLowerCase().indexOf($('#searchfield').val().toLowerCase()) !== -1 || check.deployment.customer.id.toString().indexOf($('#searchfield').val().toLowerCase()) !== -1))
+                _imagesLoaded.systemsToCheck.push(check);
+        }
+    }
+	const loopLimit = _imagesLoaded.simultaneous > _imagesLoaded.systemsToCheck.length ?_imagesLoaded.systemsToCheck.length :_imagesLoaded.simultaneous;
+	for (let system = 0; system < loopLimit; system++)
+		loadScreenshot(system);
+}
+
+function loadScreenshot(id) {
+	_imagesLoaded.started++;
+	let img = new Image();
+	img.style = "height: 100%; width: 100%; object-fit: contain";
+	img.onload = function() {
+		_imagesLoaded.finished++;
+		console.log("Bild(" + _imagesLoaded.systemsToCheck[id].id + "): " + _imagesLoaded.finished + " // " + _imagesLoaded.systemsToCheck.length);
+		$('.screenshot[data-id=' + _imagesLoaded.systemsToCheck[id].id + ']').html(this);
+		if (_imagesLoaded.started < _imagesLoaded.systemsToCheck.length)
+			loadScreenshot(_imagesLoaded.started);
+		else if (_imagesLoaded.finished === _imagesLoaded.systemsToCheck.length)
+			$('#pageloader').hide();
+	};
+	img.onerror = function(error) {
+		_imagesLoaded.finished++;
+		console.log("Bild-offline(" + _imagesLoaded.systemsToCheck[id].id + "): " + _imagesLoaded.finished + " // " + _imagesLoaded.systemsToCheck.length);
+        $('.screenshot[data-id=' + _imagesLoaded.systemsToCheck[id].id + ']').html(":/");
+		if (_imagesLoaded.started < _imagesLoaded.systemsToCheck.length)
+			loadScreenshot(_imagesLoaded.started);
+		else if (_imagesLoaded.finished === _imagesLoaded.systemsToCheck.length)
+			$('#pageloader').hide();
+	};
+	img.src = 'https://sysmon.homeinfo.de/screenshot/' + _imagesLoaded.systemsToCheck[id].id + '?' + _imagesLoaded.systemsToCheck[id].deployment.customer.id;
 }
