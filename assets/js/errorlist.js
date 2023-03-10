@@ -112,10 +112,7 @@ function setList(sort = "sortcustomer") {
                     '<td>' + abbreviation + '</td>' +
                     '<td title="' + addressComplete + '" style="white-space: nowrap;">' + address +  '</td>' + 
                     '<td><span ' + noCheckStyle + ' class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && !check.checkResults[0].online /*check.checkResults[0].sshLogin === "failed" && !check.checkResults[0].icmpRequest*/ /*&& check.fitted && !check.deployment.testing*/ ?'orangeCircle' :'blueCircle') + '"></span></td>' +
-                    '<td><span class="' + (!check.fitted ?'orangeCircle' :'blueCircle') + '"></span></td>' +
-                    '<td><span ' + noCheckStyle + ' class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].smartCheck === "failed" ?'orangeCircle' :'blueCircle') + '"></span></td>' +
-                    '<td><span ' + noCheckStyle + ' class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].sshLogin === "failed" ?"orangeCircle":"blueCircle") + '"></span></td>' +
-                    '<td><span ' + noCheckStyle + ' class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && (check.checkResults[0].applicationState === "conflict" || check.checkResults[0].applicationState === "not enabled" || check.checkResults[0].applicationState === "not running") ?"orangeCircle":"blueCircle") + '"></span></td>';
+                    '<td><span class="' + (!check.fitted ?'orangeCircle' :'blueCircle') + '"></span></td>';
                     if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("applicationVersion")) {
                         errorColor = _applicationVersion === check.checkResults[0].applicationVersion ?"blue" :"orange";
                         systemlistDOM += '<td>' + (_showVersion ?'<span class="' + errorColor + 'Mark" style="white-space:nowrap">' + check.checkResults[0].applicationVersion + '</span>' :'<a href="' + versionPath + '"><span class="' + errorColor + 'Circle"></a></span>') + '</td>';
