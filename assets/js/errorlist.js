@@ -4,7 +4,7 @@ var _applicationVersion = null;
 var _lastsort = null;
 var _operatingSystemsShorts = {"Arch Linux":"Arch", "Windows XP Embedded":"XPe", "Windows XP":"XP", "Windows 8":"Win8", "Windows 7 Embedded":"Win7e", "Windows 7":"Win7", "Windows 10":"Win10"};
 var _showVersion = false;
-var _imagesLoaded = {'simultaneous':25, 'started':0, 'finished':0, 'systemsToCheck':[]};
+var _imagesLoaded = {'simultaneous':5, 'started':0, 'finished':0, 'systemsToCheck':[]};
 $(document).ready(function() {
     _type = _commonChecks.hasOwnProperty(getURLParameterByName('type')) ?getURLParameterByName('type') :'system';
     _customer = getURLParameterByName('customer');
