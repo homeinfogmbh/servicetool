@@ -123,9 +123,9 @@ function setList(sort = "sortcustomer") {
                     (uploadAvailable && check.checkResults[0].upload*_KIBIBITTOMBIT < 0.5?'<span class="orangeMark">' + (check.checkResults[0].upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':uploadAvailable ?'<span class="blueMark">' + (check.checkResults[0].upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':' - ') + '</td>' +
                     //'<td style="white-space:nowrap"><span class="whiteMark" style="min-width:auto; display:block; float:left" title="Betriebssystem">' + (_operatingSystemsShorts.hasOwnProperty(check.operatingSystem) ?_operatingSystemsShorts[check.operatingSystem] :check.operatingSystem) + '</span>' + (check.hasOwnProperty("blacklist") ?'<span style="max-width:24px; display:block" title="System befindet sich in der Blacklist">' + _coffin + '</span>' :'') + '</td>' +
                     '<td><span class="whiteMark" style="min-width:auto; display:block" title="Betriebssystem">' + (_operatingSystemsShorts.hasOwnProperty(check.operatingSystem) ?_operatingSystemsShorts[check.operatingSystem] :check.operatingSystem) + '</span></td>' +
-                    '<td width="50px"><span title="System befindet sich in der Blacklist">' + (check.hasOwnProperty("blacklist") ?_coffin :'') + '</span></td>' +
-                    '<td><span class="screenshot" data-id="' + check.id + '"></span></td>' +
+                    '<td style="min-width:50px"><span title="System befindet sich in der Blacklist">' + (check.hasOwnProperty("blacklist") ?_coffin :'') + '</span></td>' +
                     '<td><a href="display-details.html?id=' + check.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>'+
+                    '<td><span class="screenshot" data-id="' + check.id + '"></span></td>' +
                 '</tr>';
                 counter++;
             }
