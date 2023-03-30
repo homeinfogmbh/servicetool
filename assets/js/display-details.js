@@ -424,7 +424,7 @@ function setChecks(lastCheck) {
         $("#baytrail").html(lastCheck.baytrailFreeze === "vulnerable" ?'<span class="orangeMark">' + lastCheck.baytrailFreeze + '</span>' :'<span class="blueMark">' + lastCheck.baytrailFreeze + '</span>');
         $("#bootpartition").html(lastCheck.efiMountOk === "failed" ?'<span class="orangeMark">' + lastCheck.efiMountOk + '</span>' :'<span class="blueMark">' + lastCheck.efiMountOk + '</span>');
         $("#download").html(lastCheck.hasOwnProperty("download") ?lastCheck.download*_KIBIBITTOMBIT < 2 ?'<span class="orangeMark">' + (lastCheck.download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>' :'<span class="blueMark">' + (lastCheck.download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>' :"-");
-        $("#upload").html(lastCheck.hasOwnProperty("upload") ?lastCheck.upload*_KIBIBITTOMBIT < 0.5 ?'<span class="orangeMark">' + (lastCheck.upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>' :'<span class="blueMark">' + (lastCheck.upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>' :"-");
+        $("#upload").html(lastCheck.hasOwnProperty("upload") ?lastCheck.upload*_KIBIBITTOMBIT < 0.35 ?'<span class="orangeMark">' + (lastCheck.upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>' :'<span class="blueMark">' + (lastCheck.upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>' :"-");
         $("#applicationuptodate").html(lastCheck.hasOwnProperty("applicationVersion") ?_applicationVersion === lastCheck.applicationVersion ?'<span class="blueMark">' + lastCheck.applicationVersion + '</span>' :'<span title="' + _applicationVersion + '" class="orangeMark">' + lastCheck.applicationVersion + '</span>' :'<span class="blueMark">unsupported</span>');
     } else {
         $("#systemcheck").html('<span class="orangeMark">failed</span>');
@@ -640,7 +640,7 @@ function setThirtyDays(data) {
                     $("#thirtyssh").append(log.sshLogin === "failed" ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
                     $("#thirtyhttp").append(log.httpRequest === "failed" ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
                     title = dateDay + '<br>' + (log.hasOwnProperty("download")?(log.download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit':"-") + '<br>' + (log.hasOwnProperty("upload") ?(log.upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit' :'-')
-                    $("#thirtydownloadupload").append((log.hasOwnProperty("download") && log.download*_KIBIBITTOMBIT < 2) || (log.hasOwnProperty("upload") && log.upload*_KIBIBITTOMBIT < 0.5)?'<li data-toggle="tooltip" title="' + title + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + title + '"></li>');
+                    $("#thirtydownloadupload").append((log.hasOwnProperty("download") && log.download*_KIBIBITTOMBIT < 2) || (log.hasOwnProperty("upload") && log.upload*_KIBIBITTOMBIT < 0.35)?'<li data-toggle="tooltip" title="' + title + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + title + '"></li>');
                     break;
                 }
             }

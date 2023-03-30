@@ -10,13 +10,13 @@ body {
   font-weight: 400;
   line-height: 19px;
   color: #212529;
-  background-color: #fff;
+  /*background-color: #fff;*/
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   font-family: "Roboto", sans-serif;
   color: #fff;
   background-color: #0074a5;
-  background-image: linear-gradient(182deg, #0074a5, #009fe3);
+  /*background-image: linear-gradient(182deg, #0074a5, #009fe3);*/
 }
 
 h6,
@@ -280,7 +280,7 @@ ul.navbar-nav li.nav-item:nth-child(5) {
 
 .admin_content {
   background-color: #007bb0;
-  background-image: linear-gradient(45deg, #007bb0, #009fe3);
+  /*background-image: linear-gradient(45deg, #007bb0, #009fe3);*/
   padding: 41px 41px 31px 41px;
   border-radius: 20px;
   text-align: center;
@@ -444,7 +444,7 @@ ul.navbar-nav li.nav-item:nth-child(5) {
 
   padding: 24px 20px;
   background-color: #038ec9;
-  background-image: linear-gradient(45deg, #038ec9, #00709f);
+  /*background-image: linear-gradient(45deg, #038ec9, #00709f);*/
   border-radius: 20px;
   margin-bottom: 20px;
 }
@@ -621,10 +621,11 @@ table.table.tableHeadNone tbody tr td {
   display: block;
   margin: 0 auto;
 }
-
+/*
 body.listenansicht {
   background-image: linear-gradient(to bottom, #0074a5 70%, #009fe3);
 }
+*/
 
 .neuinstaContainer {
   padding-top: 15px;
@@ -786,7 +787,7 @@ ul.checkboxList li label {
 }
 
 body.neuinstallation {
-  background-image: linear-gradient(to bottom, #0074a5 70%, #009fe3);
+  /*background-image: linear-gradient(to bottom, #0074a5 70%, #009fe3);*/
 }
 
 input:checked + label .radioCircle:after {
