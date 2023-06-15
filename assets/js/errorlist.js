@@ -209,11 +209,27 @@ function sortCommonList(sort) {
         });
     } else if (_lastsort == "sortappuptodate") {
         _commonChecks[_type].systems.sort(function(a, b) {
-            return isOnDate(b.lastSync, 24) ?-1 :isOnDate(a.lastSync, 24) ?1 :0
+            if (a.checkResults[0].applicationVersion === undefined && b.checkResults[0].applicationVersion !== undefined)
+                return 1;
+            if (b.checkResults[0].applicationVersion === undefined && a.checkResults[0].applicationVersion !== undefined)
+                return -1;
+            if (a.checkResults[0].applicationVersion < b.checkResults[0].applicationVersion)
+                return -1;
+            if (a.checkResults[0].applicationVersion > b.checkResults[0].applicationVersion)
+                return 1;
+            return 0;
         });
     } else if (_lastsort == "sortappuptodateInverted") {
         _commonChecks[_type].systems.sort(function(a, b) {
-            return isOnDate(a.lastSync, 24) ?-1 :isOnDate(b.lastSync, 24) ?1 :0
+            if (a.checkResults[0].applicationVersion === undefined && b.checkResults[0].applicationVersion !== undefined)
+                return 1;
+            if (b.checkResults[0].applicationVersion === undefined && a.checkResults[0].applicationVersion !== undefined)
+                return -1;
+            if (a.checkResults[0].applicationVersion > b.checkResults[0].applicationVersion)
+                return -1;
+            if (a.checkResults[0].applicationVersion < b.checkResults[0].applicationVersion)
+                return 1;
+        return 0;
         });
     } else if (_lastsort == "sortsync") {
         _commonChecks[_type].systems.sort(function(a, b) {
