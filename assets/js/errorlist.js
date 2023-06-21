@@ -120,7 +120,7 @@ function setList(sort = "sortcustomer") {
                     } else
                         systemlistDOM += '<td><a href="' + versionPath + '"><span class="blueCircle"></span></a></td>';
                     systemlistDOM += '<td>' + (check.hasOwnProperty("lastSync") ?formatDate(check.lastSync) + " (" + check.lastSync.substring(11, 16) + "h)": "noch nie") + '</td>' +
-                    '<td>' + (downloadAvailable && check.checkResults[0].download*_KIBIBITTOMBIT < 2?'<span class="orangeMark">' + (check.checkResults[0].download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':downloadAvailable ?'<span class="blueMark">' + (check.checkResults[0].download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':' - ') +
+                    '<td>' + (downloadAvailable && check.checkResults[0].download*_KIBIBITTOMBIT < 1.9?'<span class="orangeMark">' + (check.checkResults[0].download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':downloadAvailable ?'<span class="blueMark">' + (check.checkResults[0].download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':' - ') +
                     (uploadAvailable && check.checkResults[0].upload*_KIBIBITTOMBIT < 0.35?'<span class="orangeMark">' + (check.checkResults[0].upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':uploadAvailable ?'<span class="blueMark">' + (check.checkResults[0].upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':' - ') + '</td>' +
                     //'<td style="white-space:nowrap"><span class="whiteMark" style="min-width:auto; display:block; float:left" title="Betriebssystem">' + (_operatingSystemsShorts.hasOwnProperty(check.operatingSystem) ?_operatingSystemsShorts[check.operatingSystem] :check.operatingSystem) + '</span>' + (check.hasOwnProperty("blacklist") ?'<span style="max-width:24px; display:block" title="System befindet sich in der Blacklist">' + _coffin + '</span>' :'') + '</td>' +
                     '<td><span class="whiteMark" style="min-width:auto; display:block" title="Betriebssystem">' + (_operatingSystemsShorts.hasOwnProperty(check.operatingSystem) ?_operatingSystemsShorts[check.operatingSystem] :check.operatingSystem) + '</span></td>' +
@@ -247,8 +247,8 @@ function sortCommonList(sort) {
         _commonChecks[_type].systems.sort(function(a, b) {
             downloadAvailableA = a.hasOwnProperty("checkResults") && a.checkResults.length > 0 && a.checkResults[0].hasOwnProperty("download") ?true :false;
             downloadAvailableB = b.hasOwnProperty("checkResults") && b.checkResults.length > 0 && b.checkResults[0].hasOwnProperty("download") ?true :false;
-            downloadNOTOKA = downloadAvailableA && a.checkResults[0].download*_KIBIBITTOMBIT < 2;
-            downloadNOTOKB = downloadAvailableB && b.checkResults[0].download*_KIBIBITTOMBIT < 2;
+            downloadNOTOKA = downloadAvailableA && a.checkResults[0].download*_KIBIBITTOMBIT < 1.9;
+            downloadNOTOKB = downloadAvailableB && b.checkResults[0].download*_KIBIBITTOMBIT < 1.9;
             if (!downloadAvailableA)
                 return 1;
             if (!downloadAvailableB)
@@ -263,8 +263,8 @@ function sortCommonList(sort) {
         _commonChecks[_type].systems.sort(function(a, b) {
             downloadAvailableA = a.hasOwnProperty("checkResults") && a.checkResults.length > 0 && a.checkResults[0].hasOwnProperty("download") ?true :false;
             downloadAvailableB = b.hasOwnProperty("checkResults") && b.checkResults.length > 0 && b.checkResults[0].hasOwnProperty("download") ?true :false;
-            downloadNOTOKA = downloadAvailableA && a.checkResults[0].download*_KIBIBITTOMBIT < 2;
-            downloadNOTOKB = downloadAvailableB && b.checkResults[0].download*_KIBIBITTOMBIT < 2;
+            downloadNOTOKA = downloadAvailableA && a.checkResults[0].download*_KIBIBITTOMBIT < 1.9;
+            downloadNOTOKB = downloadAvailableB && b.checkResults[0].download*_KIBIBITTOMBIT < 1.9;
             if (!downloadAvailableB)
                 return 1;
             if (!downloadAvailableA)
