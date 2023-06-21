@@ -18,7 +18,7 @@ var _commonChecks = {"offline":{"title":"Offline", "text":"Liste der Geräte die
 	"sensors":{"title":"Überhitzt", "text":"Liste der Geräte mit Sensoren, die ihre Grenzwerte überschritten haben.", "systems":[], "widget":false, "list":true},
 	"root":{"title":"Kein Schreibzugriff", "text":'Liste der Geräte mit Root-Partitionen, die im "nur-lesen-Modus" gemountet sind.', "systems":[], "widget":true, "list":false},
 	"wireguard":{"title":"Kein Wireguard", "text":"Liste aller Systeme ohne Wireguard", "systems":[], "widget":false, "list":true},
-	"downloadUpload":{"title":"Download/Upload kritisch", "text":"Liste aller Systeme, deren Downloadrate unter 2,0 Mbit oder Uploadrate unter 0,35 Mbit liegt", "systems":[], "widget":false, "list":true},
+	"downloadUpload":{"title":"Download/Upload kritisch", "text":"Liste aller Systeme, deren Downloadrate unter 1,9 Mbit oder Uploadrate unter 0,35 Mbit liegt", "systems":[], "widget":false, "list":true},
 	"updating":{"title":"Patching", "text":"Liste aller Systeme die gepatched werden", "systems":[], "widget":true, "list":false},
 	"blacklist":{"title":"Blacklist", "text":"Liste aller Systeme auf der Blacklist", "systems":[], "widget":false, "list":true},
 	"lessTouches":{"title":"21 Tage ohne Touch", "text":"Displays (Standorte) auf denen 21 Tage keine Klicks registriert wurden", "systems":[], "widget":false, "list":true},
@@ -266,7 +266,7 @@ function setCheckList(list, applicationVersion, blacklist) {
 					_commonChecks.root.systems.push(check);
 				if (!check.hasOwnProperty("pubkey"))
 					_commonChecks.wireguard.systems.push(check);
-				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && (check.checkResults[0].hasOwnProperty("download") && check.checkResults[0].download*_KIBIBITTOMBIT < 2) || (check.checkResults[0].hasOwnProperty("upload") && check.checkResults[0].upload*_KIBIBITTOMBIT < 0.35))
+				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && (check.checkResults[0].hasOwnProperty("download") && check.checkResults[0].download*_KIBIBITTOMBIT < 1.9) || (check.checkResults[0].hasOwnProperty("upload") && check.checkResults[0].upload*_KIBIBITTOMBIT < 0.35))
 					_commonChecks.downloadUpload.systems.push(check);
 				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("recentTouchEvents") && check.checkResults[0].recentTouchEvents === 0)
 					_commonChecks.lessTouches.systems.push(check);
