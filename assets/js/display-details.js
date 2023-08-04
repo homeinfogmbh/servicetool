@@ -75,7 +75,29 @@ $(document).ready(function() {
         }
 		e.preventDefault();
 	});
-    
+
+    $('.btn_displayurl').click(function(e) {
+        $("#displayurlInput").val($("#displayurl").text() === "-" ?"" :$("#displayurl").text());
+        if ($("#displayurlfields").is(":visible"))
+            $("#displayurlfields").hide();
+        else
+            $("#displayurlfields").show();
+        $("#displayurlInput").focus();
+		e.preventDefault();
+	});
+    $('.btn_savedisplayurl').click(function(e) {
+        if (_display !== null) { 
+            let displayurl = $("#displayurlInput").val().trim() === "" ?null :$("#displayurlInput").val();
+            changedisplayurl(displayurl).then(() => {
+                localStorage.removeItem("servicetool.systemchecks");
+                $("#displayurl").text(displayurl === null ?"-" :displayurl);
+                $("#displayurlfields").hide();
+                $("#pageloader").hide()
+            });
+        }
+		e.preventDefault();
+	});
+
     $('.btn_wireguard').click(function(e) {
         if (_display.hasOwnProperty("pubkey"))
             navigator.clipboard.writeText(_display.pubkey);
@@ -892,6 +914,23 @@ function changeSerialNumber(serialNumber) {
 		}
 	});   
 }
+
+function changedisplayurl(displayurl) {
+    $("#pageloader").show();
+	let data = {"url":displayurl};
+	return $.ajax({
+		url: "https://termgr.homeinfo.de/administer/url/" + _display.deployment.id,
+		type: "POST",
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+		success: function (data) {
+		},
+		error: function (msg) {
+			setErrorMessage(msg, "Ändern eines Deployments");
+		}
+	});   
+}
+
 /*
 class ApplicationState(str, Enum):
     AIR = 'air'
