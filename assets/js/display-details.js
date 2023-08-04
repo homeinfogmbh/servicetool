@@ -371,10 +371,12 @@ function setDetails(data) {
         $("#publicTransportAddress").html('<span title="' + lptAddress + '">' + lptAddress.substring(0, 18) + (lptAddress > 18 ? '...' :'') + '</span>');
         $("#deploymentID").text(_display.deployment.id);
         $("#annotation").html(_display.deployment.hasOwnProperty("annotation") ?"<span title='" + _display.deployment.annotation + "'>" + _display.deployment.annotation.substring(0, 20) + (_display.deployment.annotation.length > 20 ? '...' :'') + "</span>" :"-");
+        $("#displayurl").html('<span>' + _display.deployment.url + '</span>');
     }
     $("#wireguard").html(_display.hasOwnProperty("pubkey") ?"<span title='" + _display.pubkey + " (zum Kopieren klicken)'>" + _display.pubkey.substring(0, 20) + "...</span>" :"-");
     $("#systemID").text(_display.id);
     $("#os").text(_display.operatingSystem);
+    
 
     // Funktionen
     if (_display.fitted) {
