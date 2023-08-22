@@ -13,6 +13,7 @@ $(document).ready(function() {
             setDetails(data);
             setThirtyDays(data);
             setErrorLog(data);
+            setButtons();
         });
         getSystemInfo().then((data) => {
             try { $("#applicationDesign").text('"' + data.presentation.configuration.design.toUpperCase() + '"'); } catch(error) { $("#applicationDesign").text("-"); }
@@ -70,28 +71,6 @@ $(document).ready(function() {
                 localStorage.removeItem("servicetool.systemchecks");
                 $("#serialNumber").text(serialNumber === null ?"-" :serialNumber);
                 $("#serialNumberfields").hide();
-                $("#pageloader").hide()
-            });
-        }
-		e.preventDefault();
-	});
-
-    $('.btn_displayurl').click(function(e) {
-        $("#displayurlInput").val($("#displayurl").text() === "-" ?"" :$("#displayurl").text());
-        if ($("#displayurlfields").is(":visible"))
-            $("#displayurlfields").hide();
-        else
-            $("#displayurlfields").show();
-        $("#displayurlInput").focus();
-		e.preventDefault();
-	});
-    $('.btn_savedisplayurl').click(function(e) {
-        if (_display !== null) { 
-            let displayurl = $("#displayurlInput").val().trim() === "" ?null :$("#displayurlInput").val();
-            changedisplayurl(displayurl).then(() => {
-                localStorage.removeItem("servicetool.systemchecks");
-                $("#displayurl").text(displayurl === null ?"-" :displayurl);
-                $("#displayurlfields").hide();
                 $("#pageloader").hide()
             });
         }
@@ -371,7 +350,7 @@ function setDetails(data) {
         $("#publicTransportAddress").html('<span title="' + lptAddress + '">' + lptAddress.substring(0, 18) + (lptAddress > 18 ? '...' :'') + '</span>');
         $("#deploymentID").text(_display.deployment.id);
         $("#annotation").html(_display.deployment.hasOwnProperty("annotation") ?"<span title='" + _display.deployment.annotation + "'>" + _display.deployment.annotation.substring(0, 20) + (_display.deployment.annotation.length > 20 ? '...' :'') + "</span>" :"-");
-        $("#displayurl").html('<span>' + _display.deployment.url + '</span>');
+        $("#displayurl").html('<span>' + (_display.deployment.hasOwnProperty('url') ?_display.deployment.url :"-") + '</span>');
     }
     $("#wireguard").html(_display.hasOwnProperty("pubkey") ?"<span title='" + _display.pubkey + " (zum Kopieren klicken)'>" + _display.pubkey.substring(0, 20) + "...</span>" :"-");
     $("#systemID").text(_display.id);
@@ -576,6 +555,36 @@ function setErrorLog(display) {
     $("#errorlog").html(logs);
 }
 
+function setButtons() {
+    if (_display !== null && _display.hasOwnProperty("deployment")) {
+        $(".btn_displayurl").css("opacity", "1");
+        $(".btn_displayurl").attr("title", "");
+        $('.btn_displayurl').click(function(e) {
+            $("#displayurlInput").val($("#displayurl").text() === "-" ?"" :$("#displayurl").text());
+            if ($("#displayurlfields").is(":visible"))
+                $("#displayurlfields").hide();
+            else
+                $("#displayurlfields").show();
+            $("#displayurlInput").focus();
+            e.preventDefault();
+        });
+        $('.btn_savedisplayurl').click(function(e) {
+            if (_display !== null) { 
+                let displayurl = $("#displayurlInput").val().trim() === "" ?null :$("#displayurlInput").val();
+                changedisplayurl(displayurl).then(() => {
+                    localStorage.removeItem("servicetool.systemchecks");
+                    $("#displayurl").text(displayurl === null ?"-" :displayurl);
+                    $("#displayurlfields").hide();
+                    $("#pageloader").hide()
+                });
+            }
+            e.preventDefault();
+        });
+    } else {
+        $(".btn_displayurl").attr("title", "Keine Zuordnung vorhanden");
+    }
+        
+}
 function setHistory(history, page = 1) {
     if (_deploymentHistory === null) {
         _deploymentHistory = [];
