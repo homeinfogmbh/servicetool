@@ -12,9 +12,10 @@ $(document).ready(function() {
     Promise.all(getListOfSystemChecks()).then((data)=>{
         _applicationVersion = data[1];
         setCheckList(data[0], data[1], data[2]);
-        if (_customer === null) {
-            setList();
-        } else {
+        //if (_customer === null) {
+          //  setList();
+        //} else {
+            // Get all systems without deployment
             getSystems().then((systems) => {
                 let found;
                 for (let system of systems) {
@@ -22,17 +23,19 @@ $(document).ready(function() {
                         found = false;
                         for (let checkedSystem of _commonChecks.system.systems) {
                             if (system.id === checkedSystem.id) {
+                                if (system.deployment.hasOwnProperty('technicianAnnotation'))
+                                    checkedSystem.deployment.technicianAnnotation = system.deployment.technicianAnnotation;
                                 found = true;
                                 break;
                             }
                         }
                         if (!found)
-                            _commonChecks.system.systems.push(system);
+                            _commonChecks[_type].systems.push(system); //_commonChecks.system.systems.push(system);
                     }
                 }
                 setList();
             });
-        }
+       // }
     });
     $('#searchfield').val(getURLParameterByName('filter') !== null ? getURLParameterByName('filter') :"");
     $(".dashTopLeft").html('<h2>' + _commonChecks[_type].title + '</h2><p>' + _commonChecks[_type].text + '</p>');
@@ -123,6 +126,18 @@ function setList(sort = "sortcustomer") {
                     '<td>' + (downloadAvailable && check.checkResults[0].download*_KIBIBITTOMBIT < 1.9?'<span class="orangeMark">' + (check.checkResults[0].download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':downloadAvailable ?'<span class="blueMark">' + (check.checkResults[0].download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':' - ') +
                     (uploadAvailable && check.checkResults[0].upload*_KIBIBITTOMBIT < 0.35?'<span class="orangeMark">' + (check.checkResults[0].upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':uploadAvailable ?'<span class="blueMark">' + (check.checkResults[0].upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':' - ') + '</td>' +
                     //'<td style="white-space:nowrap"><span class="whiteMark" style="min-width:auto; display:block; float:left" title="Betriebssystem">' + (_operatingSystemsShorts.hasOwnProperty(check.operatingSystem) ?_operatingSystemsShorts[check.operatingSystem] :check.operatingSystem) + '</span>' + (check.hasOwnProperty("blacklist") ?'<span style="max-width:24px; display:block" title="System befindet sich in der Blacklist">' + _coffin + '</span>' :'') + '</td>' +
+                    '<td>' + 
+                        '<span class="btn_technicianAnnotation">' + (check.deployment.hasOwnProperty('technicianAnnotation') ?check.deployment.technicianAnnotation :"") + '</span>' +
+                        '<div id="technicianAnnotationfields" style="display:none; padding-top:5px">' +
+                            '<div class="dualinp inpCol">' +
+                                '<textarea id="technicianAnnotationInput" class="technicianAnnotationInput longInp basic-data" style=resize:auto;"></textarea>' +
+                            '</div>' +
+                            '<div style="float:right">' +
+                                '<span class="whiteMark btn_saveTechnicianAnnotation pointer" data-deployment="' + check.deployment.id + '">Speichern</span>' +
+                                '<span class="whiteMark btn_closeTechnicianAnnotation pointer">Abbrechen</span>' +
+                            '</div>' +
+                        '</div>' +
+                    '</td>' +
                     '<td><span class="whiteMark" style="min-width:auto; display:block" title="Betriebssystem">' + (_operatingSystemsShorts.hasOwnProperty(check.operatingSystem) ?_operatingSystemsShorts[check.operatingSystem] :check.operatingSystem) + '</span></td>' +
                     '<td style="min-width:50px"><span title="System befindet sich in der Blacklist">' + (check.hasOwnProperty("blacklist") ?_coffin :'') + '</span></td>' +
                     '<td><a href="display-details.html?id=' + check.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>'+
@@ -134,6 +149,35 @@ function setList(sort = "sortcustomer") {
     }
     systemlistDOM = systemlistDOM === "" ?"<tr><td>Keine Einträge vorhanden</td></tr>" :systemlistDOM;
     $("#systemlist").html(systemlistDOM);
+
+    $('.btn_technicianAnnotation').click(function(e) {
+        $(this).parent().find('#technicianAnnotationInput').val($(this).text() === "-" ?"" :$(this).text());
+        if ($(this).parent().find("#technicianAnnotationfields").is(":visible"))
+            $(this).parent().find("#technicianAnnotationfields").hide();
+        else
+            $(this).parent().find("#technicianAnnotationfields").show();
+        $(this).parent().find('#technicianAnnotationInput').focus();
+		e.preventDefault();
+    });
+    $('.technicianAnnotationInput').keydown(function(e) {
+        if (e.which === 13) {
+            e.preventDefault();
+            this.value = this.value.substring(0, this.selectionStart) + "" + "\n" + this.value.substring(this.selectionEnd, this.value.length);
+        }
+    });
+    $('.btn_closeTechnicianAnnotation').click(function(e) {
+        $(this).parent().parent().parent().find('.btn_technicianAnnotation').click();
+		e.preventDefault();
+    });
+    $('.btn_saveTechnicianAnnotation').click(function(e) {
+            let technicianAnnotation = $(this).parent().parent().parent().find('#technicianAnnotationInput').val().trim() === "" ?null :$(this).parent().parent().parent().find('#technicianAnnotationInput').val();
+            saveTechnicianAnnotation($(this).data('deployment'), technicianAnnotation).then(() => {
+                $(this).parent().parent().parent().find('.btn_technicianAnnotation').text(technicianAnnotation === null ?"" :technicianAnnotation);
+                $("#technicianAnnotationfields").hide();
+                $("#pageloader").hide()
+            });
+		e.preventDefault();
+	});
     $(".dashTopLeft").html('<h2>' + (_customer == null?_commonChecks[_type].title :'Displays für ' + abbreviation) + ' (' + counter + ')</h2><p>' + (_customer == null ?_commonChecks[_type].text :'Liste aller Displays für ' +  name + ' (' + _customer + ')') + '</p>');
     $("#pageloader").hide();
 }
@@ -322,4 +366,21 @@ function loadScreenshot(id) {
 			$('#pageloader').hide();
 	};
 	img.src = 'https://sysmon.homeinfo.de/screenshot/' + _imagesLoaded.systemsToCheck[id].id + '?' + _imagesLoaded.systemsToCheck[id].deployment.customer.id;
+}
+
+function saveTechnicianAnnotation(id, annotation) {
+    $("#pageloader").show();
+    return $.ajax({
+        url: 'https://backend.homeinfo.de/deployments/' + id + "/annotation",
+        method: 'PATCH',
+        contentType: 'application/json',
+        data: JSON.stringify(annotation),
+        dataType: 'json',
+		error: function (msg) {
+			console.log(msg)
+		},
+        xhrFields: {
+            withCredentials: true
+        }
+    });
 }

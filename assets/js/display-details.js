@@ -239,6 +239,10 @@ $(document).ready(function() {
           })
 		e.preventDefault();
 	}); 
+    $('.btn_restartApplication').click(function(e) {
+        restartDDBOS();
+		e.preventDefault();
+	}); 
     $('.btn_testsystem').click(function(e) {
         if (_display !== null && _display.hasOwnProperty("deployment")) {
             localStorage.removeItem("servicetool.systemchecks");
@@ -351,12 +355,56 @@ function setDetails(data) {
         $("#deploymentID").text(_display.deployment.id);
         $("#annotation").html(_display.deployment.hasOwnProperty("annotation") ?"<span title='" + _display.deployment.annotation + "'>" + _display.deployment.annotation.substring(0, 20) + (_display.deployment.annotation.length > 20 ? '...' :'') + "</span>" :"-");
         $("#displayurl").html('<span>' + (_display.deployment.hasOwnProperty('url') ?_display.deployment.url :"-") + '</span>');
+        if (_display.deployment.hasOwnProperty('technicianAnnotation')) {
+            let technicianAnnotation = '<td>' + 
+                '<span class="btn_technicianAnnotation">' + (_display.deployment.hasOwnProperty('technicianAnnotation') ?_display.deployment.technicianAnnotation :"") + '</span>' +
+                '<div id="technicianAnnotationfields" style="display:none; padding-top:5px">' +
+                    '<div class="dualinp inpCol">' +
+                        '<textarea id="technicianAnnotationInput" class="technicianAnnotationInput longInp basic-data" style=resize:auto;"></textarea>' +
+                    '</div>' +
+                    '<div style="float:right">' +
+                        '<span class="whiteMark btn_saveTechnicianAnnotation pointer" data-deployment="' + _display.deployment.id + '">Speichern</span>' +
+                        '<span class="whiteMark btn_closeTechnicianAnnotation pointer">Abbrechen</span>' +
+                    '</div>' +
+                '</div>' +
+            '</td>' 
+            $("#technicalannotation").html("<tr>" + technicianAnnotation + "</tr>");
+            $('.btn_technicianAnnotation').click(function(e) {
+                $(this).parent().find('#technicianAnnotationInput').val($(this).text() === "-" ?"" :$(this).text());
+                if ($(this).parent().find("#technicianAnnotationfields").is(":visible"))
+                    $(this).parent().find("#technicianAnnotationfields").hide();
+                else
+                    $(this).parent().find("#technicianAnnotationfields").show();
+                $(this).parent().find('#technicianAnnotationInput').focus();
+                e.preventDefault();
+            });
+            $('.technicianAnnotationInput').keydown(function(e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    this.value = this.value.substring(0, this.selectionStart) + "" + "\n" + this.value.substring(this.selectionEnd, this.value.length);
+                }
+            });
+            $('.btn_closeTechnicianAnnotation').click(function(e) {
+                $(this).parent().parent().parent().find('.btn_technicianAnnotation').click();
+                e.preventDefault();
+            });
+            $('.btn_saveTechnicianAnnotation').click(function(e) {
+                    let technicianAnnotation = $(this).parent().parent().parent().find('#technicianAnnotationInput').val().trim() === "" ?null :$(this).parent().parent().parent().find('#technicianAnnotationInput').val();
+                    saveTechnicianAnnotation($(this).data('deployment'), technicianAnnotation).then(() => {
+                        localStorage.removeItem("servicetool.systemchecks");
+                        $(this).parent().parent().parent().find('.btn_technicianAnnotation').text(technicianAnnotation === null ?"" :technicianAnnotation);
+                        $("#technicianAnnotationfields").hide();
+                        $("#pageloader").hide()
+                    });
+                e.preventDefault();
+            });
+        }
+        technicalannotation
     }
     $("#wireguard").html(_display.hasOwnProperty("pubkey") ?"<span title='" + _display.pubkey + " (zum Kopieren klicken)'>" + _display.pubkey.substring(0, 20) + "...</span>" :"-");
     $("#systemID").text(_display.id);
     $("#os").text(_display.operatingSystem);
     
-
     // Funktionen
     if (_display.fitted) {
         $("#Verbaut").prop("checked", true);
@@ -571,11 +619,19 @@ function setButtons() {
         $('.btn_savedisplayurl').click(function(e) {
             if (_display !== null) { 
                 let displayurl = $("#displayurlInput").val().trim() === "" ?null :$("#displayurlInput").val();
-                changedisplayurl(displayurl).then(() => {
-                    localStorage.removeItem("servicetool.systemchecks");
+                changedisplayurl(displayurl).then((data) => {
                     $("#displayurl").text(displayurl === null ?"-" :displayurl);
                     $("#displayurlfields").hide();
                     $("#pageloader").hide()
+                    Swal.fire({
+                        title: "URL gespeichert",
+                        html: "Erfolgreich übertragen: " + data.success.toString() + '<br>Nicht übertragen: ' + data.failed.offline.toString(),
+                        showCancelButton: false,
+                        confirmButtonColor: '#ff821d',
+                        iconHtml: '<img src="assets/img/PopUp-Icon.png"></img>',
+                        confirmButtonText: 'O.K.',
+                        buttonsStyling: true
+                    });
                 });
             }
             e.preventDefault();
@@ -856,6 +912,22 @@ function restart() {
         }
     });
 }
+function restartDDBOS() {
+    console.log("TODO");
+    /*
+    $("#pageloader").show();
+    return $.ajax({
+        url: 'https://termgr.homeinfo.de/administer/reboot',
+        type: "POST",
+        data: JSON.stringify({'system': _id}),
+        contentType: 'application/json',
+        success: function (data) {  },
+        error: function (msg) {
+            setErrorMessage(msg, "Neustarten des Systems");
+        }
+    });
+    */
+}
 function setFit() {
     $("#pageloader").show();
     return $.ajax({
@@ -935,13 +1007,30 @@ function changedisplayurl(displayurl) {
         data: JSON.stringify(data),
         contentType: 'application/json',
 		success: function (data) {
+            console.log(data)
 		},
 		error: function (msg) {
-			setErrorMessage(msg, "Ändern eines Deployments");
+			setErrorMessage(msg, "Ändern der URL");
 		}
 	});   
 }
 
+function saveTechnicianAnnotation(id, annotation) {
+    $("#pageloader").show();
+    return $.ajax({
+        url: 'https://backend.homeinfo.de/deployments/' + id + "/annotation",
+        method: 'PATCH',
+        contentType: 'application/json',
+        data: JSON.stringify(annotation),
+        dataType: 'json',
+		error: function (msg) {
+			console.log(msg)
+		},
+        xhrFields: {
+            withCredentials: true
+        }
+    });
+}
 /*
 class ApplicationState(str, Enum):
     AIR = 'air'
