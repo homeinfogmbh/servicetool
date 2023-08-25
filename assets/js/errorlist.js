@@ -127,10 +127,10 @@ function setList(sort = "sortcustomer") {
                     (uploadAvailable && check.checkResults[0].upload*_KIBIBITTOMBIT < 0.35?'<span class="orangeMark">' + (check.checkResults[0].upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':uploadAvailable ?'<span class="blueMark">' + (check.checkResults[0].upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':' - ') + '</td>' +
                     //'<td style="white-space:nowrap"><span class="whiteMark" style="min-width:auto; display:block; float:left" title="Betriebssystem">' + (_operatingSystemsShorts.hasOwnProperty(check.operatingSystem) ?_operatingSystemsShorts[check.operatingSystem] :check.operatingSystem) + '</span>' + (check.hasOwnProperty("blacklist") ?'<span style="max-width:24px; display:block" title="System befindet sich in der Blacklist">' + _coffin + '</span>' :'') + '</td>' +
                     '<td>' + 
-                        '<span class="btn_technicianAnnotation">' + (check.deployment.hasOwnProperty('technicianAnnotation') ?check.deployment.technicianAnnotation :"") + '</span>' +
+                        '<span class="btn_technicianAnnotation">' + (check.deployment.hasOwnProperty('technicianAnnotation') ?check.deployment.technicianAnnotation.length > 20 ?check.deployment.technicianAnnotation.substring(0,20) + "..." :check.deployment.technicianAnnotation :"..") + '</span>' +
                         '<div id="technicianAnnotationfields" style="display:none; padding-top:5px">' +
                             '<div class="dualinp inpCol">' +
-                                '<textarea id="technicianAnnotationInput" class="technicianAnnotationInput longInp basic-data" style=resize:auto;"></textarea>' +
+                                '<textarea id="technicianAnnotationInput" class="technicianAnnotationInput longInp basic-data" style=resize:auto;">' + (check.deployment.hasOwnProperty('technicianAnnotation') ?check.deployment.technicianAnnotation :"") + '</textarea>' +
                             '</div>' +
                             '<div style="float:right">' +
                                 '<span class="whiteMark btn_saveTechnicianAnnotation pointer" data-deployment="' + check.deployment.id + '">Speichern</span>' +
@@ -151,7 +151,6 @@ function setList(sort = "sortcustomer") {
     $("#systemlist").html(systemlistDOM);
 
     $('.btn_technicianAnnotation').click(function(e) {
-        $(this).parent().find('#technicianAnnotationInput').val($(this).text() === "-" ?"" :$(this).text());
         if ($(this).parent().find("#technicianAnnotationfields").is(":visible"))
             $(this).parent().find("#technicianAnnotationfields").hide();
         else
@@ -173,7 +172,7 @@ function setList(sort = "sortcustomer") {
             let technicianAnnotation = $(this).parent().parent().parent().find('#technicianAnnotationInput').val().trim() === "" ?null :$(this).parent().parent().parent().find('#technicianAnnotationInput').val();
             saveTechnicianAnnotation($(this).data('deployment'), technicianAnnotation).then(() => {
                 $(this).parent().parent().parent().find('.btn_technicianAnnotation').text(technicianAnnotation === null ?"" :technicianAnnotation);
-                $("#technicianAnnotationfields").hide();
+                $(this).parent().parent().parent().find("#technicianAnnotationfields").hide();
                 $("#pageloader").hide()
             });
 		e.preventDefault();

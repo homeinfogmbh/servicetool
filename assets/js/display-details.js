@@ -355,51 +355,47 @@ function setDetails(data) {
         $("#deploymentID").text(_display.deployment.id);
         $("#annotation").html(_display.deployment.hasOwnProperty("annotation") ?"<span title='" + _display.deployment.annotation + "'>" + _display.deployment.annotation.substring(0, 20) + (_display.deployment.annotation.length > 20 ? '...' :'') + "</span>" :"-");
         $("#displayurl").html('<span>' + (_display.deployment.hasOwnProperty('url') ?_display.deployment.url :"-") + '</span>');
-        if (_display.deployment.hasOwnProperty('technicianAnnotation')) {
-            let technicianAnnotation = '<td>' + 
-                '<span class="btn_technicianAnnotation">' + (_display.deployment.hasOwnProperty('technicianAnnotation') ?_display.deployment.technicianAnnotation :"") + '</span>' +
-                '<div id="technicianAnnotationfields" style="display:none; padding-top:5px">' +
-                    '<div class="dualinp inpCol">' +
-                        '<textarea id="technicianAnnotationInput" class="technicianAnnotationInput longInp basic-data" style=resize:auto;"></textarea>' +
-                    '</div>' +
-                    '<div style="float:right">' +
-                        '<span class="whiteMark btn_saveTechnicianAnnotation pointer" data-deployment="' + _display.deployment.id + '">Speichern</span>' +
-                        '<span class="whiteMark btn_closeTechnicianAnnotation pointer">Abbrechen</span>' +
-                    '</div>' +
+        let technicianAnnotation = '<td>' + 
+            '<span class="btn_technicianAnnotation">' + (_display.deployment.hasOwnProperty('technicianAnnotation') ?_display.deployment.technicianAnnotation :"..") + '</span>' +
+            '<div id="technicianAnnotationfields" style="display:none; padding-top:5px">' +
+                '<div class="dualinp inpCol">' +
+                    '<textarea id="technicianAnnotationInput" class="technicianAnnotationInput longInp basic-data" style=resize:auto;">' + (_display.deployment.hasOwnProperty('technicianAnnotation') ?_display.deployment.technicianAnnotation :"") + '</textarea>' +
                 '</div>' +
-            '</td>' 
-            $("#technicalannotation").html("<tr>" + technicianAnnotation + "</tr>");
-            $('.btn_technicianAnnotation').click(function(e) {
-                $(this).parent().find('#technicianAnnotationInput').val($(this).text() === "-" ?"" :$(this).text());
-                if ($(this).parent().find("#technicianAnnotationfields").is(":visible"))
-                    $(this).parent().find("#technicianAnnotationfields").hide();
-                else
-                    $(this).parent().find("#technicianAnnotationfields").show();
-                $(this).parent().find('#technicianAnnotationInput').focus();
+                '<div style="float:right">' +
+                    '<span class="whiteMark btn_saveTechnicianAnnotation pointer" data-deployment="' + _display.deployment.id + '">Speichern</span>' +
+                    '<span class="whiteMark btn_closeTechnicianAnnotation pointer">Abbrechen</span>' +
+                '</div>' +
+            '</div>' +
+        '</td>' 
+        $("#technicalannotation").html("<tr>" + technicianAnnotation + "</tr>");
+        $('.btn_technicianAnnotation').click(function(e) {
+            if ($(this).parent().find("#technicianAnnotationfields").is(":visible"))
+                $(this).parent().find("#technicianAnnotationfields").hide();
+            else
+                $(this).parent().find("#technicianAnnotationfields").show();
+            $(this).parent().find('#technicianAnnotationInput').focus();
+            e.preventDefault();
+        });
+        $('.technicianAnnotationInput').keydown(function(e) {
+            if (e.which === 13) {
                 e.preventDefault();
-            });
-            $('.technicianAnnotationInput').keydown(function(e) {
-                if (e.which === 13) {
-                    e.preventDefault();
-                    this.value = this.value.substring(0, this.selectionStart) + "" + "\n" + this.value.substring(this.selectionEnd, this.value.length);
-                }
-            });
-            $('.btn_closeTechnicianAnnotation').click(function(e) {
-                $(this).parent().parent().parent().find('.btn_technicianAnnotation').click();
-                e.preventDefault();
-            });
-            $('.btn_saveTechnicianAnnotation').click(function(e) {
-                    let technicianAnnotation = $(this).parent().parent().parent().find('#technicianAnnotationInput').val().trim() === "" ?null :$(this).parent().parent().parent().find('#technicianAnnotationInput').val();
-                    saveTechnicianAnnotation($(this).data('deployment'), technicianAnnotation).then(() => {
-                        localStorage.removeItem("servicetool.systemchecks");
-                        $(this).parent().parent().parent().find('.btn_technicianAnnotation').text(technicianAnnotation === null ?"" :technicianAnnotation);
-                        $("#technicianAnnotationfields").hide();
-                        $("#pageloader").hide()
-                    });
-                e.preventDefault();
-            });
-        }
-        technicalannotation
+                this.value = this.value.substring(0, this.selectionStart) + "" + "\n" + this.value.substring(this.selectionEnd, this.value.length);
+            }
+        });
+        $('.btn_closeTechnicianAnnotation').click(function(e) {
+            $(this).parent().parent().parent().find('.btn_technicianAnnotation').click();
+            e.preventDefault();
+        });
+        $('.btn_saveTechnicianAnnotation').click(function(e) {
+                let technicianAnnotation = $(this).parent().parent().parent().find('#technicianAnnotationInput').val().trim() === "" ?null :$(this).parent().parent().parent().find('#technicianAnnotationInput').val();
+                saveTechnicianAnnotation($(this).data('deployment'), technicianAnnotation).then(() => {
+                    localStorage.removeItem("servicetool.systemchecks");
+                    $(this).parent().parent().parent().find('.btn_technicianAnnotation').text(technicianAnnotation === null ?"" :technicianAnnotation);
+                    $(this).parent().parent().parent().find("#technicianAnnotationfields").hide();
+                    $("#pageloader").hide()
+                });
+            e.preventDefault();
+        });
     }
     $("#wireguard").html(_display.hasOwnProperty("pubkey") ?"<span title='" + _display.pubkey + " (zum Kopieren klicken)'>" + _display.pubkey.substring(0, 20) + "...</span>" :"-");
     $("#systemID").text(_display.id);
