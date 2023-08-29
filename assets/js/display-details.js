@@ -14,43 +14,54 @@ $(document).ready(function() {
             setThirtyDays(data);
             setErrorLog(data);
             setButtons();
-        });
-        getSystemInfo().then((data) => {
-            try { $("#applicationDesign").text('"' + data.presentation.configuration.design.toUpperCase() + '"'); } catch(error) { $("#applicationDesign").text("-"); }
-            $("#display-mode-unknown").hide();
-            if (data.hasOwnProperty("application") && data.application.hasOwnProperty("mode")) {
-                $(".tw-toggle").show();
-                switch (data.application.mode) {
-                case "PRODUCTIVE":
-                    $("#black-mode").prop("checked", false);
-                    $("#installation-instructions-mode").prop("checked", false);
-                    $("#productive-mode").prop("checked", true);
-                    break;
-                case "INSTALLATION_INSTRUCTIONS":
-                    $("#black-mode").prop("checked", false);
-                    $("#installation-instructions-mode").prop("checked", true);
-                    $("#productive-mode").prop("checked", false);
-                    break;
-                default:
-                    $("#black-mode").prop("checked", true);
-                    $("#installation-instructions-mode").prop("checked", false);
-                    $("#productive-mode").prop("checked", false);
-                    break;
-                }
-            } else {
-                $("#display-mode-unknown").show();
-                $("#display-mode-unknown").text("(Status: UNBEKANNT)");
+            if (!_display.ddbOs && _display.operatingSystem === "Arch Linux") {
+                $("#displayModeLine").show();
+                getSystemInfo().then((data) => {
+                    try { $("#applicationDesign").text('"' + data.presentation.configuration.design.toUpperCase() + '"'); } catch(error) { $("#applicationDesign").text("-"); }
+                    $("#display-mode-unknown").hide();
+                    if (data.hasOwnProperty("application") && data.application.hasOwnProperty("mode")) {
+                        $(".tw-toggle").show();
+                        switch (data.application.mode) {
+                        case "PRODUCTIVE":
+                            $("#black-mode").prop("checked", false);
+                            $("#installation-instructions-mode").prop("checked", false);
+                            $("#productive-mode").prop("checked", true);
+                            break;
+                        case "INSTALLATION_INSTRUCTIONS":
+                            $("#black-mode").prop("checked", false);
+                            $("#installation-instructions-mode").prop("checked", true);
+                            $("#productive-mode").prop("checked", false);
+                            break;
+                        default:
+                            $("#black-mode").prop("checked", true);
+                            $("#installation-instructions-mode").prop("checked", false);
+                            $("#productive-mode").prop("checked", false);
+                            break;
+                        }
+                    } else {
+                        $("#display-mode-unknown").show();
+                        $("#display-mode-unknown").text("(Status: UNBEKANNT)");
+                    }
+                    $('[name="display-mode"]').click(function(e) {
+                        localStorage.removeItem("servicetool.systemchecks");
+                        setApplicationState().then(checkSystem).then(()=>{
+                            $("#pageloader").hide();
+                        }, ()=>{
+                            $("#pageloader").hide();
+                        });
+                    });
+                }, ()=>{
+                    try {
+                        if (_display.checkResults[0].applicationState === "html" || _display.checkResults[0].applicationState === "air") {
+                            $("#black-mode").prop("checked", false);
+                            $("#installation-instructions-mode").prop("checked", false);
+                            $("#productive-mode").prop("checked", true);
+                        }
+                    } catch(error) {    }
+                    $("#applicationDesign").text("-");
+                    $("#display-mode-unknown").text("(Status: UNBEKANNT)");
+                });
             }
-        }, ()=>{
-            try {
-                if (_display.checkResults[0].applicationState === "html" || _display.checkResults[0].applicationState === "air") {
-                    $("#black-mode").prop("checked", false);
-                    $("#installation-instructions-mode").prop("checked", false);
-                    $("#productive-mode").prop("checked", true);
-                }
-            } catch(error) {    }
-            $("#applicationDesign").text("-");
-            $("#display-mode-unknown").text("(Status: UNBEKANNT)");
         });
     }, ()=>{
         $("#errorlog").html("<tr><td>Keine Einträge geladen</td></tr>");
@@ -191,21 +202,6 @@ $(document).ready(function() {
         e.preventDefault();
 	});
 
-    $('.btn_noice').click(function(e) {
-        noice().then(()=>{
-            $("#pageloader").hide();
-            Swal.fire({
-                title: 'Erfolg',
-                text: "Piep Ton wurde abgespielt.",
-                showCancelButton: false,
-                confirmButtonColor: '#009fe3',
-                iconHtml: '<img src="assets/img/PopUp-Icon.png"></img>',
-                confirmButtonText: 'O.K.',
-                buttonsStyling: true
-            });
-        });
-		e.preventDefault();
-	}); 
     $('.btn_installed').click(function(e) {
         localStorage.removeItem("servicetool.systemchecks");
         setFit().then(()=>{$("#pageloader").hide()});
@@ -213,35 +209,6 @@ $(document).ready(function() {
             $(this).attr("title", "Ist nicht verbaut");
         else
             $(this).attr("title", "Ist verbaut");
-	}); 
-    $('[name="display-mode"]').click(function(e) {
-        localStorage.removeItem("servicetool.systemchecks");
-        setApplicationState().then(checkSystem).then(()=>{
-            $("#pageloader").hide();
-        }, ()=>{
-            $("#pageloader").hide();
-        });
-	}); 
-    $('.btn_restart').click(function(e) {
-        Swal.fire({
-            title: 'Sind Sie sicher?',
-            text: "Wollen Sie das System neustarten?",
-            showCancelButton: true,
-            confirmButtonColor: '#009fe3',
-            cancelButtonColor: '#ff821d',
-            iconHtml: '<img src="assets/img/PopUp-Icon.png"></img>',
-            confirmButtonText: 'Ja, neustarten!',
-            cancelButtonText: 'Vorgang abbrechen!',
-            buttonsStyling: true
-          }).then(function(selection) {
-            if (selection.isConfirmed === true)
-                restart().then(()=>{$("#pageloader").hide()});
-          })
-		e.preventDefault();
-	}); 
-    $('.btn_restartApplication').click(function(e) {
-        restartDDBOS();
-		e.preventDefault();
 	}); 
     $('.btn_testsystem').click(function(e) {
         if (_display !== null && _display.hasOwnProperty("deployment")) {
@@ -252,47 +219,6 @@ $(document).ready(function() {
             else
                 $(this).attr("title", "Ist ein Testsystem");
         }
-	});
-    $('.btn_screenshot').click(function(e) {
-        if (_display !== null && _display.hasOwnProperty("checkResults") && _display.checkResults.length > 0 && _display.checkResults[0].hasOwnProperty("offlineSince")) {
-            Swal.fire({
-                title: 'System war offline',
-                text: "Dieses System wurde beim letzten Check 'offline' gemessen. Ein Screenshot kann aufgrund fehlender Erreichbarkeit unerwartet lange dauern.",
-                showCancelButton: true,
-                confirmButtonColor: '#009fe3',
-                cancelButtonColor: '#ff821d',
-                iconHtml: '<img src="assets/img/PopUp-Icon.png"></img>',
-                confirmButtonText: 'Fortsetzen!',
-                cancelButtonText: 'Abbrechen',
-                buttonsStyling: true
-            }).then(function(selection) {
-                if (selection.isConfirmed === true)
-                    window.open('https://sysmon.homeinfo.de/screenshot/' + _id, "_blank"); // http://321.terminals.homeinfo.intra:8000/screenshot (faster)
-            });
-        } else
-            window.open('https://sysmon.homeinfo.de/screenshot/' + _id, "_blank"); // http://321.terminals.homeinfo.intra:8000/screenshot (faster)
-        
-		e.preventDefault();
-	}); 
-	$('.btn_eye').click(function(e) {
-		$("#pageloader").show();
-		$.ajax({
-			url: "https://sysmon.homeinfo.de/preview/" + _display.deployment.id,
-			type: "GET",
-			contentType: 'application/json',
-			success: function (msg) {
-				window.open('https://cms.homeinfo.de/preview/preview.html?token=' + msg.token, '_blank');
-				$("#pageloader").hide();
-			},
-			error: function (msg) {
-				setErrorMessage(msg, "Generieren der Vorschau");
-			}
-		});
-	});
-    $('.btn_sync').click(function(e) {
-        if (_display !== null && _display.hasOwnProperty("deployment"))
-            sync().then(()=>{$("#pageloader").hide()});
-		e.preventDefault();
 	});
 });
 
@@ -399,7 +325,7 @@ function setDetails(data) {
     }
     $("#wireguard").html(_display.hasOwnProperty("pubkey") ?"<span title='" + _display.pubkey + " (zum Kopieren klicken)'>" + _display.pubkey.substring(0, 20) + "...</span>" :"-");
     $("#systemID").text(_display.id);
-    $("#os").text(_display.operatingSystem);
+    $("#os").text(_display.operatingSystem + (_display.ddbOs ? " (DDB OS)":""));
     
     // Funktionen
     if (_display.fitted) {
@@ -635,7 +561,115 @@ function setButtons() {
     } else {
         $(".btn_displayurl").attr("title", "Keine Zuordnung vorhanden");
     }
-        
+    if (_display.ddbOs) {
+        $('.btn_restartApplication').click(function(e) {
+            restartDDBOS().then(()=>{$("#pageloader").hide()});
+            e.preventDefault();
+        }); 
+        $('#restartDDBOSLine').show();
+    } else if (_display.operatingSystem === "Arch Linux") {
+        $('.btn_noice').click(function(e) {
+            noice().then(()=>{
+                $("#pageloader").hide();
+                Swal.fire({
+                    title: 'Erfolg',
+                    text: "Piep Ton wurde abgespielt.",
+                    showCancelButton: false,
+                    confirmButtonColor: '#009fe3',
+                    iconHtml: '<img src="assets/img/PopUp-Icon.png"></img>',
+                    confirmButtonText: 'O.K.',
+                    buttonsStyling: true
+                });
+            });
+            e.preventDefault();
+        }); 
+        $('.btn_restart').click(function(e) {
+            Swal.fire({
+                title: 'Sind Sie sicher?',
+                text: "Wollen Sie das System neustarten?",
+                showCancelButton: true,
+                confirmButtonColor: '#009fe3',
+                cancelButtonColor: '#ff821d',
+                iconHtml: '<img src="assets/img/PopUp-Icon.png"></img>',
+                confirmButtonText: 'Ja, neustarten!',
+                cancelButtonText: 'Vorgang abbrechen!',
+                buttonsStyling: true
+            }).then(function(selection) {
+                if (selection.isConfirmed === true)
+                    restart().then(()=>{$("#pageloader").hide()});
+            })
+            e.preventDefault();
+        });
+        $('.btn_screenshot').click(function(e) {
+            if (_display !== null && _display.hasOwnProperty("checkResults") && _display.checkResults.length > 0 && _display.checkResults[0].hasOwnProperty("offlineSince")) {
+                Swal.fire({
+                    title: 'System war offline',
+                    text: "Dieses System wurde beim letzten Check 'offline' gemessen. Ein Screenshot kann aufgrund fehlender Erreichbarkeit unerwartet lange dauern.",
+                    showCancelButton: true,
+                    confirmButtonColor: '#009fe3',
+                    cancelButtonColor: '#ff821d',
+                    iconHtml: '<img src="assets/img/PopUp-Icon.png"></img>',
+                    confirmButtonText: 'Fortsetzen!',
+                    cancelButtonText: 'Abbrechen',
+                    buttonsStyling: true
+                }).then(function(selection) {
+                    if (selection.isConfirmed === true)
+                        window.open('https://sysmon.homeinfo.de/screenshot/' + _id, "_blank"); // http://321.terminals.homeinfo.intra:8000/screenshot (faster)
+                });
+            } else
+                window.open('https://sysmon.homeinfo.de/screenshot/' + _id, "_blank"); // http://321.terminals.homeinfo.intra:8000/screenshot (faster)
+            
+            e.preventDefault();
+        });
+        $('.btn_eye').click(function(e) {
+            $("#pageloader").show();
+            $.ajax({
+                url: "https://sysmon.homeinfo.de/preview/" + _display.deployment.id,
+                type: "GET",
+                contentType: 'application/json',
+                success: function (msg) {
+                    window.open('https://cms.homeinfo.de/preview/preview.html?token=' + msg.token, '_blank');
+                    $("#pageloader").hide();
+                },
+                error: function (msg) {
+                    setErrorMessage(msg, "Generieren der Vorschau");
+                }
+            });
+        });
+        $('.btn_sync').click(function(e) {
+            if (_display !== null && _display.hasOwnProperty("deployment"))
+                sync().then(()=>{$("#pageloader").hide()});
+            e.preventDefault();
+        });
+        $('#noiceLine').show();
+        $('#restartLine').show();
+        $('#screenshotLine').show();
+        $('#eyeLine').show();
+        $('#syncLine').show();
+    } else {
+        $('.btn_eye').click(function(e) {
+            $("#pageloader").show();
+            $.ajax({
+                url: "https://sysmon.homeinfo.de/preview/" + _display.deployment.id,
+                type: "GET",
+                contentType: 'application/json',
+                success: function (msg) {
+                    window.open('https://cms.homeinfo.de/preview/preview.html?token=' + msg.token, '_blank');
+                    $("#pageloader").hide();
+                },
+                error: function (msg) {
+                    setErrorMessage(msg, "Generieren der Vorschau");
+                }
+            });
+        });
+        $('.btn_sync').click(function(e) {
+            if (_display !== null && _display.hasOwnProperty("deployment"))
+                sync().then(()=>{$("#pageloader").hide()});
+            e.preventDefault();
+        });
+        $('#eyeLine').show();
+        $('#syncLine').show();
+    }
 }
 function setHistory(history, page = 1) {
     if (_deploymentHistory === null) {
@@ -777,7 +811,8 @@ function getSystemInfo() {
         type: "GET",
         cache: false,
         error: function (msg) {
-            setErrorMessage(msg, "Laden der Systeminfos");
+            console.log(msg)
+            //setErrorMessage(msg, "Laden der Systeminfos");
         }
     });
 }
@@ -909,20 +944,17 @@ function restart() {
     });
 }
 function restartDDBOS() {
-    console.log("TODO");
-    /*
     $("#pageloader").show();
     return $.ajax({
-        url: 'https://termgr.homeinfo.de/administer/reboot',
+        url: 'https://termgr.homeinfo.de/administer/restart-web-browser',
         type: "POST",
         data: JSON.stringify({'system': _id}),
         contentType: 'application/json',
         success: function (data) {  },
         error: function (msg) {
-            setErrorMessage(msg, "Neustarten des Systems");
+            setErrorMessage(msg, "Neustarten des Browsers");
         }
     });
-    */
 }
 function setFit() {
     $("#pageloader").show();
