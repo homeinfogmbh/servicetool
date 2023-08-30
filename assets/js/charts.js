@@ -8,21 +8,29 @@ $(document).ready(function() {
 });
 
 function getAllDaysChecks(days) {
-	getCheckByDays(days).then((data) => {
-    data[1].reverse();
-    if (Object.keys(data).length > 1)
-    	data[2].reverse();
-	let values = {"xValues":[], "ddbyValues":[], "exposeyValues":[]};
-	for (let day in data[1]) {
-		values.xValues.push(formatDate(data[1][day].timestamp));
-		values.ddbyValues.push(data[1][day].offline);
-      if (Object.keys(data).length > 1)
-			  values.exposeyValues.push(data[2][day].offline);
+    let systemsWithActualData = 0;
+    let promises = [];
+    promises.push(getCheckByDays(days));
+    promises.push(getCheckPromis());
+	Promise.all(promises).then((data) => {
+        for (let system in data[1]) {
+            if (data[1][system].hasOwnProperty("checkResults") && isOnDate(data[1][system].lastSync, 48) && data[1][system].checkResults.length > 0 && !data[1][system].checkResults[0].online)
+                systemsWithActualData++;
+        }
+        data[0][1].reverse();
+        if (Object.keys(data[0]).length > 1)
+        data[0][2].reverse();
+        let values = {"xValues":[], "ddbyValues":[], "exposeyValues":[]};
+        for (let day in data[0][1]) {
+            values.xValues.push(formatDate(data[0][1][day].timestamp));
+            values.ddbyValues.push(data[0][1][day].offline-(day == 0 ?systemsWithActualData :0));
+            if (Object.keys(data[0]).length > 1)
+                values.exposeyValues.push(data[0][2][day].offline);
 		}
 		$("#sysChart").html('<canvas id="canvas" style="width:100%; max-width:1000px; height:300px"></canvas>');
-  		
   		renderChart(values);
   		$("#pageloader").hide();
+        $('#actualData').text(systemsWithActualData);
 	});
 }
 

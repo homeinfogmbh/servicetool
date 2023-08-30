@@ -29,8 +29,9 @@ $(document).ready(function() {
                                 break;
                             }
                         }
-                        if (!found)
-                            _commonChecks[_type].systems.push(system); //_commonChecks.system.systems.push(system);
+                        // Uncomment cause, offline widget and offline list are different
+                        //if (!found)
+                            //_commonChecks[_type].systems.push(system); //_commonChecks.system.systems.push(system);
                     }
                 }
                 setList();
