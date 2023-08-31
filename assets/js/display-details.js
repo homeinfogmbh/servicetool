@@ -562,11 +562,49 @@ function setButtons() {
         $(".btn_displayurl").attr("title", "Keine Zuordnung vorhanden");
     }
     if (_display.ddbOs) {
+        $('.btn_noice').click(function(e) {
+            noice().then(()=>{
+                $("#pageloader").hide();
+                Swal.fire({
+                    title: 'Erfolg',
+                    text: "Piep Ton wurde abgespielt.",
+                    showCancelButton: false,
+                    confirmButtonColor: '#009fe3',
+                    iconHtml: '<img src="assets/img/PopUp-Icon.png"></img>',
+                    confirmButtonText: 'O.K.',
+                    buttonsStyling: true
+                });
+            });
+            e.preventDefault();
+        }); 
         $('.btn_restartApplication').click(function(e) {
             restartDDBOS().then(()=>{$("#pageloader").hide()});
             e.preventDefault();
-        }); 
+        });
+        $('.btn_screenshot').click(function(e) {
+            if (_display !== null && _display.hasOwnProperty("checkResults") && _display.checkResults.length > 0 && _display.checkResults[0].hasOwnProperty("offlineSince")) {
+                Swal.fire({
+                    title: 'System war offline',
+                    text: "Dieses System wurde beim letzten Check 'offline' gemessen. Ein Screenshot kann aufgrund fehlender Erreichbarkeit unerwartet lange dauern.",
+                    showCancelButton: true,
+                    confirmButtonColor: '#009fe3',
+                    cancelButtonColor: '#ff821d',
+                    iconHtml: '<img src="assets/img/PopUp-Icon.png"></img>',
+                    confirmButtonText: 'Fortsetzen!',
+                    cancelButtonText: 'Abbrechen',
+                    buttonsStyling: true
+                }).then(function(selection) {
+                    if (selection.isConfirmed === true)
+                        window.open('https://sysmon.homeinfo.de/screenshot/' + _id, "_blank"); // http://321.terminals.homeinfo.intra:8000/screenshot (faster)
+                });
+            } else
+                window.open('https://sysmon.homeinfo.de/screenshot/' + _id, "_blank"); // http://321.terminals.homeinfo.intra:8000/screenshot (faster)
+            
+            e.preventDefault();
+        });
+        $('#noiceLine').show();
         $('#restartDDBOSLine').show();
+        $('#screenshotLine').show();
     } else if (_display.operatingSystem === "Arch Linux") {
         $('.btn_noice').click(function(e) {
             noice().then(()=>{
