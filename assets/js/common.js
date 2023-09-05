@@ -240,7 +240,7 @@ function setCheckList(list, applicationVersion, blacklist) {
 				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].smartCheck === "failed")
 					_commonChecks.ssd.systems.push(check);
 				//if (check.hasOwnProperty("lastSync") && !isOnDate(check.lastSync, 24) && check.fitted && !check.deployment.testing && (!check.hasOwnProperty("checkResults") || (check.checkResults.length > 0 && !check.checkResults[0].hasOwnProperty("offlineSince"))))
-				if (check.hasOwnProperty("lastSync") && !isOnDate(check.lastSync, 24) && check.fitted && !check.deployment.testing && (!check.hasOwnProperty("checkResults") || (check.checkResults.length > 0 && check.checkResults[0].sshLogin !== "failed" && check.checkResults[0].icmpRequest)))
+				if (!check.ddbOs && check.hasOwnProperty("lastSync") && !isOnDate(check.lastSync, 24) && check.fitted && !check.deployment.testing && (!check.hasOwnProperty("checkResults") || (check.checkResults.length > 0 && check.checkResults[0].sshLogin !== "failed" && check.checkResults[0].icmpRequest)))
 					_commonChecks.noActualData.systems.push(check);
 				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState !== "html" && check.checkResults[0].applicationState !== "air" && check.checkResults[0].applicationState !== "unknown" && check.fitted && !check.deployment.testing)
 					_commonChecks.blackscreen.systems.push(check);

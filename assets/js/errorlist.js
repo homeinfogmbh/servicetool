@@ -5,6 +5,7 @@ var _lastsort = null;
 var _operatingSystemsShorts = {"Arch Linux":"Arch", "Windows XP Embedded":"XPe", "Windows XP":"XP", "Windows 8":"Win8", "Windows 7 Embedded":"Win7e", "Windows 7":"Win7", "Windows 10":"Win10"};
 var _showVersion = false;
 var _imagesLoaded = {'simultaneous':5, 'started':0, 'finished':0, 'systemsToCheck':[]};
+var _customerOfflineList = [];
 $(document).ready(function() {
     _type = _commonChecks.hasOwnProperty(getURLParameterByName('type')) ?getURLParameterByName('type') :'system';
     _customer = getURLParameterByName('customer');
@@ -90,6 +91,7 @@ $(document).ready(function() {
 function setList(sort = "sortcustomer") {
     sortCommonList(sort);
     let systemlistDOM = "";
+    let customerlistDOM = "";
     let address;
     let addressComplete;
     let counter = 0;
@@ -126,7 +128,6 @@ function setList(sort = "sortcustomer") {
                     systemlistDOM += '<td>' + (check.hasOwnProperty("lastSync") ?formatDate(check.lastSync) + " (" + check.lastSync.substring(11, 16) + "h)": "noch nie") + '</td>' +
                     '<td>' + (downloadAvailable && check.checkResults[0].download*_KIBIBITTOMBIT < 1.9?'<span class="orangeMark">' + (check.checkResults[0].download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':downloadAvailable ?'<span class="blueMark">' + (check.checkResults[0].download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':' - ') +
                     (uploadAvailable && check.checkResults[0].upload*_KIBIBITTOMBIT < 0.35?'<span class="orangeMark">' + (check.checkResults[0].upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':uploadAvailable ?'<span class="blueMark">' + (check.checkResults[0].upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':' - ') + '</td>' +
-                    //'<td style="white-space:nowrap"><span class="whiteMark" style="min-width:auto; display:block; float:left" title="Betriebssystem">' + (_operatingSystemsShorts.hasOwnProperty(check.operatingSystem) ?_operatingSystemsShorts[check.operatingSystem] :check.operatingSystem) + '</span>' + (check.hasOwnProperty("blacklist") ?'<span style="max-width:24px; display:block" title="System befindet sich in der Blacklist">' + _coffin + '</span>' :'') + '</td>' +
                     '<td>' + 
                         '<span class="btn_technicianAnnotation">' + (check.deployment.hasOwnProperty('technicianAnnotation') ?check.deployment.technicianAnnotation.length > 20 ?check.deployment.technicianAnnotation.substring(0,20) + "..." :check.deployment.technicianAnnotation :"..") + '</span>' +
                         '<div id="technicianAnnotationfields" style="display:none; padding-top:5px">' +
@@ -139,18 +140,36 @@ function setList(sort = "sortcustomer") {
                             '</div>' +
                         '</div>' +
                     '</td>' +
-                    '<td><span class="whiteMark" style="min-width:auto; display:block" title="Betriebssystem">' + (_operatingSystemsShorts.hasOwnProperty(check.operatingSystem) ?_operatingSystemsShorts[check.operatingSystem] :check.operatingSystem) + '</span></td>' +
+                    '<td><span class="whiteMark" style="min-width:auto; display:block" title="Betriebssystem">' + (_operatingSystemsShorts.hasOwnProperty(check.operatingSystem) ?_operatingSystemsShorts[check.operatingSystem] :check.operatingSystem) + ' ' + (check.ddbOs ?"DDBOS" :"") + '</span></td>' +
                     '<td style="min-width:50px"><span title="System befindet sich in der Blacklist">' + (check.hasOwnProperty("blacklist") ?_coffin :'') + '</span></td>' +
                     '<td><a href="display-details.html?id=' + check.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>'+
                     '<td><span class="screenshot" data-id="' + check.id + '"></span></td>' +
                 '</tr>';
                 counter++;
+                if (_type == "offline") {
+                    if (!_customerOfflineList.hasOwnProperty(abbreviation))
+                        _customerOfflineList[abbreviation] = 0;
+                    _customerOfflineList[abbreviation]++;
+                }
+                
             }
         }
     }
     systemlistDOM = systemlistDOM === "" ?"<tr><td>Keine Einträge vorhanden</td></tr>" :systemlistDOM;
     $("#systemlist").html(systemlistDOM);
 
+    if (_type == "offline") {
+        for (let customer in _customerOfflineList) {
+            customerlistDOM += "<tr>" +
+            "<td>" + customer + "</td>" +
+            "<td>" + _customerOfflineList[customer] + "</td>" +
+            "</tr>";
+        }
+        customerlistDOM = customerlistDOM === "" ?"<tr><td>Keine Einträge vorhanden</td></tr>" :customerlistDOM;
+        $("#customerofflinelist").html(customerlistDOM);
+        $("#offlinecustomertable").show();
+    }
+    
     $('.btn_technicianAnnotation').click(function(e) {
         if ($(this).parent().find("#technicianAnnotationfields").is(":visible"))
             $(this).parent().find("#technicianAnnotationfields").hide();

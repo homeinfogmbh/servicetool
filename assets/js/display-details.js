@@ -602,6 +602,10 @@ function setButtons() {
             
             e.preventDefault();
         });
+        $('.btn_eye').click(function(e) {
+            if (_display.deployment.hasOwnProperty("url"))
+                window.open(_display.deployment.url, '_blank');
+        });
         $('#noiceLine').show();
         $('#restartDDBOSLine').show();
         $('#screenshotLine').show();
@@ -682,7 +686,6 @@ function setButtons() {
         $('#noiceLine').show();
         $('#restartLine').show();
         $('#screenshotLine').show();
-        $('#eyeLine').show();
         $('#syncLine').show();
     } else {
         $('.btn_eye').click(function(e) {
@@ -705,7 +708,6 @@ function setButtons() {
                 sync().then(()=>{$("#pageloader").hide()});
             e.preventDefault();
         });
-        $('#eyeLine').show();
         $('#syncLine').show();
     }
 }

@@ -257,7 +257,8 @@ function getImageVersions() {
 	}); 
 }
 function setImageVersions(data) {
-    let titles = {"HIDSL":"Image x86_64", "HIDSL-ARM":"Image ARM", "manual":"Installationsanleitung DDB"};
+    console.log(data)
+    let titles = {"HIDSL":"Image x86_64", "HIDSL-ARM":"Image ARM", "manual":"Installationsanleitung DDB", "DDBOS":"Image DDB OS"};
     let imageDom = "";
     for (let image in data[0]) {
         if (data[0][image].length > 0) {
