@@ -36,6 +36,9 @@ $(document).ready(function() {
                         '<input id="menusearch" type="search" placeholder="System suchen...">' +
                     '</form>' +
                 '</li>' +
+                '<li class="nav-item">' +
+                    '<a class="nav-link" id="newsletter" href="newsletter.html" onclick="removeopenedlist()">Newsletter</a>' +
+                '</li>' +
             '</ul>' +
         '</div>' +
         '<div class="admin_box">' +
@@ -179,6 +182,8 @@ function loadMenuData() {
         $("#standorte-zuweisen").addClass("active");
     else if (window.location.pathname.indexOf("bestelltool") != -1)
         $("#bestelltool").addClass("active");
+    else if (window.location.pathname.indexOf("newsletter") != -1)
+        $("#newsletter").addClass("active");
     
     $('.sendBtn').click(function(e) {
         let date = new Date();

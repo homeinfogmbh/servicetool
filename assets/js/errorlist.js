@@ -147,9 +147,9 @@ function setList(sort = "sortcustomer") {
                 '</tr>';
                 counter++;
                 if (_type == "offline") {
-                    if (!_customerOfflineList.hasOwnProperty(abbreviation))
-                        _customerOfflineList[abbreviation] = 0;
-                    _customerOfflineList[abbreviation]++;
+                    if (!_customerOfflineList.hasOwnProperty(check.deployment.customer.id))
+                        _customerOfflineList[check.deployment.customer.id] = {"offline":0, "name":check.deployment.customer.company.name};
+                    _customerOfflineList[check.deployment.customer.id].offline++;
                 }
                 
             }
@@ -162,7 +162,8 @@ function setList(sort = "sortcustomer") {
         for (let customer in _customerOfflineList) {
             customerlistDOM += "<tr>" +
             "<td>" + customer + "</td>" +
-            "<td>" + _customerOfflineList[customer] + "</td>" +
+            "<td>" + _customerOfflineList[customer].name + "</td>" +
+            "<td>" + _customerOfflineList[customer].offline + "</td>" +
             "</tr>";
         }
         customerlistDOM = customerlistDOM === "" ?"<tr><td>Keine Einträge vorhanden</td></tr>" :customerlistDOM;

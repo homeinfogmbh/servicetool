@@ -108,9 +108,9 @@ function setWidgets() {
                     for (let offlineBlacklist of _commonChecks["offline"].systems) {
                         if (offlineBlacklist.hasOwnProperty("blacklist"))
                             blacklistOfflineCounter++;
-                    }   
+                    }
                 }
-                let diff = _commonChecks["offline"].systems.length - blacklistOfflineCounter - _systemchecksByDays;
+                let diff = _commonChecks["offline"].systems.length + _commonChecks["noActualData"].systems.length - blacklistOfflineCounter - _systemchecksByDays;
                 if (diff >= 0)
                     subTxt = '<span style="font-size:14px; font-weight:normal">' + Math.abs(diff) + ' mehr als gestern</span>';
                 else if (diff < 0)
@@ -257,7 +257,6 @@ function getImageVersions() {
 	}); 
 }
 function setImageVersions(data) {
-    console.log(data)
     let titles = {"HIDSL":"Image x86_64", "HIDSL-ARM":"Image ARM", "manual":"Installationsanleitung DDB", "DDBOS":"Image DDB OS"};
     let imageDom = "";
     for (let image in data[0]) {

@@ -581,6 +581,23 @@ function setButtons() {
             restartDDBOS().then(()=>{$("#pageloader").hide()});
             e.preventDefault();
         });
+        $('.btn_restart').click(function(e) {
+            Swal.fire({
+                title: 'Sind Sie sicher?',
+                text: "Wollen Sie das System neustarten?",
+                showCancelButton: true,
+                confirmButtonColor: '#009fe3',
+                cancelButtonColor: '#ff821d',
+                iconHtml: '<img src="assets/img/PopUp-Icon.png"></img>',
+                confirmButtonText: 'Ja, neustarten!',
+                cancelButtonText: 'Vorgang abbrechen!',
+                buttonsStyling: true
+            }).then(function(selection) {
+                if (selection.isConfirmed === true)
+                    restart().then(()=>{$("#pageloader").hide()});
+            })
+            e.preventDefault();
+        });
         $('.btn_screenshot').click(function(e) {
             if (_display !== null && _display.hasOwnProperty("checkResults") && _display.checkResults.length > 0 && _display.checkResults[0].hasOwnProperty("offlineSince")) {
                 Swal.fire({
@@ -607,6 +624,7 @@ function setButtons() {
                 window.open(_display.deployment.url, '_blank');
         });
         $('#noiceLine').show();
+        $('#restartLine').show();
         $('#restartDDBOSLine').show();
         $('#screenshotLine').show();
     } else if (_display.operatingSystem === "Arch Linux") {

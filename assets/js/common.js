@@ -2,8 +2,8 @@ const ONE_HOUR = 60 * 60 * 1000; // Milliseconds;
 const THREE_MONTHS = 3 * 30 * 24; // Hours
 const _KIBIBITTOMBIT = 1024/1000/1000;
 var _coffin = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#fff" d="M8,22L5,8L8,2H16L19,8L16,22H8M11,6V8H9V10H11V15H13V10H15V8H13V6H11Z" /></svg>';
-var _commonChecks = {"offline":{"title":"Offline", "text":"Liste der Geräte die offline gemessen wurden und dessen Daten älter als 48h sind", "systems":[], "widget":true, "list":false},
-	"offlineThreeMonth":{"title":"Lange offline", "text":"Liste der Geräte die länger als 3 Monate offline sind und dessen Daten älter als 48h sind", "systems":[], "widget":true, "list":false, "widget":true, "list":false},
+var _commonChecks = {"offline":{"title":"Offline", "text":"Liste der Geräte die offline gemessen wurden und dessen Daten älter als 24h sind", "systems":[], "widget":true, "list":false},
+	"offlineThreeMonth":{"title":"Lange offline", "text":"Liste der Geräte die länger als 3 Monate offline sind und dessen Daten älter als 24h sind", "systems":[], "widget":true, "list":false, "widget":true, "list":false},
 	"noDeployment":{"title":"Systeme ohne Zuordnung", "text":"Liste der Geräte die keine Zuordnung besitzen", "systems":[], "widget":false, "list":true},
 	"ssd":{"title":"SSD Karten Fehler", "text":"Liste der Geräte die einen SSD-Karten-Fehler aufweisen", "systems":[], "widget":true, "list":false},
 	"noActualData":{"title":"Keine aktuellen Daten", "text":"Liste der Geräte die keine aktuellen Daten besitzen", "systems":[], "widget":false, "list":true},
@@ -232,7 +232,7 @@ function setCheckList(list, applicationVersion, blacklist) {
 					check.deployment.address = {"street":"Keine Adresse", "houseNumber":"", "zipCode":"", "city":""}
 			} else {
 				//if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("offlineSince") && check.checkResults[0].sshLogin !== "success" && !check.checkResults[0].icmpRequest && check.fitted && !check.deployment.testing && check.operatingSystem.toLowerCase().indexOf("windows") === -1) {
-				if (check.hasOwnProperty("checkResults") && !isOnDate(check.lastSync, 48) && check.checkResults.length > 0 && !check.checkResults[0].online && check.fitted && !check.deployment.testing) {
+				if (check.hasOwnProperty("checkResults") && !isOnDate(check.lastSync, 24) && check.checkResults.length > 0 && !check.checkResults[0].online && check.fitted && !check.deployment.testing) {
 					_commonChecks.offline.systems.push(check);
 					if (!isOnDate(check.checkResults[0].offlineSince, THREE_MONTHS))
 						_commonChecks.offlineThreeMonth.systems.push(check);
