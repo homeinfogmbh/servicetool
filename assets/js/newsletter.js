@@ -10,27 +10,32 @@ $(document).ready(function() {
         Promise.all(promises).then((customeremails) => {
             let emailsDOM = "";
             for (let customer in customeremails) {
-                let emailsEnterd = '';
+                let emailsEntered = '';
+                let emailsEnteredLines = '';
                 for (let email of customeremails[customer]) {
-                    if (emailsEnterd != '')
-                        emailsEnterd += ', ';
-                    emailsEnterd += email.email;
+                    if (emailsEntered != '')
+                        emailsEntered += ', ';
+                    emailsEntered += email.email;
+                    emailsEnteredLines += email.email + '<br>';
                 }
                 emailsDOM += '<tr>' +
                     '<td>' + customers[customer].abbreviation + '</td>' +
                     '<td>' + 
-                        '<span class="btn_customeremails">' + (emailsEnterd == "" ?"-" :emailsEnterd) + '</span>' +
+                        '<span id="customeremailsEnteredLines">' + (emailsEnteredLines == "" ?"-" :emailsEnteredLines) + '</span>' +
                         '<div id="customeremailsfield" style="display:none; padding-top:5px">' +
                             '<div class="dualinp inpCol">' +
-                                '<input id="customeremailsInput" type="text" class="longInp basic-data" value="' + emailsEnterd + '">' +
+                                '<input id="customeremailsInput" type="text" class="longInp basic-data" value="' + emailsEntered + '">' +
                             '</div>' +
                             '<div style="float:right">' +
                                 '<span class="whiteMark btn_save_emails pointer" data-customer="' + customers[customer].id + '">Speichern</span>' +
                                 '<span class="whiteMark btn_closeCustomerEmails pointer">Abbrechen</span>' +
                             '</div>' +
                         '</div>' +
-                        //'<td>' + emailsEnterd + '</td>' +
-                    '</td>';
+                    '</td>' +
+                    '<td>' +
+                        '<a href="#" class="editIcon btn_customeremails"><img src="assets/img/edit.svg" alt=""></a>' +
+                        '<a href="https://typo3.homeinfo.de/ddb-report?customer=' + customers[customer].id + '" target="_blank" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a>' +
+                    '</td>' +
                 '</tr>';
             }
             $('#customerEmails').html(emailsDOM);
@@ -42,26 +47,29 @@ $(document).ready(function() {
 });
 function setButtons() {
     $('.btn_customeremails').click(function(e) {
-        if ($(this).parent().find("#customeremailsfield").is(":visible"))
-            $(this).parent().find("#customeremailsfield").hide();
+        if ($(this).parent().parent().find("#customeremailsfield").is(":visible"))
+            $(this).parent().parent().find("#customeremailsfield").hide();
         else
-            $(this).parent().find("#customeremailsfield").show();
-        $(this).parent().find('#customeremailsInput').focus();
+            $(this).parent().parent().find("#customeremailsfield").show();
+        $(this).parent().parent().find('#customeremailsInput').focus();
         e.preventDefault();
     });
     $('.btn_closeCustomerEmails').click(function(e) {
-        $(this).parent().parent().parent().find('.btn_customeremails').click();
+        $(this).parent().parent().parent().parent().find('.btn_customeremails').click();
         e.preventDefault();
     });
     $('.btn_save_emails').click(function(e) {
             let emails = [];
-            let emailsEntered = $(this).parent().parent().find('#customeremailsInput').val().replace(/\s+/, "").replaceAll(/;+/g,',').replaceAll(/,+/g,',').split(',');
+            let emailsEntered = $(this).parent().parent().parent().find('#customeremailsInput').val().replace(/\s+/, "").replaceAll(/;+/g,',').replaceAll(/,+/g,',').split(',');
+            let emailsEnteredLines = '';
             if (emailsEntered != '') {
-                for (let email of emailsEntered)
+                for (let email of emailsEntered) {
                     emails.push({'email':email.trim()});
+                    emailsEnteredLines += email + '<br>';
+                }
             }
             saveCustomerEmails($(this).data('customer'), emails).then(() => {
-                $(this).parent().parent().parent().find('.btn_customeremails').text((emailsEnterd == "" ?"-" :emailsEnterd));
+                $(this).parent().parent().parent().find('#customeremailsEnteredLines').html((emailsEnteredLines == "" ?"-" :emailsEnteredLines));
                 $(this).parent().parent().parent().find("#customeremailsfield").hide();
                 $("#pageloader").hide()
             });

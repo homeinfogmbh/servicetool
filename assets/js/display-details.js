@@ -982,7 +982,6 @@ function noice() {
         type: "POST",
         data: JSON.stringify({'system': _id}),
         contentType: 'application/json',
-        success: function (data) {  },
         error: function (msg) {
             setErrorMessage(msg, "Piepen des Systems");
         }
@@ -995,7 +994,6 @@ function restart() {
         type: "POST",
         data: JSON.stringify({'system': _id}),
         contentType: 'application/json',
-        success: function (data) {  },
         error: function (msg) {
             setErrorMessage(msg, "Neustarten des Systems");
         }
@@ -1008,7 +1006,6 @@ function restartDDBOS() {
         type: "POST",
         data: JSON.stringify({'system': _id}),
         contentType: 'application/json',
-        success: function (data) {  },
         error: function (msg) {
             setErrorMessage(msg, "Neustarten des Browsers");
         }
@@ -1021,7 +1018,6 @@ function setFit() {
         type: "POST",
         data: JSON.stringify({'system': _id, 'fitted': $('input[name=Verbaut]:checked').val() !== 'on'}),
         contentType: 'application/json',
-        success: function (data) {  },
         error: function (msg) {
             setErrorMessage(msg, 'Systems als "verbaut" zu markieren');
         }
@@ -1043,7 +1039,6 @@ function setPublicTransport(address) {
         type: "POST",
         data: JSON.stringify(address),
         contentType: 'application/json',
-        success: function (msg) {   },
         error: function (msg) {
             setErrorMessage(msg, "Durchführen der ÖPNV-Änderung");
         }
@@ -1060,8 +1055,6 @@ function changeDeployment(key, value) {
 		cache: false,
 		contentType: 'application/json',
 		data: JSON.stringify(deployment),
-		success: function (data) {
-		},
 		error: function (msg) {
 			setErrorMessage(msg, "Ändern eines Deployments");
 		}
@@ -1076,8 +1069,6 @@ function changeSerialNumber(serialNumber) {
 		type: "POST",
         data: JSON.stringify(data),
         contentType: 'application/json',
-		success: function (data) {
-		},
 		error: function (msg) {
 			setErrorMessage(msg, "Ändern eines Deployments");
 		}
@@ -1092,9 +1083,6 @@ function changedisplayurl(displayurl) {
 		type: "POST",
         data: JSON.stringify(data),
         contentType: 'application/json',
-		success: function (data) {
-            console.log(data)
-		},
 		error: function (msg) {
 			setErrorMessage(msg, "Ändern der URL");
 		}

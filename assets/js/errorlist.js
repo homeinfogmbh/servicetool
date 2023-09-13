@@ -6,6 +6,7 @@ var _operatingSystemsShorts = {"Arch Linux":"Arch", "Windows XP Embedded":"XPe",
 var _showVersion = false;
 var _imagesLoaded = {'simultaneous':5, 'started':0, 'finished':0, 'systemsToCheck':[]};
 var _customerOfflineList = [];
+var _systemsCountByCustomer = [];
 $(document).ready(function() {
     _type = _commonChecks.hasOwnProperty(getURLParameterByName('type')) ?getURLParameterByName('type') :'system';
     _customer = getURLParameterByName('customer');
@@ -21,6 +22,9 @@ $(document).ready(function() {
                 let found;
                 for (let system of systems) {
                     if (system.hasOwnProperty("deployment")) {
+                        if (!_systemsCountByCustomer.hasOwnProperty(system.deployment.customer.id))
+                            _systemsCountByCustomer[system.deployment.customer.id] = {"count":0};
+                        _systemsCountByCustomer[system.deployment.customer.id].count++;
                         found = false;
                         for (let checkedSystem of _commonChecks.system.systems) {
                             if (system.id === checkedSystem.id) {
@@ -91,7 +95,6 @@ $(document).ready(function() {
 function setList(sort = "sortcustomer") {
     sortCommonList(sort);
     let systemlistDOM = "";
-    let customerlistDOM = "";
     let address;
     let addressComplete;
     let counter = 0;
@@ -102,6 +105,7 @@ function setList(sort = "sortcustomer") {
     let downloadAvailable;
     let uploadAvailable;
     let noCheckStyle;
+    let customerofflinelistset = _customerOfflineList.length == 0;
     for (let check of _commonChecks[_type].systems) {
         addressComplete = check.deployment.hasOwnProperty("address") ?check.deployment.address.street + " " + check.deployment.address.houseNumber + ", " + check.deployment.address.zipCode + " " + check.deployment.address.city :'Nicht angegeben';
         if (_customer == null || _customer == check.deployment.customer.id) {
@@ -146,30 +150,31 @@ function setList(sort = "sortcustomer") {
                     '<td><span class="screenshot" data-id="' + check.id + '"></span></td>' +
                 '</tr>';
                 counter++;
-                if (_type == "offline") {
-                    if (!_customerOfflineList.hasOwnProperty(check.deployment.customer.id))
-                        _customerOfflineList[check.deployment.customer.id] = {"offline":0, "name":check.deployment.customer.company.name};
-                    _customerOfflineList[check.deployment.customer.id].offline++;
+                if (_type == "offline" && customerofflinelistset && check.deployment.customer.id != -1) {
+                    let foundItem = -1;
+                    for (let item in _customerOfflineList) {
+                        if (_customerOfflineList[item].customer == check.deployment.customer.id) {
+                            foundItem = item;
+                            break;
+                        }
+                    }
+                    if (foundItem == -1) {
+                        foundItem = _customerOfflineList.length;
+                        _customerOfflineList.push({"customer":check.deployment.customer.id, "offline":0, "name":check.deployment.customer.company.name, "countAll": _systemsCountByCustomer[check.deployment.customer.id].count});
+                    }
+                    _customerOfflineList[foundItem].offline++;
                 }
-                
             }
         }
     }
+
     systemlistDOM = systemlistDOM === "" ?"<tr><td>Keine Einträge vorhanden</td></tr>" :systemlistDOM;
     $("#systemlist").html(systemlistDOM);
 
-    if (_type == "offline") {
-        for (let customer in _customerOfflineList) {
-            customerlistDOM += "<tr>" +
-            "<td>" + customer + "</td>" +
-            "<td>" + _customerOfflineList[customer].name + "</td>" +
-            "<td>" + _customerOfflineList[customer].offline + "</td>" +
-            "</tr>";
-        }
-        customerlistDOM = customerlistDOM === "" ?"<tr><td>Keine Einträge vorhanden</td></tr>" :customerlistDOM;
-        $("#customerofflinelist").html(customerlistDOM);
-        $("#offlinecustomertable").show();
-    }
+    if (_type == "offline" && $('#searchfield').val().length === 0)
+        setCustomerOfflineList();
+    else
+        $("#offlinecustomertable").hide();
     
     $('.btn_technicianAnnotation').click(function(e) {
         if ($(this).parent().find("#technicianAnnotationfields").is(":visible"))
@@ -200,6 +205,22 @@ function setList(sort = "sortcustomer") {
 	});
     $(".dashTopLeft").html('<h2>' + (_customer == null?_commonChecks[_type].title :'Displays für ' + abbreviation) + ' (' + counter + ')</h2><p>' + (_customer == null ?_commonChecks[_type].text :'Liste aller Displays für ' +  name + ' (' + _customer + ')') + '</p>');
     $("#pageloader").hide();
+}
+
+function setCustomerOfflineList() {
+    let customerlistDOM = "";
+    for (let customer in _customerOfflineList) {
+        customerlistDOM += "<tr>" +
+            "<td>" + _customerOfflineList[customer].customer + "</td>" +
+            "<td>" + _customerOfflineList[customer].name + "</td>" +
+            "<td>" + _customerOfflineList[customer].countAll + "</td>" +
+            "<td>" + _customerOfflineList[customer].offline + "</td>" +
+            '<td><a href="listenansicht.html?customer=' + customer + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>'+
+        "</tr>";
+    }
+    customerlistDOM = customerlistDOM === "" ?"<tr><td>Keine Einträge vorhanden</td></tr>" :customerlistDOM;
+    $("#customerofflinelist").html(customerlistDOM);
+    $("#offlinecustomertable").show();
 }
 
 function sortCommonList(sort) {
@@ -334,6 +355,46 @@ function sortCommonList(sort) {
             if (!downloadAvailableA)
                 return -1;
             return downloadNOTOKB ?-1 :downloadNOTOKA ?1 :0;
+        });
+    } else if (_lastsort === "sortannotation") {
+        _commonChecks[_type].systems.sort(function(a, b) {
+            return !b.deployment.hasOwnProperty("technicianAnnotation") ?-1 :!a.deployment.hasOwnProperty("technicianAnnotation") ?1 :compareInverted(a.deployment.technicianAnnotation, b.deployment.technicianAnnotation);
+        });
+    } else if (_lastsort === "sortannotationInverted") {
+            _commonChecks[_type].systems.sort(function(a, b) {
+                return !a.deployment.hasOwnProperty("technicianAnnotation") ?-1 :!b.deployment.hasOwnProperty("technicianAnnotation") ?1 :compare(a.deployment.technicianAnnotation, b.deployment.technicianAnnotation);
+        });
+    } else if (_lastsort == "offlinecustomersortid") {
+        _customerOfflineList.sort(function(a, b) {
+            return compare(a.customer, b.customer);
+        });
+    } else if (_lastsort == "offlinecustomersortidInverted") {
+        _customerOfflineList.sort(function(a, b) {
+            return compareInverted(a.customer, b.customer);
+        });
+    } else if (_lastsort == "offlinecustomersortcustomer") {
+        _customerOfflineList.sort(function(a, b) {
+            return compare(a.name, b.name);
+        });
+    } else if (_lastsort == "offlinecustomersortcustomerInverted") {
+        _customerOfflineList.sort(function(a, b) {
+            return compareInverted(a.name, b.name);
+        });
+    } else if (_lastsort == "offlinecustomersortoffline") {
+        _customerOfflineList.sort(function(a, b) {
+            return compare(a.offline, b.offline);
+        });
+    } else if (_lastsort == "offlinecustomersortofflineInverted") {
+        _customerOfflineList.sort(function(a, b) {
+            return compareInverted(a.offline, b.offline);
+        });
+    } else if (_lastsort == "offlinecustomersortalloffline") {
+        _customerOfflineList.sort(function(a, b) {
+            return compare(a.countAll, b.countAll);
+        });
+    } else if (_lastsort == "offlinecustomersortallofflineInverted") {
+        _customerOfflineList.sort(function(a, b) {
+            return compareInverted(a.countAll, b.countAll);
         });
     }
 }

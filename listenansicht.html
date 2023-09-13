@@ -66,9 +66,11 @@
 									<table class="table" id="offlinecustomertable" style="display:none">
 										<thead>
 											<tr>
-												<th style="width:100px">Kundennummer</th>
-												<th>Kunde</th>
-												<th>Anzahl Offlinesysteme</th>
+												<th style="width:100px"><span class="sortCustomer pointer" data-id="offlinecustomersortid" style="text-decoration:underline">Kundennummer</span></th>
+												<th><span class="sortCustomer pointer" data-id="offlinecustomersortcustomer" style="text-decoration:underline">Kunde</span></th>
+												<th><span class="sortCustomer pointer" data-id="offlinecustomersortalloffline" style="text-decoration:underline">Systeme gesamt</span></th>
+												<th><span class="sortCustomer pointer" data-id="offlinecustomersortoffline" style="text-decoration:underline">Anzahl Offlinesysteme</span></th>
+												<th style="min-width:40px"></th>
 											</tr>
 										</thead>
 										<tbody id="customerofflinelist"></tbody>
@@ -85,7 +87,7 @@
 												<th class="sortCustomer pointer" data-id="sortappuptodate" style="text-decoration:underline">App Version</th>
 												<th class="sortCustomer pointer" data-id="sortsync" style="text-decoration:underline">Inhalte übertagen am</th>
 												<th class="sortCustomer pointer" data-id="sortdownupload" style="text-decoration:underline">Bandbreite Download/Upload</th>
-												<th>Bemerkung</th>
+												<th class="sortCustomer pointer" data-id="sortannotation" style="text-decoration:underline">Bemerkung</th>
 												<th></th>
 												<th style="min-width:30px"></th>
 												<th style="min-width:40px"></th>
