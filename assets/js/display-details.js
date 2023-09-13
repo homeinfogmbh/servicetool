@@ -280,6 +280,7 @@ function setDetails(data) {
         $("#publicTransportAddress").html('<span title="' + lptAddress + '">' + lptAddress.substring(0, 18) + (lptAddress > 18 ? '...' :'') + '</span>');
         $("#deploymentID").text(_display.deployment.id);
         $("#annotation").html(_display.deployment.hasOwnProperty("annotation") ?"<span title='" + _display.deployment.annotation + "'>" + _display.deployment.annotation.substring(0, 20) + (_display.deployment.annotation.length > 20 ? '...' :'') + "</span>" :"-");
+        
         $("#displayurl").html('<span>' + (_display.deployment.hasOwnProperty('url') ?_display.deployment.url :"-") + '</span>');
         let technicianAnnotation = '<td>' + 
             '<span class="btn_technicianAnnotation">' + (_display.deployment.hasOwnProperty('technicianAnnotation') ?_display.deployment.technicianAnnotation :"..") + '</span>' +
@@ -540,7 +541,15 @@ function setButtons() {
         });
         $('.btn_savedisplayurl').click(function(e) {
             if (_display !== null) { 
-                let displayurl = $("#displayurlInput").val().trim() === "" ?null :$("#displayurlInput").val();
+                let displayurl;
+                let rotationparameter = "";
+                let input = $("#displayurlInput").val().replace("?rotation=90", "").replace("?rotation=270", "").replace("&rotation=270", "").replace("&rotation=270", "");
+                if ($('#rotation :selected').val() != 0)
+                    rotationparameter = (input.indexOf("?") == -1 ?"?" :"&") + "rotation=" + $('#rotation :selected').val();
+                if (input.trim() === "")
+                    displayurl = null;
+                else
+                    displayurl = input + rotationparameter;
                 changedisplayurl(displayurl).then((data) => {
                     $("#displayurl").text(displayurl === null ?"-" :displayurl);
                     $("#displayurlfields").hide();
@@ -554,6 +563,9 @@ function setButtons() {
                         confirmButtonText: 'O.K.',
                         buttonsStyling: true
                     });
+                }, () => {
+                    $("#displayurl").text(displayurl === null ?"-" :displayurl);
+                    $("#displayurlfields").hide();
                 });
             }
             e.preventDefault();
@@ -623,10 +635,19 @@ function setButtons() {
             if (_display.deployment.hasOwnProperty("url"))
                 window.open(_display.deployment.url, '_blank');
         });
+        $('#rotation').on('change', function() {
+            $("#displayurlInput").val($("#displayurl").text() === "-" ?"" :$("#displayurl").text());
+            $('.btn_savedisplayurl').click();
+        });
         $('#noiceLine').show();
         $('#restartLine').show();
         $('#restartDDBOSLine').show();
         $('#screenshotLine').show();
+        if (_display.deployment.hasOwnProperty('url') && _display.deployment.url.toLowerCase().indexOf("rotation=90") != -1)
+            $('#rotation').val(90);
+        else if (_display.deployment.hasOwnProperty('url') && _display.deployment.url.toLowerCase().indexOf("rotation=270") != -1)
+            $('#rotation').val(270);
+        $('#rotationLine').show();
     } else if (_display.operatingSystem === "Arch Linux") {
         $('.btn_noice').click(function(e) {
             noice().then(()=>{
@@ -1084,7 +1105,7 @@ function changedisplayurl(displayurl) {
         data: JSON.stringify(data),
         contentType: 'application/json',
 		error: function (msg) {
-			setErrorMessage(msg, "Ändern der URL");
+			setErrorMessage(msg, "Senden der URL");
 		}
 	});   
 }
