@@ -982,7 +982,7 @@ function setDeployments(id, deployment = null, exclusive = false) {
         contentType: 'application/json',
         success: function (data) {  },
         error: function (msg) {
-            setErrorMessage(msg, "Zuweisen/Lösen des Stanortes");
+            setErrorMessage(msg, "Zuweisen/Lösen des Standortes");
         }
     });
 }

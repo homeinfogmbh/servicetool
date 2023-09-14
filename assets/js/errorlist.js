@@ -216,7 +216,7 @@ function setCustomerOfflineList() {
             "<td>" + _customerOfflineList[customer].name + "</td>" +
             "<td>" + _customerOfflineList[customer].countAll + "</td>" +
             "<td>" + _customerOfflineList[customer].offline + "</td>" +
-            '<td><a href="listenansicht.html?customer=' + customer + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>'+
+            '<td><a href="listenansicht.html?customer=' + _customerOfflineList[customer].customer + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>'+
         "</tr>";
     }
     customerlistDOM = customerlistDOM === "" ?"<tr><td>Keine Einträge vorhanden</td></tr>" :customerlistDOM;
@@ -365,6 +365,14 @@ function sortCommonList(sort) {
             _commonChecks[_type].systems.sort(function(a, b) {
                 return !a.deployment.hasOwnProperty("technicianAnnotation") ?-1 :!b.deployment.hasOwnProperty("technicianAnnotation") ?1 :compare(a.deployment.technicianAnnotation, b.deployment.technicianAnnotation);
         });
+    } else if (_lastsort == "sortddbos") {
+        _commonChecks[_type].systems.sort(function(a, b) {
+            return a.ddbOs ?-1 :b.ddbOs ?1 :0
+        });
+    } else if (_lastsort == "sortddbosInverted") {
+        _commonChecks[_type].systems.sort(function(a, b) {
+            return b.ddbOs ?-1 :a.ddbOs ?1 :0
+        });        
     } else if (_lastsort == "offlinecustomersortid") {
         _customerOfflineList.sort(function(a, b) {
             return compare(a.customer, b.customer);

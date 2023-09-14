@@ -3,11 +3,11 @@ const THREE_MONTHS = 3 * 30 * 24; // Hours
 const _KIBIBITTOMBIT = 1024/1000/1000;
 var _coffin = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#fff" d="M8,22L5,8L8,2H16L19,8L16,22H8M11,6V8H9V10H11V15H13V10H15V8H13V6H11Z" /></svg>';
 var _commonChecks = {"offline":{"title":"Offline", "text":"Liste der Geräte die offline gemessen wurden und dessen Daten älter als 24h sind", "systems":[], "widget":true, "list":false},
-	"offlineThreeMonth":{"title":"Lange offline", "text":"Liste der Geräte die länger als 3 Monate offline sind und dessen Daten älter als 24h sind", "systems":[], "widget":true, "list":false, "widget":true, "list":false},
+	"offlineThreeMonth":{"title":"Lange offline", "text":"Liste der Geräte die länger als 3 Monate offline sind und dessen Daten älter als 24h sind", "systems":[], "widget":false, "list":true},
 	"noDeployment":{"title":"Systeme ohne Zuordnung", "text":"Liste der Geräte die keine Zuordnung besitzen", "systems":[], "widget":false, "list":true},
 	"ssd":{"title":"SSD Karten Fehler", "text":"Liste der Geräte die einen SSD-Karten-Fehler aufweisen", "systems":[], "widget":true, "list":false},
-	"noActualData":{"title":"Keine aktuellen Daten", "text":"Liste der Geräte die keine aktuellen Daten besitzen", "systems":[], "widget":false, "list":true},
-	"blackscreen":{"title":"Im Schwarzbild-Modus", "text":"Liste der Geräte die schwarz geschaltet sind bzw. die App nicht läuft", "systems":[], "widget":false, "list":true},
+	"noActualData":{"title":"Keine aktuellen Daten", "text":"Liste der Geräte die keine aktuellen Daten besitzen", "systems":[], "widget":true, "list":true},
+	"blackscreen":{"title":"Im Schwarzbild-Modus", "text":"Liste der Geräte die schwarz geschaltet sind bzw. die App nicht läuft", "systems":[], "widget":true, "list":true},
 	"ramfree":{"title":"Geringer verfügbarer Speicher", "text":"Liste der Geräte die weniger als 1/4 des Speichers freihaben", "systems":[], "widget":false, "list":true},
 	"ram":{"title":"Zu wenig RAM verbaut", "text":"Liste der Geräte die wenige als 2 GB RAM aufweisen", "systems":[], "widget":false, "list":true},
  	"notfitted":{"title":"Nicht verbaute Displays", "text":"Liste der Geräte die nicht verbaut sind", "systems":[], "widget":false, "list":true},
