@@ -32,9 +32,11 @@ $(document).ready(function() {
                             '</div>' +
                         '</div>' +
                     '</td>' +
-                    '<td>' +
+                    '<td style="min-width:50px">' +
                         '<a href="#" class="editIcon btn_customeremails"><img src="assets/img/edit.svg" alt=""></a>' +
-                        '<a href="https://typo3.homeinfo.de/ddb-report?customer=' + customers[customer].id + '" target="_blank" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a>' +
+                    '</td>' +
+                    '<td style="min-width:50px">' +
+                        '<a href="https://typo3.homeinfo.de/ddb-report?customer=' + customers[customer].id + '" target="_blank"><img src="assets/img/eye.svg" alt="huntinglink"></a>' +
                     '</td>' +
                 '</tr>';
             }

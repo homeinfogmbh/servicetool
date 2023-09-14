@@ -376,11 +376,12 @@ function getSystems() {
         }
     });
 }
-function setErrorMessage(msg, fromFunction) {
+function setErrorMessage(msg, fromFunction, title = "Das hat nicht geklappt") {
 	try {
-		let title = "Das hat nicht geklappt";
 		let message = "Leider ist ein Fehler beim " + fromFunction + " aufgetreten.";
-		if (msg.responseText.indexOf("Sysinfo unsupported on this system.") !== -1) {
+		if (msg)
+			message = fromFunction;
+		else if (msg.responseText.indexOf("Sysinfo unsupported on this system.") !== -1) {
 			title = "Systeminfos können nicht geladen werden";
 			message = "Das System wird nicht unterstützt."
 		} else if (msg.responseText.indexOf("System is offline.") !== -1)

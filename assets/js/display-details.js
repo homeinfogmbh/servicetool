@@ -636,8 +636,11 @@ function setButtons() {
                 window.open(_display.deployment.url, '_blank');
         });
         $('#rotation').on('change', function() {
-            $("#displayurlInput").val($("#displayurl").text() === "-" ?"" :$("#displayurl").text());
-            $('.btn_savedisplayurl').click();
+            if ($("#displayurl").text() != "-") {
+                $("#displayurlInput").val($("#displayurl").text());
+                $('.btn_savedisplayurl').click();
+            } else
+                setErrorMessage(true, "Die Rotation wird über die URL gesendet. Von daher muss eine URL unter 'Displayübersicht' hinterlegt werden.", "URL-Feld nicht ausgefüllt");
         });
         $('#noiceLine').show();
         $('#restartLine').show();
