@@ -105,6 +105,7 @@ function setList(sort = "sortcustomer") {
     let downloadAvailable;
     let uploadAvailable;
     let noCheckStyle;
+    let customerOfflineListTMP = {};
     let customerofflinelistset = _customerOfflineList.length == 0;
     for (let check of _commonChecks[_type].systems) {
         addressComplete = check.deployment.hasOwnProperty("address") ?check.deployment.address.street + " " + check.deployment.address.houseNumber + ", " + check.deployment.address.zipCode + " " + check.deployment.address.city :'Nicht angegeben';
@@ -152,22 +153,16 @@ function setList(sort = "sortcustomer") {
                 '</tr>';
                 counter++;
                 if (_type == "offline" && customerofflinelistset && check.deployment.customer.id != -1) {
-                    let foundItem = -1;
-                    for (let item in _customerOfflineList) {
-                        if (_customerOfflineList[item].customer == check.deployment.customer.id) {
-                            foundItem = item;
-                            break;
-                        }
-                    }
-                    if (foundItem == -1) {
-                        foundItem = _customerOfflineList.length;
-                        _customerOfflineList.push({"customer":check.deployment.customer.id, "offline":0, "name":check.deployment.customer.company.name, "countAll": _systemsCountByCustomer[check.deployment.customer.id].count});
-                    }
-                    _customerOfflineList[foundItem].offline++;
+                    if (customerOfflineListTMP.hasOwnProperty(check.deployment.customer.id))
+                        customerOfflineListTMP[check.deployment.customer.id].offline++;
+                    else
+                        customerOfflineListTMP[check.deployment.customer.id] = {"customer":check.deployment.customer.id, "offline":1, "name":check.deployment.customer.company.name, "countAll": _systemsCountByCustomer[check.deployment.customer.id].count};
                 }
             }
         }
     }
+    for (let customer in customerOfflineListTMP)
+        _customerOfflineList.push(customerOfflineListTMP[customer]);
 
     systemlistDOM = systemlistDOM === "" ?"<tr><td>Keine Einträge vorhanden</td></tr>" :systemlistDOM;
     $("#systemlist").html(systemlistDOM);

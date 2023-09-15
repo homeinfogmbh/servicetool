@@ -150,7 +150,7 @@ function loadMenuData() {
             for (let customer in customerList)
                 sortedList.push(customerList[customer]);
                 sortedList.sort(function(a, b) {
-                return compare(a.name.toLowerCase(), b.name.toLowerCase());
+                    return compare(a.name.toLowerCase(), b.name.toLowerCase());
             });
             setCustomerListWithTerminals(sortedList);
         });

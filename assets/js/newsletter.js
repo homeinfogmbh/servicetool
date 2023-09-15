@@ -1,6 +1,16 @@
 
 $(document).ready(function() {
     getCustomers().then((customers) => {
+        let customerList = {};
+        for (let system of customers) {
+            if (system.hasOwnProperty("deployment")) {
+                if (!customerList.hasOwnProperty(system.deployment.customer.id))
+                    customerList[system.deployment.customer.id] = system.deployment.customer;
+            }
+        }
+        customers = [];
+        for (let customer in customerList)
+            customers.push(customerList[customer]);
         customers.sort(function(a, b) {
             return compareStrings(a.company.name, b.company.name);
         });
@@ -93,11 +103,13 @@ function saveCustomerEmails(customer, emails) {
 }
 
 function getCustomers() {
+    return Promise.resolve(getSystems());
     return $.ajax({
         url: "https://his.homeinfo.de/customer",
         type: "GET",
     });
 }
+
 
 function getEmails(customerid) {
 	return $.ajax({
