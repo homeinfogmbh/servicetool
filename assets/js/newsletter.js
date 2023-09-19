@@ -7,7 +7,7 @@ $(document).ready(function() {
         let date = new Date(_newsletter[0].period);
         date.setMonth(date.getMonth()+1);
         let period = date.getFullYear() + "-" + (date.getMonth()+1 < 10 ?"0"+date.getMonth()+1 :date.getMonth()+1) + "-" + (date.getDate() < 10 ?"0"+date.getDate() :date.getDate());
-        _newsletter.unshift({"id":-1, "subject":_newsletter[0].subject, "text":_newsletter[0].text, "visible":0, "period":period});
+        _newsletter.unshift({"id":-1, "subject":_newsletter[0].subject, "text":_newsletter[0].text, "visible":false, "period":period});
         setNewsletter();
         $(".btn_newsletter").eq(0).click();
 		e.preventDefault();
@@ -24,7 +24,7 @@ function setNewsletter(newsletters) {
     for (let newsletter of _newsletter) {
         date = new Date(newsletter.period);
         newsletterDOM += '<div class="tableBox BeobachtTable">' +
-            '<h3 style="color:' + (newsletter.visible ?"" :"#ff821d") + '"><u><i>' + _MONTHS[date.getMonth()] + ' ' + date.getFullYear() + '</i></u>' +
+            '<h3 style="color:' + (newsletter.visible == "true" ?"" :"#ff821d") + '"><u><i>' + _MONTHS[date.getMonth()] + ' ' + date.getFullYear() + '</i></u>' +
                 ' <a href="#" class="editIcon btn_newsletter" title="Newsletter bearbeiten"><img src="assets/img/edit.svg" alt=""></a>' +
             '</h3>' +
             '<div id="newslettersaveclose" style="float:right; display:none">' +
@@ -34,8 +34,8 @@ function setNewsletter(newsletters) {
             
             '<div id="newslettervisibleselect" class="select" style="display:none">' +
                 '<select name="visible" id="visible" class="basic-data">' +
-                    '<option value="0" ' + (newsletter.visible == 0?'selected' :'') + '>nicht aktiv</option>' +
-                    '<option value="1" ' + (newsletter.visible == 1?'selected' :'') + '>aktiv</option>' +
+                    '<option value="false" ' + (newsletter.visible == "false" ?'selected' :'') + '>nicht aktiv</option>' +
+                    '<option value="true" ' + (newsletter.visible == "true" ?'selected' :'') + '>aktiv</option>' +
                 '</select>' +
                 '<span class="selectArrow"></span>' +
             '</div><br>' +
