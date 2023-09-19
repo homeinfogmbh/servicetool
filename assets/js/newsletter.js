@@ -24,7 +24,7 @@ function setNewsletter(newsletters) {
     for (let newsletter of _newsletter) {
         date = new Date(newsletter.period);
         newsletterDOM += '<div class="tableBox BeobachtTable">' +
-            '<h3 style="color:' + (newsletter.visible ?"" :"ff821d") + '"><u><i>' + _MONTHS[date.getMonth()] + ' ' + date.getFullYear() + '</i></u>' +
+            '<h3 style="color:' + (newsletter.visible ?"" :"#ff821d") + '"><u><i>' + _MONTHS[date.getMonth()] + ' ' + date.getFullYear() + '</i></u>' +
                 ' <a href="#" class="editIcon btn_newsletter" title="Newsletter bearbeiten"><img src="assets/img/edit.svg" alt=""></a>' +
             '</h3>' +
             '<div id="newslettersaveclose" style="float:right; display:none">' +
