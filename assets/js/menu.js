@@ -225,7 +225,8 @@ function checkSysmon() {
         type: "GET",
         cache: false,
         error: function (msg) {
-            setErrorMessage(msg, "Laden von Sysmon");
+            console.log(msg)
+            //setErrorMessage(msg, "Laden von Sysmon");
         }
     });
 }
