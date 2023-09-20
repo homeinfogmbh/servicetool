@@ -36,8 +36,14 @@ $(document).ready(function() {
                         '<input id="menusearch" type="search" placeholder="System suchen...">' +
                     '</form>' +
                 '</li>' +
-                '<li class="nav-item">' +
-                    '<a class="nav-link" id="newsletter" href="newsletter.html" onclick="removeopenedlist()">Newsletter</a>' +
+                '<li class="nav-item dropdown">' +
+                    '<a id="newsletter" class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">' +
+                        'Newsletter' +
+                    '</a>' +
+                    '<ul class="dropdown-menu" aria-labelledby="navbarDropdown">' +
+                        '<li><a class="dropdown-item" href="newsletter.html" onclick="removeopenedlist()">Newsletter verwalten</a></li>' +
+                        '<li><a class="dropdown-item" href="recipientlist.html" onclick="removeopenedlist()">Empfängerliste</a></li>' +
+                    '</ul>' +
                 '</li>' +
             '</ul>' +
         '</div>' +
@@ -176,13 +182,13 @@ function loadMenuData() {
 
     if (window.location.pathname.indexOf("dashboard") != -1)
         $("#dash").addClass("active");
-        else if (window.location.pathname.indexOf("chart") != -1)
+    else if (window.location.pathname.indexOf("chart") != -1)
         $("#chart").addClass("active");
     else if (window.location.pathname.indexOf("standorte-zuweisen") != -1)
         $("#standorte-zuweisen").addClass("active");
     else if (window.location.pathname.indexOf("bestelltool") != -1)
         $("#bestelltool").addClass("active");
-    else if (window.location.pathname.indexOf("newsletter") != -1)
+    else if (window.location.pathname.indexOf("newsletter") != -1 || window.location.pathname.indexOf("recipientlist") != -1)
         $("#newsletter").addClass("active");
     
     $('.sendBtn').click(function(e) {
