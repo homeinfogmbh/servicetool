@@ -917,6 +917,9 @@ input[type="checkbox"]:checked + label .checkboxStyle:after {
 .checkboxStyle.whiteCheckbox {
   background: #fff;
 }
+.checkboxStyle.orangeCheckbox {
+  background: #ff821d;
+}
 
 span.checkboxStyle.whiteCheckbox:after {
   background: #038ec9;
@@ -927,6 +930,9 @@ input[type="checkbox"]:checked + label span.checkboxStyle.whiteCheckbox {
 }
 
 input[type="checkbox"]:checked + label span.checkboxStyle.whiteCheckbox:after {
+  background: #fff;
+}
+input[type="checkbox"]:checked + label span.checkboxStyle.orangeCheckbox:after {
   background: #fff;
 }
 
