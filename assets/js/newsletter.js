@@ -28,7 +28,7 @@ function setNewsletter(newsletters) {
         date = new Date(newsletter.period);
         newsletterDOM += '<tr>' +
             '<td>' +
-                _MONTHS[date.getMonth()] + ' (' + date.getFullYear() + ') ' + (newsletter.default ?'<span class="whiteMark">DEFAULT</span>' :"") + '<br>' +
+                _MONTHS[date.getMonth()] + ' (' + date.getFullYear() + ') <br>' +
                 '<span id="newslettersubject" style="font-size:30px;"><b>' + newsletter.subject + '</span></b>' +
                 '<div id="subjectfield" style="display:none">' +
                     '<div class="dualinp inpCol">' +
@@ -139,12 +139,4 @@ function saveNewsletter(id, subject, text, visible, period) {
 			setErrorMessage(msg, "Anlegen/ändern des Newsletters");
 		}
 	});	
-}
-
-function getCustomers() {
-    return Promise.resolve(getSystems());
-    return $.ajax({
-        url: "https://his.homeinfo.de/customer",
-        type: "GET",
-    });
 }

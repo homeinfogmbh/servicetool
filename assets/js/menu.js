@@ -43,6 +43,7 @@ $(document).ready(function() {
                     '<ul class="dropdown-menu" aria-labelledby="navbarDropdown">' +
                         '<li><a class="dropdown-item" href="newsletter.html" onclick="removeopenedlist()">Newsletter verwalten</a></li>' +
                         '<li><a class="dropdown-item" href="recipientlist.html" onclick="removeopenedlist()">Empfängerliste</a></li>' +
+                        '<li><a class="dropdown-item" href="defaultnewsletter.html" onclick="removeopenedlist()">Default Newsletter</a></li>' +
                     '</ul>' +
                 '</li>' +
             '</ul>' +
