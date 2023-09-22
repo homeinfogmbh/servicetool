@@ -48,7 +48,7 @@ function setNewsletter(newsletters) {
                 '</div><br>' +
             '</td>' +
             '<td style="min-width:250px; text-align:right; vertical-align: top;">' +
-                '<span class="whiteMark btn_testNewsletter pointer" title="Verschickt eine E-Mail an diesen Account">Testmailing</span>' +
+                '<span class="whiteMark btn_testNewsletter pointer" data-id="' + newslettercounter + '" title="Verschickt eine E-Mail an diesen Account">Testmailing</span>' +
                 '<a href="#" class="editIcon btn_newsletter" style="padding:0 20px 0 20px" title="Newsletter bearbeiten"><img src="assets/img/edit.svg"></a>' +
                 '<input type="checkbox" style="display:none;" name="newslettervisible" id="newslettervisible' + newslettercounter + '" ' + (newsletter.visible ?"checked" :"") + '>' +
                 '<label for="newslettervisible' + newslettercounter + '"><span class="btn_visible checkboxStyle orangeCheckbox" data-id="' + newslettercounter + '"></span></label>' +
@@ -59,15 +59,24 @@ function setNewsletter(newsletters) {
     $('#newsletterdata').html(newsletterDOM);
 
     $('.btn_testNewsletter').click(function(e) {
-        Swal.fire({
-			title: "Newsletter",
-			text: "Wurde NOCH NICHT verschickt",
-			showCancelButton: false,
-			confirmButtonColor: '#ff821d',
-			iconHtml: '<img src="assets/img/PopUp-Icon.png"></img>',
-			confirmButtonText: 'O.K.',
-			buttonsStyling: true
-		});
+        let newslettertitle = "Newsletter"
+        let newslettertext = 'Der Newsletter: "' + _newsletter[$(this).data("id")].subject + '" (zwei Ansichten, zwei E-Mails) wurde verschickt.';
+        if (!_newsletter[$(this).data("id")].visible) {
+            newslettertitle = "Default-Newsletter"
+            newslettertext = 'Der Default-Newsletter (zwei Ansichten, zwei E-Mails) wurde verschickt, da dieser Newsletter: "' + _newsletter[$(this).data("id")].subject + '" nicht freigegeben wurde.';
+        }
+        sendTestNewsletter(_newsletter[$(this).data("id")].id).then((data) => {
+            $("#pageloader").hide();
+            Swal.fire({
+                title: newslettertitle,
+                text: newslettertext,
+                showCancelButton: false,
+                confirmButtonColor: '#ff821d',
+                iconHtml: '<img src="assets/img/PopUp-Icon.png"></img>',
+                confirmButtonText: 'O.K.',
+                buttonsStyling: true
+            });
+        });
 	});    
     
     $('.btn_newsletter').click(function(e) {
@@ -135,6 +144,16 @@ function saveNewsletter(id, subject, text, visible, period) {
 		type: "POST",
         data: data,
         contentType: 'application/json',
+		error: function (msg) {
+			setErrorMessage(msg, "Anlegen/ändern des Newsletters");
+		}
+	});	
+}
+function sendTestNewsletter(id) {
+    $("#pageloader").show();
+	return $.ajax({
+		url:  "https://sysmon.homeinfo.de/send_test_mails/" + id,
+		type: "POST",
 		error: function (msg) {
 			setErrorMessage(msg, "Anlegen/ändern des Newsletters");
 		}
