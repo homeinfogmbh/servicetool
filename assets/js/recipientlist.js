@@ -122,8 +122,8 @@ function setButtons() {
             let emailsEnteredLines = '';
             if (emailsEntered != '') {
                 for (let email of emailsEntered) {
-                    emails.push({'email':email.trim()});
-                    emailsEnteredLines += email + '<br>';
+                    emails.push({'email':email.toLowerCase().trim()});
+                    emailsEnteredLines += email.toLowerCase() + '<br>';
                 }
             }
             saveCustomerEmails($(this).data('customer'), emails).then(() => {
@@ -144,10 +144,10 @@ function setButtons() {
             for (let email of emailsEntered) {
                 if (email != "") {
                     if (_customerEmails.hasOwnProperty(email)) {
-                        deletedEmails += email + ', '
+                        deletedEmails += email.toLowerCase() + ', '
                     } else {
-                        emailsEnteredLines += email + '<br>';
-                        emails.push({'email':email.trim()});
+                        emailsEnteredLines += email.toLowerCase() + '<br>';
+                        emails.push({'email':email.toLowerCase().trim()});
                     }
                 }
             }
