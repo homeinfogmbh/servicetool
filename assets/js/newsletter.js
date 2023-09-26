@@ -62,8 +62,8 @@ function setNewsletter(newsletters) {
         let newslettertitle = "Newsletter"
         let newslettertext = 'Der Newsletter: "' + _newsletter[$(this).data("id")].subject + '" (zwei Ansichten, zwei E-Mails) wurde verschickt.';
         if (!_newsletter[$(this).data("id")].visible) {
-            newslettertitle = "Default-Newsletter"
-            newslettertext = 'Der Default-Newsletter (zwei Ansichten, zwei E-Mails) wurde verschickt, da dieser Newsletter: "' + _newsletter[$(this).data("id")].subject + '" nicht freigegeben wurde.';
+            newslettertitle = "Newsletter nicht freigegeben."
+            newslettertext = 'Anstelle des angeforderten Newsletters wurde der Standard-Newsletter versendet. Bitte erteilen Sie vor dem Versand die Freigabe für den Newsletter "' + _newsletter[$(this).data("id")].subject + '"';
         }
         sendTestNewsletter(_newsletter[$(this).data("id")].id).then((data) => {
             $("#pageloader").hide();
@@ -135,6 +135,8 @@ function getNewsletter() {
 }
 function saveNewsletter(id, subject, text, visible, period) {
     $("#pageloader").show();
+    subject = subject.split('"').join('\\"').split("'").join("\'");
+    text = text.split('"').join('\\"').split("'").join("\'");
     let data = '{"subject":"' + subject + '","text":"' + text + '","visible":'+ visible + ', "period":"' + period + '"}';
     let url = "https://sysmon.homeinfo.de/patch_newsletter/" + id; 
     if (id == -1)
