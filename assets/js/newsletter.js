@@ -43,7 +43,7 @@ function setNewsletter(newsletters) {
                     '</div>' +
                 '</div>' +
                 '<div id="newslettersaveclose" style="display:none">' +
-                    '<span class="whiteMark btn_saveNewsletter pointer" style="margin:0 20px 0 0" data-period="' + newsletter.period + '" data-id="' + newslettercounter + '">Speichern</span>' +
+                    '<span class="whiteMark btn_saveNewsletter pointer" style="margin:0 20px 0 0" data-id="' + newslettercounter + '">Speichern</span>' +
                     '<span class="whiteMark btn_newsletter pointer">Abbrechen</span>' +
                 '</div><br>' +
             '</td>' +
@@ -109,12 +109,10 @@ function setNewsletter(newsletters) {
         let id = _newsletter[$(this).data("id")].id;
         let subject = $(this).parent().parent().find('#subjectInput').val();
         let text = $(this).parent().parent().find('#newsletterTextInput').val().replace(/\n/g, "<br>");
-        let visible = $(this).parent().parent().find('#visible :selected').val() == "true";
-        let period = $(this).data("period");
+        let visible = _newsletter[$(this).data("id")].visible;
+        let period = _newsletter[$(this).data("id")].period;
         _newsletter[$(this).data("id")].subject = subject;
         _newsletter[$(this).data("id")].text = text;
-        _newsletter[$(this).data("id")].visible = visible;
-        _newsletter[$(this).data("id")].period = period;
         saveNewsletter(id, subject, text, visible, period).then((data) => {
             setNewsletter();
         });
