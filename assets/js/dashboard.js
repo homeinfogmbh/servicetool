@@ -110,7 +110,7 @@ function setWidgets() {
                             blacklistOfflineCounter++;
                     }
                 }
-                let diff = _commonChecks["offline"].systems.length + _commonChecks["noActualData"].systems.length - blacklistOfflineCounter - _systemchecksByDays;
+                let diff = _commonChecks["offline"].systems.length - blacklistOfflineCounter - _systemchecksByDays;
                 if (diff >= 0)
                     subTxt = '<span style="font-size:14px; font-weight:normal">' + Math.abs(diff) + ' mehr als gestern</span>';
                 else if (diff < 0)

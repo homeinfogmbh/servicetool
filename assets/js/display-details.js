@@ -283,7 +283,7 @@ function setDetails(data) {
         
         $("#displayurl").html('<span>' + (_display.deployment.hasOwnProperty('url') ?_display.deployment.url :"-") + '</span>');
         let technicianAnnotation = '<td>' + 
-            '<span class="btn_technicianAnnotation">' + (_display.deployment.hasOwnProperty('technicianAnnotation') ?_display.deployment.technicianAnnotation :"..") + '</span>' +
+            '<span class="btn_technicianAnnotation">' + (_display.deployment.hasOwnProperty('technicianAnnotation') ?_display.deployment.technicianAnnotation + ' <a href="#" class="editIcon"><img src="assets/img/edit.svg" alt=""></a>':'<a href="#" class="editIcon"><img src="assets/img/edit.svg" alt=""></a>') + '</span>' +
             '<div id="technicianAnnotationfields" style="display:none; padding-top:5px">' +
                 '<div class="dualinp inpCol">' +
                     '<textarea id="technicianAnnotationInput" class="technicianAnnotationInput longInp basic-data" style=resize:auto;">' + (_display.deployment.hasOwnProperty('technicianAnnotation') ?_display.deployment.technicianAnnotation :"") + '</textarea>' +
@@ -543,13 +543,15 @@ function setButtons() {
             if (_display !== null) { 
                 let displayurl;
                 let rotationparameter = "";
+                let ddbosparameter = "";
                 let input = $("#displayurlInput").val().replace("?rotation=90", "").replace("?rotation=270", "").replace("&rotation=270", "").replace("&rotation=270", "");
                 if ($('#rotation :selected').val() != 0)
                     rotationparameter = (input.indexOf("?") == -1 ?"?" :"&") + "rotation=" + $('#rotation :selected').val();
+                ddbosparameter = ((input+rotationparameter).indexOf("?") == -1 ?"?" :"&") + "ddbos=true";
                 if (input.trim() === "")
                     displayurl = null;
                 else
-                    displayurl = input + rotationparameter;
+                    displayurl = input + rotationparameter + ddbosparameter;
                 changedisplayurl(displayurl).then((data) => {
                     $("#displayurl").text(displayurl === null ?"-" :displayurl);
                     $("#displayurlfields").hide();
