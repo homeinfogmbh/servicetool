@@ -28,9 +28,10 @@ function setNewsletter(newsletters) {
         date = new Date(newsletter.period);
         newsletterDOM += '<tr>' +
             '<td>' +
-                _MONTHS[date.getMonth()] + ' (' + date.getFullYear() + ') <br>' +
+                '<b>' + _MONTHS[date.getMonth()] + ' (' + date.getFullYear() + ')</b> <br>' +
                 '<span id="newslettersubject" style="font-size:30px;"><b>' + newsletter.subject + '</span></b>' +
                 '<div id="subjectfield" style="display:none">' +
+                    'Betreff<br>' +
                     '<div class="dualinp inpCol">' +
                         '<input id="subjectInput" type="text" class="longInp basic-data" value="' + newsletter.subject + '">' +
                     '</div>' +
@@ -38,10 +39,70 @@ function setNewsletter(newsletters) {
 
                 //'<span id="newslettertext">' + newsletter.text.replaceAll("&lt;","<").replaceAll("&gt;",">") + '</span>' +
                 '<div id="newslettertextfield" style="display:none">' +
+                    'Text<br>' +
                     '<div class="dualinp inpCol">' +
                         '<textarea id="newsletterTextInput" class="longInp basic-data" style=resize:auto;">' + newsletter.text.replaceAll("&lt;","<").replaceAll("&gt;",">").replaceAll("<br>","\n") + '</textarea>' +
                     '</div>' +
                 '</div>' +
+
+                '<div id="newslettermorelinkfield" style="display:none">' +
+                    'Mehr Link<br>' +
+                    '<div class="dualinp inpCol">' +
+                        '<textarea id="newslettermoreLinkInput" class="longInp basic-data" style=resize:auto;">' + newsletter.moreLink.replaceAll("&lt;","<").replaceAll("&gt;",">").replaceAll("<br>","\n") + '</textarea>' +
+                    '</div>' +
+                '</div>' +
+                '<div id="newslettermoretextfield" style="display:none">' +
+                    'Mehr Text<br>' +
+                    '<div class="dualinp inpCol">' +
+                        '<textarea id="newslettermoreTextInput" class="longInp basic-data" style=resize:auto;">' + newsletter.moreText.replaceAll("&lt;","<").replaceAll("&gt;",">").replaceAll("<br>","\n") + '</textarea>' +
+                    '</div>' +
+                '</div>' +
+                '<div id="headerfield" style="display:none">' +
+                    'Mail Header<br>' +
+                    '<div class="dualinp inpCol">' +
+                        '<input id="headerInput" type="text" class="longInp basic-data" value="' + newsletter.header + '">' +
+                    '</div>' +
+                '</div>' +
+
+                '<div id="newsletterlisttext3field" style="display:none">' +
+                    'Listen Text 3<br>' +
+                    '<div class="dualinp inpCol">' +
+                        '<textarea id="newsletterlistText3Input" class="longInp basic-data" style=resize:auto;">' + newsletter.listText3.replaceAll("&lt;","<").replaceAll("&gt;",">").replaceAll("<br>","\n") + '</textarea>' +
+                    '</div>' +
+                '</div>' +
+                '<div id="header3field" style="display:none">' +
+                    'Listen Header 3<br>' +
+                    '<div class="dualinp inpCol">' +
+                        '<input id="header3Input" type="text" class="longInp basic-data" value="' + newsletter.listHeader3 + '">' +
+                    '</div>' +
+                '</div>' +
+
+                '<div id="newsletterlisttext2field" style="display:none">' +
+                    'Listen Text 2<br>' +
+                    '<div class="dualinp inpCol">' +
+                        '<textarea id="newsletterlistText2Input" class="longInp basic-data" style=resize:auto;">' + newsletter.listText2.replaceAll("&lt;","<").replaceAll("&gt;",">").replaceAll("<br>","\n") + '</textarea>' +
+                    '</div>' +
+                '</div>' +
+                '<div id="header2field" style="display:none">' +
+                    'Listen Header 2<br>' +
+                    '<div class="dualinp inpCol">' +
+                        '<input id="header2Input" type="text" class="longInp basic-data" value="' + newsletter.listHeader2 + '">' +
+                    '</div>' +
+                '</div>' +
+
+                '<div id="newsletterlisttext1field" style="display:none">' +
+                    'Listen Text 1<br>' +
+                    '<div class="dualinp inpCol">' +
+                        '<textarea id="newsletterlistText1Input" class="longInp basic-data" style=resize:auto;">' + newsletter.listText1.replaceAll("&lt;","<").replaceAll("&gt;",">").replaceAll("<br>","\n") + '</textarea>' +
+                    '</div>' +
+                '</div>' +
+                '<div id="header1field" style="display:none">' +
+                    'Listen Header 1<br>' +
+                    '<div class="dualinp inpCol">' +
+                        '<input id="header1Input" type="text" class="longInp basic-data" value="' + newsletter.listHeader1 + '">' +
+                    '</div>' +
+                '</div>' +
+                
                 '<div id="newslettersaveclose" style="display:none">' +
                     '<span class="whiteMark btn_saveNewsletter pointer" style="margin:0 20px 0 0" data-id="' + newslettercounter + '">Speichern</span>' +
                     '<span class="whiteMark btn_newsletter pointer">Abbrechen</span>' +
@@ -86,7 +147,16 @@ function setNewsletter(newsletters) {
             $(this).parent().parent().find("#newslettertextfield").hide();
             $(this).parent().parent().find("#newslettersaveclose").hide();
             $(this).parent().parent().find("#newslettersubject").show();
-            //$(this).parent().parent().find("#newslettertext").show();
+            
+            $(this).parent().parent().find("#newslettermorelinkfield").hide();
+            $(this).parent().parent().find("#newslettermoretextfield").hide();
+            $(this).parent().parent().find("#headerfield").hide();
+            $(this).parent().parent().find("#newsletterlisttext3field").hide();
+            $(this).parent().parent().find("#header3field").hide();
+            $(this).parent().parent().find("#newsletterlisttext2field").hide();
+            $(this).parent().parent().find("#header2field").hide();
+            $(this).parent().parent().find("#newsletterlisttext1field").hide();
+            $(this).parent().parent().find("#header1field").hide();
         } else {
             $(this).parent().parent().find("#newslettersubject").hide();
             //$(this).parent().parent().find("#newslettertext").hide();
@@ -94,6 +164,16 @@ function setNewsletter(newsletters) {
             $(this).parent().parent().find("#subjectfield").show();
             $(this).parent().parent().find("#newslettertextfield").show();
             $(this).parent().parent().find("#newslettersaveclose").show();
+
+            $(this).parent().parent().find("#newslettermorelinkfield").show();
+            $(this).parent().parent().find("#newslettermoretextfield").show();
+            $(this).parent().parent().find("#headerfield").show();
+            $(this).parent().parent().find("#newsletterlisttext3field").show();
+            $(this).parent().parent().find("#header3field").show();
+            $(this).parent().parent().find("#newsletterlisttext2field").show();
+            $(this).parent().parent().find("#header2field").show();
+            $(this).parent().parent().find("#newsletterlisttext1field").show();
+            $(this).parent().parent().find("#header1field").show();
         }
 		e.preventDefault();
 	});
@@ -111,9 +191,29 @@ function setNewsletter(newsletters) {
         let text = $(this).parent().parent().find('#newsletterTextInput').val().replace(/\n/g, "<br>");
         let visible = _newsletter[$(this).data("id")].visible;
         let period = _newsletter[$(this).data("id")].period;
+        let moreLink = $(this).parent().parent().find('#newslettermoreLinkInput').val().replace(/\n/g, "<br>");
+        let moreText = $(this).parent().parent().find('#newslettermoreTextInput').val().replace(/\n/g, "<br>");
+        let header = $(this).parent().parent().find('#headerInput').val();
+        let listHeader1 = $(this).parent().parent().find('#header1Input').val();
+        let listHeader2 = $(this).parent().parent().find('#header2Input').val();
+        let listHeader3 = $(this).parent().parent().find('#header3Input').val();
+        let listText1 = $(this).parent().parent().find('#newsletterlistText1Input').val().replace(/\n/g, "<br>");
+        let listText2 = $(this).parent().parent().find('#newsletterlistText2Input').val().replace(/\n/g, "<br>");
+        let listText3 = $(this).parent().parent().find('#newsletterlistText3Input').val().replace(/\n/g, "<br>");
+
         _newsletter[$(this).data("id")].subject = subject;
         _newsletter[$(this).data("id")].text = text;
-        saveNewsletter(id, subject, text, visible, period).then((data) => {
+        _newsletter[$(this).data("id")].moreLink = moreLink;
+        _newsletter[$(this).data("id")].moreText = moreText;
+        _newsletter[$(this).data("id")].header = header;
+        _newsletter[$(this).data("id")].listHeader1 = listHeader1;
+        _newsletter[$(this).data("id")].listHeader2 = listHeader2;
+        _newsletter[$(this).data("id")].listHeader3 = listHeader3;
+        _newsletter[$(this).data("id")].listText1 = listText1;
+        _newsletter[$(this).data("id")].listText2 = listText2;
+        _newsletter[$(this).data("id")].listText3 = listText3;
+
+        saveNewsletter(id, subject, text, visible, period, moreLink, moreText, header, listHeader1, listHeader2, listHeader3, listText1, listText2, listText3).then((data) => {
             setNewsletter();
         });
 		e.preventDefault();
@@ -131,11 +231,20 @@ function getNewsletter() {
 		}
 	});	
 }
-function saveNewsletter(id, subject, text, visible, period) {
+function saveNewsletter(id, subject, text, visible, period, moreLink, moreText, header, listHeader1, listHeader2, listHeader3, listText1, listText2, listText3) {
     $("#pageloader").show();
     subject = subject.split('"').join('\\"').split("'").join("\'");
     text = text.split('"').join('\\"').split("'").join("\'");
-    let data = '{"subject":"' + subject + '","text":"' + text + '","visible":'+ visible + ', "period":"' + period + '"}';
+    moreLink = moreLink.split('"').join('\\"').split("'").join("\'");
+    moreText = moreText.split('"').join('\\"').split("'").join("\'");
+    header = header.split('"').join('\\"').split("'").join("\'");
+    listHeader1 = listHeader1.split('"').join('\\"').split("'").join("\'");
+    listHeader2 = listHeader2.split('"').join('\\"').split("'").join("\'");
+    listHeader3 = listHeader3.split('"').join('\\"').split("'").join("\'");
+    listText1 = listText1.split('"').join('\\"').split("'").join("\'");
+    listText2 = listText2.split('"').join('\\"').split("'").join("\'");
+    listText3 = listText3.split('"').join('\\"').split("'").join("\'");
+    let data = '{"subject":"' + subject + '","text":"' + text + '","visible":'+ visible + ', "period":"' + period + '","moreLink":"'+ moreLink + '", "moreText":"' + moreText + '","header":"'+ header + '", "listHeader1":"' + listHeader1 + '","listHeader2":"'+ listHeader2 + '", "listHeader3":"' + listHeader3 + '","listText1":"'+ listText1 + '", "listText2":"' + listText2 + '","listText3":"'+ listText3 + '"}';
     let url = "https://sysmon.homeinfo.de/patch_newsletter/" + id; 
     if (id == -1)
         url = "https://sysmon.homeinfo.de/add_newsletter";
