@@ -191,7 +191,7 @@ function setNewsletter(newsletters) {
         }
         $(this).parent().parent().find('.newsletteritem').each(function() {
             if ($(this).find('.newsletterlistHeaderInput').val() != "") {
-                listitems.push({"header":$(this).find('.newsletterlistHeaderInput').val(), "newsletter":_newsletter[id].id, "text":$(this).find('.newsletterlistTextInput').val().replace(/\n/g, "<br>")});
+                listitems.push({"id":$(this).data('id'), "header":$(this).find('.newsletterlistHeaderInput').val(), "newsletter":_newsletter[id].id, "text":$(this).find('.newsletterlistTextInput').val().replace(/\n/g, "<br>")});
                 if ($(this).data('id') == -1)
                     listitemsToADD.push({"header":$(this).find('.newsletterlistHeaderInput').val(), "newsletter":_newsletter[id].id, "text":$(this).find('.newsletterlistTextInput').val().replace(/\n/g, "<br>")});
             }
@@ -266,6 +266,7 @@ function saveNewsletter(id, setnewsletter = true) {
                 promises.push(patchNewsLetterListItem(item));
         }
         if (_newsletter[id].hasOwnProperty('listitemsToDELETE')) {
+            console.log(_newsletter);
             for (item of _newsletter[id].listitemsToDELETE)
                 promises.push(deleteNewsLetterListItem(item.id));
         }
