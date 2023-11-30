@@ -10,6 +10,7 @@ $(document).ready(function() {
         systemCheckCompleted(data);
         getDeploymentHistory().then((data)=>setHistory(data), denyHistory);
         getSystemChecks().then((data)=> {
+            console.log(data)
             setDetails(data);
             setThirtyDays(data);
             setErrorLog(data);
@@ -22,21 +23,21 @@ $(document).ready(function() {
                     if (data.hasOwnProperty("application") && data.application.hasOwnProperty("mode")) {
                         $(".tw-toggle").show();
                         switch (data.application.mode) {
-                        case "PRODUCTIVE":
-                            $("#black-mode").prop("checked", false);
-                            $("#installation-instructions-mode").prop("checked", false);
-                            $("#productive-mode").prop("checked", true);
-                            break;
-                        case "INSTALLATION_INSTRUCTIONS":
-                            $("#black-mode").prop("checked", false);
-                            $("#installation-instructions-mode").prop("checked", true);
-                            $("#productive-mode").prop("checked", false);
-                            break;
-                        default:
-                            $("#black-mode").prop("checked", true);
-                            $("#installation-instructions-mode").prop("checked", false);
-                            $("#productive-mode").prop("checked", false);
-                            break;
+                            case "PRODUCTIVE":
+                                $("#black-mode").prop("checked", false);
+                                $("#installation-instructions-mode").prop("checked", false);
+                                $("#productive-mode").prop("checked", true);
+                                break;
+                            case "INSTALLATION_INSTRUCTIONS":
+                                $("#black-mode").prop("checked", false);
+                                $("#installation-instructions-mode").prop("checked", true);
+                                $("#productive-mode").prop("checked", false);
+                                break;
+                            default:
+                                $("#black-mode").prop("checked", true);
+                                $("#installation-instructions-mode").prop("checked", false);
+                                $("#productive-mode").prop("checked", false);
+                                break;
                         }
                     } else {
                         $("#display-mode-unknown").show();
@@ -235,7 +236,6 @@ function getSystemChecks() {
     });
 }
 
-
 function systemCheckCompleted(data) {
     _applicationVersion = data[1];
     let foundsystem = {};
@@ -258,6 +258,7 @@ function systemCheckCompleted(data) {
 }
 function setDetails(data) {
     _display = data.hasOwnProperty(_id) ?data[_id] :data;
+    console.log(_display)
     let address = _display.hasOwnProperty("deployment") ?_display.deployment.hasOwnProperty("address") && _display.deployment.address.street !== "Keine Adresse" ?_display.deployment.address.street + " " + _display.deployment.address.houseNumber + ", " + _display.deployment.address.zipCode + " " + _display.deployment.address.city :'<i>Keine Adresse angegeben</i>' :'<i>Keinem Standort zugewiesen</i>';
     $("#displaytitle").html("Display: " + address);
     try {
@@ -280,7 +281,6 @@ function setDetails(data) {
         $("#publicTransportAddress").html('<span title="' + lptAddress + '">' + lptAddress.substring(0, 18) + (lptAddress > 18 ? '...' :'') + '</span>');
         $("#deploymentID").text(_display.deployment.id);
         $("#annotation").html(_display.deployment.hasOwnProperty("annotation") ?"<span title='" + _display.deployment.annotation + "'>" + _display.deployment.annotation.substring(0, 20) + (_display.deployment.annotation.length > 20 ? '...' :'') + "</span>" :"-");
-        
         $("#displayurl").html('<span>' + (_display.deployment.hasOwnProperty('url') ?_display.deployment.url :"-") + '</span>');
         let technicianAnnotation = '<td>' + 
             '<span class="btn_technicianAnnotation">' + (_display.deployment.hasOwnProperty('technicianAnnotation') ?_display.deployment.technicianAnnotation + ' <a href="#" class="editIcon"><img src="assets/img/edit.svg" alt=""></a>':'<a href="#" class="editIcon"><img src="assets/img/edit.svg" alt=""></a>') + '</span>' +
@@ -542,23 +542,20 @@ function setButtons() {
         $('.btn_savedisplayurl').click(function(e) {
             if (_display !== null) { 
                 let displayurl;
-                let rotationparameter = "";
                 let ddbosparameter = "";
-                let input = $("#displayurlInput").val().replace("?rotation=90", "").replace("?rotation=270", "").replace("&rotation=270", "").replace("&rotation=270", "");
-                if ($('#rotation :selected').val() != 0)
-                    rotationparameter = (input.indexOf("?") == -1 ?"?" :"&") + "rotation=" + $('#rotation :selected').val();
-                ddbosparameter = ((input+rotationparameter).indexOf("?") == -1 ?"?" :"&") + "ddbos=true";
+                let input = $("#displayurlInput").val().replace("?ddbos=true", "").replace("&ddbos=true", "");
+                ddbosparameter = ((input).indexOf("?") == -1 ?"?" :"&") + "ddbos=true";
                 if (input.trim() === "")
                     displayurl = null;
                 else
-                    displayurl = input + rotationparameter + ddbosparameter;
+                    displayurl = input + ddbosparameter;
                 changedisplayurl(displayurl).then((data) => {
                     $("#displayurl").text(displayurl === null ?"-" :displayurl);
                     $("#displayurlfields").hide();
-                    $("#pageloader").hide()
+                    $("#pageloader").hide();
                     Swal.fire({
                         title: "URL gespeichert",
-                        html: "Erfolgreich übertragen: " + data.success.toString() + '<br>Nicht übertragen: ' + data.failed.offline.toString(),
+                        html: "Erfolgreich übertragen: " + data.success[0] + '<br>Nicht übertragen: ' + (data.failed.hasOwnProperty('offline') ?data.failed.offline :"-"),
                         showCancelButton: false,
                         confirmButtonColor: '#ff821d',
                         iconHtml: '<img src="assets/img/PopUp-Icon.png"></img>',
@@ -591,6 +588,46 @@ function setButtons() {
             });
             e.preventDefault();
         }); 
+
+        let mode = "PRODUCTIVE";
+        mode =  $("#displayurl").text().indexOf("blackmode=true") != -1 ?"BLACK" :mode; // TODO "INSTALLATION_INSTRUCTIONS" instead of :mode
+        switch (mode) {
+            case "PRODUCTIVE":
+                $("#black-mode").prop("checked", false);
+                $("#installation-instructions-mode").prop("checked", false);
+                $("#productive-mode").prop("checked", true);
+                break;
+            case "INSTALLATION_INSTRUCTIONS":
+                $("#black-mode").prop("checked", false);
+                $("#installation-instructions-mode").prop("checked", true);
+                $("#productive-mode").prop("checked", false);
+                break;
+            default:
+                $("#black-mode").prop("checked", true);
+                $("#installation-instructions-mode").prop("checked", false);
+                $("#productive-mode").prop("checked", false);
+                break;
+        }
+
+        $('[name="display-mode"]').click(function(e) {
+            let displayurl = $("#displayurl").text().replace("?blackmode=true", "").replace("&blackmode=true", "");
+            if ($(this).val() == "OFF")
+                displayurl += ((displayurl).indexOf("?") == -1 ?"?" :"&") + "blackmode=true";   
+            $("#displayurl").text(displayurl);
+            changedisplayurl(displayurl).then((data) => {
+                $("#pageloader").hide();
+                Swal.fire({
+                    title: "Blackmodus eingestellt",
+                    html: "Erfolgreich übertragen: " + data.success[0] + '<br>Nicht übertragen: ' + (data.failed.hasOwnProperty('offline') ?data.failed.offline :"-"),
+                    showCancelButton: false,
+                    confirmButtonColor: '#ff821d',
+                    iconHtml: '<img src="assets/img/PopUp-Icon.png"></img>',
+                    confirmButtonText: 'O.K.',
+                    buttonsStyling: true
+                });
+            });
+        });
+
         $('.btn_restartApplication').click(function(e) {
             restartDDBOS().then(()=>{$("#pageloader").hide()});
             e.preventDefault();
@@ -637,22 +674,13 @@ function setButtons() {
             if (_display.deployment.hasOwnProperty("url"))
                 window.open(_display.deployment.url, '_blank');
         });
-        $('#rotation').on('change', function() {
-            if ($("#displayurl").text() != "-") {
-                $("#displayurlInput").val($("#displayurl").text());
-                $('.btn_savedisplayurl').click();
-            } else
-                setErrorMessage(true, "Die Rotation wird über die URL gesendet. Von daher muss eine URL unter 'Displayübersicht' hinterlegt werden.", "URL-Feld nicht ausgefüllt");
-        });
         $('#noiceLine').show();
         $('#restartLine').show();
         $('#restartDDBOSLine').show();
         $('#screenshotLine').show();
-        if (_display.deployment.hasOwnProperty('url') && _display.deployment.url.toLowerCase().indexOf("rotation=90") != -1)
-            $('#rotation').val(90);
-        else if (_display.deployment.hasOwnProperty('url') && _display.deployment.url.toLowerCase().indexOf("rotation=270") != -1)
-            $('#rotation').val(270);
-        $('#rotationLine').show();
+        $("#displayModeLine").show();
+        $("#display-mode-unknown").hide();
+        $(".tw-toggle").show();
     } else if (_display.operatingSystem === "Arch Linux") {
         $('.btn_noice').click(function(e) {
             noice().then(()=>{
