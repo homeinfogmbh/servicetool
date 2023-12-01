@@ -42,7 +42,8 @@ $(document).ready(function() {
                     '</a>' +
                     '<ul class="dropdown-menu" aria-labelledby="navbarDropdown">' +
                         '<li><a class="dropdown-item" href="newsletter.html" onclick="removeopenedlist()">Newsletter verwalten</a></li>' +
-                        '<li><a class="dropdown-item" href="recipientlist.html" onclick="removeopenedlist()">Empfängerliste</a></li>' +
+                        '<li><a class="dropdown-item" href="recipientlistcustomer.html" onclick="removeopenedlist()">Empfänger "Kunden"</a></li>' +
+                        '<li><a class="dropdown-item" href="recipientlistgeneral.html" onclick="removeopenedlist()">Empfänger "Allgemein"</a></li>' +
                         '<li><a class="dropdown-item" href="defaultnewsletter.html" onclick="removeopenedlist()">Standard-Newsletter</a></li>' +
                     '</ul>' +
                 '</li>' +

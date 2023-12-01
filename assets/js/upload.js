@@ -84,6 +84,7 @@ class Upload {
 	}
 
 	drop(fileUploadList) {
+		this.fileList = [];
 		holdSession();
 		$('.progress').hide();
 		var thisobject = this;
@@ -487,7 +488,9 @@ class Upload {
 		this.selector.find('#upload_thumbnail').append('<li class="ui-state-default" data-id="' + this.fileList.length + '" style="cursor:move" title="Reihenfolge verändern"><div class="thumb ">' +
 			(typeof _chartType !== 'undefined' ?this.fileList.length+1 :'') + ' <img src="' + src + '?thumbnail=200x150&' + localStorage.getItem('customer') + '" class="btn_image" style="max-width:200px; max-height:150px; border:2px solid transparent; cursor:zoom-in" data-imageurl="' + src + '" title="' + filename + '">' + 
 			'<i class="fa fa-download btn_download pointer" data-id="' + this.fileList.length + '" style="font-size:20px; color:#fff; margin:10px -30px; vertical-align: top; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; display:none" title="Bild runterladen"></i>' +
-			'<i class="fa fa-trash-o btn_delete_image pointer" data-id="' + this.fileList.length + '" style="font-size:20px; color:#fff; margin:10px 10px; vertical-align: bottom; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; display:none" title="Bild löschen"></i>' + 
+			'<i class="fa fa-trash-o btn_delete_image pointer" data-id="' + this.fileList.length + '" style="font-size:20px; color:#fff; margin:10px 10px; vertical-align: bottom; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; display:none" title="Bild löschen">' +
+			'<img src="assets/img/trash.png">' + 
+			'</i>' + 
 			'<span class="ui-icon ui-icon-arrowthick-2-n-s" title="Reihenfolge verändern"></span>' + 
 		'</div><div class="loader"></div></li>');
 		var selector = this.selector.find('#upload_thumbnail').find('li[data-id="' + this.fileList.length + '"]');
@@ -500,7 +503,7 @@ class Upload {
 			selector.find('.loader').hide();
 		};
 
-		this.fileList.push({'file':id, 'state':'saved', 'format':format, 'name':filename});
+		//this.fileList.push({'file':id, 'state':'saved', 'format':format, 'name':filename});
 		this.setButtons();
 	}
 }
