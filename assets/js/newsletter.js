@@ -191,7 +191,6 @@ function setNewsletter(newsletters) {
         }
         $(this).parent().parent().find('.newsletteritem').each(function() {
             if ($(this).find('.newsletterlistHeaderInput').val() != "") {
-                listitems.push({"id":$(this).data('id'), "header":$(this).find('.newsletterlistHeaderInput').val(), "newsletter":_newsletter[id].id, "text":$(this).find('.newsletterlistTextInput').val().replace(/\n/g, "<br>")});
                 if ($(this).data('id') == -1)
                     listitemsToADD.push({"header":$(this).find('.newsletterlistHeaderInput').val(), "newsletter":_newsletter[id].id, "text":$(this).find('.newsletterlistTextInput').val().replace(/\n/g, "<br>")});
             }
@@ -258,15 +257,13 @@ function saveNewsletter(id, setnewsletter = true) {
 
         let item;
         if (_newsletter[id].hasOwnProperty('listitemsToADD')) {
-            for (item of _newsletter[id].listitemsToADD)
-                promises.push(addNewsLetterListItem(item));
+            promises.push(addNewsLetterListItemInOrder(id));
         }
         if (_newsletter[id].hasOwnProperty('listitemsToPATCH')) {
             for (item of _newsletter[id].listitemsToPATCH)
                 promises.push(patchNewsLetterListItem(item));
         }
         if (_newsletter[id].hasOwnProperty('listitemsToDELETE')) {
-            console.log(_newsletter);
             for (item of _newsletter[id].listitemsToDELETE)
                 promises.push(deleteNewsLetterListItem(item.id));
         }
@@ -301,6 +298,17 @@ function setNewsletterData(id) {
 	});
 
 }
+function addNewsLetterListItemInOrder(newsletterid) {
+    if (_newsletter[newsletterid].listitemsToADD.length == 0)
+        return Promise.resolve("nothingtoadd");
+    let newitem = _newsletter[newsletterid].listitemsToADD.shift();
+    return addNewsLetterListItem(newitem).then((data) => {
+        newitem.id = "-2"; // TODO ADD CORRECT LIST-ID
+        _newsletter[newsletterid].listitems.push(newitem);
+        addNewsLetterListItemInOrder(newsletterid)
+    });
+}
+
 function addNewsLetterListItem(listitem) {
     return $.ajax({
 		url: 'https://sysmon.homeinfo.de/newsletter_list_add/',
