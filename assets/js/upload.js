@@ -52,6 +52,8 @@ class Upload {
 			e.dataTransfer.dropEffect = "none";
 		});
 		window.addEventListener("paste", function(e) {
+			thisobject.fileList = [];
+			thisobject.selector.find('#upload_thumbnail').html('');
 			$('.progress').hide();
 			thisobject.retrieveImageFromClipboardAsBlob(e, function(file) {
 				if (file) {
@@ -63,12 +65,12 @@ class Upload {
 						canvas.height = this.height;
 						ctx.drawImage(img, 0, 0);
 						var imgdata = canvas.toDataURL('image/png');
-						thisobject.selector.find('#upload_thumbnail').append('<li class="ui-state-default" data-id="' + thisobject.fileList.length + '" style="cursor:move" title="Reihenfolge verändern"><div class="thumb">' +
+						thisobject.selector.find('#upload_thumbnail').append('<li class="ui-state-default" data-id="' + thisobject.fileList.length + '"><div class="thumb">' +
 							'<img src="' + imgdata + '" style="max-width:200px; max-height:150px; border:2px solid transparent;" title="' + file.name + ' (' + (file.size/1024).toFixed(2) + 'kb)">' + 
 							'<i class="fa fa-rotate-right btn_rotate pointer" data-id="' + thisobject.fileList.length + '" style="font-size:20px; color:#fff; margin:10px -30px; vertical-align: top; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; display:none" title="Bild drehen"></i>' +
-							'<i class="fa fa-trash-o btn_delete_image pointer no_drag" data-id="' + thisobject.fileList.length + '" style="font-size:20px; color:#fff; margin:10px 10px; vertical-align: bottom; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; display:none" title="Bild löschen"></i>' + 
-							//'<i class="fa fa-trash-o btn_delete_image pointer no_drag" data-id="' + thisobject.fileList.length + '" style="font-size:20px; color:#fff; margin:10px -30px; vertical-align: bottom; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; display:none" title="Bild löschen"></i>' +
-							'<span class="ui-icon ui-icon-arrowthick-2-n-s" title="Reihenfolge verändern"></span>' +
+							'<i class="btn_delete_image pointer no_drag" data-id="' + thisobject.fileList.length + '" style="font-size:20px; color:#fff; margin:10px -30px; vertical-align: bottom; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; display:none" title="Bild löschen"></i>' + 
+								'<img src="assets/img/trash.png">' + 
+							'</i>' + 							
 							'</div></li>');
 						thisobject.fileList.push({'file': file, 'state':'toAdd', 'format':'A4', 'index':thisobject.fileList.length, 'name':file.name.substr(0, file.name.indexOf('.')), 'img':img});
 						thisobject.setButtons();					
@@ -83,78 +85,48 @@ class Upload {
 		});
 	}
 
-	drop(fileUploadList) {
-		this.fileList = [];
-		holdSession();
+	drop(fileUploadList) {	
 		$('.progress').hide();
 		var thisobject = this;
+		thisobject.fileList = [];
+		thisobject.selector.find('#upload_thumbnail').html('');
 		thisobject.selector.find('#upload_error').html('');
 		try { thisobject.selector.css({'border': '2px solid #a2a2a2'}); } catch(err) { }
 		// Permissions
 		for (var i = 0, f; f = fileUploadList[i]; i++) {
-			if (f.size > 524288000) { // 500mb
-				thisobject.selector.find('#upload_error').html('<font style="color:red; font-size:16px">' + f.name + ' ist zu groß (max. 500mb).</font>');
+			if (f.size > 10485760) { // 10mb
+				thisobject.selector.find('#upload_error').html('<font style="color:red; font-size:16px">' + f.name + ' ist zu groß (max. 10mb).</font>');
 				continue;
-/*Charts*/	} else if (typeof _chartType !== 'undefined') {
-				if ((!f.type.match('image.*') && !f.type.match('application/pdf') && _chartType !== 'Video') || (!f.type.match('video.*') && _chartType === 'Video') || (f.type.match('application/pdf') && (_chartType === 'RealEstates' || _chartType === 'Weather'))) {
-					thisobject.selector.find('#upload_error').html('<font style="color:red; font-size:16px"><b>' + f.name + '</b> ist nicht zulässig.</font>');
-					continue;
-				} else if (thisobject.fileList.length >= 1 && _chartType === 'Video') {
-					var videoCounter = 0;
-					for (var count in thisobject.fileList) {
-						if (thisobject.fileList[count].state !== "toDelete" && thisobject.fileList[count].state !== "deleted")
-							videoCounter++;
-					}
-					if (videoCounter > 0) {
-						thisobject.selector.find('#upload_error').html('<font style="color:red; font-size:16px">Es ist nur <b>ein</b> Video zulässig.</font>');
-						continue;
-					}
-				}
-			} else if (!f.type.match('image.*') && !f.type.match('application/pdf') && !f.type.match('application/x-shockwave-flash')) {
+			} else if (!f.type.match('image.*') && !f.type.match('application/pdf')) {
 				thisobject.selector.find('#upload_error').html('<font style="color:red; font-size:16px"><b>' + f.name + '</b> ist nicht zulässig.</font>');
 				continue;
-/*conf*/	} else if (thisobject.maximages !== null) {
-				var imagescounter = 0;
-				for (var file in thisobject.fileList){
-					if (thisobject.fileList[file].state !== 'deleted' && thisobject.fileList[file].state !== 'toDelete')
-						imagescounter++;
-				}
-				if (i+imagescounter >= thisobject.maximages) {
+			} else if (thisobject.maximages !== null) {
+				if (thisobject.selector.find('#upload_thumbnail').children().length >= thisobject.maximages) {
 					thisobject.selector.find('#upload_error').html('<font style="color:red; font-size:16px"><b>' + f.name + '</b> ist nicht zulässig, da nur <b>ein</b> Bild erlaubt ist.</font>');
 					continue;
 				}
-/*menu*/	} if (typeof _type !== 'undefined' && (_type === 'MENU' || _type === 'CONFIGURATION') && f.type.match('application/pdf')) {
-				thisobject.selector.find('#upload_error').html('<font style="color:red; font-size:16px"><b>PDF</b> ist nicht zulässig.</font>');
-				continue;
 			}
 			
 			// Create thumbnails
 			var reader = new FileReader();
 			reader.onload = (function(file) {
 				return function(e) {	
-					if (file.type.match('video.*')) {
-						thisobject.selector.find('#upload_thumbnail').append('<div class="thumb">' +
-						((file.size > 104857600 /*100mb*/) ?'<span class="fa fa-file-video-o" style="font-size:120px;" title="Video wird beim erneuten Laden des Charts angezeigt."></span>' :
-							'<video src="' + e.target.result + '" height="300" style="max-width:400px; max-height:350px; border:2px solid transparent;" title="' + file.name + ' (' + (file.size/1024).toFixed(2) + 'kb)" preload="metadata" controls muted>Ihr Browser kann dieses Video nicht wiedergeben.<br/></video>') + 
-							'<i class="fa fa-trash-o btn_delete_image pointer" data-id="' + thisobject.fileList.length + '" style="font-size:20px; color:#ff0000; margin:10px 5px; vertical-align: top; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; display:none" title="Video löschen"></i>' +
-						'</div>')
-					} else if (file.type.match('image.*')) {
-						thisobject.selector.find('#upload_thumbnail').append('<li class="ui-state-default" data-id="' + thisobject.fileList.length + '" style="cursor:move" title="Reihenfolge verändern"><div class="thumb">' +
+					if (file.type.match('image.*')) {
+						thisobject.selector.find('#upload_thumbnail').append('<li class="ui-state-default" data-id="' + thisobject.fileList.length + '"><div class="thumb">' +
 							'<img src="' + e.target.result + '" style="max-width:200px; max-height:150px; border:2px solid transparent;" title="' + file.name + ' (' + (file.size/1024).toFixed(2) + 'kb)">' + 
-							'<i class="fa fa-rotate-right btn_rotate pointer" data-id="' + thisobject.fileList.length + '" style="font-size:20px; color:#fff; margin:10px -30px; vertical-align: top; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; display:none" title="Bild drehen"></i>' +
-							'<i class="fa fa-trash-o btn_delete_image pointer" data-id="' + thisobject.fileList.length + '" style="font-size:20px; color:#fff; margin:10px 10px; vertical-align: bottom; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; display:none" title="Bild löschen"></i>' + 
-							'<span class="ui-icon ui-icon-arrowthick-2-n-s" title="Reihenfolge verändern"></span>' + 
+							'<i class="btn_delete_image pointer" data-id="' + thisobject.fileList.length + '" style="font-size:20px; color:#fff; margin:0px 0px; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; display:none" title="Bild löschen"></i>' + 
+								'<img src="assets/img/trash.png">' + 
+							'</i>' + 
 						'</div></li>');
 					} else if (file.type.match('application/pdf')) {
 						try {
-							if (typeof _chartType !== 'undefined' && _chartType === 'Blackboard')
-								$('#canvas').attr('width', thisobject.blackboardsize['A4'].width + 'px');
 							if ($('.appmenuitem[data-menu="documents"]').is(':checked') === true) { // In chart if mobile-menu 'documents' is selected
-								thisobject.selector.find('#upload_thumbnail').append('<li class="ui-state-default" data-id="' + thisobject.fileList.length + '" style="cursor:move" title="Reihenfolge verändern"><div class="thumb">' +
-									//'<iframe src="' + e.target.result + '" style="max-width:200px; max-height:150px; border:2px solid transparent;" title="' + file.name + ' (' + (file.size/1024).toFixed(2) + 'kb)">PDF-Datei wird geladen</iframe>' +
-									'<span class="fa fa-file-pdf-o" style="font-size:120px;" title="' + file.name + ' (' + (file.size/1024).toFixed(2) + 'kb)"></span>' +
-									'<i class="fa fa-trash-o btn_delete_image pointer" data-id="' + thisobject.fileList.length + '" style="font-size:20px; color:#fff; margin:10px -30px; vertical-align:bottom; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; display:none" title="PDF löschen"></i>' +
-									'<span class="ui-icon ui-icon-arrowthick-2-n-s" title="Reihenfolge verändern" style="margin:10px"></span>');
+								thisobject.selector.find('#upload_thumbnail').append('<li class="ui-state-default" data-id="' + thisobject.fileList.length + '"><div class="thumb">' +
+									'<span class="fa fa-file-pdf-o" style="font-size:120px;" title="' + file.name + ' (' + (file.size/1024).toFixed(2) + 'kb)"></span>' +									
+									'<i class="btn_delete_image pointer" data-id="' + thisobject.fileList.length + '" style="font-size:20px; color:#fff; margin:10px -30px; vertical-align:bottom; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; display:none" title="PDF löschen"></i>' +
+										'<img src="assets/img/trash.png">' + 
+									'</i>' + 
+									'<span class="ui-icon ui-icon-arrowthick-2-n-s" style="margin:10px"></span>');
 									thisobject.fileList.push({'file': file, 'state':'toAdd', 'format':'A4', 'index':thisobject.fileList.length, 'name':file.name.substr(0, file.name.indexOf('.')), 'img':img});
 							} else
 								thisobject.convertToImage(reader, file);
@@ -162,19 +134,17 @@ class Upload {
 							console.log(err)
 							thisobject.selector.find('#upload_error').html('<font style="color:red; font-size:16px">Wählen Sie die PDFs bitte nacheinander aus.</font>')
 						}
-					} else if (file.type.match('application/x-shockwave-flash')) {
-						thisobject.selector.find('#upload_thumbnail').append('<div class="thumb"><i class="fa fa-file-video-o" style="font-size:80px"></i></div>')
 					}
 					if (file.type.match('image.*') || file.type.match('svg')) {
 						// Rerender file
 						var img = new Image();
 						img.onload = function() {
-							if (img.width > 1920 || img.height > 1080) {
+							if (img.width > 700 || img.height > 1080) {
 								var canvas = document.getElementById('canvas');
 								var context = canvas.getContext('2d');
-								var k = 1920 / 1080;
-								if (img.width * k > img.height) // Fill whole stage; "if (img.width * k < img.height)": show whole image
-									k = 1920 / img.width;
+								var k = 700 / 1080;
+								if (img.width * k > img.height)
+									k = 700 / img.width;
 								else
 									k = 1080 / img.height;
 								canvas.width = img.width * k;
@@ -229,10 +199,11 @@ class Upload {
 				var imgfile = thisobject.dataURLtoFile(img);
 				imgfile.name = file.name.substr(0, file.name.length-4) + (pdf.numPages > 1 ?' Seite ' + pagenumber :'') + '.png';
 				if (selectorid === null) {
-					thisobject.selector.find('#upload_thumbnail').append('<li class="ui-state-default" data-id="' + thisobject.fileList.length + '" style="cursor:move" title="Reihenfolge verändern"><div class="thumb">' +
+					thisobject.selector.find('#upload_thumbnail').append('<li class="ui-state-default" data-id="' + thisobject.fileList.length + '"><div class="thumb">' +
 						'<img src="' + img + '" style="max-width:200px; max-height:150px; border:2px solid transparent;" title="' + imgfile.name + ' (' + (imgfile.size/1024).toFixed(2) + 'kb)">' + 
-						'<i class="fa fa-trash-o btn_delete_image pointer no_drag" data-id="' + thisobject.fileList.length + '" style="font-size:20px; color:#fff; margin:10px -30px; vertical-align: bottom; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; display:none" title="Bild löschen"></i>' +
-						'<span class="ui-icon ui-icon-arrowthick-2-n-s" title="Reihenfolge verändern"></span>' + 
+						'<i class="btn_delete_image pointer no_drag" data-id="' + thisobject.fileList.length + '" style="font-size:20px; color:#fff; margin:10px 10px; vertical-align: bottom; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; display:none" title="Bild löschen"></i>' +
+							'<img src="assets/img/trash.png">' + 
+						'</i>' + 
 						'</div></li>');
 					thisobject.fileList.push({'file': imgfile, 'state':'toAdd', 'format':'A4', 'index':thisobject.fileList.length, 'name':imgfile.name.substr(0, imgfile.name.indexOf('.')), 'pdf':{'file':file, 'pagenumber':pagenumber, 'pdf':pdf, 'selectorid':thisobject.fileList.length}});
 					if (pagenumber !== pdf.numPages) {
@@ -321,15 +292,9 @@ class Upload {
 						}
 						for (item in added) {
 							if (msg.created[thisobject.fileList[added[item]].file.name.toLowerCase()] != null) {
-								//if (thisobject.fileList[added[item]].file.type.match('application/pdf'))
-									//thisobject.fileList[added[item]].state = 'pdf';
-								//else 
 									thisobject.fileList[added[item]].state = 'saved';
 								thisobject.fileList[added[item]].file = msg.created[thisobject.fileList[added[item]].file.name.toLowerCase()];
 							} else if (msg.existing[thisobject.fileList[added[item]].file.name.toLowerCase()] != null) {
-								//if (thisobject.fileList[added[item]].file.type.match('application/pdf'))
-									//thisobject.fileList[added[item]].state = 'pdf';
-								//else
 									thisobject.fileList[added[item]].state = 'saved';
 								thisobject.fileList[added[item]].file = msg.existing[thisobject.fileList[added[item]].file.name.toLowerCase()];
 							}
@@ -384,7 +349,7 @@ class Upload {
 		
 		thisobject.selector.find('.thumb').mouseover(function() {
 			$(this).find('i').fadeIn(0);
-			$(this).find('img').css({'border': '2px solid #ff0000'});
+			//$(this).find('img').css({'border': '2px solid #ff0000'});
 			$(this).find('.fa-file-pdf-o').css({'border': '2px solid #ff0000'});
 			$(this).find('video').css({'border': '2px solid #ff0000'});
 		});
@@ -395,22 +360,14 @@ class Upload {
 			$(this).find('video').css({'border': '2px solid transparent'});
 		});
 		thisobject.selector.find('.btn_image').click(function() {
-			holdSession();
 			$('.progress').hide();
 			thisobject.selector.find('#upload_error').html('');
 			window.open($(this).data('imageurl') + "?" + localStorage.getItem('customer'), '_blank');
 		});
 		thisobject.selector.find('.btn_delete_image').click(function() {
-			holdSession();
 			$('.progress').hide();
 			thisobject.selector.find('#upload_error').html('');
-			if (thisobject.fileList[$(this).data('id')].state === 'saved')
-				thisobject.fileList[$(this).data('id')].state = 'toDelete';
-			else
-				thisobject.fileList[$(this).data('id')].state = 'deleted';
 			$(this).parent().remove();
-			if (typeof _type !== 'undefined' && _type === 'MENU') // Called in menu_edit
-				deleteIcon(thisobject.selector);
 		});
 		thisobject.selector.find('.btn_download').click(function() {
 			window.open('https://backend.homeinfo.de/hisfs/' + thisobject.fileList[$(this).data('id')].file + '?named&' + localStorage.getItem('customer'), '_self');
@@ -483,15 +440,13 @@ class Upload {
 		});
 	}
 	
-	loadFile(id, format, filename) {
+	loadFile(id, filename) {
 		let src = 'https://sysmon.homeinfo.de/newsletter-image/' + id;
-		this.selector.find('#upload_thumbnail').append('<li class="ui-state-default" data-id="' + this.fileList.length + '" style="cursor:move" title="Reihenfolge verändern"><div class="thumb ">' +
-			(typeof _chartType !== 'undefined' ?this.fileList.length+1 :'') + ' <img src="' + src + '?thumbnail=200x150&' + localStorage.getItem('customer') + '" class="btn_image" style="max-width:200px; max-height:150px; border:2px solid transparent; cursor:zoom-in" data-imageurl="' + src + '" title="' + filename + '">' + 
-			'<i class="fa fa-download btn_download pointer" data-id="' + this.fileList.length + '" style="font-size:20px; color:#fff; margin:10px -30px; vertical-align: top; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; display:none" title="Bild runterladen"></i>' +
-			'<i class="fa fa-trash-o btn_delete_image pointer" data-id="' + this.fileList.length + '" style="font-size:20px; color:#fff; margin:10px 10px; vertical-align: bottom; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; display:none" title="Bild löschen">' +
-			'<img src="assets/img/trash.png">' + 
+		this.selector.find('#upload_thumbnail').append('<li class="ui-state-default" data-id="' + this.fileList.length + '"><div class="thumb ">' +
+			'<img src="' + src + '?thumbnail=200x150&' + localStorage.getItem('customer') + '" class="btn_image" style="max-width:200px; max-height:150px; border:2px solid transparent; cursor:zoom-in" data-imageurl="' + src + '" title="' + filename + '">' + 
+			'<i class=" btn_delete_image pointer" data-id="' + this.fileList.length + '" style="font-size:20px; color:#fff; margin:0px -30px; vertical-align: bottom; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; display:none" title="Bild löschen">' +
+				'<img src="assets/img/trash.png">' + 
 			'</i>' + 
-			'<span class="ui-icon ui-icon-arrowthick-2-n-s" title="Reihenfolge verändern"></span>' + 
 		'</div><div class="loader"></div></li>');
 		var selector = this.selector.find('#upload_thumbnail').find('li[data-id="' + this.fileList.length + '"]');
 		var tmpImg = new Image() ;
@@ -502,8 +457,6 @@ class Upload {
 		tmpImg.onerror = function() {
 			selector.find('.loader').hide();
 		};
-
-		//this.fileList.push({'file':id, 'state':'saved', 'format':format, 'name':filename});
 		this.setButtons();
 	}
 }

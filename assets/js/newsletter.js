@@ -107,9 +107,9 @@ function setNewsletter(newsletters) {
     
     $('#newsletterdata').html(newsletterDOM);
     for (let item = 0; item < newslettercounter; item++) {
-        _newsletter[item].upload = new Upload($('#imagefieldUpload' + item));
+        _newsletter[item].upload = new Upload($('#imagefieldUpload' + item), 1);
         if (_newsletter[item].hasOwnProperty('image'))
-            _newsletter[item].upload.loadFile(_newsletter[item].image, 'image', 'Bild');
+            _newsletter[item].upload.loadFile(_newsletter[item].image, 'Newsletter-Bild');
     }
 
     setListButton();
