@@ -611,13 +611,16 @@ function setButtons() {
 
         $('[name="display-mode"]').click(function(e) {
             let displayurl = $("#displayurl").text().replace("?blackmode=true", "").replace("&blackmode=true", "");
+            let title = "Blackmodus eingestellt";
             if ($(this).val() == "OFF")
                 displayurl += ((displayurl).indexOf("?") == -1 ?"?" :"&") + "blackmode=true";   
+            else
+                title = "Blackmodus ausgestellt";
             $("#displayurl").text(displayurl);
             changedisplayurl(displayurl).then((data) => {
                 $("#pageloader").hide();
                 Swal.fire({
-                    title: "Blackmodus eingestellt",
+                    title: title,
                     html: "Erfolgreich übertragen: " + data.success[0] + '<br>Nicht übertragen: ' + (data.failed.hasOwnProperty('offline') ?data.failed.offline :"-"),
                     showCancelButton: false,
                     confirmButtonColor: '#ff821d',
