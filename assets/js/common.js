@@ -7,6 +7,8 @@ var _commonChecks = {"offline":{"title":"Offline", "text":"Liste der Geräte die
 	"noDeployment":{"title":"Systeme ohne Zuordnung", "text":"Liste der Geräte die keine Zuordnung besitzen", "systems":[], "widget":false, "list":true},
 	"ssd":{"title":"SSD Karten Fehler", "text":"Liste der Geräte die einen SSD-Karten-Fehler aufweisen", "systems":[], "widget":true, "list":false},
 	"noActualData":{"title":"Keine aktuellen Daten", "text":"Liste der Geräte deren Daten älter als 48h sind", "systems":[], "widget":true, "list":false},
+	"onlyoffline":{"title":"OfflineSystem", "text":"Systeme als nicht online unabhängig vom Aktualisierungsdatum", "systems":[], "widget":false, "list":false},
+	"offlineAndActualData":{"title":"Offline aber aktuell", "text":"Systeme als online markiert aber aktuelle Daten", "systems":[], "widget":false, "list":false},
 	"blackscreen":{"title":"Im Schwarzbild-Modus", "text":"Liste der Geräte die schwarz geschaltet sind bzw. die App nicht läuft", "systems":[], "widget":true, "list":false},
 	"ramfree":{"title":"Geringer verfügbarer Speicher", "text":"Liste der Geräte die weniger als 1/4 des Speichers freihaben", "systems":[], "widget":false, "list":true},
 	"ram":{"title":"Zu wenig RAM verbaut", "text":"Liste der Geräte die wenige als 2 GB RAM aufweisen", "systems":[], "widget":false, "list":true},
@@ -232,11 +234,15 @@ function setCheckList(list, applicationVersion, blacklist) {
 					check.deployment.address = {"street":"Keine Adresse", "houseNumber":"", "zipCode":"", "city":""}
 			} else {
 				//if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("offlineSince") && check.checkResults[0].sshLogin !== "success" && !check.checkResults[0].icmpRequest && check.fitted && !check.deployment.testing && check.operatingSystem.toLowerCase().indexOf("windows") === -1) {
+				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && !check.checkResults[0].online && check.fitted && !check.deployment.testing)
+					_commonChecks.onlyoffline.systems.push(check);
 				if (check.hasOwnProperty("checkResults") && !isOnDate(check.lastSync, 48) && check.checkResults.length > 0 && !check.checkResults[0].online && check.fitted && !check.deployment.testing) {
 					_commonChecks.offline.systems.push(check);
 					if (!isOnDate(check.checkResults[0].offlineSince, THREE_MONTHS))
 						_commonChecks.offlineThreeMonth.systems.push(check);
 				}
+				if (check.hasOwnProperty("checkResults") && isOnDate(check.lastSync, 48) && check.checkResults.length > 0 && !check.checkResults[0].online && check.fitted && !check.deployment.testing)
+					_commonChecks.offlineAndActualData.systems.push(check);
 				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].smartCheck === "failed")
 					_commonChecks.ssd.systems.push(check);
 				//if (check.hasOwnProperty("lastSync") && !isOnDate(check.lastSync, 24) && check.fitted && !check.deployment.testing && (!check.hasOwnProperty("checkResults") || (check.checkResults.length > 0 && !check.checkResults[0].hasOwnProperty("offlineSince"))))

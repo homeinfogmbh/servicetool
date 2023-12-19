@@ -10,13 +10,11 @@ $(document).ready(function() {
         systemCheckCompleted(data);
         getDeploymentHistory().then((data)=>setHistory(data), denyHistory);
         getSystemChecks().then((data)=> {
-            console.log(data)
             setDetails(data);
             setThirtyDays(data);
             setErrorLog(data);
             setButtons();
             if (!_display.ddbOs && _display.operatingSystem === "Arch Linux") {
-                $("#displayModeLine").show();
                 getSystemInfo().then((data) => {
                     try { $("#applicationDesign").text('"' + data.presentation.configuration.design.toUpperCase() + '"'); } catch(error) { $("#applicationDesign").text("-"); }
                     $("#display-mode-unknown").hide();
@@ -258,7 +256,6 @@ function systemCheckCompleted(data) {
 }
 function setDetails(data) {
     _display = data.hasOwnProperty(_id) ?data[_id] :data;
-    console.log(_display)
     let address = _display.hasOwnProperty("deployment") ?_display.deployment.hasOwnProperty("address") && _display.deployment.address.street !== "Keine Adresse" ?_display.deployment.address.street + " " + _display.deployment.address.houseNumber + ", " + _display.deployment.address.zipCode + " " + _display.deployment.address.city :'<i>Keine Adresse angegeben</i>' :'<i>Keinem Standort zugewiesen</i>';
     $("#displaytitle").html("Display: " + address);
     try {
@@ -278,7 +275,7 @@ function setDetails(data) {
         $("#screentype").text(_display.deployment.type);
         $("#internetconnection").text(_display.deployment.connection);
         let lptAddress = _display.deployment.hasOwnProperty("lptAddress") ?_display.deployment.lptAddress.street + " " + _display.deployment.lptAddress.houseNumber + ", " + _display.deployment.lptAddress.zipCode + " " + _display.deployment.lptAddress.city :address
-        $("#publicTransportAddress").html('<span title="' + lptAddress + '">' + lptAddress.substring(0, 18) + (lptAddress > 18 ? '...' :'') + '</span>');
+        $("#publicTransportAddress").html('<span title="' + lptAddress + '">' + lptAddress.substring(0, 18) + (lptAddress.length > 18 ? '...' :'') + '</span>');
         $("#deploymentID").text(_display.deployment.id);
         $("#annotation").html(_display.deployment.hasOwnProperty("annotation") ?"<span title='" + _display.deployment.annotation + "'>" + _display.deployment.annotation.substring(0, 20) + (_display.deployment.annotation.length > 20 ? '...' :'') + "</span>" :"-");
         $("#displayurl").html('<span>' + (_display.deployment.hasOwnProperty('url') ?_display.deployment.url :"-") + '</span>');
@@ -681,7 +678,6 @@ function setButtons() {
         $('#restartLine').show();
         $('#restartDDBOSLine').show();
         $('#screenshotLine').show();
-        $("#displayModeLine").show();
         $("#display-mode-unknown").hide();
         $(".tw-toggle").show();
     } else if (_display.operatingSystem === "Arch Linux") {
