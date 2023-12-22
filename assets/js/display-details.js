@@ -276,6 +276,17 @@ function setDetails(data) {
         $("#internetconnection").text(_display.deployment.connection);
         let lptAddress = _display.deployment.hasOwnProperty("lptAddress") ?_display.deployment.lptAddress.street + " " + _display.deployment.lptAddress.houseNumber + ", " + _display.deployment.lptAddress.zipCode + " " + _display.deployment.lptAddress.city :address
         $("#publicTransportAddress").html('<span title="' + lptAddress + '">' + lptAddress.substring(0, 18) + (lptAddress.length > 18 ? '...' :'') + '</span>');
+        if (_display.deployment.hasOwnProperty("lptAddress")) {
+            $("#street").val(_display.deployment.lptAddress.street);
+            $("#houseNumber").val(_display.deployment.lptAddress.houseNumber);
+            $("#zipCode").val(_display.deployment.lptAddress.zipCode);
+            $("#city").val(_display.deployment.lptAddress.city);
+        } else if (_display.hasOwnProperty("deployment") && _display.deployment.hasOwnProperty("address") && _display.deployment.address.street !== "Keine Adresse") {
+            $("#street").val(_display.deployment.address.street);
+            $("#houseNumber").val(_display.deployment.address.houseNumber);
+            $("#zipCode").val(_display.deployment.address.zipCode);
+            $("#city").val(_display.deployment.address.city);
+        }
         $("#deploymentID").text(_display.deployment.id);
         $("#annotation").html(_display.deployment.hasOwnProperty("annotation") ?"<span title='" + _display.deployment.annotation + "'>" + _display.deployment.annotation.substring(0, 20) + (_display.deployment.annotation.length > 20 ? '...' :'') + "</span>" :"-");
         $("#displayurl").html('<span>' + (_display.deployment.hasOwnProperty('url') ?_display.deployment.url :"-") + '</span>');
