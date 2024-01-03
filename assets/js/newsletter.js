@@ -254,7 +254,8 @@ function saveNewsletter(id, setnewsletter = true) {
 
         if (_newsletter[id].hasOwnProperty('upload') && _newsletter[id].upload.fileList.length > 0 && _newsletter[id].upload.fileList[0].state != 'saved')
             promises.push(uploadImage(_newsletter[id].id, _newsletter[id].upload.fileList[0].file));
-
+        else if (_newsletter[id].hasOwnProperty('upload') && _newsletter[id].hasOwnProperty('image') && _newsletter[id].upload.fileList.length == 0)
+            promises.push(deleteImage(_newsletter[id].image));
         let item;
         if (_newsletter[id].hasOwnProperty('listitemsToADD')) {
             promises.push(addNewsLetterListItemInOrder(id));
@@ -354,6 +355,15 @@ function uploadImage(newsletterid, file) {
         processData: false,
         error: function (msg) {
             setErrorMessage(msg, "Upload des Newsletterimages");
+        }
+    });
+}
+function deleteImage(imageid) {
+    return $.ajax({
+        url: 'https://sysmon.homeinfo.de/newsletter-image/' + imageid,
+        type: 'DELETE',
+        error: function (msg) {
+            setErrorMessage(msg, "Löschen des Bildes");
         }
     });
 }

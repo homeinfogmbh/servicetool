@@ -64,7 +64,7 @@ class Upload {
 						canvas.width = this.width;
 						canvas.height = this.height;
 						ctx.drawImage(img, 0, 0);
-						var imgdata = canvas.toDataURL('image/png');
+						var imgdata = canvas.toDataURL('image/jpg');
 						thisobject.selector.find('#upload_thumbnail').append('<li class="ui-state-default" data-id="' + thisobject.fileList.length + '"><div class="thumb">' +
 							'<img src="' + imgdata + '" style="max-width:200px; max-height:150px; border:2px solid transparent;" title="' + file.name + ' (' + (file.size/1024).toFixed(2) + 'kb)">' + 
 							'<i class="fa fa-rotate-right btn_rotate pointer" data-id="' + thisobject.fileList.length + '" style="font-size:20px; color:#fff; margin:10px -30px; vertical-align: top; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; display:none" title="Bild drehen"></i>' +
@@ -97,8 +97,8 @@ class Upload {
 			if (f.size > 10485760) { // 10mb
 				thisobject.selector.find('#upload_error').html('<font style="color:red; font-size:16px">' + f.name + ' ist zu groß (max. 10mb).</font>');
 				continue;
-			} else if (!f.type.match('image.*') && !f.type.match('application/pdf')) {
-				thisobject.selector.find('#upload_error').html('<font style="color:red; font-size:16px"><b>' + f.name + '</b> ist nicht zulässig.</font>');
+			} else if (/*!f.type.match('image.*')*/!f.type.match('image/jpg') && !f.type.match('image/jpeg') && !f.type.match('application/pdf')) {
+				thisobject.selector.find('#upload_error').html('<font style="color:red; font-size:16px"><b>' + f.name + '</b> ist nicht zulässig; nur *.jpg</font>');
 				continue;
 			} else if (thisobject.maximages !== null) {
 				if (thisobject.selector.find('#upload_thumbnail').children().length >= thisobject.maximages) {
@@ -150,8 +150,8 @@ class Upload {
 								canvas.width = img.width * k;
 								canvas.height = img.height * k;
 								context.drawImage(img, 0, 0, canvas.width, canvas.height);
-								var imgfile = thisobject.dataURLtoFile(canvas.toDataURL('image/png'));
-								imgfile.name = file.name.substr(0, file.name.length-4) + '.png';
+								var imgfile = thisobject.dataURLtoFile(canvas.toDataURL('image/jpg'));
+								imgfile.name = file.name.substr(0, file.name.length-4) + '.jpg';
 								thisobject.fileList.push({'file': imgfile, 'state':'toAdd', 'format':'A4', 'index':thisobject.fileList.length, 'name':file.name.substr(0, file.name.indexOf('.')), 'img':img});
 								thisobject.selector.find('#upload_error').html('<font style="color:green; font-size:12px">Das Bild <b>' + file.name.substr(0, file.name.indexOf('.')) + '</b> ist zu groß und wird beim Hochladen in der Auflösung verringert.</font>');
 							} else 
@@ -195,9 +195,9 @@ class Upload {
 			canvas.width = viewport.width;
 			var task = page.render({canvasContext: context, viewport: viewport})
 			task.promise.then(function() {
-				var img = canvas.toDataURL('image/png');
+				var img = canvas.toDataURL('image/jpg');
 				var imgfile = thisobject.dataURLtoFile(img);
-				imgfile.name = file.name.substr(0, file.name.length-4) + (pdf.numPages > 1 ?' Seite ' + pagenumber :'') + '.png';
+				imgfile.name = file.name.substr(0, file.name.length-4) + (pdf.numPages > 1 ?' Seite ' + pagenumber :'') + '.jpg';
 				if (selectorid === null) {
 					thisobject.selector.find('#upload_thumbnail').append('<li class="ui-state-default" data-id="' + thisobject.fileList.length + '"><div class="thumb">' +
 						'<img src="' + img + '" style="max-width:200px; max-height:150px; border:2px solid transparent;" title="' + imgfile.name + ' (' + (imgfile.size/1024).toFixed(2) + 'kb)">' + 
@@ -222,7 +222,7 @@ class Upload {
 		var array = [];
 		for(var i = 0; i < bstr.length; i++)
 			array.push(bstr.charCodeAt(i));
-		return new Blob([new Uint8Array(array)], {type: 'image/png'});
+		return new Blob([new Uint8Array(array)], {type: 'image/jpg'});
 	}
 	
 	retrieveImageFromClipboardAsBlob(pasteEvent, callback) {
@@ -422,7 +422,7 @@ class Upload {
 			context.drawImage(filelist.img, 0,  0, filelist.rotate[0].cvwidth, filelist.rotate[0].cvheight);
 
 			var name = filelist.file.name;
-			var imgfile = thisobject.dataURLtoFile(canvas.toDataURL('image/png'));
+			var imgfile = thisobject.dataURLtoFile(canvas.toDataURL('image/jpg'));
 			imgfile.name = name;
 			filelist.file = imgfile;
 			
