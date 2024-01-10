@@ -109,7 +109,7 @@ function setNewsletter(newsletters) {
     for (let item = 0; item < newslettercounter; item++) {
         _newsletter[item].upload = new Upload($('#imagefieldUpload' + item), 1);
         if (_newsletter[item].hasOwnProperty('image'))
-            _newsletter[item].upload.loadFile(_newsletter[item].image, 'Newsletter-Bild');
+            _newsletter[item].upload.loadFile(_newsletter[item].image, 'Newsletter-Bild'); // TODO if images changed and same site, shoing old image, but new was saved -> reload data?
     }
 
     setListButton();
@@ -251,7 +251,6 @@ function saveNewsletter(id, setnewsletter = true) {
         if (_newsletter[id].id == -1)
             _newsletter[id].id = data.id;
         let promises = [];
-
         if (_newsletter[id].hasOwnProperty('upload') && _newsletter[id].upload.fileList.length > 0 && _newsletter[id].upload.fileList[0].state != 'saved')
             promises.push(uploadImage(_newsletter[id].id, _newsletter[id].upload.fileList[0].file));
         else if (_newsletter[id].hasOwnProperty('upload') && _newsletter[id].hasOwnProperty('image') && _newsletter[id].upload.fileList.length == 0)
@@ -362,6 +361,9 @@ function deleteImage(imageid) {
     return $.ajax({
         url: 'https://sysmon.homeinfo.de/newsletter-image/' + imageid,
         type: 'DELETE',
+        success: function() {
+            _newsletter[id].upload.fileList = [];
+        },
         error: function (msg) {
             setErrorMessage(msg, "Löschen des Bildes");
         }

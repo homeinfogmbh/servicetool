@@ -458,5 +458,6 @@ class Upload {
 			selector.find('.loader').hide();
 		};
 		this.setButtons();
+		this.fileList.push({'file':id, 'state':'saved', 'name':filename});
 	}
 }
