@@ -109,7 +109,7 @@ function setNewsletter(newsletters) {
     for (let item = 0; item < newslettercounter; item++) {
         _newsletter[item].upload = new Upload($('#imagefieldUpload' + item), 1);
         if (_newsletter[item].hasOwnProperty('image'))
-            _newsletter[item].upload.loadFile(_newsletter[item].image, 'Newsletter-Bild'); // TODO if images changed and same site, shoing old image, but new was saved -> reload data?
+            _newsletter[item].upload.loadFile(_newsletter[item].image, 'Newsletter-Bild');
     }
 
     setListButton();
@@ -268,6 +268,8 @@ function saveNewsletter(id, setnewsletter = true) {
                 promises.push(deleteNewsLetterListItem(item.id));
         }
         Promise.all(promises).then((data) => {
+            if (data.length > 0 && data[0].hasOwnProperty("message") && data[0].message == "The file has been created.")
+                _newsletter[id].image = data[0].id;
             if (setnewsletter)
                 setNewsletter();
             else
