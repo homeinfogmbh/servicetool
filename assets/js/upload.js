@@ -68,7 +68,7 @@ class Upload {
 						thisobject.selector.find('#upload_thumbnail').append('<li class="ui-state-default" data-id="' + thisobject.fileList.length + '"><div class="thumb">' +
 							'<img src="' + imgdata + '" style="max-width:200px; max-height:150px; border:2px solid transparent;" title="' + file.name + ' (' + (file.size/1024).toFixed(2) + 'kb)">' + 
 							'<i class="fa fa-rotate-right btn_rotate pointer" data-id="' + thisobject.fileList.length + '" style="font-size:20px; color:#fff; margin:10px -30px; vertical-align: top; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; display:none" title="Bild drehen"></i>' +
-							'<i class="btn_delete_image pointer no_drag" data-id="' + thisobject.fileList.length + '" style="font-size:20px; color:#fff; margin:10px -30px; vertical-align: bottom; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; display:none" title="Bild löschen"></i>' + 
+							'<i class="btn_delete_image pointer no_drag" data-id="' + thisobject.fileList.length + '" style="font-size:20px; color:#fff; margin:10px -30px; vertical-align: bottom; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; display:none" title="Bild löschen">' + 
 								'<img src="assets/img/trash.png">' + 
 							'</i>' + 							
 							'</div></li>');
@@ -114,7 +114,7 @@ class Upload {
 					if (file.type.match('image.*')) {
 						thisobject.selector.find('#upload_thumbnail').append('<li class="ui-state-default" data-id="' + thisobject.fileList.length + '"><div class="thumb">' +
 							'<img src="' + e.target.result + '" style="max-width:200px; max-height:150px; border:2px solid transparent;" title="' + file.name + ' (' + (file.size/1024).toFixed(2) + 'kb)">' + 
-							'<i class="btn_delete_image pointer" data-id="' + thisobject.fileList.length + '" style="font-size:20px; color:#fff; margin:0px 0px; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; display:none" title="Bild löschen"></i>' + 
+							'<i class="btn_delete_image pointer" data-id="' + thisobject.fileList.length + '" style="font-size:20px; color:#fff; margin:0px 0px; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; display:none" title="Bild löschen">' + 
 								'<img src="assets/img/trash.png">' + 
 							'</i>' + 
 						'</div></li>');
@@ -123,7 +123,7 @@ class Upload {
 							if ($('.appmenuitem[data-menu="documents"]').is(':checked') === true) { // In chart if mobile-menu 'documents' is selected
 								thisobject.selector.find('#upload_thumbnail').append('<li class="ui-state-default" data-id="' + thisobject.fileList.length + '"><div class="thumb">' +
 									'<span class="fa fa-file-pdf-o" style="font-size:120px;" title="' + file.name + ' (' + (file.size/1024).toFixed(2) + 'kb)"></span>' +									
-									'<i class="btn_delete_image pointer" data-id="' + thisobject.fileList.length + '" style="font-size:20px; color:#fff; margin:10px -30px; vertical-align:bottom; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; display:none" title="PDF löschen"></i>' +
+									'<i class="btn_delete_image pointer" data-id="' + thisobject.fileList.length + '" style="font-size:20px; color:#fff; margin:10px -30px; vertical-align:bottom; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; display:none" title="PDF löschen">' +
 										'<img src="assets/img/trash.png">' + 
 									'</i>' + 
 									'<span class="ui-icon ui-icon-arrowthick-2-n-s" style="margin:10px"></span>');
@@ -201,7 +201,7 @@ class Upload {
 				if (selectorid === null) {
 					thisobject.selector.find('#upload_thumbnail').append('<li class="ui-state-default" data-id="' + thisobject.fileList.length + '"><div class="thumb">' +
 						'<img src="' + img + '" style="max-width:200px; max-height:150px; border:2px solid transparent;" title="' + imgfile.name + ' (' + (imgfile.size/1024).toFixed(2) + 'kb)">' + 
-						'<i class="btn_delete_image pointer no_drag" data-id="' + thisobject.fileList.length + '" style="font-size:20px; color:#fff; margin:10px 10px; vertical-align: bottom; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; display:none" title="Bild löschen"></i>' +
+						'<i class="btn_delete_image pointer no_drag" data-id="' + thisobject.fileList.length + '" style="font-size:20px; color:#fff; margin:10px 10px; vertical-align: bottom; text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black; display:none" title="Bild löschen">' +
 							'<img src="assets/img/trash.png">' + 
 						'</i>' + 
 						'</div></li>');
@@ -367,6 +367,7 @@ class Upload {
 		thisobject.selector.find('.btn_delete_image').click(function() {
 			$('.progress').hide();
 			thisobject.selector.find('#upload_error').html('');
+			thisobject.fileList = [];
 			$(this).parent().remove();
 		});
 		thisobject.selector.find('.btn_download').click(function() {
