@@ -379,7 +379,7 @@ function sendTestNewsletter(id) {
 		url:  "https://sysmon.homeinfo.de/send_test_mails/" + id,
 		type: "POST",
 		error: function (msg) {
-			setErrorMessage(msg, "Anlegen/ändern des Newsletters");
+			setErrorMessage(msg, "Testen des Newsletters (jpg?)");
 		}
 	});	
 }

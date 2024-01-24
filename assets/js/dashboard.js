@@ -61,8 +61,8 @@ function loadPageData() {
 		e.preventDefault();
 	}); 
     */
-    if (localStorage.getItem("servicetool.systemchecks") !== null)
-        intervalChecks();
+    //if (localStorage.getItem("servicetool.systemchecks") !== null)
+        //intervalChecks();
     setInterval(intervalChecks, 60000);
 }
 function setChecks(data) {

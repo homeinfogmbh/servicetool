@@ -47,6 +47,9 @@ $(document).ready(function() {
                         '<li><a class="dropdown-item" href="defaultnewsletter.html" onclick="removeopenedlist()">Standard-Newsletter</a></li>' +
                     '</ul>' +
                 '</li>' +
+                '<li class="nav-item">' +
+                    '<a class="nav-link" id="service-notification" href="service-notification.html" onclick="removeopenedlist()">Service Notification</a>' +
+                '</li>' +
             '</ul>' +
         '</div>' +
         '<div class="admin_box">' +
@@ -192,6 +195,8 @@ function loadMenuData() {
         $("#bestelltool").addClass("active");
     else if (window.location.pathname.indexOf("newsletter") != -1 || window.location.pathname.indexOf("recipientlist") != -1)
         $("#newsletter").addClass("active");
+    else if (window.location.pathname.indexOf("service-notification") != -1)
+        $("#service-notification").addClass("active");
     
     $('.sendBtn').click(function(e) {
         let date = new Date();
@@ -283,7 +288,7 @@ function setMenu(data) {
 
     $("#sysmonlogo").attr("title", _commonChecks.checkedToday.systems.length + " / " + _commonChecks.systemReducedByBlacklist.systems.length)
     $('.btn_openedlist[data-openedlist="' + localStorage.getItem("servicetool.openedmenulist") + '"]').dropdown("toggle");
-    if ($('.btn_openedlist').hasClass('customerlistLabel'))
+    if ($('.btn_openedlist').hasClass('show'))
         $(".customerlistLabel").click();
     $('.btn_openedlist').click(function(e) {
         if ($(this).data("openedlist") == localStorage.getItem("servicetool.openedmenulist"))
