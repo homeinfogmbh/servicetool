@@ -35,6 +35,7 @@ var _commonChecks = {"offline":{"title":"Offline", "text":"Liste der Geräte die
 var _showErrorMessages = true;
 var _countdowntimer = null;
 var _systemChecksPromise = [];
+var _systems = null;
 $(window).on("unload", function(e) {
     _showErrorMessages = false;
 });
@@ -373,14 +374,18 @@ function getDeployments() {
     });
 }
 function getSystems() {
-    return $.ajax({
-        url: "https://termgr.homeinfo.de/list/systems",
-        type: "GET",
-        cache: false,
-        error: function (msg) {
-            setErrorMessage(msg, "Listen der Systeme");
-        }
-    });
+	if (_systems != null)
+		return _systems;
+	else {
+		return _systems = $.ajax({
+			url: "https://termgr.homeinfo.de/list/systems",
+			type: "GET",
+			cache: false,
+			error: function (msg) {
+				setErrorMessage(msg, "Listen der Systeme");
+			}
+		});
+	}
 }
 function setErrorMessage(msg, fromFunction, title = "Das hat nicht geklappt") {
 	try {
