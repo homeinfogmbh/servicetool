@@ -44,7 +44,7 @@ function assign (event) {
         return Promise.reject('Fehlende Daten.');
 
     localStorage.removeItem("servicetool.systemchecks");
-    
+    localStorage.removeItem("servicetool.systems");
     return $.ajax({
         url: 'https://termgr.homeinfo.de/administer/deploy',
         method: 'POST',

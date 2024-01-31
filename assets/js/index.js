@@ -155,6 +155,7 @@ function removeLocalStorage() {
 	localStorage.removeItem("servicetool.services");
 	localStorage.removeItem("servicetool.session.expired");
 	localStorage.removeItem("servicetool.systemchecks");
+	localStorage.removeItem("servicetool.systems");
 	localStorage.removeItem("servicetool.applicationversion");
 	/*
 

@@ -1010,6 +1010,7 @@ function listDeployments(deployments = null) {
 }
 function setDeployments(id, deployment = null, exclusive = false) {
     $("#pageloader").show();
+    localStorage.removeItem("servicetool.systems");
     const data = {
         'system': id,
         'deployment':deployment,
@@ -1077,6 +1078,7 @@ function restartDDBOS() {
 }
 function setFit() {
     $("#pageloader").show();
+    localStorage.removeItem("servicetool.systems");
     return $.ajax({
         url: 'https://termgr.homeinfo.de/administer/fit',
         type: "POST",
@@ -1098,6 +1100,7 @@ function setApplicationState() {
 }
 function setPublicTransport(address) {
     $("#pageloader").show();
+    localStorage.removeItem("servicetool.systems");
     return $.ajax({
         url: 'https://termgr.homeinfo.de/administer/lpt-address/' + _display.deployment.id,
         type: "POST",
@@ -1111,6 +1114,7 @@ function setPublicTransport(address) {
 
 function changeDeployment(key, value) {
     $("#pageloader").show();
+    localStorage.removeItem("servicetool.systems");
 	let deployment = {};
     deployment[key] = value;
 	return $.ajax({
@@ -1141,6 +1145,7 @@ function changeSerialNumber(serialNumber) {
 
 function changedisplayurl(displayurl) {
     $("#pageloader").show();
+    localStorage.removeItem("servicetool.systems");
 	let data = {"url":displayurl};
 	return $.ajax({
 		url: "https://termgr.homeinfo.de/administer/url/" + _display.deployment.id,
@@ -1155,6 +1160,7 @@ function changedisplayurl(displayurl) {
 
 function saveTechnicianAnnotation(id, annotation) {
     $("#pageloader").show();
+    localStorage.removeItem("servicetool.systems");
     return $.ajax({
         url: 'https://backend.homeinfo.de/deployments/' + id + "/annotation",
         method: 'PATCH',

@@ -70,6 +70,7 @@ $(document).ready(function() {
 		localStorage.removeItem("servicetool.systemchecks");
 		localStorage.removeItem("servicetool.applicationversion");
 		localStorage.removeItem("servicetool.blacklist");
+		localStorage.removeItem("servicetool.systems");
 		//localStorage.removeItem("servicetool.userSettings");
         deleteSession();
     });	
@@ -374,18 +375,21 @@ function getDeployments() {
     });
 }
 function getSystems() {
+	if (localStorage.getItem("servicetool.systems") !== null)
+		return Promise.resolve(JSON.parse(localStorage.getItem("servicetool.systems")));
 	if (_systems != null)
 		return _systems;
-	else {
-		return _systems = $.ajax({
-			url: "https://termgr.homeinfo.de/list/systems",
-			type: "GET",
-			cache: false,
-			error: function (msg) {
-				setErrorMessage(msg, "Listen der Systeme");
-			}
-		});
-	}
+	return _systems = $.ajax({
+		url: "https://termgr.homeinfo.de/list/systems",
+		type: "GET",
+		cache: false,
+		success: function (data) {
+			localStorage.setItem("servicetool.systems", JSON.stringify(data));
+		},
+		error: function (msg) {
+			setErrorMessage(msg, "Listen der Systeme");
+		}
+	});
 }
 function setErrorMessage(msg, fromFunction, title = "Das hat nicht geklappt") {
 	try {

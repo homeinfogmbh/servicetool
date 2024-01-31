@@ -455,6 +455,7 @@ function loadScreenshot(id) {
 
 function saveTechnicianAnnotation(id, annotation) {
     $("#pageloader").show();
+    localStorage.removeItem("servicetool.systems");
     return $.ajax({
         url: 'https://backend.homeinfo.de/deployments/' + id + "/annotation",
         method: 'PATCH',

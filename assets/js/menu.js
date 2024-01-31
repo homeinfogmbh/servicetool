@@ -73,9 +73,10 @@ $(document).ready(function() {
             '</tbody>' +
         '</table>' +
     '</div>';
+    $(".menu_sidebar").html(menu);
     getAccountServices().then((data)=>{
         if (localStorage.getItem("servicetool.user") && JSON.parse(localStorage.getItem("servicetool.user")).root) {
-            $(".menu_sidebar").html(menu);
+            //
             loadMenuData();
         } else {
             let rights = false;
@@ -86,10 +87,10 @@ $(document).ready(function() {
                 }
             }
             if (rights) {
-                $(".menu_sidebar").html(menu);
+                //$(".menu_sidebar").html(menu);
                 loadMenuData();
             } else {
-                menu = '<div class="loader" id="pageloader"></div><div class="menu_content">' +
+                menu = '<div class="loader" id="pageloader" style="display:none"></div><div class="menu_content">' +
                     '<div class="side_logo">' +
                         '<a href="dashboard.html" onclick="removeopenedlist()"><img id="sysmonlogo" src="assets/img/sideLogo.png" alt="Logo"></a>' +
                     '</div>' +

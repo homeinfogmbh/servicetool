@@ -165,6 +165,7 @@ function getDeployments () {
 */
 export function undeploy (event) {
     localStorage.removeItem("servicetool.systemchecks");
+    localStorage.removeItem("servicetool.systems");
     return $.ajax({
         url: 'https://termgr.homeinfo.de/administer/deploy',
         method: 'POST',
