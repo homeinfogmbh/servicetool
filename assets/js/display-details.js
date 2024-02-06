@@ -598,7 +598,7 @@ function setButtons() {
         }); 
 
         let mode = "PRODUCTIVE";
-        mode =  $("#displayurl").text().indexOf("blackmode=true") != -1 ?"BLACK" :mode; // TODO "INSTALLATION_INSTRUCTIONS" instead of :mode
+        mode =  $("#displayurl").text().indexOf("blackmode=true") != -1 ?"BLACK" :mode;
         switch (mode) {
             case "PRODUCTIVE":
                 $("#black-mode").prop("checked", false);
@@ -618,12 +618,15 @@ function setButtons() {
         }
 
         $('[name="display-mode"]').click(function(e) {
-            let displayurl = $("#displayurl").text().replace("?blackmode=true", "").replace("&blackmode=true", "");
-            let title = "Blackmodus eingestellt";
-            if ($(this).val() == "OFF")
-                displayurl += ((displayurl).indexOf("?") == -1 ?"?" :"&") + "blackmode=true";   
-            else
-                title = "Blackmodus ausgestellt";
+            let displayurl = $("#displayurl").text().replace("?blackmode=true", "").replace("&blackmode=true", "").replace("?displaytest=true", "").replace("&displaytest=true", "");
+            let title = "Normalmodus eingestellt";
+            if ($(this).val() == "OFF") {
+                displayurl += ((displayurl).indexOf("?") == -1 ?"?" :"&") + "blackmode=true";
+                title = "Schwarzmodus eingestellt";
+            } else if ($(this).val() == "displaytest") {
+                displayurl += ((displayurl).indexOf("?") == -1 ?"?" :"&") + "displaytest=true";
+                title = "Bildschirmtest eingestellt";
+            }
             $("#displayurl").text(displayurl);
             changedisplayurl(displayurl).then((data) => {
                 $("#pageloader").hide();

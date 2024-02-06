@@ -1101,7 +1101,7 @@ ul.flexContent li {
   border-radius: 20px;
   position:relative;
   border: 2px solid #ffffff;
-  width: 100px;
+  width: 141px;
 }
 
 .tw-toggle label {
@@ -1146,18 +1146,23 @@ ul.flexContent li {
   transition:all 0.3s ease-in-out;
 }
 
+.tw-toggle input[value="displaytest"]:checked ~ span{
+  background:#ff0000;
+  left: 7px;
+  color:#fff;
+}
 .tw-toggle input[value="OFF"]:checked ~ span{
   background:#000000;
-  left: 7px;
+  left: 45px;
   color:#fff;
 }
 .tw-toggle input[value="INSTALLATION_INSTRUCTIONS"]:checked ~ span{
   background:#ffee00;
-  left: 36px;
+  left: 77px;
 }
 .tw-toggle input[value="PRODUCTIVE"]:checked ~ span{
   background:#27ae60;
-  left: 66px;
+  left: 106px;
 }
 .tw-toggle input[value="OFF"]:checked + label,.tw-toggle input[value="PRODUCTIVE"]:checked + label{
   color:#fff;
