@@ -42,6 +42,10 @@ $(document).ready(function() {
                         $("#display-mode-unknown").text("(Status: UNBEKANNT)");
                     }
                     $('[name="display-mode"]').click(function(e) {
+                        if ($(this).val() == "displaytest") {
+                            e.preventDefault();
+                            return;
+                        }
                         localStorage.removeItem("servicetool.systemchecks");
                         setApplicationState().then(checkSystem).then(()=>{
                             $("#pageloader").hide();
@@ -599,19 +603,29 @@ function setButtons() {
 
         let mode = "PRODUCTIVE";
         mode =  $("#displayurl").text().indexOf("blackmode=true") != -1 ?"BLACK" :mode;
+        mode =  $("#displayurl").text().indexOf("displaytest=true") != -1 ?"TESTMODE" :mode;
         switch (mode) {
             case "PRODUCTIVE":
+                $("#test-mode").prop("checked", false);
                 $("#black-mode").prop("checked", false);
                 $("#installation-instructions-mode").prop("checked", false);
                 $("#productive-mode").prop("checked", true);
                 break;
             case "INSTALLATION_INSTRUCTIONS":
+                $("#test-mode").prop("checked", false);
                 $("#black-mode").prop("checked", false);
                 $("#installation-instructions-mode").prop("checked", true);
                 $("#productive-mode").prop("checked", false);
                 break;
+            case "TESTMODE":
+                $("#test-mode").prop("checked", true);
+                $("#black-mode").prop("checked", false);
+                $("#installation-instructions-mode").prop("checked", false);
+                $("#productive-mode").prop("checked", false);
+                break;
             default:
                 $("#black-mode").prop("checked", true);
+                $("#test-mode").prop("checked", false);
                 $("#installation-instructions-mode").prop("checked", false);
                 $("#productive-mode").prop("checked", false);
                 break;
@@ -768,6 +782,8 @@ function setButtons() {
                 sync().then(()=>{$("#pageloader").hide()});
             e.preventDefault();
         });
+        $(".fa-chess-board").css("opacity", "0.3");
+        $(".fa-chess-board").attr("title", "Steht für dieses System nicht zur Verfügung");
         $('#noiceLine').show();
         $('#restartLine').show();
         $('#screenshotLine').show();
