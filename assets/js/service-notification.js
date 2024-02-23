@@ -87,10 +87,9 @@ function setButtons() {
 
 }
 function saveServiceEmails(emails) {
-    /*
     $("#pageloader").show();
     return $.ajax({
-        url: "https://sysmon.homeinfo.de/extra-user-notification-emails",
+        url: "https://sysmon.homeinfo.de/statistic-user-notification-emails",
         type: "POST",
         data: JSON.stringify(emails),
         contentType: 'application/json',
@@ -98,19 +97,16 @@ function saveServiceEmails(emails) {
             setErrorMessage(msg, "Speichern der E-Mails");
         }
     });	
-    */
 }
 
 function getServiceEmails() {
-    /*
 	return $.ajax({
-		url: "https://sysmon.homeinfo.de/extra-user-notification-emails",
+		url: "https://sysmon.homeinfo.de/statistic-user-notification-emails",
 		type: "GET",
 		error: function (msg) {
 			setErrorMessage(msg, "Laden der E-Mails");
 		}
 	});	
-    */
 }
 
 function compareStrings(a, b) {

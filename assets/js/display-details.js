@@ -69,6 +69,31 @@ $(document).ready(function() {
     }, ()=>{
         $("#errorlog").html("<tr><td>Keine Einträge geladen</td></tr>");
     });
+    $('.btn_changeDeploymentAddress').click(function(e) {
+        if (_display !== null && _display.hasOwnProperty("deployment") && _display.deployment.hasOwnProperty("address") && _display.deployment.address.street !== "Keine Adresse") {
+            $("#deploymentAddressStreetInput").val(_display.deployment.address.street);
+            $("#deploymentAddressHouseNumberInput").val(_display.deployment.address.houseNumber);
+            $("#deploymentAddressZipCodeInput").val(_display.deployment.address.zipCode);
+            $("#deploymentAddressCityInput").val(_display.deployment.address.city);
+            if ($("#deploymentAddressfields").is(":visible"))
+                $("#deploymentAddressfields").hide();
+            else
+                $("#deploymentAddressfields").show();
+            $("#deploymentAddressInput").focus();
+        }
+		e.preventDefault();
+	});
+    $('.btn_saveDeploymentAddress').click(function(e) {
+        let address = {'street':$("#deploymentAddressStreetInput").val(), 'houseNumber':$("#deploymentAddressHouseNumberInput").val(), 'zipCode':$("#deploymentAddressZipCodeInput").val(), 'city':$("#deploymentAddressCityInput").val()};
+        changeDeploymentAddress(address).then(() => {
+            localStorage.removeItem("servicetool.systemchecks");
+            $("#displaytitle").text('Display: ' + $("#deploymentAddressStreetInput").val() + " " + $("#deploymentAddressHouseNumberInput").val() + ", " + $("#deploymentAddressZipCodeInput").val() + " " + $("#deploymentAddressCityInput").val());
+            $("#deploymentAddressfields").hide();
+            $("#pageloader").hide()
+        });
+		e.preventDefault();
+	});
+
     $('.btn_serialNumber').click(function(e) {
         $("#serialNumberInput").val($("#serialNumber").text() === "-" ?"" :$("#serialNumber").text());
         if ($("#serialNumberfields").is(":visible"))
@@ -1026,6 +1051,23 @@ function listDeployments(deployments = null) {
         $('#deploymentsearch').focus();
         $("#pageloader").hide();
     }
+}
+function changeDeploymentAddress(address) {
+    setErrorMessage(true, "Ändern der Adresse (klappt noch nicht)");
+    return Promise.resolve();
+    /*
+    $("#pageloader").show();
+	let data = {"system":_display.id, "serialNumber":serialNumber};
+	return $.ajax({
+		url: "https://termgr.homeinfo.de/administer/serial-number",
+		type: "POST",
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+		error: function (msg) {
+			setErrorMessage(msg, "Ändern der Adresse");
+		}
+	});
+    */
 }
 function setDeployments(id, deployment = null, exclusive = false) {
     $("#pageloader").show();

@@ -9,15 +9,11 @@
 	<link rel="apple-touch-icon" sizes="57x57" href="assets/img/favicon/apple-icon-57x57.png"><link rel="apple-touch-icon" sizes="60x60" href="assets/img/favicon/apple-icon-60x60.png"><link rel="apple-touch-icon" sizes="72x72" href="assets/img/favicon/apple-icon-72x72.png"><link rel="apple-touch-icon" sizes="76x76" href="assets/img/favicon/apple-icon-76x76.png"><link rel="apple-touch-icon" sizes="114x114" href="assets/img/favicon/apple-icon-114x114.png"><link rel="apple-touch-icon" sizes="120x120" href="assets/img/favicon/apple-icon-120x120.png"><link rel="apple-touch-icon" sizes="144x144" href="assets/img/favicon/apple-icon-144x144.png"><link rel="apple-touch-icon" sizes="152x152" href="assets/img/favicon/apple-icon-152x152.png"><link rel="apple-touch-icon" sizes="180x180" href="assets/img/favicon/apple-icon-180x180.png"><link rel="icon" type="image/png" sizes="192x192"  href="assets/img/favicon/android-icon-192x192.png"><link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon/favicon-32x32.png"><link rel="icon" type="image/png" sizes="96x96" href="assets/img/favicon/favicon-96x96.png"><link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon/favicon-16x16.png"><link rel="manifest" href="assets/img/favicon/manifest.json"><meta name="msapplication-TileColor" content="#ffffff"><meta name="msapplication-TileImage" content="/ms-icon-144x144.png"><meta name="theme-color" content="#ffffff">
 	<title id="sitetitle">Display-Details</title>
 	<link rel="stylesheet" href="assets/css/fonts.css">
-	<!-- Bootstrap -->
 	<link rel="stylesheet" href="assets/css/bootstrap.min.css">
-	<!-- owl.carousel -->
 	<link rel="stylesheet" href="assets/css/owl.carousel.min.css">
 	<link rel="stylesheet" href="assets/css/owl.theme.default.min.css">
-	<!-- Main Css -->
 	<link rel="stylesheet" href="style.css">
 	<link rel="stylesheet" href="assets/css/common.css">
-	<!-- Responsive Css -->
 	<link rel="stylesheet" href="assets/css/responsive.css">
 	<link rel="stylesheet" href="assets/css/sweetalert2.min.css">
 
@@ -38,7 +34,23 @@
 							<a href="dashboard.html"><img src="assets/img/sideLogo.png" alt="Logo"></a>
 						</div>
 						<div class="dashTopLeft">
-							<h2><span id="displaytitle">Display</span></h2>
+							<h2><span id="displaytitle">Display</span> <a href="#" class="editIcon btn_changeDeploymentAddress"><img src="assets/img/edit.svg" alt=""></a></h2>
+							<div id="deploymentAddressfields" style="display:none; padding-top:5px">															
+								<div class="dualinp inpCol Straße">
+									<div class="autocomplete-wrapper">
+										<input id="deploymentAddressStreetInput" type="text" placeholder="Straße" class="longInp basic-data">
+									</div>
+									<input id="deploymentAddressHouseNumberInput" type="text" placeholder="Nr." class="smallInp basic-data">
+								</div>
+								<div class="dualinp inpCol PLZ">
+									<input id="deploymentAddressZipCodeInput" type="text" placeholder="PLZ" class="smallInp basic-data">
+									<input id="deploymentAddressCityInput" type="text" placeholder="Stadt" class="longInp basic-data">
+								</div>
+								<div style="float:right">
+									<span class="whiteMark btn_saveDeploymentAddress pointer">Speichern</span>
+									<span class="whiteMark btn_changeDeploymentAddress pointer">Abbrechen</span>
+								</div>
+							</div>
 							<p id="completecustomername"></p>
 						</div>
 						<div class="dashTopRight">
