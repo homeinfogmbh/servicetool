@@ -1,6 +1,7 @@
 const ONE_HOUR = 60 * 60 * 1000; // Milliseconds;
 const THREE_MONTHS = 3 * 30 * 24; // Hours
 const _KIBIBITTOMBIT = 1024/1000/1000;
+var _DDBOSURL = 'https://portal.homeinfo.de/';
 var _coffin = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="#fff" d="M8,22L5,8L8,2H16L19,8L16,22H8M11,6V8H9V10H11V15H13V10H15V8H13V6H11Z" /></svg>';
 var _commonChecks = {"offline":{"title":"Offline", "text":"Liste der Geräte die offline gemessen wurden und dessen Daten älter als 48h sind", "systems":[], "widget":true, "list":false},
 	"offlineThreeMonth":{"title":"Lange offline", "text":"Liste der Geräte die länger als 3 Monate offline sind und dessen Daten älter als 24h sind", "systems":[], "widget":false, "list":true},
@@ -250,7 +251,7 @@ function setCheckList(list, applicationVersion, blacklist) {
 				//if (check.hasOwnProperty("lastSync") && !isOnDate(check.lastSync, 24) && check.fitted && !check.deployment.testing && (!check.hasOwnProperty("checkResults") || (check.checkResults.length > 0 && !check.checkResults[0].hasOwnProperty("offlineSince"))))
 				if (!check.ddbOs && check.hasOwnProperty("lastSync") && !isOnDate(check.lastSync, 48) && check.fitted && !check.deployment.testing && (!check.hasOwnProperty("checkResults") || (check.checkResults.length > 0 && check.checkResults[0].sshLogin !== "failed" && check.checkResults[0].icmpRequest)))
 					_commonChecks.noActualData.systems.push(check);
-				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState !== "html" && check.checkResults[0].applicationState !== "air" && check.checkResults[0].applicationState !== "unknown" && check.fitted && !check.deployment.testing)
+				if ((check.deployment.hasOwnProperty('url') && check.deployment.url.indexOf("blackmode=true") != -1) || (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState !== "html" && check.checkResults[0].applicationState !== "air" && check.checkResults[0].applicationState !== "unknown" && check.fitted && !check.deployment.testing))
 					_commonChecks.blackscreen.systems.push(check);
 				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("ramAvailable") && check.checkResults[0].hasOwnProperty("ramTotal") && parseInt(check.checkResults[0].ramAvailable)*4 < parseInt(check.checkResults[0].ramTotal))
 					_commonChecks.ramfree.systems.push(check);
@@ -433,4 +434,10 @@ function formatDate(date) {
 function getURLParameterByName(name) {
     let match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
     return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+}
+function getDefaultDisplayURL(system) {
+    let address = "&location=" + system.deployment.address.city + "&street=" + system.deployment.address.street + "&housenumber=" + system.deployment.address.houseNumber;
+    if (system.deployment.hasOwnProperty("lptAddress"))
+        address = "&location=" + system.deployment.lptAddress.city + "&street=" + system.deployment.lptAddress.street + "&housenumber=" + system.deployment.lptAddress.houseNumber;
+    return _DDBOSURL + system.deployment.customer.abbreviation.toString().toLowerCase().split(" ").join("").split("ä").join("ae").split("ü").join("ue").split("ö").join("oe").split("(").join("").split(")").join("") + "/?system=" + system.id + "&deployment=" + system.deployment.id + address + "&customer=" + system.deployment.customer.id + "&ddbos=true";
 }

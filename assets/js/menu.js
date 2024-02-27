@@ -50,6 +50,9 @@ $(document).ready(function() {
                 '<li class="nav-item">' +
                     '<a class="nav-link" id="service-notification" href="service-notification.html" onclick="removeopenedlist()">Service Notification</a>' +
                 '</li>' +
+                '<li class="nav-item">' +
+                    '<a class="nav-link" id="global" href="global.html" onclick="removeopenedlist()">Global</a>' +
+                '</li>' +
             '</ul>' +
         '</div>' +
         '<div class="admin_box">' +
@@ -198,6 +201,8 @@ function loadMenuData() {
         $("#newsletter").addClass("active");
     else if (window.location.pathname.indexOf("service-notification") != -1)
         $("#service-notification").addClass("active");
+    else if (window.location.pathname.indexOf("global") != -1)
+        $("#global").addClass("active");
     
     $('.sendBtn').click(function(e) {
         let date = new Date();

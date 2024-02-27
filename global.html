@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<meta charset="UTF-8">
+	<meta name="description" content="Site Description">
+	<meta name="keywords" content="HTML, CSS, JavaScript, Bootstrap">
+	<meta name="author" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="apple-touch-icon" sizes="57x57" href="assets/img/favicon/apple-icon-57x57.png"><link rel="apple-touch-icon" sizes="60x60" href="assets/img/favicon/apple-icon-60x60.png"><link rel="apple-touch-icon" sizes="72x72" href="assets/img/favicon/apple-icon-72x72.png"><link rel="apple-touch-icon" sizes="76x76" href="assets/img/favicon/apple-icon-76x76.png"><link rel="apple-touch-icon" sizes="114x114" href="assets/img/favicon/apple-icon-114x114.png"><link rel="apple-touch-icon" sizes="120x120" href="assets/img/favicon/apple-icon-120x120.png"><link rel="apple-touch-icon" sizes="144x144" href="assets/img/favicon/apple-icon-144x144.png"><link rel="apple-touch-icon" sizes="152x152" href="assets/img/favicon/apple-icon-152x152.png"><link rel="apple-touch-icon" sizes="180x180" href="assets/img/favicon/apple-icon-180x180.png"><link rel="icon" type="image/png" sizes="192x192"  href="assets/img/favicon/android-icon-192x192.png"><link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon/favicon-32x32.png"><link rel="icon" type="image/png" sizes="96x96" href="assets/img/favicon/favicon-96x96.png"><link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon/favicon-16x16.png"><link rel="manifest" href="assets/img/favicon/manifest.json"><meta name="msapplication-TileColor" content="#ffffff"><meta name="msapplication-TileImage" content="/ms-icon-144x144.png"><meta name="theme-color" content="#ffffff">
+	<title>Global</title>
+
+	<link rel="stylesheet" href="assets/css/fonts.css">
+	<link rel="stylesheet" href="assets/css/bootstrap.min.css">
+	<link rel="stylesheet" href="assets/css/owl.carousel.min.css">
+	<link rel="stylesheet" href="assets/css/owl.theme.default.min.css">
+	<link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="assets/css/common.css">
+	<link rel="stylesheet" href="assets/css/responsive.css">
+	<link rel="stylesheet" href="assets/css/sweetalert2.min.css">
+
+</head>
+<body class="">
+	<div class="bodyWrap">
+		<div class="mobile_triger">
+			<img src="assets/img/mobile-burger.svg" class="burger">
+			<img src="assets/img/mobile-close.svg" class="close_menu" style="display: none;">
+		</div>
+		<div class="dashboard_container">
+			<div class="menu_sidebar"></div>
+			<div class="dashboard_containers">
+				<div class="dashboard_content">
+					<div class="dashboardTopbar">
+						<div class="mobileLogo">
+							<a href="dashboard.html"><img src="assets/img/sideLogo.png" alt="Logo"></a>
+						</div>
+						<div class="dashTopLeft">
+							<h2>Global</h2>
+							<p>Vorsicht: Diese Einstellungen ändern alle Systeme</p>
+						</div>
+						<div class="dashTopRight">
+							<div class="search_dash rights">
+								<form action="#">
+									<button type="button"><img src="assets/img/search.svg"></button>
+									<input type="search" id="globalsearchfield" placeholder="Suche...">
+								</form>
+							</div>
+							<div class="top_user">
+								<div class="seru_avatar"></div>
+								<div class="user_cont">
+									<h5 id="username"></h5>
+									<a class="blue_btn logout pointer">abmelden</a>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="dash_bottomCont ">
+						<div class="neuinstaContainer">
+							<div class="row">
+								<div class="neuinstaCol col33">
+									<div class="neuinstaContent basisdaten">
+										<h3>DDB - OS</h3>
+										<p>Allgemeine Einstellungen</p>
+										<table class="table tableHeadNone">
+											<tbody>
+												<tr>
+													<td>Base URL</td>
+													<td>
+														<span id="baseurl">-</span> <a href="#" class="editIcon btn_baseurl"><img src="assets/img/edit.svg" alt=""></a>
+														<div id="baseurlfields" style="display:none; padding-top:5px">															
+															<div class="dualinp inpCol">
+																<input id="baseurlInput" type="text" class="longInp basic-data">
+															</div>
+															<div style="float:right">
+																<span class="whiteMark btn_savebaseurl pointer">Speichern</span>
+																<span class="whiteMark btn_baseurl pointer">Abbrechen</span>
+															</div>
+														</div>
+													</td>
+												</tr>
+												<tr>
+													<td>Display URL's</td>
+													<td><span class="whiteMark btn_displayurlDefault pointer">neu generieren</span></td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+								<div class="col60">
+									<div class="tableBox rights">
+										<h3>Geänderte Display-URL</h3>
+										<p>Liste der DDB-OS Systeme mit Display-URL, die nicht dem Standard entsprechen. Diese werden beim "neu generieren" nicht überschrieben.</p>
+										<div class="table_container Neuinsta">
+											<table class="table">
+												<thead>
+													<tr>
+														<th>Kunde</th>
+														<th>Adresse</th>
+														<th>URL</th>
+														<th></th>
+													</tr>
+												</thead>
+												<tbody id="overwritelist">
+													<tr>
+														<td><i>Wird geladen...</i></td>
+														<td></td>
+														<td></td>
+														<td></td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+	</div>
+	<script src="assets/js/jquery.min.js"></script>
+	<script src="assets/js/bootstrap.bundle.min.js"></script>
+	<script src="assets/js/owl.carousel.min.js"></script>
+	<script src="assets/js/active.js"></script>
+	<script src="assets/js/sweetalert2.min.js"></script>
+	<script src="assets/js/common.js"></script>
+	<script src="assets/js/menu.js"></script>
+	<script src="assets/js/global.js"></script>
+</body>
+</html>

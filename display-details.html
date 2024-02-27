@@ -109,8 +109,8 @@
 													<td>RAM (frei)</td>
 													<td id="ramAvailable">-</td>
 												</tr>
-												<tr class="btn_wireguard" title="Klicken zum Kopieren" style="cursor:pointer">
-													<td>WireGuard pubKey</td>
+												<tr>
+													<td>WireGuard pubKey <img class="btn_wireguard pointer" src="assets/img/copy.png" title="Klicken zum Kopieren" style="cursor:pointer"></td>
 													<td id="wireguard">-</td>
 												</tr>
 												<tr>
@@ -170,7 +170,7 @@
 													<td id="annotation">-</td>
 												</tr>
 												<tr>
-													<td>Display URL</td>
+													<td>Display URL <img class="btn_displayurlCopy pointer" src="assets/img/copy.png" title="Klicken zum Kopieren" style="cursor:pointer"></td>
 													<td>
 														<span id="displayurl" style="word-break: break-all;">-</span> <a href="#" class="editIcon btn_displayurl" title="Wird geladen..." style="opacity:0.3"><img src="assets/img/edit.svg" alt=""></a>
 														<div id="displayurlfields" style="display:none; padding-top:5px">															
@@ -346,6 +346,20 @@
 															<label> <i class="fa fa-check"></i></label>
 															<span></span>
 														</div>
+													</td>
+												</tr>
+												<tr id="heatmapMode" style="display:none">
+													<td>Heatmap</td>
+													<td>
+														<input type="checkbox" style="display:none;" name="Heatmap" id="Heatmap">
+														<label for="Heatmap"><span class="btn_heatmap checkboxStyle whiteCheckbox"></span></label>
+													</td>
+												</tr>
+												<tr id="consoleMode" style="display:none">
+													<td>Konsole</td>
+													<td>
+														<input type="checkbox" style="display:none;" name="Konsole" id="Konsole">
+														<label for="Konsole"><span class="btn_console checkboxStyle whiteCheckbox"></span></label>
 													</td>
 												</tr>
 												<tr id="restartLine" style="display:none">

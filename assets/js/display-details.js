@@ -168,6 +168,11 @@ $(document).ready(function() {
         }
 		e.preventDefault();
 	});
+    $('.btn_displayurlCopy').click(function(e) {
+        if (_display != null && _display.hasOwnProperty('deployment') && _display.deployment.hasOwnProperty('url') && _display.deployment.hasOwnProperty('url'))
+            navigator.clipboard.writeText(_display.deployment.url.split("&amp;").join("&"));
+		e.preventDefault();
+	});
     $('.btn_check').click(function(e) {
         localStorage.removeItem("servicetool.systemchecks");
         localStorage.removeItem("servicetool.applicationversion");
@@ -293,7 +298,7 @@ function setDetails(data) {
         $("#completecustomername").html(_display.deployment.customer.company.name + ' (Knr. <a target="_self" style="color:white;" href="https://testing.homeinfo.de/sysmon2/listenansicht.html?customer=' + _display.deployment.customer.id + '">' + _display.deployment.customer.id + '</a>)');
     } catch(err) {   }
     // Display Overview
-    $("#model").text(_display.hasOwnProperty("model") ?_display.model :'-');
+    $("#model").text(_display.hasOwnProperty("model") ?_display.model.split('&quot;').join('"') :'-');
     $("#serialNumber").text(_display.hasOwnProperty("serialNumber") ?_display.serialNumber :'-');
     $("#ipv6").text(_display.ipv6address);
     if (_display.hasOwnProperty("checkResults") && _display.checkResults.length > 0) {
@@ -361,7 +366,7 @@ function setDetails(data) {
             e.preventDefault();
         });
     }
-    $("#wireguard").html(_display.hasOwnProperty("pubkey") ?"<span title='" + _display.pubkey + " (zum Kopieren klicken)'>" + _display.pubkey.substring(0, 20) + "...</span>" :"-");
+    $("#wireguard").html(_display.hasOwnProperty("pubkey") ?"<span title='" + _display.pubkey + "'>" + _display.pubkey.substring(0, 20) + "...</span>" :"-");
     $("#systemID").text(_display.id);
     $("#os").text(_display.operatingSystem + (_display.ddbOs ? " (DDB OS)":""));
     
@@ -566,7 +571,7 @@ function setErrorLog(display) {
 function setButtons() {
     if (_display !== null && _display.hasOwnProperty("deployment")) {
         $(".btn_displayurl").css("opacity", "1");
-        $(".btn_displayurl").attr("title", "");
+        $(".btn_displayurl").attr("title", 'Komplett Löschen, um normalen Betrieb ("Default") wiederherzustellen (Testdisplay, Schwarzbildmodus, Konsole und Heatmap werden deaktiviert)');
         $('.btn_displayurl').click(function(e) {
             $("#displayurlInput").val($("#displayurl").text() === "-" ?"" :$("#displayurl").text());
             if ($("#displayurlfields").is(":visible"))
@@ -580,12 +585,13 @@ function setButtons() {
             if (_display !== null) { 
                 let displayurl;
                 let ddbosparameter = "";
-                let input = $("#displayurlInput").val().replace("?ddbos=true", "").replace("&ddbos=true", "");
-                ddbosparameter = ((input).indexOf("?") == -1 ?"?" :"&") + "ddbos=true";
-                if (input.trim() === "")
-                    displayurl = null;
-                else
+                let input = $("#displayurlInput").val().replace("?ddbos=true", "").replace("&ddbos=true", "").replace("?overwrite=true", "").replace("&overwrite=true", "");
+                if (input.trim() == "") {
+                    displayurl = getDefaultDisplayURL(_display);
+                } else {
+                    ddbosparameter = ((input).indexOf("?") == -1 ?"?" :"&") + "ddbos=true&overwrite=true";
                     displayurl = input + ddbosparameter;
+                }
                 changedisplayurl(displayurl).then((data) => {
                     $("#displayurl").text(displayurl === null ?"-" :displayurl);
                     $("#displayurlfields").hide();
@@ -624,11 +630,79 @@ function setButtons() {
                 });
             });
             e.preventDefault();
-        }); 
+        });
+
+        // Heatmap
+        if ($("#displayurl").text().indexOf("heatmap=true") != -1) {;
+            $("#Heatmap").prop("checked", true);
+            $(".btn_heatmap").attr("title", "Heatmap wird gerade angezeigt");
+        } else {
+            $("#Heatmap").prop("checked", false);
+            $(".btn_heatmap").attr("title", "Heatmap wird gerade NICHT angezeigt");
+        }
+        $('.btn_heatmap').click(function(e) {
+            let displayurl = $("#displayurl").text().replace("?heatmap=true", "").replace("&heatmap=true", "");
+            let title;
+            if ($('input[name=Heatmap]:checked').val() === 'on') {
+                $(this).attr("title", "Wird nicht angezeigt");
+                title = "Heatmap gerade wird nicht angezeigt";
+            } else {
+                displayurl += ((displayurl).indexOf("?") == -1 ?"?" :"&") + "heatmap=true";
+                title = "Heatmap gerade angezeigt";
+                $(this).attr("title", "Heatmap angezeigt");
+            }
+            $("#displayurl").text(displayurl);
+            changedisplayurl(displayurl).then((data) => {
+                $("#pageloader").hide();
+                Swal.fire({
+                    title: title,
+                    html: "Erfolgreich übertragen: " + data.success[0] + '<br>Nicht übertragen: ' + (data.failed.hasOwnProperty('offline') ?data.failed.offline :"-"),
+                    showCancelButton: false,
+                    confirmButtonColor: '#ff821d',
+                    iconHtml: '<img src="assets/img/PopUp-Icon.png"></img>',
+                    confirmButtonText: 'O.K.',
+                    buttonsStyling: true
+                });
+            });
+        });
+
+        // Console
+        if ($("#displayurl").text().indexOf("console=true") != -1) {;
+            $("#Konsole").prop("checked", true);
+            $(".btn_console").attr("title", "Konsole wird gerade angezeigt");
+        } else {
+            $("#Konsole").prop("checked", false);
+            $(".btn_console").attr("title", "Konsole wird gerade NICHT angezeigt");
+        }
+        $('.btn_console').click(function(e) {
+            let displayurl = $("#displayurl").text().replace("?console=true", "").replace("&console=true", "");
+            let title;
+            if ($('input[name=Konsole]:checked').val() === 'on') {
+                $(this).attr("title", "Wird nicht angezeigt");
+                title = "Konsole gerade wird nicht angezeigt";
+            } else {
+                displayurl += ((displayurl).indexOf("?") == -1 ?"?" :"&") + "console=true";
+                title = "Konsole gerade angezeigt";
+                $(this).attr("title", "Konsole angezeigt");
+            }
+            $("#displayurl").text(displayurl);
+            changedisplayurl(displayurl).then((data) => {
+                $("#pageloader").hide();
+                Swal.fire({
+                    title: title,
+                    html: "Erfolgreich übertragen: " + data.success[0] + '<br>Nicht übertragen: ' + (data.failed.hasOwnProperty('offline') ?data.failed.offline :"-"),
+                    showCancelButton: false,
+                    confirmButtonColor: '#ff821d',
+                    iconHtml: '<img src="assets/img/PopUp-Icon.png"></img>',
+                    confirmButtonText: 'O.K.',
+                    buttonsStyling: true
+                });
+            });
+        });
 
         let mode = "PRODUCTIVE";
-        mode =  $("#displayurl").text().indexOf("blackmode=true") != -1 ?"BLACK" :mode;
-        mode =  $("#displayurl").text().indexOf("displaytest=true") != -1 ?"TESTMODE" :mode;
+        mode = $("#displayurl").text().indexOf("blackmode=true") != -1 ?"BLACK" :mode;
+        mode = $("#displayurl").text().indexOf("displaytest=true") != -1 ?"TESTMODE" :mode;
         switch (mode) {
             case "PRODUCTIVE":
                 $("#test-mode").prop("checked", false);
@@ -655,15 +729,14 @@ function setButtons() {
                 $("#productive-mode").prop("checked", false);
                 break;
         }
-
         $('[name="display-mode"]').click(function(e) {
-            let displayurl = $("#displayurl").text().replace("?blackmode=true", "").replace("&blackmode=true", "").replace("?displaytest=true", "").replace("&displaytest=true", "");
+            let displayurl = $("#displayurl").text().replace("?blackmode=true", "").replace("&blackmode=true", "").replace("?displaytest=true", "").replace("&displaytest=true", "").replace("?overwrite=true", "").replace("&overwrite=true", "");
             let title = "Normalmodus eingestellt";
             if ($(this).val() == "OFF") {
-                displayurl += ((displayurl).indexOf("?") == -1 ?"?" :"&") + "blackmode=true";
+                displayurl += ((displayurl).indexOf("?") == -1 ?"?" :"&") + "blackmode=true&overwrite=true";
                 title = "Schwarzmodus eingestellt";
             } else if ($(this).val() == "displaytest") {
-                displayurl += ((displayurl).indexOf("?") == -1 ?"?" :"&") + "displaytest=true";
+                displayurl += ((displayurl).indexOf("?") == -1 ?"?" :"&") + "displaytest=true&overwrite=true";
                 title = "Bildschirmtest eingestellt";
             }
             $("#displayurl").text(displayurl);
@@ -733,6 +806,8 @@ function setButtons() {
         $('#screenshotLine').show();
         $("#display-mode-unknown").hide();
         $(".tw-toggle").show();
+        $('#heatmapMode').show();
+        $('#consoleMode').show();
     } else if (_display.operatingSystem === "Arch Linux") {
         $('.btn_noice').click(function(e) {
             noice().then(()=>{
@@ -1207,6 +1282,7 @@ function changeSerialNumber(serialNumber) {
 function changedisplayurl(displayurl) {
     $("#pageloader").show();
     localStorage.removeItem("servicetool.systems");
+    //localStorage.removeItem("servicetool.systemchecks");
 	let data = {"url":displayurl};
 	return $.ajax({
 		url: "https://termgr.homeinfo.de/administer/url/" + _display.deployment.id,
