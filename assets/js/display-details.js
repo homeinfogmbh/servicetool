@@ -1128,21 +1128,16 @@ function listDeployments(deployments = null) {
     }
 }
 function changeDeploymentAddress(address) {
-    setErrorMessage(true, "Ändern der Adresse (klappt noch nicht)");
-    return Promise.resolve();
-    /*
-    $("#pageloader").show();
-	let data = {"system":_display.id, "serialNumber":serialNumber};
+    $("#pageloader").show();;
 	return $.ajax({
-		url: "https://termgr.homeinfo.de/administer/serial-number",
+		url: "https://sysmon.homeinfo.de/deployment-address/" + _display.deployment.id,
 		type: "POST",
-        data: JSON.stringify(data),
+        data: JSON.stringify(address),
         contentType: 'application/json',
 		error: function (msg) {
 			setErrorMessage(msg, "Ändern der Adresse");
 		}
 	});
-    */
 }
 function setDeployments(id, deployment = null, exclusive = false) {
     $("#pageloader").show();
