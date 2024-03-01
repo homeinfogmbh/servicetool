@@ -251,7 +251,7 @@ function checkSysmon() {
 }
 
 function setCustomerListWithTerminals(customerList) {
-    let customerDom = "";
+    let customerDom = '<li><a class="dropdown-item" href="listenansicht.html">ALLE</a></li>';
     for (let customer in customerList)
         customerDom += '<li><a class="dropdown-item" href="listenansicht.html?customer=' + customerList[customer].id + '">' + customerList[customer].name + ' (' + customerList[customer].count + ')</a></li>'
     $(".customerlistLabel").text("Kundenliste (" + Object.keys(customerList).length + ")");
