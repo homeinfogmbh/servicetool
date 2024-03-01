@@ -85,7 +85,7 @@ $(document).ready(function() {
 	});
     $('.btn_saveDeploymentAddress').click(function(e) {
         let address = {'street':$("#deploymentAddressStreetInput").val(), 'houseNumber':$("#deploymentAddressHouseNumberInput").val(), 'zipCode':$("#deploymentAddressZipCodeInput").val(), 'city':$("#deploymentAddressCityInput").val()};
-        changeDeploymentAddress(address).then(() => {
+            changeDeployment("address", address).then(() => {
             localStorage.removeItem("servicetool.systemchecks");
             $("#displaytitle").text('Display: ' + $("#deploymentAddressStreetInput").val() + " " + $("#deploymentAddressHouseNumberInput").val() + ", " + $("#deploymentAddressZipCodeInput").val() + " " + $("#deploymentAddressCityInput").val());
             $("#deploymentAddressfields").hide();
@@ -798,7 +798,7 @@ function setButtons() {
         });
         $('.btn_eye').click(function(e) {
             if (_display.deployment.hasOwnProperty("url"))
-                window.open(_display.deployment.url, '_blank');
+                window.open(_display.deployment.url.split("&amp;").join("&"), '_blank');
         });
         $('#noiceLine').show();
         $('#restartLine').show();
@@ -1126,18 +1126,6 @@ function listDeployments(deployments = null) {
         $('#deploymentsearch').focus();
         $("#pageloader").hide();
     }
-}
-function changeDeploymentAddress(address) {
-    $("#pageloader").show();;
-	return $.ajax({
-		url: "https://sysmon.homeinfo.de/deployment-address/" + _display.deployment.id,
-		type: "POST",
-        data: JSON.stringify(address),
-        contentType: 'application/json',
-		error: function (msg) {
-			setErrorMessage(msg, "Ändern der Adresse");
-		}
-	});
 }
 function setDeployments(id, deployment = null, exclusive = false) {
     $("#pageloader").show();
