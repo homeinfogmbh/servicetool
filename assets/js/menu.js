@@ -1,5 +1,6 @@
 var _paramsForEmail = ""
 var _list = [];
+var _customerList = [];
 var _lastSearchSort = null;
 //var _commonChecks import from common
 $(document).ready(function() {
@@ -126,7 +127,17 @@ function loadMenuData() {
         if (sysmonIsRunning)
             $("#sysmonlogo").attr("src", "assets/img/Sysmon_check_active.gif")
     });
-    let searchTable = '<div class="search_container" style="display:none">' +
+    let searchTable = '<table class="table" id="searchcustomertable" style="display:none">' +
+    '<thead>' +
+        '<tr>' +
+            '<th style="width:100px"><span class="searchSortCustomerList pointer" data-id="searchcustomersortid" style="text-decoration:underline">Kundennummer</span></th>' +
+            '<th><span class="searchSortCustomerList pointer" data-id="searchcustomersortcustomer" style="text-decoration:underline">Kunde</span></th>' +
+            '<th style="min-width:40px"></th>' +
+        '</tr>' +
+    '</thead>' +
+    '<tbody id="searchcustomerlist"></tbody>' +
+    '</table><br>' +
+    '<div class="search_container" style="display:none">' +
         '<div class="table_contents">' +
             '<div class="tableBox">' +
                 '<div class="table_container altosVers">' +
@@ -175,6 +186,10 @@ function loadMenuData() {
         setSearchList($(this).data("id"));
         e.preventDefault();
     });
+    $('.searchSortCustomerList').click(function(e) {
+        setSearchCustomerList($(this).data("id"));
+        e.preventDefault();
+    });
     $('#btn_menuSystem').click(function(e) {
         if ($("#menusearch").val() !== "")
             window.location.href = "display-details.html?id=" + $("#menusearch").val();
@@ -219,9 +234,13 @@ function loadMenuData() {
         if ($(this).val() === "") {
             $(".dash_bottomCont").show();
             $(".search_container").hide();
+            $("#searchcustomertable").hide();
+            
         } else {
             setSearchList();
+            setSearchCustomerList();
             $(".search_container").show();
+            $("#searchcustomertable").show();
         }
 	});
     Promise.all(getListOfSystemChecks()).then(setMenu);
@@ -314,7 +333,10 @@ function setSearchList(sort = "sortcustomer") {
     let abbreviation;
     let name;
     let annotation
+    let searchCustomerListTMP = {};
+    let searchCustomerlistset = _customerList.length == 0;
     $(".dash_bottomCont").hide();
+    
     for (let check of _list) {
         address = check.deployment.hasOwnProperty("address") ?check.deployment.address.street + " " + check.deployment.address.houseNumber + " " + check.deployment.address.zipCode + " " + check.deployment.address.city :'Nicht angegeben';
         abbreviation = check.deployment.customer.hasOwnProperty("abbreviation") ?check.deployment.customer.abbreviation :"Zuordnung nicht vorhanden";
@@ -331,9 +353,29 @@ function setSearchList(sort = "sortcustomer") {
                 '<td><a href="display-details.html?id=' + check.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>' +
             '</tr>';
         }
+        if (searchCustomerlistset && check.deployment.customer.id != -1 && !searchCustomerListTMP.hasOwnProperty(check.deployment.customer.id))
+            searchCustomerListTMP[check.deployment.customer.id] = {"customer":check.deployment.customer.id, "name":check.deployment.customer.company.name};
     }
     searchDom = searchDom === '' ?"<tr><td>Keine Übereinstimmungen gefunden</td></tr>" :searchDom;
     $("#searchlist").html(searchDom);
+
+    for (let customer in searchCustomerListTMP)
+        _customerList.push(searchCustomerListTMP[customer]);
+}
+function setSearchCustomerList(sort = "sortcustomer") {
+    sortSearchList(sort);
+    let customerlistDOM = "";
+    for (let customer of _customerList) {
+        if (customer.customer.toString().toLowerCase().indexOf($('#globalsearchfield').val().toLowerCase()) !== -1 || customer.name.toLowerCase().indexOf($('#globalsearchfield').val().toLowerCase()) !== -1) {
+            customerlistDOM += "<tr>" +
+                "<td>" + customer.customer + "</td>" +
+                "<td>" + customer.name + "</td>" +
+                '<td><a href="listenansicht.html?customer=' + customer.customer + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>'+
+            "</tr>";
+        }
+    }
+    customerlistDOM = customerlistDOM === "" ?"<tr><td>Keine Einträge vorhanden</td></tr>" :customerlistDOM;
+    $("#searchcustomerlist").html(customerlistDOM);
 }
 function sortSearchList(sort) {
     _lastSearchSort = _lastSearchSort === sort && _lastSearchSort.indexOf('inverted' === -1) ? _lastSearchSort + "Inverted" :sort;
@@ -392,6 +434,22 @@ function sortSearchList(sort) {
             let annotationA = (a.deployment.hasOwnProperty("annotation") ?a.deployment.annotation :"");
             let annotationB = (b.deployment.hasOwnProperty("annotation") ?b.deployment.annotation :"");
             return compareInverted(annotationA.toLowerCase(), annotationB.toLowerCase());
+        });
+    } else if (_lastSearchSort == "searchcustomersortid") {
+        _customerList.sort(function(a, b) {
+            return compare(a.customer, b.customer);
+        });
+    } else if (_lastSearchSort == "searchcustomersortidInverted") {
+        _customerList.sort(function(a, b) {
+            return compareInverted(a.customer, b.customer);
+        });
+    } else if (_lastSearchSort == "searchcustomersortcustomer") {
+        _customerList.sort(function(a, b) {
+            return compare(a.name.toLowerCase(), b.name.toLowerCase());
+        });
+    } else if (_lastSearchSort == "searchcustomersortcustomerInverted") {
+        _customerList.sort(function(a, b) {
+            return compareInverted(a.name.toLowerCase(), b.name.toLowerCase());
         });
     }
 }
