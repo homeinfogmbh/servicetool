@@ -323,7 +323,8 @@ function setDetails(data) {
         }
         $("#deploymentID").text(_display.deployment.id);
         $("#annotation").html(_display.deployment.hasOwnProperty("annotation") ?"<span title='" + _display.deployment.annotation + "'>" + _display.deployment.annotation.substring(0, 20) + (_display.deployment.annotation.length > 20 ? '...' :'') + "</span>" :"-");
-        $("#displayurl").html('<span>' + (_display.deployment.hasOwnProperty('url') ?_display.deployment.url :"-") + '</span>');
+        let displayurl = _display.deployment.hasOwnProperty('url') ?(_display.deployment.url.split("&amp;").join("&") == getDefaultDisplayURL(_display) ?'default' :_display.deployment.url) :"-";
+        $("#displayurl").html('<span>' + displayurl + '</span>');
         let technicianAnnotation = '<td>' + 
             '<span class="btn_technicianAnnotation">' + (_display.deployment.hasOwnProperty('technicianAnnotation') ?_display.deployment.technicianAnnotation + ' <a href="#" class="editIcon"><img src="assets/img/edit.svg" alt=""></a>':'<a href="#" class="editIcon"><img src="assets/img/edit.svg" alt=""></a>') + '</span>' +
             '<div id="technicianAnnotationfields" style="display:none; padding-top:5px">' +
