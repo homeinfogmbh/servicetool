@@ -1,18 +1,14 @@
 var _type;
 var _customer;
-var _applicationVersion = null;
 var _lastsort = null;
 var _operatingSystemsShorts = {"Arch Linux":"Arch", "Windows XP Embedded":"XPe", "Windows XP":"XP", "Windows 8":"Win8", "Windows 7 Embedded":"Win7e", "Windows 7":"Win7", "Windows 10":"Win10"};
-var _showVersion = false;
 var _imagesLoaded = {'simultaneous':5, 'started':0, 'finished':0, 'systemsToCheck':[]};
 var _customerOfflineList = [];
 var _systemsCountByCustomer = [];
 $(document).ready(function() {
     _type = _commonChecks.hasOwnProperty(getURLParameterByName('type')) ?getURLParameterByName('type') :'system';
     _customer = getURLParameterByName('customer');
-    _showVersion = getURLParameterByName('version');
     Promise.all(getListOfSystemChecks()).then((data)=>{
-        _applicationVersion = data[1];
         setCheckList(data[0], data[1], data[2]);
         //if (_customer === null) {
           //  setList();
@@ -101,7 +97,6 @@ function setList(sort = "sortcustomer") {
     let abbreviation;
     let name;
     let errorColor;
-    let versionPath;
     let downloadAvailable;
     let uploadAvailable;
     let noCheckStyle;
@@ -114,7 +109,6 @@ function setList(sort = "sortcustomer") {
             if ($('#searchfield').val().length === 0 || (check.id.toString().indexOf($('#searchfield').val().toLowerCase()) !== -1 || addressComplete.toLowerCase().indexOf($('#searchfield').val().toLowerCase()) !== -1 || check.deployment.customer.abbreviation.toLowerCase().indexOf($('#searchfield').val().toLowerCase()) !== -1 || name.toLowerCase().indexOf($('#searchfield').val().toLowerCase()) !== -1 || check.deployment.customer.id.toString().indexOf($('#searchfield').val().toLowerCase()) !== -1)) {
                 address = check.deployment.hasOwnProperty("address") ?check.deployment.address.street + " " + check.deployment.address.houseNumber :'';
                 abbreviation = check.deployment.customer.abbreviation === "Zuordnung nicht vorhanden" ?'<i>' + check.deployment.customer.abbreviation + '</i>' :check.deployment.customer.abbreviation;
-                versionPath = $(location).attr('pathname') + $(location).attr('search') + ($(location).attr('search') === "" ?"?" :"&") + "version=true";
                 downloadAvailable = check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("download") ?true :false;
                 uploadAvailable = check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("upload") ?true :false;
                 noCheckStyle = check.hasOwnProperty("checkResults") && check.checkResults.length > 0 ?"" :'style="background-color:gray"';
@@ -124,13 +118,8 @@ function setList(sort = "sortcustomer") {
                     '<td title="' + addressComplete + '" style="white-space: nowrap;">' + address +  '</td>' + 
                     '<td><span ' + noCheckStyle + ' class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && !check.checkResults[0].online /*check.checkResults[0].sshLogin === "failed" && !check.checkResults[0].icmpRequest*/ /*&& check.fitted && !check.deployment.testing*/ ?'orangeCircle' :'blueCircle') + '"></span></td>' +
                     '<td><span class="' + (!check.fitted ?'orangeCircle' :'blueCircle') + '"></span></td>' +
-                    '<td><span ' + noCheckStyle + ' class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].sshLogin === "failed" ?"orangeCircle":"blueCircle") + '"></span></td>';
-                    if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("applicationVersion")) {
-                        errorColor = _applicationVersion === check.checkResults[0].applicationVersion ?"blue" :"orange";
-                        systemlistDOM += '<td>' + (_showVersion ?'<span class="' + errorColor + 'Mark" style="white-space:nowrap">' + check.checkResults[0].applicationVersion + '</span>' :'<a href="' + versionPath + '"><span class="' + errorColor + 'Circle"></a></span>') + '</td>';
-                    } else
-                        systemlistDOM += '<td><a href="' + versionPath + '"><span class="blueCircle"></span></a></td>';
-                    systemlistDOM += '<td>' + (check.hasOwnProperty("lastSync") ?formatDate(check.lastSync) + " (" + check.lastSync.substring(11, 16) + "h)": "noch nie") + '</td>' +
+                    '<td><span class="' + (check.deployment.testing ?"orangeCircle":"blueCircle") + '"></span></td>' +
+                    '<td>' + (check.hasOwnProperty("lastSync") ?formatDate(check.lastSync) + " (" + check.lastSync.substring(11, 16) + "h)": "noch nie") + '</td>' +
                     '<td>' + (downloadAvailable && check.checkResults[0].download*_KIBIBITTOMBIT < 1.9?'<span class="orangeMark">' + (check.checkResults[0].download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':downloadAvailable ?'<span class="blueMark">' + (check.checkResults[0].download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':' - ') +
                     (uploadAvailable && check.checkResults[0].upload*_KIBIBITTOMBIT < 0.35?'<span class="orangeMark">' + (check.checkResults[0].upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':uploadAvailable ?'<span class="blueMark">' + (check.checkResults[0].upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':' - ') + '</td>' +
                     '<td>' + 
@@ -272,14 +261,6 @@ function sortCommonList(sort) {
         _commonChecks[_type].systems.sort(function(a, b) {
             return b.hasOwnProperty("checkResults") && b.checkResults[0].smartCheck === "failed" ?-1 :a.hasOwnProperty("checkResults") && a.checkResults[0].smartCheck === "failed"?1 :0
         });
-    } else if (_lastsort == "sortssh") {
-        _commonChecks[_type].systems.sort(function(a, b) {
-            return a.hasOwnProperty("checkResults") && a.checkResults[0].sshLogin === "failed" ?-1 :b.hasOwnProperty("checkResults") && b.checkResults[0].sshLogin === "failed" ?1 :0
-        });
-    } else if (_lastsort == "sortsshInverted") {
-        _commonChecks[_type].systems.sort(function(a, b) {
-            return b.hasOwnProperty("checkResults") && b.checkResults[0].sshLogin === "failed" ?-1 :a.hasOwnProperty("checkResults") && a.checkResults[0].sshLogin === "failed" ?1 :0
-        });
     } else if (_lastsort == "sortapprunning") {
         _commonChecks[_type].systems.sort(function(a, b) {
             return a.hasOwnProperty("checkResults") && a.checkResults[0].applicationState === "not running" ?-1 :b.hasOwnProperty("checkResults") && b.checkResults[0].applicationState === "not running" ?1 :0
@@ -288,6 +269,7 @@ function sortCommonList(sort) {
         _commonChecks[_type].systems.sort(function(a, b) {
             return b.hasOwnProperty("checkResults") && b.checkResults[0].applicationState === "not running" ?-1 :a.hasOwnProperty("checkResults") && a.checkResults[0].applicationState === "not running" ?1 :0
         });
+        /*
     } else if (_lastsort == "sortappuptodate") {
         _commonChecks[_type].systems.sort(function(a, b) {
             if (a.checkResults[0].applicationVersion === undefined && b.checkResults[0].applicationVersion !== undefined)
@@ -312,6 +294,7 @@ function sortCommonList(sort) {
                 return 1;
         return 0;
         });
+        */
     } else if (_lastsort == "sortsync") {
         _commonChecks[_type].systems.sort(function(a, b) {
             return !b.hasOwnProperty("lastSync") ?-1 :!a.hasOwnProperty("lastSync") ?1 :compareInverted(a.lastSync.toLowerCase(), b.lastSync.toLowerCase());            
@@ -399,6 +382,14 @@ function sortCommonList(sort) {
     } else if (_lastsort == "offlinecustomersortallofflineInverted") {
         _customerOfflineList.sort(function(a, b) {
             return compareInverted(a.countAll, b.countAll);
+        });
+    } else if (_lastsort == "sorttestsystem") {
+        _commonChecks[_type].systems.sort(function(a, b) {
+            return compare(a.deployment.testing, b.deployment.testing);
+        });
+    } else if (_lastsort == "sorttestsystemInverted") {
+        _commonChecks[_type].systems.sort(function(a, b) {
+            return compareInverted(a.deployment.testing, b.deployment.testing);
         });
     }
 }

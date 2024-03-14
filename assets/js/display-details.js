@@ -1148,6 +1148,8 @@ function setDeployments(id, deployment = null, exclusive = false) {
 }
 function sync() {
     $("#pageloader").show();
+    localStorage.removeItem("servicetool.systems");
+    localStorage.removeItem("servicetool.systemchecks");
     return $.ajax({
         url: 'https://termgr.homeinfo.de/administer/sync', //"https://hipster.homeinfo.de?customer=" + _display.deployment.customer.id,
         type: "POST",

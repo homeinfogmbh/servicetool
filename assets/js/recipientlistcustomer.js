@@ -52,7 +52,7 @@ function setEmails(customers) {
                     '<a href="#" class="editIcon btn_customeremails"><img src="assets/img/edit.svg" alt=""></a>' +
                 '</td>' +
                 '<td style="min-width:50px">' +
-                    '<a href="https://typo3.homeinfo.de/ddb-report?customer=' + customers[customer].id + '" target="_blank"><img src="assets/img/eye.svg" alt="huntinglink"></a>' +
+                    '<a href="https://portal.homeinfo.de/ddb-report?customer=' + customers[customer].id + '" target="_blank"><img src="assets/img/eye.svg" alt="huntinglink"></a>' +
                 '</td>' +
             '</tr>';
         }
