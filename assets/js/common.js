@@ -392,6 +392,22 @@ function getSystems() {
 		}
 	});
 }
+function changeDeployment(key, value, system) {
+    $("#pageloader").show();
+    localStorage.removeItem("servicetool.systems");
+	let deployment = {};
+    deployment[key] = value;
+	return $.ajax({
+		url: "https://backend.homeinfo.de/deployments/" + system.deployment.id + "?customer=" + system.deployment.customer.id,
+		type: "PATCH",
+		cache: false,
+		contentType: 'application/json',
+		data: JSON.stringify(deployment),
+		error: function (msg) {
+			setErrorMessage(msg, "Ändern eines Deployments");
+		}
+	});
+}
 function setErrorMessage(msg, fromFunction, title = "Das hat nicht geklappt") {
 	try {
 		let message = "Leider ist ein Fehler beim " + fromFunction + " aufgetreten.";

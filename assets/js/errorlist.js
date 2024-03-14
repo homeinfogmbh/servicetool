@@ -115,7 +115,25 @@ function setList(sort = "sortcustomer") {
                 systemlistDOM += '<tr class="system" data-id="' + check.id + '">' +
                     '<td>' + check.id + '</td>' +
                     '<td>' + abbreviation + '</td>' +
-                    '<td title="' + addressComplete + '" style="white-space: nowrap;">' + address +  '</td>' + 
+                    '<td title="' + addressComplete + '" style="white-space: nowrap;">' + address + 
+                        ' <a href="#" class="editIcon btn_changeDeploymentAddress" data-street="' + check.deployment.address.street + '" data-housenumber="' + check.deployment.address.houseNumber + '" data-zipcode="' + check.deployment.address.zipCode + '" data-city="' + check.deployment.address.city + '"><img src="assets/img/edit.svg" alt=""></a>' +
+                        '<div id="deploymentAddressfields" style="display:none; padding-top:5px">' +							
+                            '<div class="dualinp inpCol Straße">' +
+                                '<div class="autocomplete-wrapper">' +
+                                    '<input id="deploymentAddressStreetInput" type="text" placeholder="Straße" class="longInp basic-data">' +
+                                '</div>' +
+                                '<input id="deploymentAddressHouseNumberInput" type="text" placeholder="Nr." class="smallInp basic-data">' +
+                            '</div>' +
+                            '<div class="dualinp inpCol PLZ">' +
+                                '<input id="deploymentAddressZipCodeInput" type="text" placeholder="PLZ" class="smallInp basic-data">' +
+                                '<input id="deploymentAddressCityInput" type="text" placeholder="Stadt" class="longInp basic-data">' +
+                            '</div>' +
+                            '<div style="float:right">' +
+                                '<span class="whiteMark btn_saveDeploymentAddress pointer" data-id="' + check.deployment.id + '" data-customerid="' + check.deployment.customer.id + '">Speichern</span>' +
+                                '<span class="whiteMark btn_changeDeploymentAddressHide pointer">Abbrechen</span>' +
+                            '</div>' +
+                        '</div>' +
+                    '</td>' + 
                     '<td><span ' + noCheckStyle + ' class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && !check.checkResults[0].online /*check.checkResults[0].sshLogin === "failed" && !check.checkResults[0].icmpRequest*/ /*&& check.fitted && !check.deployment.testing*/ ?'orangeCircle' :'blueCircle') + '"></span></td>' +
                     '<td><span class="' + (!check.fitted ?'orangeCircle' :'blueCircle') + '"></span></td>' +
                     '<td><span class="' + (check.deployment.testing ?"orangeCircle":"blueCircle") + '"></span></td>' +
@@ -160,6 +178,36 @@ function setList(sort = "sortcustomer") {
         setCustomerOfflineList();
     else
         $("#offlinecustomertable").hide();
+    
+    $('.btn_changeDeploymentAddress').click(function(e) {
+        $(this).parent().find("#deploymentAddressStreetInput").val($(this).data("street"));
+        $(this).parent().find("#deploymentAddressHouseNumberInput").val($(this).data("housenumber"));
+        $(this).parent().find("#deploymentAddressZipCodeInput").val($(this).data("zipcode"));
+        $(this).parent().find("#deploymentAddressCityInput").val($(this).data("city"));
+        if ($(this).parent().find("#deploymentAddressfields").is(":visible"))
+            $(this).parent().find("#deploymentAddressfields").hide();
+        else
+            $(this).parent().find("#deploymentAddressfields").show();
+        $(this).parent().find("#deploymentAddressStreetInput").focus();
+        e.preventDefault();
+    });
+    $('.btn_changeDeploymentAddressHide').click(function(e) {
+            $(this).parent().parent().hide();
+        e.preventDefault();
+    });
+    $('.btn_saveDeploymentAddress').click(function(e) {
+        let thisobject = $(this);
+        let address = {'street': thisobject.parent().parent().find("#deploymentAddressStreetInput").val(), 'houseNumber':thisobject.parent().parent().find("#deploymentAddressHouseNumberInput").val(), 'zipCode':thisobject.parent().parent().find("#deploymentAddressZipCodeInput").val(), 'city':thisobject.parent().parent().find("#deploymentAddressCityInput").val()};
+        let system = {'deployment':{'id':thisobject.data('id'), 'customer':{'id':thisobject.data('customerid')}}};
+        changeDeployment("address", address, system).then(() => {
+            localStorage.removeItem("servicetool.systemchecks");
+            thisobject.parent().parent().parent().attr('title', thisobject.parent().parent().find("#deploymentAddressStreetInput").val() + " " + thisobject.parent().parent().find("#deploymentAddressHouseNumberInput").val() + ", " + thisobject.parent().parent().find("#deploymentAddressZipCodeInput").val() + " " + thisobject.parent().parent().find("#deploymentAddressCityInput").val());
+            thisobject.parent().parent().parent().text(thisobject.parent().parent().find("#deploymentAddressStreetInput").val() + " " + thisobject.parent().parent().find("#deploymentAddressHouseNumberInput").val());
+            thisobject.parent().parent().hide();
+            $("#pageloader").hide()
+        });
+        e.preventDefault();
+    });
     
     $('.btn_technicianAnnotation').click(function(e) {
         if ($(this).parent().find("#technicianAnnotationfields").is(":visible"))

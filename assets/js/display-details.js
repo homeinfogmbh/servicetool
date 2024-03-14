@@ -79,13 +79,13 @@ $(document).ready(function() {
                 $("#deploymentAddressfields").hide();
             else
                 $("#deploymentAddressfields").show();
-            $("#deploymentAddressInput").focus();
+            $("#deploymentAddressStreetInput").focus();
         }
 		e.preventDefault();
 	});
     $('.btn_saveDeploymentAddress').click(function(e) {
         let address = {'street':$("#deploymentAddressStreetInput").val(), 'houseNumber':$("#deploymentAddressHouseNumberInput").val(), 'zipCode':$("#deploymentAddressZipCodeInput").val(), 'city':$("#deploymentAddressCityInput").val()};
-            changeDeployment("address", address).then(() => {
+        changeDeployment("address", address, _display).then(() => {
             localStorage.removeItem("servicetool.systemchecks");
             $("#displaytitle").text('Display: ' + $("#deploymentAddressStreetInput").val() + " " + $("#deploymentAddressHouseNumberInput").val() + ", " + $("#deploymentAddressZipCodeInput").val() + " " + $("#deploymentAddressCityInput").val());
             $("#deploymentAddressfields").hide();
@@ -133,7 +133,7 @@ $(document).ready(function() {
         $("#connectionsDropdown").removeClass("show");
         $("#internetconnection").text($(this).text());
         if (_display !== null && _display.hasOwnProperty("deployment"))
-            changeDeployment("connection", $(this).text()).then(()=>{$("#pageloader").hide()});
+            changeDeployment("connection", $(this).text(), _display).then(()=>{$("#pageloader").hide()});
 		e.preventDefault();
 	});
     $('.btn_publictransport').click(function(e) {
@@ -246,7 +246,7 @@ $(document).ready(function() {
     $('.btn_testsystem').click(function(e) {
         if (_display !== null && _display.hasOwnProperty("deployment")) {
             localStorage.removeItem("servicetool.systemchecks");
-            changeDeployment("testing", $('input[name=Testgerät]:checked').val() !== 'on').then(()=>{$("#pageloader").hide()});
+            changeDeployment("testing", $('input[name=Testgerät]:checked').val() !== 'on', _display).then(()=>{$("#pageloader").hide()});
             if ($('input[name=Testgerät]:checked').val() === 'on')
                 $(this).attr("title", "Ist kein Testsystem");
             else
@@ -1232,23 +1232,6 @@ function setPublicTransport(address) {
             setErrorMessage(msg, "Durchführen der ÖPNV-Änderung");
         }
     });
-}
-
-function changeDeployment(key, value) {
-    $("#pageloader").show();
-    localStorage.removeItem("servicetool.systems");
-	let deployment = {};
-    deployment[key] = value;
-	return $.ajax({
-		url: "https://backend.homeinfo.de/deployments/" + _display.deployment.id + "?customer=" + _display.deployment.customer.id,
-		type: "PATCH",
-		cache: false,
-		contentType: 'application/json',
-		data: JSON.stringify(deployment),
-		error: function (msg) {
-			setErrorMessage(msg, "Ändern eines Deployments");
-		}
-	});
 }
 
 function changeSerialNumber(serialNumber) {
