@@ -30,9 +30,9 @@ $(document).ready(function() {
                                 break;
                             }
                         }
-                        // Uncomment cause, offline widget and offline list are different
-                        //if (!found)
-                            //_commonChecks[_type].systems.push(system); //_commonChecks.system.systems.push(system);
+                        // Show systems with now checks, but dont show in error list, only customer lists or "ALL"
+                        if (!found && (_customer != null || !window.location.href.includes('?')))
+                            _commonChecks[_type].systems.push(system); //_commonChecks.system.systems.push(system);
                     }
                 }
                 setList();
@@ -96,7 +96,6 @@ function setList(sort = "sortcustomer") {
     let counter = 0;
     let abbreviation;
     let name;
-    let errorColor;
     let downloadAvailable;
     let uploadAvailable;
     let noCheckStyle;

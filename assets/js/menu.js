@@ -270,11 +270,15 @@ function checkSysmon() {
 }
 
 function setCustomerListWithTerminals(customerList) {
-    let customerDom = '<li><a class="dropdown-item" href="listenansicht.html">ALLE</a></li>';
-    for (let customer in customerList)
+    let customerDom = '<li><a class="dropdown-item" href="listenansicht.html">ALLE (<span id="countall"></span>)</a></li>';
+    let countALL = 0;
+    for (let customer in customerList) {
         customerDom += '<li><a class="dropdown-item" href="listenansicht.html?customer=' + customerList[customer].id + '">' + customerList[customer].name + ' (' + customerList[customer].count + ')</a></li>'
+        countALL += customerList[customer].count;
+    }
     $(".customerlistLabel").text("Kundenliste (" + Object.keys(customerList).length + ")");
     $('#menucustomerlist').html(customerDom);
+    $('#countall').text(countALL);
 }
 
 function setMenu(data) {
