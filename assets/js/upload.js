@@ -51,6 +51,7 @@ class Upload {
 			e.dataTransfer.effectAllowed = "none";
 			e.dataTransfer.dropEffect = "none";
 		});
+		/*
 		window.addEventListener("paste", function(e) {
 			thisobject.fileList = [];
 			thisobject.selector.find('#upload_thumbnail').html('');
@@ -80,6 +81,7 @@ class Upload {
 				}
 			});
 		}, false);
+		*/
 		this.selector.find($('.btn_input')).click(function() {
 			$(this).parent().find("#input").trigger("click");
 		});
@@ -224,7 +226,7 @@ class Upload {
 			array.push(bstr.charCodeAt(i));
 		return new Blob([new Uint8Array(array)], {type: 'image/jpg'});
 	}
-	
+	/*
 	retrieveImageFromClipboardAsBlob(pasteEvent, callback) {
 		if (pasteEvent.clipboardData == false) {
 			if(typeof(callback) == "function") {
@@ -244,7 +246,7 @@ class Upload {
 				callback(blob);
 			}
 		}
-	}
+	}*/
 
 	deleteAndUploadFiles() {  // Called from chart, configuration and menu_edit
 		var promises = [];
