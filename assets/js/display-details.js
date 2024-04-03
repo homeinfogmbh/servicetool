@@ -116,6 +116,27 @@ $(document).ready(function() {
 		e.preventDefault();
 	});
 
+    $('.btn_annotation').click(function(e) {
+        if ($("#annotationfields").is(":visible"))
+            $("#annotationfields").hide();
+        else
+            $("#annotationfields").show();
+        $("#annotationInput").focus();
+		e.preventDefault();
+	});
+    $('.btn_saveAnnotation').click(function(e) {
+        if (_display !== null && _display.hasOwnProperty("deployment")) {
+            let annotation = $("#annotationInput").val().trim() === "" ?null :$("#annotationInput").val();
+            changeDeployment("annotation", annotation, _display).then(()=>{
+                localStorage.removeItem("servicetool.systemchecks");
+                $("#annotation").text(annotation === null ?"-" :annotation);
+                $("#annotationfields").hide();
+                $("#pageloader").hide()
+            });
+        }
+		e.preventDefault();
+	});
+    
     $('.btn_wireguard').click(function(e) {
         if (_display.hasOwnProperty("pubkey"))
             navigator.clipboard.writeText(_display.pubkey);
@@ -323,6 +344,7 @@ function setDetails(data) {
         }
         $("#deploymentID").text(_display.deployment.id);
         $("#annotation").html(_display.deployment.hasOwnProperty("annotation") ?"<span title='" + _display.deployment.annotation + "'>" + _display.deployment.annotation.substring(0, 20) + (_display.deployment.annotation.length > 20 ? '...' :'') + "</span>" :"-");
+        $("#annotationInput").val(_display.deployment.hasOwnProperty("annotation") ?_display.deployment.annotation.split("&amp;").join("&") :'');
         let displayurl = _display.deployment.hasOwnProperty('url') ?(_display.deployment.url.split("&amp;").join("&") == getDefaultDisplayURL(_display) ?'default' :_display.deployment.url) :"-";
         $("#displayurl").html('<span>' + displayurl + '</span>');
         let technicianAnnotation = '<td>' + 
