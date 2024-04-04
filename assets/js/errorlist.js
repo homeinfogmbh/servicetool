@@ -114,8 +114,8 @@ function setList(sort = "sortcustomer") {
                 systemlistDOM += '<tr class="system" data-id="' + check.id + '">' +
                     '<td>' + check.id + '</td>' +
                     '<td>' + abbreviation + '</td>' +
-                    '<td title="' + addressComplete + '"><span style="white-space: nowrap;">' + address + (check.deployment.hasOwnProperty("annotation") ?"</span> (" + check.deployment.annotation + ")" :"") + 
-                        ' <a href="#" class="editIcon btn_changeDeploymentAddress" data-street="' + check.deployment.address.street + '" data-housenumber="' + check.deployment.address.houseNumber + '" data-zipcode="' + check.deployment.address.zipCode + '" data-city="' + check.deployment.address.city + '"><img src="assets/img/edit.svg" alt=""></a>' +
+                    '<td title="' + addressComplete + '"><span style="white-space: nowrap;">' + address + (check.deployment.hasOwnProperty("annotation") && check.deployment.annotation != ""?"</span> (" + check.deployment.annotation + ")" :"") + 
+                        ' <a href="#" class="editIcon btn_changeDeploymentAddress" data-street="' + check.deployment.address.street + '" data-housenumber="' + check.deployment.address.houseNumber + '" data-zipcode="' + check.deployment.address.zipCode + '" data-city="' + check.deployment.address.city + '" data-annotation="' + (check.deployment.hasOwnProperty("annotation") ?check.deployment.annotation :"") + '"><img src="assets/img/edit.svg" alt=""></a>' +
                         '<div id="deploymentAddressfields" style="display:none; padding-top:5px">' +							
                             '<div class="dualinp inpCol Straße">' +
                                 '<div class="autocomplete-wrapper">' +
@@ -186,6 +186,7 @@ function setList(sort = "sortcustomer") {
         $(this).parent().find("#deploymentAddressHouseNumberInput").val($(this).data("housenumber"));
         $(this).parent().find("#deploymentAddressZipCodeInput").val($(this).data("zipcode"));
         $(this).parent().find("#deploymentAddressCityInput").val($(this).data("city"));
+        $(this).parent().find("#deploymentAnnotationInput").val($(this).data("annotation"));
         if ($(this).parent().find("#deploymentAddressfields").is(":visible"))
             $(this).parent().find("#deploymentAddressfields").hide();
         else
@@ -200,13 +201,17 @@ function setList(sort = "sortcustomer") {
     $('.btn_saveDeploymentAddress').click(function(e) {
         let thisobject = $(this);
         let address = {'street': thisobject.parent().parent().find("#deploymentAddressStreetInput").val(), 'houseNumber':thisobject.parent().parent().find("#deploymentAddressHouseNumberInput").val(), 'zipCode':thisobject.parent().parent().find("#deploymentAddressZipCodeInput").val(), 'city':thisobject.parent().parent().find("#deploymentAddressCityInput").val()};
+        let annotation = thisobject.parent().parent().find("#deploymentAnnotationInput").val();
         let system = {'deployment':{'id':thisobject.data('id'), 'customer':{'id':thisobject.data('customerid')}}};
-        changeDeployment("address", address, system).then(() => {
-            localStorage.removeItem("servicetool.systemchecks");
-            thisobject.parent().parent().parent().attr('title', thisobject.parent().parent().find("#deploymentAddressStreetInput").val() + " " + thisobject.parent().parent().find("#deploymentAddressHouseNumberInput").val() + ", " + thisobject.parent().parent().find("#deploymentAddressZipCodeInput").val() + " " + thisobject.parent().parent().find("#deploymentAddressCityInput").val());
-            thisobject.parent().parent().parent().text(thisobject.parent().parent().find("#deploymentAddressStreetInput").val() + " " + thisobject.parent().parent().find("#deploymentAddressHouseNumberInput").val());
-            thisobject.parent().parent().hide();
-            $("#pageloader").hide()
+
+        changeDeployment("annotation", annotation, system).then(() => {
+            changeDeployment("address", address, system).then(() => {
+                localStorage.removeItem("servicetool.systemchecks");
+                thisobject.parent().parent().parent().attr('title', thisobject.parent().parent().find("#deploymentAddressStreetInput").val() + " " + thisobject.parent().parent().find("#deploymentAddressHouseNumberInput").val() + ", " + thisobject.parent().parent().find("#deploymentAddressZipCodeInput").val() + " " + thisobject.parent().parent().find("#deploymentAddressCityInput").val());
+                thisobject.parent().parent().parent().text(thisobject.parent().parent().find("#deploymentAddressStreetInput").val() + " " + thisobject.parent().parent().find("#deploymentAddressHouseNumberInput").val() + (thisobject.parent().parent().find("#deploymentAnnotationInput").val() != "" ?" (" + thisobject.parent().parent().find("#deploymentAnnotationInput").val() + ")":""));
+                thisobject.parent().parent().hide();
+                $("#pageloader").hide()
+            });
         });
         e.preventDefault();
     });
