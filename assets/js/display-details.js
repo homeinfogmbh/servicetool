@@ -153,8 +153,18 @@ $(document).ready(function() {
         localStorage.removeItem("servicetool.systemchecks");
         $("#connectionsDropdown").removeClass("show");
         $("#internetconnection").text($(this).text());
-        if (_display !== null && _display.hasOwnProperty("deployment"))
-            changeDeployment("connection", $(this).text(), _display).then(()=>{$("#pageloader").hide()});
+        if (_display !== null && _display.hasOwnProperty("deployment")) {
+            let connection;
+            if ($(this).text() == "LAN/DSL")
+                connection = "LANDSL";
+            if ($(this).text() == "LTE/UMTS")
+                connection = "UMTS";
+            if ($(this).text() == "WLAN ➝ DSL Router")
+                connection = "WLANDSL";
+            if ($(this).text() == "WLAN ➝ LTE Router")
+                connection = "WLANLTE";
+            changeDeployment("connection", connection, _display).then(()=>{$("#pageloader").hide()});
+        }
 		e.preventDefault();
 	});
     $('.btn_publictransport').click(function(e) {
@@ -328,7 +338,16 @@ function setDetails(data) {
     }
     if (_display.hasOwnProperty("deployment")) {
         $("#screentype").text(_display.deployment.type);
-        $("#internetconnection").text(_display.deployment.connection);
+        let connection;
+        if (_display.deployment.connection == "LANDSL")
+            connection = "LAN/DSL";
+        if (_display.deployment.connection == "UMTS")
+            connection = "LTE/UMTS";
+        if (_display.deployment.connection == "WLANDSL")
+            connection = "WLAN ➝ DSL Router";
+        if (_display.deployment.connection == "WLANLTE")
+            connection = "WLAN ➝ LTE Router";
+        $("#internetconnection").text(connection);
         let lptAddress = _display.deployment.hasOwnProperty("lptAddress") ?_display.deployment.lptAddress.street + " " + _display.deployment.lptAddress.houseNumber + ", " + _display.deployment.lptAddress.zipCode + " " + _display.deployment.lptAddress.city :address
         $("#publicTransportAddress").html('<span title="' + lptAddress + '">' + lptAddress.substring(0, 18) + (lptAddress.length > 18 ? '...' :'') + '</span>');
         if (_display.deployment.hasOwnProperty("lptAddress")) {

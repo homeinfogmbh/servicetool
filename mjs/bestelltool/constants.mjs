@@ -39,13 +39,17 @@ export const MODEL_TO_ID = {
 };
 
 export const ID_TO_CONNECTION = {
-    'ADSL': 'DSL',
-    'lte3G4G': 'LTE'
+    'ADSL': 'LANDSL',
+    'lte3G4G': 'UMTS',
+    'wlandsl': 'WLANDSL',
+    'wlanlte': 'WLANLTE'
 };
 
 export const CONNECTION_TO_ID = {
-    'DSL': 'ADSL',
-    'LTE': 'lte3G4G'
+    'LANDSL': 'ADSL',
+    'UMTS': 'lte3G4G',
+    'WLANDSL': 'wlandsl',
+    'WLANLTE': 'wlanlte'
 };
 
 export const URL_PARAMS = new URLSearchParams(window.location.search);

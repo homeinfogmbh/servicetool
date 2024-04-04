@@ -77,7 +77,7 @@ $(document).ready(function() {
         let name;
         for (let check of _commonChecks[_type].systems) {
             if (_customer == null || _customer == check.deployment.customer.id) {
-                addressComplete = check.deployment.hasOwnProperty("address") ?check.deployment.address.street + " " + check.deployment.address.houseNumber + ", " + check.deployment.address.zipCode + " " + check.deployment.address.city :'Nicht angegeben';
+                addressComplete = check.deployment.hasOwnProperty("address") ?check.deployment.address.street + " " + check.deployment.address.houseNumber + (check.deployment.hasOwnProperty("annotation") ?" (" + check.deployment.annotation + ")" :"") + ", " + check.deployment.address.zipCode + " " + check.deployment.address.city :'Nicht angegeben';
                 name = check.deployment.customer.hasOwnProperty("company") && check.deployment.customer.company.hasOwnProperty("name") ?check.deployment.customer.company.name :"";
                 if ($('#searchfield').val().length === 0 || (check.id.toString().indexOf($('#searchfield').val().toLowerCase()) !== -1 || addressComplete.toLowerCase().indexOf($('#searchfield').val().toLowerCase()) !== -1 || check.deployment.customer.abbreviation.toLowerCase().indexOf($('#searchfield').val().toLowerCase()) !== -1 || name.toLowerCase().indexOf($('#searchfield').val().toLowerCase()) !== -1 || check.deployment.customer.id.toString().indexOf($('#searchfield').val().toLowerCase()) !== -1))
                     copy += addressComplete + "\r\n";
@@ -114,7 +114,7 @@ function setList(sort = "sortcustomer") {
                 systemlistDOM += '<tr class="system" data-id="' + check.id + '">' +
                     '<td>' + check.id + '</td>' +
                     '<td>' + abbreviation + '</td>' +
-                    '<td title="' + addressComplete + '" style="white-space: nowrap;">' + address + 
+                    '<td title="' + addressComplete + '"><span style="white-space: nowrap;">' + address + (check.deployment.hasOwnProperty("annotation") ?"</span> (" + check.deployment.annotation + ")" :"") + 
                         ' <a href="#" class="editIcon btn_changeDeploymentAddress" data-street="' + check.deployment.address.street + '" data-housenumber="' + check.deployment.address.houseNumber + '" data-zipcode="' + check.deployment.address.zipCode + '" data-city="' + check.deployment.address.city + '"><img src="assets/img/edit.svg" alt=""></a>' +
                         '<div id="deploymentAddressfields" style="display:none; padding-top:5px">' +							
                             '<div class="dualinp inpCol Straße">' +
@@ -126,6 +126,9 @@ function setList(sort = "sortcustomer") {
                             '<div class="dualinp inpCol PLZ">' +
                                 '<input id="deploymentAddressZipCodeInput" type="text" placeholder="PLZ" class="smallInp basic-data">' +
                                 '<input id="deploymentAddressCityInput" type="text" placeholder="Stadt" class="longInp basic-data">' +
+                            '</div>' +
+                            '<div class="dualinp inpCol Straße">' +
+                                '<input id="deploymentAnnotationInput" type="text" placeholder="Adresszusatz" class="longInp basic-data">' +
                             '</div>' +
                             '<div style="float:right">' +
                                 '<span class="whiteMark btn_saveDeploymentAddress pointer" data-id="' + check.deployment.id + '" data-customerid="' + check.deployment.customer.id + '">Speichern</span>' +
