@@ -14,56 +14,144 @@ $(document).ready(function() {
             setThirtyDays(data);
             setErrorLog(data);
             setButtons();
-            if (!_display.ddbOs && _display.operatingSystem === "Arch Linux") {
-                getSystemInfo().then((data) => {
-                    try { $("#applicationDesign").text('"' + data.presentation.configuration.design.toUpperCase() + '"'); } catch(error) { $("#applicationDesign").text("-"); }
-                    $("#display-mode-unknown").hide();
-                    if (data.hasOwnProperty("application") && data.application.hasOwnProperty("mode")) {
-                        $(".tw-toggle").show();
-                        switch (data.application.mode) {
-                            case "PRODUCTIVE":
+            if (_display.operatingSystem === "Arch Linux") {
+                if (_display.ddbOs) {
+
+                    $('[name="display-mode"]').click(function(e) {
+                        let displayurl = _display.deployment.hasOwnProperty('url') ?_display.deployment.url.split("&amp;").join("&").replace("?blackmode=true", "").replace("&blackmode=true", "").replace("?displaytest=true", "").replace("&displaytest=true", "").replace("?overwrite=true", "").replace("&overwrite=true", "") :getDefaultDisplayURL(_display);
+                        let title = "Normalmodus eingestellt";
+                        if ($(this).val() == "OFF") {
+                            displayurl += ((displayurl).indexOf("?") == -1 ?"?" :"&") + "blackmode=true&overwrite=true";
+                            title = "Schwarzmodus eingestellt";
+                        } else if ($(this).val() == "displaytest") {
+                            displayurl += ((displayurl).indexOf("?") == -1 ?"?" :"&") + "displaytest=true&overwrite=true";
+                            title = "Bildschirmtest eingestellt";
+                        } else if ($(this).val() == "PRODUCTIVE") {
+                            title = "Normalmodus eingestellt";
+                        } else if ($(this).val() == "INSTALLATION_INSTRUCTIONS") {
+                            title = "Installationsanleitung eingestellt";
+                        }
+                        $("#displayurl").text(displayurl);
+                        changedisplayurl(displayurl).then((data) => {
+                            $("#pageloader").hide();
+                            Swal.fire({
+                                title: title,
+                                html: "Erfolgreich übertragen: " + data.success[0] + '<br>Nicht übertragen: ' + (data.failed.hasOwnProperty('offline') ?data.failed.offline :"-"),
+                                showCancelButton: false,
+                                confirmButtonColor: '#ff821d',
+                                iconHtml: '<img src="assets/img/PopUp-Icon.png"></img>',
+                                confirmButtonText: 'O.K.',
+                                buttonsStyling: true
+                            });
+                        });
+                        if ($(this).val() == "INSTALLATION_INSTRUCTIONS" || $(this).val() == "PRODUCTIVE") {
+                            setApplicationState().then(()=>{
+                                $("#pageloader").hide();
+                            }, ()=>{
+                                $("#pageloader").hide();
+                            });
+                        }
+                    });
+
+                    let mode = "Unknown";
+                    mode = $("#displayurl").text().indexOf("blackmode=true") != -1 ?"BLACK" :mode;
+                    mode = $("#displayurl").text().indexOf("displaytest=true") != -1 ?"TESTMODE" :mode;
+                    switch (mode) {
+                        case "TESTMODE":
+                            $("#test-mode").prop("checked", true);
+                            $("#black-mode").prop("checked", false);
+                            $("#installation-instructions-mode").prop("checked", false);
+                            $("#productive-mode").prop("checked", false);
+                            $("#display-mode-unknown").hide();
+                            $(".tw-toggle").show();
+                            break;
+                        case "BLACK":
+                            $("#black-mode").prop("checked", true);
+                            $("#test-mode").prop("checked", false);
+                            $("#installation-instructions-mode").prop("checked", false);
+                            $("#productive-mode").prop("checked", false);
+                            $("#display-mode-unknown").hide();
+                            $(".tw-toggle").show();
+                            break;
+                        default:
+                            getSystemInfo().then((data) => {
+                                $("#display-mode-unknown").hide();
+                                if (data.hasOwnProperty("application") && data.application.hasOwnProperty("mode")) {
+                                    $(".tw-toggle").show();
+                                    switch (data.application.mode) {
+                                        case "installationInstructions":
+                                            $("#test-mode").prop("checked", false);
+                                            $("#black-mode").prop("checked", false);
+                                            $("#installation-instructions-mode").prop("checked", true);
+                                            $("#productive-mode").prop("checked", false);
+                                            break;
+                                        case "chromium":
+                                            $("#test-mode").prop("checked", false);
+                                            $("#black-mode").prop("checked", false);
+                                            $("#installation-instructions-mode").prop("checked", false);
+                                            $("#productive-mode").prop("checked", true);
+                                            break;
+                                        default:
+                                            $("#display-mode-unknown").show();
+                                            $("#display-mode-unknown").text("(Status: UNBEKANNT: " + data.application.mode + ")");
+                                            break;
+                                    }
+                                } else {
+                                    $("#display-mode-unknown").show();
+                                    $("#display-mode-unknown").text("(Status: UNBEKANNT)");
+                                }
+                            }, ()=>{
+                                $("#display-mode-unknown").text("(Status: UNBEKANNT)");
+                            });
+                            break;
+                    }
+                } else {
+                    getSystemInfo().then((data) => {
+                        try { $("#applicationDesign").text('"' + data.presentation.configuration.design.toUpperCase() + '"'); } catch(error) { $("#applicationDesign").text("-"); }
+                        $("#display-mode-unknown").hide();
+                        if (data.hasOwnProperty("application") && data.application.hasOwnProperty("mode")) {
+                            $(".tw-toggle").show();
+                            switch (data.application.mode) {
+                                case "PRODUCTIVE":
+                                    $("#black-mode").prop("checked", false);
+                                    $("#installation-instructions-mode").prop("checked", false);
+                                    $("#productive-mode").prop("checked", true);
+                                    break;
+                                case "INSTALLATION_INSTRUCTIONS":
+                                    $("#black-mode").prop("checked", false);
+                                    $("#installation-instructions-mode").prop("checked", true);
+                                    $("#productive-mode").prop("checked", false);
+                                    break;
+                                default:
+                                    $("#black-mode").prop("checked", true);
+                                    $("#installation-instructions-mode").prop("checked", false);
+                                    $("#productive-mode").prop("checked", false);
+                                    break;
+                            }
+                        } else {
+                            $("#display-mode-unknown").show();
+                            $("#display-mode-unknown").text("(Status: UNBEKANNT)");
+                        }
+                        $('[name="display-mode"]').click(function(e) {
+                            localStorage.removeItem("servicetool.systemchecks");
+                            setApplicationState().then(checkSystem).then(()=>{
+                                $("#pageloader").hide();
+                            }, ()=>{
+                                $("#pageloader").hide();
+                            });
+                        });
+                    }, ()=>{
+                        try {
+                            if (_display.checkResults[0].applicationState === "html" || _display.checkResults[0].applicationState === "air") {
                                 $("#black-mode").prop("checked", false);
                                 $("#installation-instructions-mode").prop("checked", false);
                                 $("#productive-mode").prop("checked", true);
-                                break;
-                            case "INSTALLATION_INSTRUCTIONS":
-                                $("#black-mode").prop("checked", false);
-                                $("#installation-instructions-mode").prop("checked", true);
-                                $("#productive-mode").prop("checked", false);
-                                break;
-                            default:
-                                $("#black-mode").prop("checked", true);
-                                $("#installation-instructions-mode").prop("checked", false);
-                                $("#productive-mode").prop("checked", false);
-                                break;
-                        }
-                    } else {
-                        $("#display-mode-unknown").show();
+                            }
+                        } catch(error) {    }
+                        $("#applicationDesign").text("-");
                         $("#display-mode-unknown").text("(Status: UNBEKANNT)");
-                    }
-                    $('[name="display-mode"]').click(function(e) {
-                        if ($(this).val() == "displaytest") {
-                            e.preventDefault();
-                            return;
-                        }
-                        localStorage.removeItem("servicetool.systemchecks");
-                        setApplicationState().then(checkSystem).then(()=>{
-                            $("#pageloader").hide();
-                        }, ()=>{
-                            $("#pageloader").hide();
-                        });
                     });
-                }, ()=>{
-                    try {
-                        if (_display.checkResults[0].applicationState === "html" || _display.checkResults[0].applicationState === "air") {
-                            $("#black-mode").prop("checked", false);
-                            $("#installation-instructions-mode").prop("checked", false);
-                            $("#productive-mode").prop("checked", true);
-                        }
-                    } catch(error) {    }
-                    $("#applicationDesign").text("-");
-                    $("#display-mode-unknown").text("(Status: UNBEKANNT)");
-                });
+                }
             }
         });
     }, ()=>{
@@ -742,60 +830,6 @@ function setButtons() {
             });
         });
 
-        let mode = "PRODUCTIVE";
-        mode = $("#displayurl").text().indexOf("blackmode=true") != -1 ?"BLACK" :mode;
-        mode = $("#displayurl").text().indexOf("displaytest=true") != -1 ?"TESTMODE" :mode;
-        switch (mode) {
-            case "PRODUCTIVE":
-                $("#test-mode").prop("checked", false);
-                $("#black-mode").prop("checked", false);
-                $("#installation-instructions-mode").prop("checked", false);
-                $("#productive-mode").prop("checked", true);
-                break;
-            case "INSTALLATION_INSTRUCTIONS":
-                $("#test-mode").prop("checked", false);
-                $("#black-mode").prop("checked", false);
-                $("#installation-instructions-mode").prop("checked", true);
-                $("#productive-mode").prop("checked", false);
-                break;
-            case "TESTMODE":
-                $("#test-mode").prop("checked", true);
-                $("#black-mode").prop("checked", false);
-                $("#installation-instructions-mode").prop("checked", false);
-                $("#productive-mode").prop("checked", false);
-                break;
-            default:
-                $("#black-mode").prop("checked", true);
-                $("#test-mode").prop("checked", false);
-                $("#installation-instructions-mode").prop("checked", false);
-                $("#productive-mode").prop("checked", false);
-                break;
-        }
-        $('[name="display-mode"]').click(function(e) {
-            let displayurl = $("#displayurl").text().replace("?blackmode=true", "").replace("&blackmode=true", "").replace("?displaytest=true", "").replace("&displaytest=true", "").replace("?overwrite=true", "").replace("&overwrite=true", "");
-            let title = "Normalmodus eingestellt";
-            if ($(this).val() == "OFF") {
-                displayurl += ((displayurl).indexOf("?") == -1 ?"?" :"&") + "blackmode=true&overwrite=true";
-                title = "Schwarzmodus eingestellt";
-            } else if ($(this).val() == "displaytest") {
-                displayurl += ((displayurl).indexOf("?") == -1 ?"?" :"&") + "displaytest=true&overwrite=true";
-                title = "Bildschirmtest eingestellt";
-            }
-            $("#displayurl").text(displayurl);
-            changedisplayurl(displayurl).then((data) => {
-                $("#pageloader").hide();
-                Swal.fire({
-                    title: title,
-                    html: "Erfolgreich übertragen: " + data.success[0] + '<br>Nicht übertragen: ' + (data.failed.hasOwnProperty('offline') ?data.failed.offline :"-"),
-                    showCancelButton: false,
-                    confirmButtonColor: '#ff821d',
-                    iconHtml: '<img src="assets/img/PopUp-Icon.png"></img>',
-                    confirmButtonText: 'O.K.',
-                    buttonsStyling: true
-                });
-            });
-        });
-
         $('.btn_restartApplication').click(function(e) {
             restartDDBOS().then(()=>{$("#pageloader").hide()});
             e.preventDefault();
@@ -846,8 +880,6 @@ function setButtons() {
         $('#restartLine').show();
         $('#restartDDBOSLine').show();
         $('#screenshotLine').show();
-        $("#display-mode-unknown").hide();
-        $(".tw-toggle").show();
         $('#heatmapMode').show();
         $('#consoleMode').show();
     } else if (_display.operatingSystem === "Arch Linux") {
