@@ -112,6 +112,44 @@
 									</div>
 								</div>
 							</div>
+							<br>
+							<div class="row">
+								<div class="tableBox rights">
+									<h3>Neuen Kunden anlegen</h3>
+									<div class="dualinp inpCol Straße">
+										<input id="customernumber" type="number" placeholder="Kundennummer" class="longInp basic-data">
+										<input id="customername" type="text" placeholder="Kundenname" class="longInp basic-data" style="margin-left:16px">
+									</div>
+									<div class="dualinp inpCol PLZ">
+										<input id="abbreviation" type="text" placeholder="Kundenname (kurz)" class="longInp basic-data">
+										<input id="annotation" type="text" placeholder="Bemerkung (optional)" class="longInp basic-data" style="margin-left:16px">
+									</div>
+									<div class="bestToopBtn">
+										<button id="submit" class="whitelineBtn basic-data" type="button">Kunden anlegen</button>
+									</div>
+									<h3>Kundenliste</h3>								
+									<div class="table_container Neuinsta">
+										<table class="table">
+											<thead>
+												<tr>
+													<th>Kundennummer</th>
+													<th>Kurzform</th>
+													<th>Kunde</th>
+													<th>Bemerkung</th>
+												</tr>
+											</thead>
+											<tbody id="customerlist">
+												<tr>
+													<td><i>Wird geladen...</i></td>
+													<td></td>
+													<td></td>
+													<td></td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>

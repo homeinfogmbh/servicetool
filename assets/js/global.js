@@ -1,15 +1,32 @@
 $(document).ready(function() {
     $("#baseurl").text(_DDBOSURL);
+    
+    getCustomers().then((customers) => {
+        setCustomers(customers);
+    });
     getSystems().then((systems) => {
         setOverwriteList(systems);
         setButtons(systems);
     });
 });
 
+function setCustomers(customers) {
+    let customersDOM = "";
+    for (let customer of customers) {
+        customersDOM += '<tr>' +
+            '<td>' + customer.id + '</td>' +
+            '<td>' +  customer.abbreviation + '</td>' +
+            '<td>' + customer.company.name + '</td>' +
+            '<td>' + (customer.hasOwnProperty("annotation") ?customer.annotation :"") + '</td>' +
+        '</tr>';
+    }
+    $("#customerlist").html(customersDOM);
+}
+
 function setOverwriteList(systems) {
     let overwriteDOM = "";
     for (let system of systems) {
-        if (system.ddbOs && system.hasOwnProperty("deployment") && getDefaultDisplayURL(system) != system.deployment.url.split("&amp;").join("&")) {
+        if (system.ddbOs && system.hasOwnProperty("deployment") && system.deployment.hasOwnProperty("url") && getDefaultDisplayURL(system) != system.deployment.url.split("&amp;").join("&")) {
             let address =  system.deployment.hasOwnProperty("address") ?system.deployment.address.street + " " + system.deployment.address.houseNumber + ", " + system.deployment.address.zipCode + " " + system.deployment.address.city :'<i>Keine Adresse angegeben</i>';
             overwriteDOM += '<tr>' +
                 '<td>' + system.deployment.customer.abbreviation + '</td>' +
@@ -41,7 +58,6 @@ function setButtons(systems) {
         e.preventDefault();
     });
 
-
     $('.btn_displayurlDefault').click(function(e) {
         Swal.fire({
             title: 'Sind Sie sicher?',
@@ -63,6 +79,41 @@ function setButtons(systems) {
         })
         e.preventDefault();
     });
+
+    $('#submit').click(function(e) {
+        if ($("#customername").val() == "")
+            $('#customername').css({"outline": "5px solid red"});
+        else
+            $('#customername').css({"outline": "unset"});
+        if ($("#abbreviation").val() == "")
+            $('#abbreviation').css({"outline": "5px solid red"});
+        else
+            $('#abbreviation').css({"outline": "unset"});
+        if ($("#customernumber").val() == "")
+            $('#customernumber').css({"outline": "5px solid red"});
+        else
+            $('#customernumber').css({"outline": "unset"});
+
+
+        if ($("#customername").val() != "" && $('#abbreviation').val() != "" && $('#customernumber').val() != "") {
+            saveNewCustomer($("#customername").val(), $("#annotation").val(), $("#abbreviation").val(), $("#customernumber").val()).then(()=>{
+                getCustomers().then((customers) => {
+                    setCustomers(customers);
+                    $("#pageloader").hide();
+                });
+            }, (error) => {
+                let text = "Es ist ein Fehler aufgetreten: " + error.responseText;
+                if (error.responseText.indexOf("Duplicate entry") != -1)
+                    text = "Diese Kundennummer gibt es schon."
+                Swal.fire({
+                    title: 'Das hat nicht geklappt',
+                    text: text,
+                })
+            });
+        }
+        e.preventDefault();
+    });
+    
     $("#pageloader").hide();
 }
 
@@ -89,4 +140,26 @@ function changedisplayurl(displayurl, system) {
         data: JSON.stringify(data),
         contentType: 'application/json'
 	});   
+}
+
+function getCustomers() {
+	return $.ajax({
+		url: "https://his.homeinfo.de/customer",
+		type: "GET",
+	});   
+}
+
+function saveNewCustomer(name, annotation, abbreviation, id) {
+    $("#pageloader").show();
+    let data = {
+        company: {"name": name},
+        customer: {"annotation": annotation, "abbreviation": abbreviation, "id":id},	
+    };
+    return $.ajax({
+        type: 'POST',
+        url: ' https://sysmon.homeinfo.de/customer_add',
+        data: JSON.stringify(data),
+        contentType: "application/json",
+        dataType: 'json'
+    });
 }
