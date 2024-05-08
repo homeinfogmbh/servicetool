@@ -286,11 +286,15 @@ function sortCommonList(sort) {
         });
     } else if (_lastsort == "sortaddress") {
         _commonChecks[_type].systems.sort(function(a, b) {
-            return compare(a.deployment.address.street.toLowerCase(), b.deployment.address.street.toLowerCase());
+            let housenumberA = a.deployment.address.houseNumber.padStart(5, "0");
+            let housenumberB = b.deployment.address.houseNumber.padStart(5, "0");
+            return compare(a.deployment.address.street.toLowerCase() + housenumberA, b.deployment.address.street.toLowerCase()+housenumberB);
         });
     } else if (_lastsort == "sortaddressInverted") {
         _commonChecks[_type].systems.sort(function(a, b) {
-            return compareInverted(a.deployment.address.street.toLowerCase(), b.deployment.address.street.toLowerCase());
+            let housenumberA = a.deployment.address.houseNumber.padStart(5, "0");
+            let housenumberB = b.deployment.address.houseNumber.padStart(5, "0");
+            return compareInverted(a.deployment.address.street.toLowerCase()+housenumberA, b.deployment.address.street.toLowerCase()+housenumberB);
         });
     } else if (_lastsort == "sortonline") {
         _commonChecks[_type].systems.sort(function(a, b) {
