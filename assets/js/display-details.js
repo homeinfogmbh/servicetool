@@ -204,6 +204,28 @@ $(document).ready(function() {
 		e.preventDefault();
 	});
 
+    $('.btn_warranty').click(function(e) {
+        $("#warrantyInput").val($("#warranty").text() === "-" ?"" :$("#warranty").text());
+        if ($("#warrantyfields").is(":visible"))
+            $("#warrantyfields").hide();
+        else
+            $("#warrantyfields").show();
+        $("#warrantyInput").focus();
+		e.preventDefault();
+	});
+    $('.btn_savewarranty').click(function(e) {
+        if (_display !== null) { 
+            let warranty = $("#warrantyInput").val().trim() === "" ?null :$("#warrantyInput").val();
+            changeWarranty(warranty).then(() => {
+                localStorage.removeItem("servicetool.systemchecks");
+                $("#warranty").text(warranty === null ?"-" :warranty);
+                $("#warrantyfields").hide();
+                $("#pageloader").hide()
+            });
+        }
+		e.preventDefault();
+	});
+
     $('.btn_annotation').click(function(e) {
         if ($("#annotationfields").is(":visible"))
             $("#annotationfields").hide();
@@ -419,6 +441,7 @@ function setDetails(data) {
     // Display Overview
     $("#model").text(_display.hasOwnProperty("model") ?_display.model.split('&quot;').join('"') :'-');
     $("#serialNumber").text(_display.hasOwnProperty("serialNumber") ?_display.serialNumber :'-');
+    $("#warranty").text(_display.hasOwnProperty("warranty") ?_display.warranty :'-');
     $("#ipv6").text(_display.ipv6address);
     if (_display.hasOwnProperty("checkResults") && _display.checkResults.length > 0) {
         $("#ramtotal").text(_display.checkResults[0].hasOwnProperty("ramTotal") ?parseInt(_display.checkResults[0].ramTotal/1024) + "MB" :"-");
@@ -1317,6 +1340,19 @@ function changeSerialNumber(serialNumber) {
         contentType: 'application/json',
 		error: function (msg) {
 			setErrorMessage(msg, "Ändern eines Deployments");
+		}
+	});   
+}
+function changeWarranty(warranty) {
+    $("#pageloader").show();
+	let data = {"system":_display.id, "warranty":warranty};
+	return $.ajax({
+		url: "https://termgr.homeinfo.de/administer/warranty",
+		type: "POST",
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+		error: function (msg) {
+			setErrorMessage(msg, "Ändern der Garantie");
 		}
 	});   
 }
