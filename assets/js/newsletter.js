@@ -171,23 +171,28 @@ function setNewsletter(newsletters) {
 
     $('.btn_saveNewsletter').click(function(e) {
         let id = $(this).data("id");
-        let listitems = [];
         let listitemsToADD = [];
         let listitemsToDELETE = [];
         let listitemsToPATCH = [];
 
         let found;
+        let counter = 0;
         for (let listitem of _newsletter[id].listitems) {
             found = false;
             $(this).parent().parent().find('.newsletteritem').each(function() {
                 if ($(this).data('id') == listitem.id) {
                     listitemsToPATCH.push({"id":listitem.id, "header":$(this).find('.newsletterlistHeaderInput').val(), "newsletter":_newsletter[id].id, "text":$(this).find('.newsletterlistTextInput').val().replace(/\n/g, "<br>")});
+                    listitem.header = $(this).find('.newsletterlistHeaderInput').val()
+                    listitem.text = $(this).find('.newsletterlistTextInput').val().replace(/\n/g, "<br>");
                     found = true;
                     return false;
                 };
             });
-            if (!found)
+            if (!found) {
                 listitemsToDELETE.push({"id":listitem.id});
+                _newsletter[id].listitems.splice(counter,1);
+            }
+            counter++;
         }
         $(this).parent().parent().find('.newsletteritem').each(function() {
             if ($(this).find('.newsletterlistHeaderInput').val() != "") {
@@ -201,7 +206,6 @@ function setNewsletter(newsletters) {
         _newsletter[id].moreLink = $(this).parent().parent().find('#newslettermoreLinkInput').val().replace(/\n/g, "<br>");
         _newsletter[id].moreText = $(this).parent().parent().find('#newslettermoreTextInput').val().replace(/\n/g, "<br>");
         _newsletter[id].header = $(this).parent().parent().find('#headerInput').val();
-        _newsletter[id].listitems = listitems;
         _newsletter[id].listitemsToADD = listitemsToADD;
         _newsletter[id].listitemsToDELETE = listitemsToDELETE;
         _newsletter[id].listitemsToPATCH = listitemsToPATCH;
@@ -255,6 +259,7 @@ function saveNewsletter(id, setnewsletter = true) {
             promises.push(uploadImage(_newsletter[id].id, _newsletter[id].upload.fileList[0].file));
         else if (_newsletter[id].hasOwnProperty('upload') && _newsletter[id].hasOwnProperty('image') && _newsletter[id].upload.fileList.length == 0)
             promises.push(deleteImage(id));
+        
         let item;
         if (_newsletter[id].hasOwnProperty('listitemsToADD')) {
             promises.push(addNewsLetterListItemInOrder(id));
@@ -305,9 +310,9 @@ function addNewsLetterListItemInOrder(newsletterid) {
         return Promise.resolve("nothingtoadd");
     let newitem = _newsletter[newsletterid].listitemsToADD.shift();
     return addNewsLetterListItem(newitem).then((data) => {
-        newitem.id = "-2"; // TODO ADD CORRECT LIST-ID
+        newitem.id = data.id;
         _newsletter[newsletterid].listitems.push(newitem);
-        addNewsLetterListItemInOrder(newsletterid)
+        return addNewsLetterListItemInOrder(newsletterid);
     });
 }
 

@@ -4,6 +4,7 @@ var _isInBlacklist = false;
 var _deployments = null;
 var _applicationVersion = null;
 var _deploymentHistory = null;
+var _months = {"01":"Januar","02":"Februar","03":"März","04":"April","05":"Mai","06":"Juni","07":"Juli","08":"August","09":"September","10":"Oktober","11":"November","12":"Dezember",}
 $(document).ready(function() {
     _id = getURLParameterByName('id');
     Promise.all(getListOfSystemChecks()).then((data) => {
@@ -205,7 +206,7 @@ $(document).ready(function() {
 	});
 
     $('.btn_warranty').click(function(e) {
-        $("#warrantyInput").val($("#warranty").text() === "-" ?"" :$("#warranty").text());
+        $("#warrantyInput").val(_display.warranty.substring(0,7));
         if ($("#warrantyfields").is(":visible"))
             $("#warrantyfields").hide();
         else
@@ -215,10 +216,10 @@ $(document).ready(function() {
 	});
     $('.btn_savewarranty').click(function(e) {
         if (_display !== null) { 
-            let warranty = $("#warrantyInput").val().trim() === "" ?null :$("#warrantyInput").val();
+            let warranty = $("#warrantyInput").val()+"-01";
             changeWarranty(warranty).then(() => {
                 localStorage.removeItem("servicetool.systemchecks");
-                $("#warranty").text(warranty === null ?"-" :warranty);
+                $("#warranty").text(_months[warranty.substring(5,7)] + ' ' + warranty.substring(0,4));
                 $("#warrantyfields").hide();
                 $("#pageloader").hide()
             });
@@ -277,6 +278,25 @@ $(document).ready(function() {
         }
 		e.preventDefault();
 	});
+
+    $('.btn_legacyddbos').click(function(e) {
+        if ($("#osDropdown").hasClass("show"))
+            $("#osDropdown").removeClass("show");
+        else
+            $("#osDropdown").addClass("show");
+		e.preventDefault();
+	});
+    $('.btn_os').click(function(e) {
+        localStorage.removeItem("servicetool.systemchecks");
+        $("#osDropdown").removeClass("show");
+        $("#os").text(_display.operatingSystem + ($(this).text() == "DDB OS" ? " (DDB OS)":""));
+        if (_display !== null && _display.hasOwnProperty("deployment")) {
+            let ddbos = $(this).text() == "DDB OS" ?true :false;
+            changeOs(ddbos).then(()=>{$("#pageloader").hide()});
+        }
+		e.preventDefault();
+	});
+
     $('.btn_publictransport').click(function(e) {
         if (_display !== null && _display.hasOwnProperty("deployment")) {
             if ($("#addressfields").is(":visible"))
@@ -441,7 +461,7 @@ function setDetails(data) {
     // Display Overview
     $("#model").text(_display.hasOwnProperty("model") ?_display.model.split('&quot;').join('"') :'-');
     $("#serialNumber").text(_display.hasOwnProperty("serialNumber") ?_display.serialNumber :'-');
-    $("#warranty").text(_display.hasOwnProperty("warranty") ?_display.warranty :'-');
+    $("#warranty").text(_display.hasOwnProperty("warranty") ?_months[_display.warranty.substring(5,7)] + ' ' + _display.warranty.substring(0,4) :'-');
     $("#ipv6").text(_display.ipv6address);
     if (_display.hasOwnProperty("checkResults") && _display.checkResults.length > 0) {
         $("#ramtotal").text(_display.checkResults[0].hasOwnProperty("ramTotal") ?parseInt(_display.checkResults[0].ramTotal/1024) + "MB" :"-");
@@ -1340,6 +1360,19 @@ function changeSerialNumber(serialNumber) {
         contentType: 'application/json',
 		error: function (msg) {
 			setErrorMessage(msg, "Ändern eines Deployments");
+		}
+	});   
+}
+function changeOs(ddbos = true) {
+    $("#pageloader").show();
+	let data = {"system":_display.id, "ddbOs":ddbos};
+	return $.ajax({
+		url: "https://termgr.homeinfo.de/administer/ddbos",
+		type: "POST",
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+		error: function (msg) {
+			setErrorMessage(msg, "Ändern des Bestriebssystems");
 		}
 	});   
 }

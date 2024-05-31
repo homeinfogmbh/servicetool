@@ -103,7 +103,7 @@
 														<span id="warranty">-</span> <a href="#" class="editIcon btn_warranty"><img src="assets/img/edit.svg" alt=""></a>
 														<div id="warrantyfields" style="display:none; padding-top:5px">															
 															<div class="dualinp inpCol">
-																<input id="warrantyInput" type="date" class="longInp basic-data">
+																<input id="warrantyInput" type="month" class="longInp basic-data">
 															</div>
 															<div style="float:right">
 																<span class="whiteMark btn_savewarranty pointer">Speichern</span>
@@ -142,7 +142,8 @@
 															<a class="dropdown-item btn_connection" href="#">WLAN ➝ DSL Router</a>
 															<a class="dropdown-item btn_connection" href="#">WLAN ➝ LTE Router</a>
 														</div>
-														<a href="#" class="editIcon btn_internetconnection"><img src="assets/img/edit.svg" alt=""></a></td>
+														<a href="#" class="editIcon btn_internetconnection"><img src="assets/img/edit.svg" alt=""></a>
+													</td>
 												</tr>
 												<tr>
 													<td>ÖPNV Adresse</td>
@@ -188,7 +189,14 @@
 												</tr>
 												<tr>
 													<td>Betriebssystem</td>
-													<td id="os">-</td>
+													<td>
+														<span id="os">-</span>
+														<div class="dropdown-menu" id="osDropdown" aria-labelledby="dropdownMenuButton">
+															<a class="dropdown-item btn_os" href="#">DDB OS</a>
+															<a class="dropdown-item btn_os" href="#">LEGACY</a>
+														</div>
+														<a href="#" class="editIcon btn_legacyddbos"><img src="assets/img/edit.svg" alt=""></a>
+													</td>
 												</tr>
 												<tr>
 													<td>Design</td>
