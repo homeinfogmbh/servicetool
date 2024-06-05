@@ -112,6 +112,7 @@ function setList(sort = "sortcustomer") {
                 uploadAvailable = check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("upload") ?true :false;
                 noCheckStyle = check.hasOwnProperty("checkResults") && check.checkResults.length > 0 ?"" :'style="background-color:gray"';
                 systemlistDOM += '<tr class="system" data-id="' + check.id + '">' +
+                    '<td>' + (counter+1) + '</td>' +
                     '<td>' + check.id + '</td>' +
                     '<td>' + abbreviation + '</td>' +
                     '<td title="' + addressComplete + '"><span style="white-space: nowrap;">' + address + (check.deployment.hasOwnProperty("annotation") && check.deployment.annotation != ""?"</span> (" + check.deployment.annotation + ")" :"") + 
@@ -138,7 +139,7 @@ function setList(sort = "sortcustomer") {
                     '</td>' + 
                     '<td><span ' + noCheckStyle + ' class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && !check.checkResults[0].online /*check.checkResults[0].sshLogin === "failed" && !check.checkResults[0].icmpRequest*/ /*&& check.fitted && !check.deployment.testing*/ ?'orangeCircle' :'blueCircle') + '"></span></td>' +
                     '<td><span class="' + (!check.fitted ?'orangeCircle' :'blueCircle') + '"></span></td>' +
-                    '<td><span class="' + (check.deployment.testing ?"orangeCircle":"blueCircle") + '"></span></td>' +
+                    '<td><span class="' + (check.testing ?"orangeCircle":"blueCircle") + '"></span></td>' +
                     '<td>' + (check.hasOwnProperty("lastSync") ?formatDate(check.lastSync) + " (" + check.lastSync.substring(11, 16) + "h)": "noch nie") + '</td>' +
                     '<td>' + (downloadAvailable && check.checkResults[0].download*_KIBIBITTOMBIT < 1.9?'<span class="orangeMark">' + (check.checkResults[0].download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':downloadAvailable ?'<span class="blueMark">' + (check.checkResults[0].download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':' - ') +
                     (uploadAvailable && check.checkResults[0].upload*_KIBIBITTOMBIT < 0.35?'<span class="orangeMark">' + (check.checkResults[0].upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':uploadAvailable ?'<span class="blueMark">' + (check.checkResults[0].upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':' - ') + '</td>' +
@@ -444,11 +445,11 @@ function sortCommonList(sort) {
         });
     } else if (_lastsort == "sorttestsystem") {
         _commonChecks[_type].systems.sort(function(a, b) {
-            return compare(a.deployment.testing, b.deployment.testing);
+            return compare(a.testing, b.testing);
         });
     } else if (_lastsort == "sorttestsystemInverted") {
         _commonChecks[_type].systems.sort(function(a, b) {
-            return compareInverted(a.deployment.testing, b.deployment.testing);
+            return compareInverted(a.testing, b.testing);
         });
     }
 }

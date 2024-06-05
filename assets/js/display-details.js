@@ -407,7 +407,7 @@ $(document).ready(function() {
     $('.btn_testsystem').click(function(e) {
         if (_display !== null && _display.hasOwnProperty("deployment")) {
             localStorage.removeItem("servicetool.systemchecks");
-            changeDeployment("testing", $('input[name=Testgerät]:checked').val() !== 'on', _display).then(()=>{$("#pageloader").hide()});
+            setTesting($('input[name=Testgerät]:checked').val() !== 'on').then(()=>{$("#pageloader").hide()}, ()=>{$("#pageloader").hide()});
             if ($('input[name=Testgerät]:checked').val() === 'on')
                 $(this).attr("title", "Ist kein Testsystem");
             else
@@ -552,7 +552,7 @@ function setDetails(data) {
         $(".btn_installed").attr("title", "Ist nicht verbaut");
     }
 
-    if (_display.hasOwnProperty("deployment") && _display.deployment.testing) {
+    if (_display.hasOwnProperty("deployment") && _display.testing) {
         $("#Testgerät").prop("checked", true);
         $(".btn_testsystem").attr("title", "Ist ein Testsystem");
     } else {
@@ -1423,6 +1423,19 @@ function saveTechnicianAnnotation(id, annotation) {
         }
     });
 }
+
+function setTesting(testing) {
+    $("#pageloader").show();
+	let data = {"system":_display.id, "testing":testing};
+    return $.ajax({
+        type: 'POST',
+        url: 'https://termgr.homeinfo.de/administer/testing',
+        data: JSON.stringify(data),
+        contentType: "application/json",
+        dataType: 'json'
+    });
+}
+
 /*
 class ApplicationState(str, Enum):
     AIR = 'air'

@@ -237,29 +237,29 @@ function setCheckList(list, applicationVersion, blacklist) {
 					check.deployment.address = {"street":"Keine Adresse", "houseNumber":"", "zipCode":"", "city":""}
 			} else {
 				//if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("offlineSince") && check.checkResults[0].sshLogin !== "success" && !check.checkResults[0].icmpRequest && check.fitted && !check.deployment.testing && check.operatingSystem.toLowerCase().indexOf("windows") === -1) {
-				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && !check.checkResults[0].online && check.fitted && !check.deployment.testing)
+				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && !check.checkResults[0].online && check.fitted && !check.testing)
 					_commonChecks.onlyoffline.systems.push(check);
-				if (check.hasOwnProperty("checkResults") && !isOnDate(check.lastSync, 48) && check.checkResults.length > 0 && !check.checkResults[0].online && check.fitted && !check.deployment.testing) {
+				if (check.hasOwnProperty("checkResults") && !isOnDate(check.lastSync, 48) && check.checkResults.length > 0 && !check.checkResults[0].online && check.fitted && !check.testing) {
 					_commonChecks.offline.systems.push(check);
 					if (!isOnDate(check.checkResults[0].offlineSince, THREE_MONTHS))
 						_commonChecks.offlineThreeMonth.systems.push(check);
 				}
-				if (check.hasOwnProperty("checkResults") && isOnDate(check.lastSync, 48) && check.checkResults.length > 0 && !check.checkResults[0].online && check.fitted && !check.deployment.testing)
+				if (check.hasOwnProperty("checkResults") && isOnDate(check.lastSync, 48) && check.checkResults.length > 0 && !check.checkResults[0].online && check.fitted && !check.testing)
 					_commonChecks.offlineAndActualData.systems.push(check);
 				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].smartCheck === "failed")
 					_commonChecks.ssd.systems.push(check);
 				//if (check.hasOwnProperty("lastSync") && !isOnDate(check.lastSync, 24) && check.fitted && !check.deployment.testing && (!check.hasOwnProperty("checkResults") || (check.checkResults.length > 0 && !check.checkResults[0].hasOwnProperty("offlineSince"))))
-				if (!check.ddbOs && check.hasOwnProperty("lastSync") && !isOnDate(check.lastSync, 48) && check.fitted && !check.deployment.testing && (!check.hasOwnProperty("checkResults") || (check.checkResults.length > 0 && check.checkResults[0].sshLogin !== "failed" && check.checkResults[0].icmpRequest)))
+				if (!check.ddbOs && check.hasOwnProperty("lastSync") && !isOnDate(check.lastSync, 48) && check.fitted && !check.testing && (!check.hasOwnProperty("checkResults") || (check.checkResults.length > 0 && check.checkResults[0].sshLogin !== "failed" && check.checkResults[0].icmpRequest)))
 					_commonChecks.noActualData.systems.push(check);
-				if ((check.deployment.hasOwnProperty('url') && check.deployment.url.indexOf("blackmode=true") != -1) || (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState !== "html" && check.checkResults[0].applicationState !== "air" && check.checkResults[0].applicationState !== "unknown" && check.fitted && !check.deployment.testing))
+				if ((check.deployment.hasOwnProperty('url') && check.deployment.url.indexOf("blackmode=true") != -1) || (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].applicationState !== "html" && check.checkResults[0].applicationState !== "air" && check.checkResults[0].applicationState !== "unknown" && check.fitted && !check.testing))
 					_commonChecks.blackscreen.systems.push(check);
 				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("ramAvailable") && check.checkResults[0].hasOwnProperty("ramTotal") && parseInt(check.checkResults[0].ramAvailable)*4 < parseInt(check.checkResults[0].ramTotal))
 					_commonChecks.ramfree.systems.push(check);
 				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("ramTotal") && parseInt(check.checkResults[0].ramTotal/1024) < 2000)
 					_commonChecks.ram.systems.push(check);
-				if (!check.fitted && !check.deployment.testing)
+				if (!check.fitted && !check.testing)
 					_commonChecks.notfitted.systems.push(check);
-				if (check.deployment.testing)
+				if (check.testing)
 					_commonChecks.testsystem.systems.push(check);
 				//if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && check.checkResults[0].hasOwnProperty("applicationVersion") && (check.checkResults[0].applicationVersion === "2.88.0-1" || check.checkResults[0].applicationVersion === "2.90.0-1") && check.fitted && !check.deployment.testing)
 					//console.log(check.deployment.customer.id + " // " + check.id);
@@ -283,7 +283,7 @@ function setCheckList(list, applicationVersion, blacklist) {
 					_commonChecks.toMuchTouches.systems.push(check);
 				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && (!check.checkResults[0].hasOwnProperty("fsckRepair") || (check.checkResults[0].hasOwnProperty("fsckRepair") && check.checkResults[0].fsckRepair !== "yes")))
 					_commonChecks.fsckRepair.systems.push(check);
-				if (!check.hasOwnProperty("checkResults") && check.fitted && !check.deployment.testing)
+				if (!check.hasOwnProperty("checkResults") && check.fitted && !check.testing)
 					_commonChecks.checked.systems.push(check);
 				if (check.hasOwnProperty("checkResults") && check.checkResults.length > 0) {
 					_commonChecks.systemReducedByBlacklist.systems.push(check);
