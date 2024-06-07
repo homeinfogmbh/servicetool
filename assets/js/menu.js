@@ -78,7 +78,7 @@ $(document).ready(function() {
         '</table>' +
     '</div>';
     $(".menu_sidebar").html(menu);
-    getAccountServices().then((data)=>{
+    getUser().then(()=>{getAccountServices()}).then((data)=> {
         if (localStorage.getItem("servicetool.user") && JSON.parse(localStorage.getItem("servicetool.user")).root) {
             //
             loadMenuData();

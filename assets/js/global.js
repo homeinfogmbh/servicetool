@@ -18,9 +18,14 @@ function setCustomers(customers) {
             '<td>' +  customer.abbreviation + '</td>' +
             '<td>' + customer.company.name + '</td>' +
             '<td>' + (customer.hasOwnProperty("annotation") ?customer.annotation :"") + '</td>' +
+            '<td><img class="btn_copyURL pointer" src="assets/img/copy.png" data-url="' + getDefaultCustomerBaseURL(customer.abbreviation) + '"></td>' +
         '</tr>';
     }
     $("#customerlist").html(customersDOM);
+    $('.btn_copyURL').click(function(e) {
+        navigator.clipboard.writeText($(this).data("url"));
+		e.preventDefault();
+	});
 }
 
 function setOverwriteList(systems) {

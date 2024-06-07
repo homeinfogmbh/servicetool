@@ -17,7 +17,6 @@ $(document).ready(function() {
             setButtons();
             if (_display.operatingSystem === "Arch Linux") {
                 if (_display.ddbOs) {
-
                     $('[name="display-mode"]').click(function(e) {
                         let displayurl = _display.deployment.hasOwnProperty('url') ?_display.deployment.url.split("&amp;").join("&").replace("?blackmode=true", "").replace("&blackmode=true", "").replace("?displaytest=true", "").replace("&displaytest=true", "").replace("?overwrite=true", "").replace("&overwrite=true", "") :getDefaultDisplayURL(_display);
                         let title = "Normalmodus eingestellt";
@@ -32,6 +31,7 @@ $(document).ready(function() {
                         } else if ($(this).val() == "INSTALLATION_INSTRUCTIONS") {
                             title = "Installationsanleitung eingestellt";
                         }
+                        _display.deployment.url = displayurl;
                         $("#displayurl").text(displayurl);
                         changedisplayurl(displayurl).then((data) => {
                             $("#pageloader").hide();
@@ -814,7 +814,7 @@ function setButtons() {
             $(".btn_heatmap").attr("title", "Heatmap wird gerade NICHT angezeigt");
         }
         $('.btn_heatmap').click(function(e) {
-            let displayurl = $("#displayurl").text().replace("?heatmap=true", "").replace("&heatmap=true", "");
+            let displayurl = _display.deployment.url.split("&amp;").join("&").replace("?heatmap=true", "").replace("&heatmap=true", "");
             let title;
             if ($('input[name=Heatmap]:checked').val() === 'on') {
                 $(this).attr("title", "Wird nicht angezeigt");
@@ -824,6 +824,7 @@ function setButtons() {
                 title = "Heatmap gerade angezeigt";
                 $(this).attr("title", "Heatmap angezeigt");
             }
+            _display.deployment.url = displayurl;
             $("#displayurl").text(displayurl);
             changedisplayurl(displayurl).then((data) => {
                 $("#pageloader").hide();
@@ -848,7 +849,7 @@ function setButtons() {
             $(".btn_console").attr("title", "Konsole wird gerade NICHT angezeigt");
         }
         $('.btn_console').click(function(e) {
-            let displayurl = $("#displayurl").text().replace("?console=true", "").replace("&console=true", "");
+            let displayurl = _display.deployment.url.split("&amp;").join("&").replace("?console=true", "").replace("&console=true", "");
             let title;
             if ($('input[name=Konsole]:checked').val() === 'on') {
                 $(this).attr("title", "Wird nicht angezeigt");
@@ -858,6 +859,7 @@ function setButtons() {
                 title = "Konsole gerade angezeigt";
                 $(this).attr("title", "Konsole angezeigt");
             }
+            _display.deployment.url = displayurl;
             $("#displayurl").text(displayurl);
             changedisplayurl(displayurl).then((data) => {
                 $("#pageloader").hide();
