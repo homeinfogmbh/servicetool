@@ -173,6 +173,7 @@ function setList(sort = "sortcustomer") {
     }
     for (let customer in customerOfflineListTMP)
         _customerOfflineList.push(customerOfflineListTMP[customer]);
+    sortCommonList("offlinecustomersortcustomer");
 
     systemlistDOM = systemlistDOM === "" ?"<tr><td>Keine Einträge vorhanden</td></tr>" :systemlistDOM;
     $("#systemlist").html(systemlistDOM);
@@ -421,11 +422,11 @@ function sortCommonList(sort) {
         });
     } else if (_lastsort == "offlinecustomersortcustomer") {
         _customerOfflineList.sort(function(a, b) {
-            return compare(a.name, b.name);
+            return compare(a.name.toLowerCase(), b.name.toLowerCase());
         });
     } else if (_lastsort == "offlinecustomersortcustomerInverted") {
         _customerOfflineList.sort(function(a, b) {
-            return compareInverted(a.name, b.name);
+            return compareInverted(a.name.toLowerCase(), b.name.toLowerCase());
         });
     } else if (_lastsort == "offlinecustomersortoffline") {
         _customerOfflineList.sort(function(a, b) {
