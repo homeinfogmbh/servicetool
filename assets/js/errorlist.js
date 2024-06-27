@@ -1,6 +1,7 @@
 var _type;
 var _customer;
 var _lastsort = null;
+var _lastsortofflinecustomer = null;
 var _operatingSystemsShorts = {"Arch Linux":"Arch", "Windows XP Embedded":"XPe", "Windows XP":"XP", "Windows 8":"Win8", "Windows 7 Embedded":"Win7e", "Windows 7":"Win7", "Windows 10":"Win10"};
 var _imagesLoaded = {'simultaneous':5, 'started':0, 'finished':0, 'systemsToCheck':[]};
 var _customerOfflineList = [];
@@ -173,7 +174,7 @@ function setList(sort = "sortcustomer") {
     }
     for (let customer in customerOfflineListTMP)
         _customerOfflineList.push(customerOfflineListTMP[customer]);
-    sortCommonList("offlinecustomersortcustomer");
+    sortCustomerList(_lastsortofflinecustomer == null ?"offlinecustomersortcustomer" :sort);
 
     systemlistDOM = systemlistDOM === "" ?"<tr><td>Keine Einträge vorhanden</td></tr>" :systemlistDOM;
     $("#systemlist").html(systemlistDOM);
@@ -330,32 +331,6 @@ function sortCommonList(sort) {
         _commonChecks[_type].systems.sort(function(a, b) {
             return b.hasOwnProperty("checkResults") && b.checkResults[0].applicationState === "not running" ?-1 :a.hasOwnProperty("checkResults") && a.checkResults[0].applicationState === "not running" ?1 :0
         });
-        /*
-    } else if (_lastsort == "sortappuptodate") {
-        _commonChecks[_type].systems.sort(function(a, b) {
-            if (a.checkResults[0].applicationVersion === undefined && b.checkResults[0].applicationVersion !== undefined)
-                return 1;
-            if (b.checkResults[0].applicationVersion === undefined && a.checkResults[0].applicationVersion !== undefined)
-                return -1;
-            if (a.checkResults[0].applicationVersion < b.checkResults[0].applicationVersion)
-                return -1;
-            if (a.checkResults[0].applicationVersion > b.checkResults[0].applicationVersion)
-                return 1;
-            return 0;
-        });
-    } else if (_lastsort == "sortappuptodateInverted") {
-        _commonChecks[_type].systems.sort(function(a, b) {
-            if (a.checkResults[0].applicationVersion === undefined && b.checkResults[0].applicationVersion !== undefined)
-                return 1;
-            if (b.checkResults[0].applicationVersion === undefined && a.checkResults[0].applicationVersion !== undefined)
-                return -1;
-            if (a.checkResults[0].applicationVersion > b.checkResults[0].applicationVersion)
-                return -1;
-            if (a.checkResults[0].applicationVersion < b.checkResults[0].applicationVersion)
-                return 1;
-        return 0;
-        });
-        */
     } else if (_lastsort == "sortsync") {
         _commonChecks[_type].systems.sort(function(a, b) {
             return !b.hasOwnProperty("lastSync") ?-1 :!a.hasOwnProperty("lastSync") ?1 :compareInverted(a.lastSync.toLowerCase(), b.lastSync.toLowerCase());            
@@ -412,38 +387,6 @@ function sortCommonList(sort) {
         _commonChecks[_type].systems.sort(function(a, b) {
             return b.ddbOs ?-1 :a.ddbOs ?1 :0
         });        
-    } else if (_lastsort == "offlinecustomersortid") {
-        _customerOfflineList.sort(function(a, b) {
-            return compare(a.customer, b.customer);
-        });
-    } else if (_lastsort == "offlinecustomersortidInverted") {
-        _customerOfflineList.sort(function(a, b) {
-            return compareInverted(a.customer, b.customer);
-        });
-    } else if (_lastsort == "offlinecustomersortcustomer") {
-        _customerOfflineList.sort(function(a, b) {
-            return compare(a.name.toLowerCase(), b.name.toLowerCase());
-        });
-    } else if (_lastsort == "offlinecustomersortcustomerInverted") {
-        _customerOfflineList.sort(function(a, b) {
-            return compareInverted(a.name.toLowerCase(), b.name.toLowerCase());
-        });
-    } else if (_lastsort == "offlinecustomersortoffline") {
-        _customerOfflineList.sort(function(a, b) {
-            return compare(a.offline, b.offline);
-        });
-    } else if (_lastsort == "offlinecustomersortofflineInverted") {
-        _customerOfflineList.sort(function(a, b) {
-            return compareInverted(a.offline, b.offline);
-        });
-    } else if (_lastsort == "offlinecustomersortalloffline") {
-        _customerOfflineList.sort(function(a, b) {
-            return compare(a.countAll, b.countAll);
-        });
-    } else if (_lastsort == "offlinecustomersortallofflineInverted") {
-        _customerOfflineList.sort(function(a, b) {
-            return compareInverted(a.countAll, b.countAll);
-        });
     } else if (_lastsort == "sorttestsystem") {
         _commonChecks[_type].systems.sort(function(a, b) {
             return compare(a.testing, b.testing);
@@ -451,6 +394,47 @@ function sortCommonList(sort) {
     } else if (_lastsort == "sorttestsystemInverted") {
         _commonChecks[_type].systems.sort(function(a, b) {
             return compareInverted(a.testing, b.testing);
+        });
+    }
+}
+
+function sortCustomerList(sort) {
+
+    if (_lastsortofflinecustomer === null && getURLParameterByName('sort') !== null)
+        _lastsortofflinecustomer = getURLParameterByName('sort');
+    else
+        _lastsortofflinecustomer = _lastsortofflinecustomer === sort && _lastsortofflinecustomer.indexOf('inverted' === -1) ? _lastsortofflinecustomer + "Inverted" :sort;
+    if (_lastsortofflinecustomer == "offlinecustomersortid") {
+        _customerOfflineList.sort(function(a, b) {
+            return compare(a.customer, b.customer);
+        });
+    } else if (_lastsortofflinecustomer == "offlinecustomersortidInverted") {
+        _customerOfflineList.sort(function(a, b) {
+            return compareInverted(a.customer, b.customer);
+        });
+    } else if (_lastsortofflinecustomer == "offlinecustomersortcustomer") {
+        _customerOfflineList.sort(function(a, b) {
+            return compare(a.name.toLowerCase(), b.name.toLowerCase());
+        });
+    } else if (_lastsortofflinecustomer == "offlinecustomersortcustomerInverted") {
+        _customerOfflineList.sort(function(a, b) {
+            return compareInverted(a.name.toLowerCase(), b.name.toLowerCase());
+        });
+    } else if (_lastsortofflinecustomer == "offlinecustomersortoffline") {
+        _customerOfflineList.sort(function(a, b) {
+            return compare(a.offline, b.offline);
+        });
+    } else if (_lastsortofflinecustomer == "offlinecustomersortofflineInverted") {
+        _customerOfflineList.sort(function(a, b) {
+            return compareInverted(a.offline, b.offline);
+        });
+    } else if (_lastsortofflinecustomer == "offlinecustomersortalloffline") {
+        _customerOfflineList.sort(function(a, b) {
+            return compare(a.countAll, b.countAll);
+        });
+    } else if (_lastsortofflinecustomer == "offlinecustomersortallofflineInverted") {
+        _customerOfflineList.sort(function(a, b) {
+            return compareInverted(a.countAll, b.countAll);
         });
     }
 }
