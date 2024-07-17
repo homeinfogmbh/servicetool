@@ -399,7 +399,6 @@ function sortCommonList(sort) {
 }
 
 function sortCustomerList(sort) {
-
     if (_lastsortofflinecustomer === null && getURLParameterByName('sort') !== null)
         _lastsortofflinecustomer = getURLParameterByName('sort');
     else

@@ -1,3 +1,5 @@
+var _customerGlobalList = null;
+var _lastsortcustomer = null;
 $(document).ready(function() {
     $("#baseurl").text(_DDBOSURL);
     
@@ -8,11 +10,18 @@ $(document).ready(function() {
         setOverwriteList(systems);
         setButtons(systems);
     });
+    $('.sortCustomer').click(function(e) {
+        setCustomers(null, $(this).data("id"));
+		e.preventDefault();
+	}); 
 });
 
-function setCustomers(customers) {
+function setCustomers(customers, sort = "customerabbreviation") {
+    if (_customerGlobalList == null && customers != null)
+        _customerGlobalList = customers;
+    sortCustomerList(sort);
     let customersDOM = "";
-    for (let customer of customers) {
+    for (let customer of _customerGlobalList) {
         customersDOM += '<tr>' +
             '<td>' + customer.id + '</td>' +
             '<td>' +  customer.abbreviation + '</td>' +
@@ -167,4 +176,57 @@ function saveNewCustomer(name, annotation, abbreviation, id) {
         contentType: "application/json",
         dataType: 'json'
     });
+}
+
+function sortCustomerList(sort) {
+        _lastsortcustomer = _lastsortcustomer === sort && _lastsortcustomer.indexOf('inverted' === -1) ? _lastsortcustomer + "Inverted" :sort;
+    if (_lastsortcustomer == "customerid") {
+        _customerGlobalList.sort(function(a, b) {
+            return compare(a.id, b.id);
+        });
+    } else if (_lastsortcustomer == "customeridInverted") {
+        _customerGlobalList.sort(function(a, b) {
+            return compareInverted(a.id, b.id);
+        });
+    } else if (_lastsortcustomer == "customerabbreviation") {
+        _customerGlobalList.sort(function(a, b) {
+            if (!a.hasOwnProperty("abbreviation") || !b.hasOwnProperty("abbreviation"))
+                return 0;
+            return compare(a.abbreviation.toLowerCase(), b.abbreviation.toLowerCase());
+        });
+    } else if (_lastsortcustomer == "customerabbreviationInverted") {
+        _customerGlobalList.sort(function(a, b) {
+            if (!a.hasOwnProperty("abbreviation") || !b.hasOwnProperty("abbreviation"))
+                return 0;
+            return compareInverted(a.abbreviation.toLowerCase(), b.abbreviation.toLowerCase());
+        });
+    } else if (_lastsortcustomer == "customer") {
+        _customerGlobalList.sort(function(a, b) {
+            return compare(a.company.name.toLowerCase(), b.company.name.toLowerCase());
+        });
+    } else if (_lastsortcustomer == "customerInverted") {
+        _customerGlobalList.sort(function(a, b) {
+            return compareInverted(a.company.name.toLowerCase(), b.company.name.toLowerCase());
+        });
+    } else if (_lastsortcustomer == "customerannotation") {
+        _customerGlobalList.sort(function(a, b) {
+            if (!a.hasOwnProperty("annotation") && !b.hasOwnProperty("annotation"))
+                return 1;
+            else if (a.hasOwnProperty("annotation") && !b.hasOwnProperty("annotation"))
+                return -1;
+            else if (!a.hasOwnProperty("annotation") && b.hasOwnProperty("annotation"))
+                return 1;
+            return compare(a.annotation.toLowerCase(), b.annotation.toLowerCase());
+        });
+    } else if (_lastsortcustomer == "customerannotationInverted") {
+        _customerGlobalList.sort(function(a, b) {
+            if (!a.hasOwnProperty("annotation") && !b.hasOwnProperty("annotation"))
+                return -1;
+            else if (a.hasOwnProperty("annotation") && !b.hasOwnProperty("annotation"))
+                return 1;
+            else if (!a.hasOwnProperty("annotation") && b.hasOwnProperty("annotation"))
+                return -1;
+            return compareInverted(a.annotation.toLowerCase(), b.annotation.toLowerCase());
+        });
+    }
 }
