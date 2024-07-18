@@ -17,7 +17,7 @@ function setDefaultNewsletter(defaultnewsletter) {
             '<span id="newslettertext">' + _defaultnewsletter.text.replaceAll("&lt;","<").replaceAll("&gt;",">") + '</span>' +
             '<div id="newslettertextfield" style="display:none">' +
                 '<div class="dualinp inpCol">' +
-                    '<textarea id="newsletterTextInput" class="longInp basic-data" style=resize:auto;">' + _defaultnewsletter.text.replaceAll("&lt;","<").replaceAll("&gt;",">").replaceAll("<br>","\n") + '</textarea>' +
+                    '<textarea id="newsletterTextInput" class="longInp basic-data" style="resize:auto;">' + _defaultnewsletter.text.replaceAll("&lt;","<").replaceAll("&gt;",">").replaceAll("<br>","\n") + '</textarea>' +
                 '</div>' +
             '</div>' +
             '<div id="newslettersaveclose" style="display:none">' +

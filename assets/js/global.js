@@ -3,6 +3,10 @@ var _lastsortcustomer = null;
 $(document).ready(function() {
     $("#baseurl").text(_DDBOSURL);
     
+    getWarningmail().then((settings) => {
+        setWarningmail(settings);
+    });
+
     getCustomers().then((customers) => {
         setCustomers(customers);
     });
@@ -14,8 +18,39 @@ $(document).ready(function() {
         setCustomers(null, $(this).data("id"));
 		e.preventDefault();
 	}); 
+    $('#submitWarningmail').click(function(e) {
+        if ($('#warningSubject').val().trim() == "")
+            $('#warningSubject').css({"outline": "5px solid red"});
+        else
+            $('#warningSubject').css({"outline": "unset"});
+        if ($('#warningtext').val().trim() == "")
+            $('#warningtext').css({"outline": "5px solid red"});
+        else
+            $('#warningtext').css({"outline": "unset"});
+        if ($('#minsystems').val().trim() == "")
+            $('#minsystems').css({"outline": "5px solid red"});
+        else
+            $('#minsystems').css({"outline": "unset"});
+        if ($('#minpercent').val().trim() == "")
+            $('#minpercent').css({"outline": "5px solid red"});
+        else
+            $('#minpercent').css({"outline": "unset"});
+
+        if ($('#warningSubject').val().trim() != "" && $('#warningtext').val().trim() != "" && $('#minsystems').val().trim() != "" && $('#minpercent').val().trim() != "") {
+            updateWarningmail(1, $('#warningSubject').val(), $('#warningtext').val(), $('#minsystems').val(), $('#minpercent').val()).then((data) => {
+                $("#pageloader").hide();
+            });
+        }
+		e.preventDefault();
+	}); 
 });
 
+function setWarningmail(settings) {
+    $('#minsystems').val(settings.minsystems);
+    $('#minpercent').val(settings.minpercent);
+    $('#warningtext').val(settings.text);
+    $('#warningSubject').val(settings.subject);
+}
 function setCustomers(customers, sort = "customerabbreviation") {
     if (_customerGlobalList == null && customers != null)
         _customerGlobalList = customers;
@@ -171,7 +206,30 @@ function saveNewCustomer(name, annotation, abbreviation, id) {
     };
     return $.ajax({
         type: 'POST',
-        url: ' https://sysmon.homeinfo.de/customer_add',
+        url: 'https://sysmon.homeinfo.de/customer_add',
+        data: JSON.stringify(data),
+        contentType: "application/json",
+        dataType: 'json'
+    });
+}
+
+function getWarningmail() {
+	return $.ajax({
+		url: 'https://sysmon.homeinfo.de/warningmail',
+		type: 'GET',
+	});   
+}
+function updateWarningmail(id, subject, text, minsystems = 6, minpercent = 20) {
+    $("#pageloader").show();
+    let data = {
+        'subject': subject,
+        'text': text,
+        'minsystems': minsystems,
+        'minpercent': minpercent
+    };
+    return $.ajax({
+        type: 'POST',
+        url: 'https://sysmon.homeinfo.de/patch_warningmail/' + id,
         data: JSON.stringify(data),
         contentType: "application/json",
         dataType: 'json'
