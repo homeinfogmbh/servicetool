@@ -629,7 +629,10 @@ function setChecks(lastCheck) {
         $("#upload").text("-");
         $("#applicationuptodate").text("-");
     }
-    $("#sync").text(_display.hasOwnProperty("lastSync") ?formatDate(_display.lastSync) + " (" + _display.lastSync.substring(11, 16) + "h)" :"noch nie");
+    if (_display.ddbOs)
+        $("#sync").text("Wird nicht mehr übertragen");
+    else
+        $("#sync").text(_display.hasOwnProperty("lastSync") ?formatDate(_display.lastSync) + " (" + _display.lastSync.substring(11, 16) + "h)" :"noch nie");
     $("#lastCheck").text("Letzter Check " + formatDate(lastCheck.timestamp) + " (" + lastCheck.timestamp.substring(11, 16) + " Uhr)");
     $("#pageloader").hide();
 }
