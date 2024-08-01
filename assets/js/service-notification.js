@@ -47,6 +47,13 @@ function setServiceEmails(useremails) {
 }
 
 function setButtons() {
+    $('#submitWarningmail').click(function(e) {
+        sendWarningEmails().then(() => {
+            $("#pageloader").hide();
+        });
+
+		e.preventDefault();
+	}); 
     $(".btn_save_serviceemails").css("title", "Eintrag bearbeiten");
     $(".btn_save_serviceemails").css("opacity", "1");
     $('.btn_save_serviceemails').click(function(e) {
@@ -107,6 +114,14 @@ function getServiceEmails() {
 			setErrorMessage(msg, "Laden der E-Mails");
 		}
 	});	
+}
+
+function sendWarningEmails() {
+    $("#pageloader").show();
+    return $.ajax({
+        url: " https://sysmon.homeinfo.de/test_warningmail",
+        type: "GET",
+    });   
 }
 
 function compareStrings(a, b) {
