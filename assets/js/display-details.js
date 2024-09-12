@@ -76,6 +76,7 @@ $(document).ready(function() {
                             break;
                         default:
                             getSystemInfo().then((data) => {
+                                setSystemysinfo(data);
                                 $("#display-mode-unknown").hide();
                                 if (data.hasOwnProperty("application") && data.application.hasOwnProperty("mode")) {
                                     $(".tw-toggle").show();
@@ -108,6 +109,7 @@ $(document).ready(function() {
                     }
                 } else {
                     getSystemInfo().then((data) => {
+                        setSystemysinfo(data);
                         try { $("#applicationDesign").text('"' + data.presentation.configuration.design.toUpperCase() + '"'); } catch(error) { $("#applicationDesign").text("-"); }
                         $("#display-mode-unknown").hide();
                         if (data.hasOwnProperty("application") && data.application.hasOwnProperty("mode")) {
@@ -451,6 +453,7 @@ function systemCheckCompleted(data) {
 }
 function setDetails(data) {
     _display = data.hasOwnProperty(_id) ?data[_id] :data;
+    console.log(_display)
     let address = _display.hasOwnProperty("deployment") ?_display.deployment.hasOwnProperty("address") && _display.deployment.address.street !== "Keine Adresse" ?_display.deployment.address.street + " " + _display.deployment.address.houseNumber + ", " + _display.deployment.address.zipCode + " " + _display.deployment.address.city :'<i>Keine Adresse angegeben</i>' :'<i>Keinem Standort zugewiesen</i>';
     $("#displaytitle").html("Display: " + address);
     try {
@@ -1179,7 +1182,21 @@ function getSystemInfo() {
         }
     });
 }
-
+function setSystemysinfo(data) {
+    console.log(data);
+    if (data.hasOwnProperty("df")) {
+        for (let systemdata of data.df) {
+            if (systemdata.filesystem == "/dev/sda2") {
+                $('#hddavailable').text(Math.floor(systemdata.available/1024).toLocaleString() + " MB");
+                break;
+            } else if (systemdata.filesystem == "ext4") {
+                $('#hddavailable').text(Math.floor(systemdata.available/1024/1024).toLocaleString() + " MB");
+                break;
+            }
+        }
+    }
+}
+                                
 function listDeployments(deployments = null) {
     if (deployments !== null) {
         _deployments = deployments;
