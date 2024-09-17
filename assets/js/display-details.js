@@ -453,7 +453,6 @@ function systemCheckCompleted(data) {
 }
 function setDetails(data) {
     _display = data.hasOwnProperty(_id) ?data[_id] :data;
-    console.log(_display)
     let address = _display.hasOwnProperty("deployment") ?_display.deployment.hasOwnProperty("address") && _display.deployment.address.street !== "Keine Adresse" ?_display.deployment.address.street + " " + _display.deployment.address.houseNumber + ", " + _display.deployment.address.zipCode + " " + _display.deployment.address.city :'<i>Keine Adresse angegeben</i>' :'<i>Keinem Standort zugewiesen</i>';
     $("#displaytitle").html("Display: " + address);
     try {
@@ -554,8 +553,7 @@ function setDetails(data) {
         $("#Verbaut").prop("checked", false);
         $(".btn_installed").attr("title", "Ist nicht verbaut");
     }
-
-    if (_display.hasOwnProperty("deployment") && _display.testing) {
+    if (_display.testing) {
         $("#Testgerät").prop("checked", true);
         $(".btn_testsystem").attr("title", "Ist ein Testsystem");
     } else {
@@ -575,6 +573,13 @@ function setDetails(data) {
         $(".btn_deleteDeployment").css("opacity", "1");
         $(".btn_deleteDeployment").addClass("pointer");
         $(".btn_deleteDeployment").attr("title", "Deployment lösen");
+        if (_display.deployment.processing == 1) {
+            $("#Processing").prop("checked", true);
+            $(".btn_processing").attr("title", "Status: Befindet sich in Bearbeitung");
+        } else {
+            $("#Processing").prop("checked", false);
+            $(".btn_processing").attr("title", "Status: Bereit");
+        }
     } else {
         $(".btn_testsystem").css("opacity", "0.3");
         $(".btn_testsystem").removeClass("pointer");
@@ -790,6 +795,14 @@ function setButtons() {
                 });
             }
             e.preventDefault();
+        });
+        $('.btn_processing').click(function(e) {
+            toggleProcessing().then(() => {$("#pageloader").hide()});
+            if ($('input[name=Processing]:checked').val() === 'on')
+                $(this).attr("title", "Status: Bereit");
+            else
+                $(this).attr("title", "Status: Befindet sich in Bearbeitung");
+                
         });
     } else {
         $(".btn_displayurl").attr("title", "Keine Zuordnung vorhanden");
@@ -1183,7 +1196,6 @@ function getSystemInfo() {
     });
 }
 function setSystemysinfo(data) {
-    console.log(data);
     if (data.hasOwnProperty("df")) {
         for (let systemdata of data.df) {
             if (systemdata.filesystem == "/dev/sda2") {
@@ -1457,6 +1469,18 @@ function setTesting(testing) {
         dataType: 'json'
     });
 }
+
+function toggleProcessing() {
+    $("#pageloader").show();
+	let data = {"system":_display.id, "processing":$('input[name=Processing]:checked').val() == 'on' ?0 :1};
+    return $.ajax({
+        url: 'https://termgr.homeinfo.de/administer/processing',
+        type: "POST",
+        data: JSON.stringify(data),
+        contentType: 'application/json'
+    });
+}
+
 
 /*
 class ApplicationState(str, Enum):

@@ -156,7 +156,8 @@ function setList(sort = "sortcustomer") {
                             '</div>' +
                         '</div>' +
                     '</td>' +
-                    '<td><span ' + noCheckStyle + ' class="' + (check.ddbOs ?"yellowCircle":"whiteCircle") + '"></span></td>' +
+                    '<td><span ' + noCheckStyle + ' class="' + (check.ddbOs ?"whiteCircle":"") + '"></span></td>' +
+                    '<td><span ' + noCheckStyle + ' class="' + (check.deployment.processing == 1 ?"yellowCircle":"whiteCircle") + '"></span></td>' +
                     '<td><span class="whiteMark" style="min-width:auto; display:block" title="Betriebssystem">' + (_operatingSystemsShorts.hasOwnProperty(check.operatingSystem) ?_operatingSystemsShorts[check.operatingSystem] :check.operatingSystem) + ' ' + '</span></td>' +
                     '<td style="min-width:50px"><span title="System befindet sich in der Blacklist">' + (check.hasOwnProperty("blacklist") ?_coffin :'') + '</span></td>' +
                     '<td><a href="display-details.html?id=' + check.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>'+
