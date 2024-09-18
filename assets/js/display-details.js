@@ -573,7 +573,7 @@ function setDetails(data) {
         $(".btn_deleteDeployment").css("opacity", "1");
         $(".btn_deleteDeployment").addClass("pointer");
         $(".btn_deleteDeployment").attr("title", "Deployment lösen");
-        if (_display.deployment.processing == 1) {
+        if (_display.deployment.processing) {
             $("#Processing").prop("checked", true);
             $(".btn_processing").attr("title", "Status: Befindet sich in Bearbeitung");
         } else {
@@ -1472,7 +1472,7 @@ function setTesting(testing) {
 
 function toggleProcessing() {
     $("#pageloader").show();
-    localStorage.removeItem("servicetool.systems");
+    localStorage.removeItem("servicetool.systemchecks");
 	let data = {"system":_display.id, "processing":$('input[name=Processing]:checked').val() == 'on' ?0 :1};
     return $.ajax({
         url: 'https://termgr.homeinfo.de/administer/processing',
