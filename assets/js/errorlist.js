@@ -137,11 +137,13 @@ function setList(sort = "sortcustomer") {
                                 '<span class="whiteMark btn_changeDeploymentAddressHide pointer">Abbrechen</span>' +
                             '</div>' +
                         '</div>' +
-                    '</td>' + 
+                    '</td>' +
                     '<td><span ' + noCheckStyle + ' class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && !check.checkResults[0].online /*check.checkResults[0].sshLogin === "failed" && !check.checkResults[0].icmpRequest*/ /*&& check.fitted && !check.deployment.testing*/ ?'orangeCircle' :'blueCircle') + '"></span></td>' +
+                    '<td><span ' + noCheckStyle + ' class="' + (check.ddbOs ?"whiteCircle":"") + '"></span></td>' +
+                    '<td><span ' + noCheckStyle + ' class="' + (check.deployment.processing ?"yellowCircle":"blueCircle") + '"></span></td>' +
                     '<td><span class="' + (!check.fitted ?'orangeCircle' :'blueCircle') + '"></span></td>' +
                     '<td><span class="' + (check.testing ?"orangeCircle":"blueCircle") + '"></span></td>' +
-                    '<td>' + (check.ddbOs ?"Wird nicht mehr übertragen" :(check.hasOwnProperty("lastSync") ?formatDate(check.lastSync) + " (" + check.lastSync.substring(11, 16) + "h)": "noch nie")) + '</td>' +
+                    '<td>' + (check.ddbOs ?"Annulliert" :(check.hasOwnProperty("lastSync") ?formatDate(check.lastSync) + " (" + check.lastSync.substring(11, 16) + "h)": "noch nie")) + '</td>' +
                     '<td>' + (downloadAvailable && check.checkResults[0].download*_KIBIBITTOMBIT < 1.9?'<span class="orangeMark">' + (check.checkResults[0].download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':downloadAvailable ?'<span class="blueMark">' + (check.checkResults[0].download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':' - ') +
                     (uploadAvailable && check.checkResults[0].upload*_KIBIBITTOMBIT < 0.35?'<span class="orangeMark">' + (check.checkResults[0].upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':uploadAvailable ?'<span class="blueMark">' + (check.checkResults[0].upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':' - ') + '</td>' +
                     '<td>' + 
@@ -156,8 +158,6 @@ function setList(sort = "sortcustomer") {
                             '</div>' +
                         '</div>' +
                     '</td>' +
-                    '<td><span ' + noCheckStyle + ' class="' + (check.ddbOs ?"whiteCircle":"") + '"></span></td>' +
-                    '<td><span ' + noCheckStyle + ' class="' + (check.deployment.processing ?"yellowCircle":"whiteCircle") + '"></span></td>' +
                     '<td><span class="whiteMark" style="min-width:auto; display:block" title="Betriebssystem">' + (_operatingSystemsShorts.hasOwnProperty(check.operatingSystem) ?_operatingSystemsShorts[check.operatingSystem] :check.operatingSystem) + ' ' + '</span></td>' +
                     '<td style="min-width:50px"><span title="System befindet sich in der Blacklist">' + (check.hasOwnProperty("blacklist") ?_coffin :'') + '</span></td>' +
                     '<td><a href="display-details.html?id=' + check.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>'+
@@ -395,6 +395,14 @@ function sortCommonList(sort) {
     } else if (_lastsort == "sorttestsystemInverted") {
         _commonChecks[_type].systems.sort(function(a, b) {
             return compareInverted(a.testing, b.testing);
+        });
+    } else if (_lastsort == "sortprocessingInverted") {
+        _commonChecks[_type].systems.sort(function(a, b) {
+            return b.deployment.processing ?-1 : a.deployment.processing?1 :0
+        });
+    } else if (_lastsort == "sortprocessing") {
+        _commonChecks[_type].systems.sort(function(a, b) {
+            return a.deployment.processing ?-1 : b.deployment.processing?1 :0
         });
     }
 }
