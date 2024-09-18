@@ -1472,6 +1472,7 @@ function setTesting(testing) {
 
 function toggleProcessing() {
     $("#pageloader").show();
+    localStorage.removeItem("servicetool.systems");
 	let data = {"system":_display.id, "processing":$('input[name=Processing]:checked').val() == 'on' ?0 :1};
     return $.ajax({
         url: 'https://termgr.homeinfo.de/administer/processing',
