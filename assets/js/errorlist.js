@@ -139,7 +139,7 @@ function setList(sort = "sortcustomer") {
                         '</div>' +
                     '</td>' +
                     '<td><span ' + noCheckStyle + ' class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && !check.checkResults[0].online /*check.checkResults[0].sshLogin === "failed" && !check.checkResults[0].icmpRequest*/ /*&& check.fitted && !check.deployment.testing*/ ?'orangeCircle' :'blueCircle') + '"></span></td>' +
-                    '<td><span ' + noCheckStyle + ' class="' + (check.ddbOs ?"whiteCircle":"") + '"></span></td>' +
+                    '<td><span ' + noCheckStyle + ' class="' + (check.ddbOs ?"blueCircle":"") + '"></span></td>' +
                     '<td><span ' + noCheckStyle + ' class="' + (check.deployment.processing ?"yellowCircle":"blueCircle") + '"></span></td>' +
                     '<td><span class="' + (!check.fitted ?'orangeCircle' :'blueCircle') + '"></span></td>' +
                     '<td><span class="' + (check.testing ?"orangeCircle":"blueCircle") + '"></span></td>' +
