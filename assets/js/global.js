@@ -173,7 +173,7 @@ function setDefaults(systems) {
     //localStorage.removeItem("servicetool.systemchecks");
     let promises = [];
     for (let system of systems) {
-        if (system.ddbOs && system.hasOwnProperty("deployment") && system.deployment.url.indexOf("overwrite=true") == -1) {
+        if (system.ddbOs && system.hasOwnProperty("deployment") && system.ddbOs && system.deployment.hasOwnProperty("url") && system.deployment.url.indexOf("overwrite=true") == -1) {
             console.log(system.id);
             promises.push(changedisplayurl(getDefaultDisplayURL(system), system));
         }

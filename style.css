@@ -144,9 +144,10 @@ h5 {
   border-right: 2px solid #fff;
 }
 
-.bodyWrap {
+/*.bodyWrap {
   overflow: hidden;
 }
+*/
 
 .menu_content {
   max-height: 100%;
