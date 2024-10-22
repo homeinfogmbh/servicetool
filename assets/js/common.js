@@ -455,7 +455,7 @@ function getDefaultDisplayURL(system) {
     let address = "&location=" + system.deployment.address.city + "&street=" + system.deployment.address.street + "&housenumber=" + system.deployment.address.houseNumber;
     if (system.deployment.hasOwnProperty("lptAddress"))
         address = "&location=" + system.deployment.lptAddress.city + "&street=" + system.deployment.lptAddress.street + "&housenumber=" + system.deployment.lptAddress.houseNumber;
-    return  getDefaultCustomerBaseURL(system.deployment.customer.abbreviation.toString()) + "/?system=" + system.id + "&deployment=" + system.deployment.id + address + "&customer=" + system.deployment.customer.id + "&ddbos=true";
+    return getDefaultCustomerBaseURL(system.deployment.customer.abbreviation.toString()) + "/?system=" + system.id + "&deployment=" + system.deployment.id + address + "&customer=" + system.deployment.customer.id + "&ddbos=true";
 }
 function getDefaultCustomerBaseURL(abbreviation) {
 	return _DDBOSURL + abbreviation.toLowerCase().split(" ").join("").split("ä").join("ae").split("ü").join("ue").split("ö").join("oe").split("(").join("").split(")").join("");

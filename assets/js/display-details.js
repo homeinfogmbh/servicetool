@@ -1249,7 +1249,27 @@ function listDeployments(deployments = null) {
                     if (selection.isConfirmed === true) {
                         _systemChecksPromise = []; // in common
                         $("#deploymentsDropdown").removeClass("show");
-                        setDeployments(_id, _deployments[id].id).then(()=>{Promise.all(getListOfSystemChecks()).then(systemCheckCompleted);});
+                        setDeployments(_id, _deployments[id].id).then(()=>{
+                            Promise.all(getListOfSystemChecks()).then((data)=> {
+                                systemCheckCompleted(data);
+                                if (_display.ddbOs) {
+                                    //let displayurl = _deployments[id].hasOwnProperty('url') ?_deployments[id].url.split("&amp;").join("&").replace("?blackmode=true", "").replace("&blackmode=true", "").replace("?displaytest=true", "").replace("&displaytest=true", "").replace("?overwrite=true", "").replace("&overwrite=true", "") :getDefaultDisplayURL(_display);
+                                    let displayurl = getDefaultDisplayURL(_display);
+                                    changedisplayurl(displayurl).then((data) => {
+                                        $("#pageloader").hide();
+                                        Swal.fire({
+                                            title: "URL übertragen",
+                                            html: "Erfolgreich übertragen: " + data.success[0] + '<br>Nicht übertragen: ' + (data.failed.hasOwnProperty('offline') ?data.failed.offline :"-"),
+                                            showCancelButton: false,
+                                            confirmButtonColor: '#ff821d',
+                                            iconHtml: '<img src="assets/img/PopUp-Icon.png"></img>',
+                                            confirmButtonText: 'O.K.',
+                                            buttonsStyling: true
+                                        });
+                                    });
+                                }
+                            })
+                        });
                     } else if (selection.isDenied === true) {
                         $("#deploymentsDropdown").removeClass("show");
                         let promises = [];
@@ -1263,13 +1283,51 @@ function listDeployments(deployments = null) {
                         if (!alreadyDeployed)
                             promises.push(setDeployments(_id, _deployments[id].id));
                         _systemChecksPromise = []; // in common
-                        Promise.all(getListOfSystemChecks()).then(systemCheckCompleted);
+                        Promise.all(getListOfSystemChecks()).then((data)=> {
+                            systemCheckCompleted(data);
+                            if (_display.ddbOs) {
+                                //let displayurl = _deployments[id].hasOwnProperty('url') ?_deployments[id].url.split("&amp;").join("&").replace("?blackmode=true", "").replace("&blackmode=true", "").replace("?displaytest=true", "").replace("&displaytest=true", "").replace("?overwrite=true", "").replace("&overwrite=true", "") :getDefaultDisplayURL(_display);
+                                let displayurl = getDefaultDisplayURL(_display);
+                                changedisplayurl(displayurl).then((data) => {
+                                    $("#pageloader").hide();
+                                    Swal.fire({
+                                        title: "URL übertragen",
+                                        html: "Erfolgreich übertragen: " + data.success[0] + '<br>Nicht übertragen: ' + (data.failed.hasOwnProperty('offline') ?data.failed.offline :"-"),
+                                        showCancelButton: false,
+                                        confirmButtonColor: '#ff821d',
+                                        iconHtml: '<img src="assets/img/PopUp-Icon.png"></img>',
+                                        confirmButtonText: 'O.K.',
+                                        buttonsStyling: true
+                                    });
+                                });
+                            }
+                        });
+                            
                     }
                 });
             } else {
                 $("#deploymentsDropdown").removeClass("show");
                 _systemChecksPromise = []; // in common
-                setDeployments(_id, _deployments[id].id).then(()=>{Promise.all(getListOfSystemChecks()).then(systemCheckCompleted);});  
+                setDeployments(_id, _deployments[id].id).then(()=> {
+                    Promise.all(getListOfSystemChecks()).then((data)=> {
+                        systemCheckCompleted(data);
+                        if (_display.ddbOs) {
+                            let displayurl = getDefaultDisplayURL(_display);
+                            changedisplayurl(displayurl).then((data) => {
+                                $("#pageloader").hide();
+                                Swal.fire({
+                                    title: "URL übertragen",
+                                    html: "Erfolgreich übertragen: " + data.success[0] + '<br>Nicht übertragen: ' + (data.failed.hasOwnProperty('offline') ?data.failed.offline :"-"),
+                                    showCancelButton: false,
+                                    confirmButtonColor: '#ff821d',
+                                    iconHtml: '<img src="assets/img/PopUp-Icon.png"></img>',
+                                    confirmButtonText: 'O.K.',
+                                    buttonsStyling: true
+                                });
+                            });
+                        }
+                    });
+                });  
             }
             e.preventDefault();
         });
