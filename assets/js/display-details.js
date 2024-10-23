@@ -18,22 +18,26 @@ $(document).ready(function() {
             if (_display.operatingSystem === "Arch Linux") {
                 if (_display.ddbOs) {
                     $('[name="display-mode"]').click(function(e) {
-                        let displayurl = _display.deployment.hasOwnProperty('url') ?_display.deployment.url.split("&amp;").join("&").replace("?blackmode=true", "").replace("&blackmode=true", "").replace("?displaytest=true", "").replace("&displaytest=true", "").replace("?overwrite=true", "").replace("&overwrite=true", "") :getDefaultDisplayURL(_display);
+                        let displayurl = "https://portal.homeinfo.de/sysmon/cursortestseite";
+                        if (_display.hasOwnProperty("deployment"))
+                            displayurl = _display.deployment.hasOwnProperty('url') ?_display.deployment.url.split("&amp;").join("&").replace("?blackmode=true", "").replace("&blackmode=true", "").replace("?displaytest=true", "").replace("&displaytest=true", "").replace("?overwrite=true", "").replace("&overwrite=true", "") :getDefaultDisplayURL(_display);
                         let title = "Normalmodus eingestellt";
                         if ($(this).val() == "OFF") {
                             displayurl += ((displayurl).indexOf("?") == -1 ?"?" :"&") + "blackmode=true&overwrite=true";
                             title = "Schwarzmodus eingestellt";
                         } else if ($(this).val() == "displaytest") {
-                            displayurl += ((displayurl).indexOf("?") == -1 ?"?" :"&") + "displaytest=true&overwrite=true";
+                            if (_display.hasOwnProperty("deployment"))
+                                displayurl += ((displayurl).indexOf("?") == -1 ?"?" :"&") + "displaytest=true&overwrite=true";
                             title = "Bildschirmtest eingestellt";
                         } else if ($(this).val() == "PRODUCTIVE") {
                             title = "Normalmodus eingestellt";
                         } else if ($(this).val() == "INSTALLATION_INSTRUCTIONS") {
                             title = "Installationsanleitung eingestellt";
                         }
-                        _display.deployment.url = displayurl;
+                        if (_display.hasOwnProperty("deployment"))
+                            _display.deployment.url = displayurl;
                         $("#displayurl").text(displayurl);
-                        changedisplayurl(displayurl).then((data) => {
+                        changedisplayurl(displayurl, _display.hasOwnProperty("deployment")).then((data) => {
                             $("#pageloader").hide();
                             Swal.fire({
                                 title: title,
@@ -1482,13 +1486,18 @@ function changeWarranty(warranty) {
 	});   
 }
 
-function changedisplayurl(displayurl) {
+function changedisplayurl(displayurl, save = true) {
     $("#pageloader").show();
+    let url;
+    if (save)
+        url = "https://termgr.homeinfo.de/administer/url/" + _display.deployment.id;
+    else
+        url = "https://termgr.homeinfo.de/administer/send-url/" + _display.id,
     localStorage.removeItem("servicetool.systems");
     //localStorage.removeItem("servicetool.systemchecks");
 	let data = {"url":displayurl};
 	return $.ajax({
-		url: "https://termgr.homeinfo.de/administer/url/" + _display.deployment.id,
+		url: url,
 		type: "POST",
         data: JSON.stringify(data),
         contentType: 'application/json',
