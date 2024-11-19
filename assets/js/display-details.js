@@ -340,6 +340,21 @@ $(document).ready(function() {
             navigator.clipboard.writeText(_display.deployment.url.split("&amp;").join("&"));
 		e.preventDefault();
 	});
+    $('.btn_sendURL').click(function(e) {
+        changedisplayurl(_display.deployment.url).then((data) => {
+            $("#pageloader").hide();
+            Swal.fire({
+                title: "URL gesendet",
+                html: "Erfolgreich übertragen: " + data.success[0] + '<br>Nicht übertragen: ' + (data.failed.hasOwnProperty('offline') ?data.failed.offline :"-"),
+                showCancelButton: false,
+                confirmButtonColor: '#ff821d',
+                iconHtml: '<img src="assets/img/PopUp-Icon.png"></img>',
+                confirmButtonText: 'O.K.',
+                buttonsStyling: true
+            });
+        });
+		e.preventDefault();
+	});
     $('.btn_check').click(function(e) {
         localStorage.removeItem("servicetool.systemchecks");
         localStorage.removeItem("servicetool.applicationversion");
