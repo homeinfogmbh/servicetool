@@ -143,7 +143,7 @@ function setList(sort = "sortcustomer") {
                     '<td><span ' + noCheckStyle + ' class="' + (check.deployment.processing ?"yellowCircle":"blueCircle") + '"></span></td>' +
                     '<td><span class="' + (!check.fitted ?'orangeCircle' :'blueCircle') + '"></span></td>' +
                     '<td><span class="' + (check.testing ?"orangeCircle":"blueCircle") + '"></span></td>' +
-                    '<td>' + (check.ddbOs ?"Annulliert" :(check.hasOwnProperty("lastSync") ?formatDate(check.lastSync) + " (" + check.lastSync.substring(11, 16) + "h)": "noch nie")) + '</td>' +
+                    '<td>' + (check.ddbOs ?"Realtime" :(check.hasOwnProperty("lastSync") ?formatDate(check.lastSync) + " (" + check.lastSync.substring(11, 16) + "h)": "noch nie")) + '</td>' +
                     '<td>' + (downloadAvailable && check.checkResults[0].download*_KIBIBITTOMBIT < 1.9?'<span class="orangeMark">' + (check.checkResults[0].download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':downloadAvailable ?'<span class="blueMark">' + (check.checkResults[0].download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':' - ') +
                     (uploadAvailable && check.checkResults[0].upload*_KIBIBITTOMBIT < 0.35?'<span class="orangeMark">' + (check.checkResults[0].upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':uploadAvailable ?'<span class="blueMark">' + (check.checkResults[0].upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>':' - ') + '</td>' +
                     '<td>' + 
