@@ -341,7 +341,7 @@ $(document).ready(function() {
 		e.preventDefault();
 	});
     $('.btn_sendURL').click(function(e) {
-        changedisplayurl(_display.deployment.url).then((data) => {
+        changedisplayurl(_display.deployment.url.split("&amp;").join("&")).then((data) => {
             $("#pageloader").hide();
             Swal.fire({
                 title: "URL gesendet",
