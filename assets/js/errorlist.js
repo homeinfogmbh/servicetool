@@ -334,10 +334,16 @@ function sortCommonList(sort) {
         });
     } else if (_lastsort == "sortsync") {
         _commonChecks[_type].systems.sort(function(a, b) {
+            if (a.ddbOs && b.ddbOs) return 0;
+            if (a.ddbOs) return -1;
+            if (b.ddbOs) return 1;
             return !b.hasOwnProperty("lastSync") ?-1 :!a.hasOwnProperty("lastSync") ?1 :compareInverted(a.lastSync.toLowerCase(), b.lastSync.toLowerCase());            
         });
     } else if (_lastsort == "sortsyncInverted") {
         _commonChecks[_type].systems.sort(function(a, b) {
+            if (a.ddbOs && b.ddbOs) return 0;
+            if (a.ddbOs) return 1;
+            if (b.ddbOs) return -1;
             return !a.hasOwnProperty("lastSync") ?-1 :!b.hasOwnProperty("lastSync") ?1 :compare(a.lastSync.toLowerCase(), b.lastSync.toLowerCase());            
         });
     } else if (_lastsort == "sortdownupload") {
