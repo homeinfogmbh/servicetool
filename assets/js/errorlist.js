@@ -10,7 +10,7 @@ $(document).ready(function() {
     _type = _commonChecks.hasOwnProperty(getURLParameterByName('type')) ?getURLParameterByName('type') :'system';
     _customer = getURLParameterByName('customer');
     Promise.all(getListOfSystemChecks()).then((data)=>{
-        setCheckList(data[0], data[1], data[2]);
+        setCheckList(data[0], data[1], data[2], data[3]);
         //if (_customer === null) {
           //  setList();
         //} else {
@@ -138,7 +138,7 @@ function setList(sort = "sortcustomer") {
                             '</div>' +
                         '</div>' +
                     '</td>' +
-                    '<td><span ' + noCheckStyle + ' class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && !check.checkResults[0].online /*check.checkResults[0].sshLogin === "failed" && !check.checkResults[0].icmpRequest*/ /*&& check.fitted && !check.deployment.testing*/ ?'orangeCircle' :'blueCircle') + '"></span></td>' +
+                    '<td><span ' + noCheckStyle + ' class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && !check.checkResults[0].online ?((check.deployment.connection == "UMTS" || check.deployment.connection == "LTE" || check.deployment.connection == "WLANLTE") ?'orangeMark">LTE manuell' :'orangeCircle">') :'blueCircle">') + '</span></td>' +
                     '<td><span ' + noCheckStyle + ' class="' + (check.ddbOs ?"blueCircle":"") + '"></span></td>' +
                     '<td><span ' + noCheckStyle + ' class="' + (check.deployment.processing ?"yellowCircle":"blueCircle") + '"></span></td>' +
                     '<td><span class="' + (!check.fitted ?'orangeCircle' :'blueCircle') + '"></span></td>' +

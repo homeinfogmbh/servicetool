@@ -493,7 +493,7 @@ function setDetails(data) {
         let connection;
         if (_display.deployment.connection == "LANDSL")
             connection = "LAN/DSL";
-        if (_display.deployment.connection == "UMTS")
+        if (_display.deployment.connection == "UMTS" || _display.deployment.connection == "LTE")
             connection = "LTE/UMTS";
         if (_display.deployment.connection == "WLANDSL")
             connection = "WLAN ➝ DSL Router";
@@ -643,7 +643,10 @@ function setChecks(lastCheck) {
         $("#upload").html(lastCheck.hasOwnProperty("upload") ?lastCheck.upload*_KIBIBITTOMBIT < 0.35 ?'<span class="orangeMark">' + (lastCheck.upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>' :'<span class="blueMark">' + (lastCheck.upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>' :"-");
         $("#applicationuptodate").html(lastCheck.hasOwnProperty("applicationVersion") ?_applicationVersion === lastCheck.applicationVersion ?'<span class="blueMark">' + lastCheck.applicationVersion + '</span>' :'<span title="' + _applicationVersion + '" class="orangeMark">' + lastCheck.applicationVersion + '</span>' :'<span class="blueMark">unsupported</span>');
     } else {
-        $("#systemcheck").html('<span class="orangeMark">failed</span>');
+        if (_display.deployment.connection == "UMTS" || _display.deployment.connection == "LTE" || _display.deployment.connection == "WLANLTE")
+            $("#systemcheck").html('<span class="orangeMark">LTE manuell</span>');
+        else
+            $("#systemcheck").html('<span class="orangeMark">failed</span>');
         $("#offline").text("-");
         $("#ssd").text("-");
         $("#icmp").text("-");
@@ -1157,7 +1160,10 @@ function setThirtyDays(data) {
                     $("#thirtyssh").append(log.sshLogin === "failed" ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
                     $("#thirtyhttp").append(log.httpRequest === "failed" ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
                     title = dateDay + '<br>' + (log.hasOwnProperty("download")?(log.download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit':"-") + '<br>' + (log.hasOwnProperty("upload") ?(log.upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit' :'-')
-                    $("#thirtydownloadupload").append((log.hasOwnProperty("download") && log.download*_KIBIBITTOMBIT < 1.9) || (log.hasOwnProperty("upload") && log.upload*_KIBIBITTOMBIT < 0.35)?'<li data-toggle="tooltip" title="' + title + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + title + '"></li>');
+                    if (!log.online)
+                        $("#thirtydownloadupload").append('<li data-toggle="tooltip" title="' + dateDay + '" style="border:2px solid grey; background:transparent"></li>');
+                    else
+                        $("#thirtydownloadupload").append((log.hasOwnProperty("download") && log.download*_KIBIBITTOMBIT < 1.9) || (log.hasOwnProperty("upload") && log.upload*_KIBIBITTOMBIT < 0.35)?'<li data-toggle="tooltip" title="' + title + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + title + '"></li>');
                     break;
                 }
             }

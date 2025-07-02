@@ -66,7 +66,7 @@ function loadPageData() {
     setInterval(intervalChecks, 60000);
 }
 function setChecks(data) {
-    let list = setCheckList(data[0], data[1], data[2]);
+    let list = setCheckList(data[0], data[1], data[2], data[3]);
     //Widgetlist table
     let listDOM = "";
     let sortLength = [];

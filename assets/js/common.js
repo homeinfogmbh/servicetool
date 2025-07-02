@@ -30,6 +30,7 @@ var _commonChecks = {"offline":{"title":"Offline", "text":"Liste der Geräte die
 	"checked":{"title":"Nicht gescheckte Geräte", "text":"Alle Systeme, die heute nicht gecheckt wurden.", "systems":[], "widget":true, "list":false},
 	"system":{"title":"Displays", "text":"Liste aller Displays", "systems":[], "widget":false, "list":false},
 	"systemReducedByBlacklist":{"title":"Displays", "text":"Liste aller Displays ohne Blacklist", "systems":[], "widget":false, "list":false},
+	"notreleasedsystems":{"title":"Wartend auf Freigabe", "text":"Liste aller Standorte ohne Freigabe", "systems":[], "widget":true, "list":false},
 	"checkedToday":{"title":"Displays", "text":"Liste aller Displays ohne Blacklist", "systems":[], "widget":false, "list":false},
 	"done":{"title":"never toSee", "unfinished":true, "widget":false, "list":false}
 }; // -> also setCheckList() for filter
@@ -165,6 +166,7 @@ function getListOfSystemChecks() {
 		_systemChecksPromise.push(getCheckPromis());
 		_systemChecksPromise.push(getApplicationVersion());
 		_systemChecksPromise.push(getBlacklist());
+		_systemChecksPromise.push(getNotReleasedSystems());
 	}
 	return _systemChecksPromise;
 }
@@ -186,8 +188,23 @@ function getCheckPromis() {
 		});
 	}
 }
+function getNotReleasedSystems() {
+    return $.ajax({
+		url: "https://backend.homeinfo.de/deployments/listtemp/",
+		type: "GET",
+		success: function (msg) {   },
+		error: function (msg) {
+			setErrorMessage(msg, "Abrufen der Systeme zur Freigabe");
+		}
+	});   
+}
 
-function setCheckList(list, applicationVersion, blacklist) {
+function setCheckList(list, applicationVersion, blacklist, notreleasedlist = null) {
+	if (notreleasedlist != null) {
+        for (let notreleasedsystem of notreleasedlist)
+            _commonChecks.notreleasedsystems.systems.push({'id':'Nicht gesetzt', 'deployment':notreleasedsystem, 'operatingSystem':'n.A.'});
+    } 
+
     list = $.map(list, function(value, index){
         return [value];
     });
