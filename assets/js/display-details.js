@@ -627,9 +627,10 @@ function setDetails(data) {
 function setChecks(lastCheck) {
     if (isOnDate(lastCheck.timestamp, 24)) {
         $("#systemcheck").html('<span class="blueMark">ok</span>');
-        //lastCheck.hasOwnProperty("offlineSince") && lastCheck.sshLogin !== "success" && !lastCheck.icmpRequest
-        //$("#offline").html(lastCheck.hasOwnProperty("offlineSince") && lastCheck.sshLogin !== "success" ?'<span class="orangeMark">offline</span>' :'<span class="blueMark">online</span>');
-        $("#offline").html("<div style='float:left'>" + (!lastCheck.online /*lastCheck.sshLogin === "failed" && !lastCheck.icmpRequest*/ ?'<span class="orangeMark">offline</span>' :'<span class="blueMark">online</span>') + '<span title="System befindet sich in der Blacklist" style="width:24px; display:block; float:right">' + (_isInBlacklist ?_coffin :'') + '</span></div>');
+        if (_display.deployment.connection == "UMTS" || _display.deployment.connection == "LTE" || _display.deployment.connection == "WLANLTE")
+            $("#offline").html("<div style='float:left'>" + (!lastCheck.online ?'<span class="orangeMark">LTE</span>' :'<span class="blueMark">LTE</span>') + '<span title="System befindet sich in der Blacklist" style="width:24px; display:block; float:right">' + (_isInBlacklist ?_coffin :'') + '</span></div>');
+        else
+            $("#offline").html("<div style='float:left'>" + (!lastCheck.online ?'<span class="orangeMark">offline</span>' :'<span class="blueMark">online</span>') + '<span title="System befindet sich in der Blacklist" style="width:24px; display:block; float:right">' + (_isInBlacklist ?_coffin :'') + '</span></div>');
         $("#sensors").html(lastCheck.sensors === "failed" ?'<span class="orangeMark">overheated</span>' :lastCheck.sensors === "success" ?'<span class="blueMark">ok</span>' :'<span class="blueMark">' + lastCheck.sensors + '</span>');
         $("#root").html(lastCheck.rootNotRo === "failed" ?'<span class="orangeMark">' + lastCheck.rootNotRo + '</span>' :'<span class="blueMark">' + lastCheck.rootNotRo + '</span>');
         $("#ssd").html(lastCheck.smartCheck === "failed" ?'<span class="orangeMark">' + lastCheck.smartCheck + '</span>' :'<span class="blueMark">' + lastCheck.smartCheck + '</span>');
@@ -643,10 +644,7 @@ function setChecks(lastCheck) {
         $("#upload").html(lastCheck.hasOwnProperty("upload") ?lastCheck.upload*_KIBIBITTOMBIT < 0.35 ?'<span class="orangeMark">' + (lastCheck.upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>' :'<span class="blueMark">' + (lastCheck.upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit</span>' :"-");
         $("#applicationuptodate").html(lastCheck.hasOwnProperty("applicationVersion") ?_applicationVersion === lastCheck.applicationVersion ?'<span class="blueMark">' + lastCheck.applicationVersion + '</span>' :'<span title="' + _applicationVersion + '" class="orangeMark">' + lastCheck.applicationVersion + '</span>' :'<span class="blueMark">unsupported</span>');
     } else {
-        if (_display.deployment.connection == "UMTS" || _display.deployment.connection == "LTE" || _display.deployment.connection == "WLANLTE")
-            $("#systemcheck").html('<span class="orangeMark">LTE manuell</span>');
-        else
-            $("#systemcheck").html('<span class="orangeMark">failed</span>');
+        $("#systemcheck").html('<span class="orangeMark">failed</span>');
         $("#offline").text("-");
         $("#ssd").text("-");
         $("#icmp").text("-");
@@ -1161,7 +1159,7 @@ function setThirtyDays(data) {
                     $("#thirtyhttp").append(log.httpRequest === "failed" ?'<li data-toggle="tooltip" title="' + dateDay + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + dateDay + '"></li>');
                     title = dateDay + '<br>' + (log.hasOwnProperty("download")?(log.download*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit':"-") + '<br>' + (log.hasOwnProperty("upload") ?(log.upload*_KIBIBITTOMBIT).toFixed(2).split(".").join(",") + ' Mbit' :'-')
                     if (!log.online)
-                        $("#thirtydownloadupload").append('<li data-toggle="tooltip" title="' + dateDay + '" style="border:2px solid grey; background:transparent"></li>');
+                        $("#thirtydownloadupload").append('<li data-toggle="tooltip" title="' + title + '" style="border:2px solid grey; background:transparent"></li>');
                     else
                         $("#thirtydownloadupload").append((log.hasOwnProperty("download") && log.download*_KIBIBITTOMBIT < 1.9) || (log.hasOwnProperty("upload") && log.upload*_KIBIBITTOMBIT < 0.35)?'<li data-toggle="tooltip" title="' + title + '" class="orangeSq"></li>' :'<li data-toggle="tooltip" title="' + title + '"></li>');
                     break;

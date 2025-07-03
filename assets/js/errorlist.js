@@ -138,7 +138,7 @@ function setList(sort = "sortcustomer") {
                             '</div>' +
                         '</div>' +
                     '</td>' +
-                    '<td><span ' + noCheckStyle + ' class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && !check.checkResults[0].online ?((check.deployment.connection == "UMTS" || check.deployment.connection == "LTE" || check.deployment.connection == "WLANLTE") ?'orangeMark">LTE manuell' :'orangeCircle">') :'blueCircle">') + '</span></td>' +
+                    '<td><span ' + noCheckStyle + ' class="' + (check.hasOwnProperty("checkResults") && check.checkResults.length > 0 && !check.checkResults[0].online ?((check.deployment.connection == "UMTS" || check.deployment.connection == "LTE" || check.deployment.connection == "WLANLTE") ?'orangeMark">LTE' :'orangeCircle">') :((check.deployment.connection == "UMTS" || check.deployment.connection == "LTE" || check.deployment.connection == "WLANLTE") ?'blueMark">LTE' :'blueCircle">')) + '</span></td>' +
                     '<td><span ' + noCheckStyle + ' class="' + (check.ddbOs ?"blueCircle":"") + '"></span></td>' +
                     '<td><span ' + noCheckStyle + ' class="' + (check.deployment.processing ?"yellowCircle":"blueCircle") + '"></span></td>' +
                     '<td><span class="' + (!check.fitted ?'orangeCircle' :'blueCircle') + '"></span></td>' +
@@ -159,9 +159,14 @@ function setList(sort = "sortcustomer") {
                         '</div>' +
                     '</td>' +
                     '<td><span class="whiteMark" style="min-width:auto; display:block" title="Betriebssystem">' + (_operatingSystemsShorts.hasOwnProperty(check.operatingSystem) ?_operatingSystemsShorts[check.operatingSystem] :check.operatingSystem) + ' ' + '</span></td>' +
-                    '<td style="min-width:50px"><span title="System befindet sich in der Blacklist">' + (check.hasOwnProperty("blacklist") ?_coffin :'') + '</span></td>' +
-                    '<td><a href="display-details.html?id=' + check.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>'+
-                    '<td><span class="screenshot" data-id="' + check.id + '"></span></td>' +
+                    '<td style="min-width:50px"><span title="System befindet sich in der Blacklist">' + (check.hasOwnProperty("blacklist") ?_coffin :'') + '</span></td>';
+                    if (check.deployment.hasOwnProperty("confirm"))
+                        systemlistDOM += '<td><a title="Freigeben" href="' + check.deployment.confirm + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>';
+                    else if (_type == "notreleasedsystems")
+                        systemlistDOM += '<td></td>';
+                    else
+                        systemlistDOM += '<td><a href="display-details.html?id=' + check.id + '" class="huntinglink"><img src="assets/img/circle-right.svg" alt="huntinglink"></a></td>';
+                    systemlistDOM += '<td><span class="screenshot" data-id="' + check.id + '"></span></td>' +
                 '</tr>';
                 counter++;
                 if (_type == "offline" && customerofflinelistset && check.deployment.customer.id != -1) {

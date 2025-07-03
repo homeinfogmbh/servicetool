@@ -40,14 +40,14 @@ export const MODEL_TO_ID = {
 
 export const ID_TO_CONNECTION = {
     'ADSL': 'LANDSL',
-    'lte3G4G': 'UMTS',
+    'lte3G4G': 'LTE',
     'wlandsl': 'WLANDSL',
     'wlanlte': 'WLANLTE'
 };
 
 export const CONNECTION_TO_ID = {
     'LANDSL': 'ADSL',
-    'UMTS': 'lte3G4G',
+    'LTE': 'lte3G4G',
     'WLANDSL': 'wlandsl',
     'WLANLTE': 'wlanlte'
 };
