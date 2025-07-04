@@ -1276,7 +1276,6 @@ function listDeployments(deployments = null) {
                             Promise.all(getListOfSystemChecks()).then((data)=> {
                                 systemCheckCompleted(data);
                                 if (_display.ddbOs) {
-                                    //let displayurl = _deployments[id].hasOwnProperty('url') ?_deployments[id].url.split("&amp;").join("&").replace("?blackmode=true", "").replace("&blackmode=true", "").replace("?displaytest=true", "").replace("&displaytest=true", "").replace("?overwrite=true", "").replace("&overwrite=true", "") :getDefaultDisplayURL(_display);
                                     let displayurl = getDefaultDisplayURL(_display);
                                     changedisplayurl(displayurl).then((data) => {
                                         $("#pageloader").hide();
@@ -1309,7 +1308,6 @@ function listDeployments(deployments = null) {
                         Promise.all(getListOfSystemChecks()).then((data)=> {
                             systemCheckCompleted(data);
                             if (_display.ddbOs) {
-                                //let displayurl = _deployments[id].hasOwnProperty('url') ?_deployments[id].url.split("&amp;").join("&").replace("?blackmode=true", "").replace("&blackmode=true", "").replace("?displaytest=true", "").replace("&displaytest=true", "").replace("?overwrite=true", "").replace("&overwrite=true", "") :getDefaultDisplayURL(_display);
                                 let displayurl = getDefaultDisplayURL(_display);
                                 changedisplayurl(displayurl).then((data) => {
                                     $("#pageloader").hide();
