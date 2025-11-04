@@ -435,6 +435,18 @@ $(document).ready(function() {
                 $(this).attr("title", "Ist ein Testsystem");
         }
 	});
+    $('.btn_virtual').click(function(e) {
+        if (_display !== null && _display.hasOwnProperty("deployment")) {
+            localStorage.removeItem("servicetool.systemchecks");
+            setVirtual($('input[name=Virtuellerstandort]:checked').val() !== 'on').then(()=>{$("#pageloader").hide()}, ()=>{$("#pageloader").hide()});
+            if ($('input[name=Virtuellerstandort]:checked').val() === 'on') {
+                $("#Verbaut").prop("checked", true);
+                setFit();
+                $(this).attr("title", "Ist kein virtueller Standort");
+            } else
+                $(this).attr("title", "Ist ein virtueller Standort");
+        }
+	});
 });
 
 
@@ -578,6 +590,13 @@ function setDetails(data) {
     } else {
         $("#Testgerät").prop("checked", false);
         $(".btn_testsystem").attr("title", "Ist kein Testsystem");
+    }
+    if (_display.isvirtual) {
+        $("#Virtuellerstandort").prop("checked", true);
+        $(".btn_virtual").attr("title", "Ist ein virtueller Standort");
+    } else {
+        $("#Virtuellerstandort").prop("checked", false);
+        $(".btn_virtual").attr("title", "Ist kein virtueller Standort");
     }
     if (_display.hasOwnProperty("deployment")) {
         $(".btn_testsystem").css("opacity", "1");
@@ -1428,17 +1447,19 @@ function restartDDBOS() {
     });
 }
 function setFit() {
-    $("#pageloader").show();
-    localStorage.removeItem("servicetool.systems");
-    return $.ajax({
-        url: 'https://termgr.homeinfo.de/administer/fit',
-        type: "POST",
-        data: JSON.stringify({'system': _id, 'fitted': $('input[name=Verbaut]:checked').val() !== 'on'}),
-        contentType: 'application/json',
-        error: function (msg) {
-            setErrorMessage(msg, 'Systems als "verbaut" zu markieren');
-        }
-    });  
+    if ($('input[name=Virtuellerstandort]:checked').val() !== 'on') {
+        $("#pageloader").show();
+        localStorage.removeItem("servicetool.systems");
+        return $.ajax({
+            url: 'https://termgr.homeinfo.de/administer/fit',
+            type: "POST",
+            data: JSON.stringify({'system': _id, 'fitted': $('input[name=Verbaut]:checked').val() !== 'on'}),
+            contentType: 'application/json',
+            error: function (msg) {
+                setErrorMessage(msg, 'Systems als "verbaut" zu markieren');
+            }
+        });
+    } return Promise.resolve();
 }
 function setApplicationState() {
     $("#pageloader").show();
@@ -1548,6 +1569,17 @@ function setTesting(testing) {
     return $.ajax({
         type: 'POST',
         url: 'https://termgr.homeinfo.de/administer/testing',
+        data: JSON.stringify(data),
+        contentType: "application/json",
+        dataType: 'json'
+    });
+}
+function setVirtual(isvirtual) {
+    $("#pageloader").show();
+	let data = {"system":_display.id, "isvirtual":isvirtual};
+    return $.ajax({
+        type: 'POST',
+        url: 'https://termgr.homeinfo.de/administer/isvirtual',
         data: JSON.stringify(data),
         contentType: "application/json",
         dataType: 'json'
