@@ -440,11 +440,12 @@ $(document).ready(function() {
             localStorage.removeItem("servicetool.systemchecks");
             setVirtual($('input[name=Virtuellerstandort]:checked').val() !== 'on').then(()=>{$("#pageloader").hide()}, ()=>{$("#pageloader").hide()});
             if ($('input[name=Virtuellerstandort]:checked').val() === 'on') {
-                $("#Verbaut").prop("checked", true);
-                setFit();
                 $(this).attr("title", "Ist kein virtueller Standort");
-            } else
+            } else {
+                setFit();
+                $("#Verbaut").prop("checked", true);
                 $(this).attr("title", "Ist ein virtueller Standort");
+            }
         }
 	});
 });
@@ -1447,19 +1448,17 @@ function restartDDBOS() {
     });
 }
 function setFit() {
-    if ($('input[name=Virtuellerstandort]:checked').val() !== 'on') {
-        $("#pageloader").show();
-        localStorage.removeItem("servicetool.systems");
-        return $.ajax({
-            url: 'https://termgr.homeinfo.de/administer/fit',
-            type: "POST",
-            data: JSON.stringify({'system': _id, 'fitted': $('input[name=Verbaut]:checked').val() !== 'on'}),
-            contentType: 'application/json',
-            error: function (msg) {
-                setErrorMessage(msg, 'Systems als "verbaut" zu markieren');
-            }
-        });
-    } return Promise.resolve();
+    $("#pageloader").show();
+    localStorage.removeItem("servicetool.systems");
+    return $.ajax({
+        url: 'https://termgr.homeinfo.de/administer/fit',
+        type: "POST",
+        data: JSON.stringify({'system': _id, 'fitted': $('input[name=Verbaut]:checked').val() !== 'on'}),
+        contentType: 'application/json',
+        error: function (msg) {
+            setErrorMessage(msg, 'Systems als "verbaut" zu markieren');
+        }
+    });
 }
 function setApplicationState() {
     $("#pageloader").show();
