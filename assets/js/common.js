@@ -166,7 +166,7 @@ function getListOfSystemChecks() {
 		_systemChecksPromise.push(getCheckPromis());
 		_systemChecksPromise.push(getApplicationVersion());
 		_systemChecksPromise.push(getBlacklist());
-		_systemChecksPromise.push(getNotReleasedSystems());
+		//_systemChecksPromise.push(getNotReleasedSystems());
 	}
 	return _systemChecksPromise;
 }
@@ -188,6 +188,7 @@ function getCheckPromis() {
 		});
 	}
 }
+/*
 function getNotReleasedSystems() {
     return $.ajax({
 		url: "https://backend.homeinfo.de/deployments/listtemp/",
@@ -198,6 +199,7 @@ function getNotReleasedSystems() {
 		}
 	});   
 }
+	*/
 
 function setCheckList(list, applicationVersion, blacklist, notreleasedlist = null) {
 	if (notreleasedlist != null) {
